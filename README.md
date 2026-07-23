@@ -8,9 +8,10 @@ This is a final semester project for the course PSYCH 755 with Dr. Adam Ross Nel
 
 ## Members
 
-| Name | GitHub username |
+| Name | GitHub Username |
 |---|---|
 | Jack J. Burleson | @Exios66 |
+| Jack J. Burleson | @jjburleson |
 
 ## Research Focus
 
