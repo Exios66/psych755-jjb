@@ -1,5 +1,14 @@
+# Analysis package + Quarto / Posit Connect Cloud runtime
 pandas>=2.2
+numpy>=1.26
 requests>=2.31
 python-dotenv>=1.0
 pyyaml>=6.0
+matplotlib>=3.8
+jupyter>=1.0
+nbclient>=0.10
+nbformat>=5.10
+ipykernel>=6.29
+
+# Local development
 pytest>=8.0

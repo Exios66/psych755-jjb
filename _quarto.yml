@@ -1,0 +1,54 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - index.qmd
+    - docs/framework.qmd
+
+website:
+  title: "LLM Prediction of Communication Apprehension"
+  description: "PSYCH 755 manuscript — tiered persona prompts, PRCA ground truth, and LLM prediction error"
+  site-url: https://connect.posit.cloud
+  repo-url: https://github.com/Exios66/psych755-jjb
+  repo-actions: [source, issue]
+  page-navigation: true
+  navbar:
+    background: "#C5050C"
+    foreground: white
+    left:
+      - href: index.qmd
+        text: Manuscript
+      - href: docs/framework.qmd
+        text: Framework
+      - href: https://github.com/Exios66/psych755-jjb
+        text: GitHub
+  page-footer:
+    left: "PSYCH 755 · UW–Madison · Summer 2026"
+    right: "Built with Quarto"
+
+format:
+  html:
+    theme:
+      - cosmo
+      - styles.scss
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    number-sections: true
+    code-fold: true
+    code-tools: true
+    code-link: true
+    df-print: paged
+    link-external-newwindow: true
+    smooth-scroll: true
+    citations-hover: true
+    footnotes-hover: true
+
+execute:
+  echo: true
+  warning: false
+  message: false
+  freeze: auto
+
+bibliography: references.bib
+csl: https://www.zotero.org/styles/apa
