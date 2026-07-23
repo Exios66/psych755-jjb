@@ -45,3 +45,6 @@ data/excerpts/*
 !data/excerpts/qualtrics_excerpt.csv
 
 **/*.quarto_ipynb
+
+# Executed notebook artifacts
+notebooks/*.executed.ipynb
