@@ -1,0 +1,23 @@
+paths:
+  prolific: data/excerpts/prolific_excerpt.csv
+  qualtrics: data/excerpts/qualtrics_excerpt.csv
+  personas_dir: data/processed/personas
+  predictions_dir: outputs/predictions
+  evaluation_dir: outputs/evaluation
+
+tiers:
+  - demos
+  - employment
+  - geo
+  - transit
+
+llm:
+  provider: ollama
+  temperature: 0.2
+  max_tokens: 256
+  timeout_seconds: 120
+
+scoring:
+  # McCroskey PRCA subscale bands commonly used in classroom settings
+  band_low_max: 13
+  band_high_min: 20

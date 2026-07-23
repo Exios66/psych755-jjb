@@ -1,0 +1,50 @@
+/.quarto/
+/_site/
+/_freeze/
+*.html
+!index.html
+~$*.docx
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# R / Python
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+dist/
+build/
+
+# Secrets / local env
+.env
+
+# Generated artifacts
+outputs/
+data/processed/
+
+# Keep excerpt fixtures + docs; ignore other local data drops
+data/*
+!data/README.md
+!data/excerpts/
+data/excerpts/*
+!data/excerpts/README.md
+!data/excerpts/prolific_excerpt.csv
+!data/excerpts/qualtrics_excerpt.csv
+
+**/*.quarto_ipynb
+
+# Executed notebook artifacts
+notebooks/*.executed.ipynb

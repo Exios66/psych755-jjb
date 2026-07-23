@@ -1,0 +1,42 @@
+---
+title: "CA persona prediction framework"
+---
+
+## Goal
+
+Estimate whether LLM-predicted communication apprehension (CA) from demographic / contextual personas systematically errs by group membership. Predictions are compared to ground-truth PRCA subscale scores computed from Qualtrics Likert items.
+
+## Pipeline
+
+```{mermaid}
+flowchart LR
+  prolific[ProlificCSV] --> join[JoinOnParticipantId]
+  qualtrics[QualtricsCSV] --> join
+  join --> score[ScoreGroundTruthPRCA]
+  score --> tiers[BuildTieredPersonaPrompts]
+  tiers --> llm[OllamaOrOpenRouter]
+  llm --> eval[JoinPredictionsToGroundTruth]
+  eval --> out[MAEByTier]
+```
+
+## Ground-truth scoring
+
+Group items: `Q1–Q6`. Interpersonal items: `Q13–Q18`.
+
+- Likert labels map to 1–5.
+- Comfort / low-anxiety items are reverse-coded as `6 - score`.
+- Each subscale is the sum of six items → range **6–30**.
+- Bands default to low ≤13, moderate 14–19, high ≥20.
+
+## Persona tiers
+
+Cumulative information revealed to the model:
+
+1. `demos`
+2. `employment`
+3. `geo` (country + lat/long)
+4. `transit`
+
+## Providers
+
+Set `CA_LLM_PROVIDER` to `ollama` or `openrouter` (see `.env.example`). Use `--provider mock` for offline dry runs and Posit Connect Cloud renders.

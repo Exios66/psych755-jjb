@@ -1,0 +1,293 @@
+---
+title: "Do LLMs Stereotype Communication Apprehension?"
+subtitle: "Tiered persona prompts, PRCA ground truth, and prediction error across demographic context"
+author:
+  - name: Jack J. Burleson
+    affiliations:
+      - University of Wisconsin–Madison
+    corresponding: true
+date: last-modified
+abstract: |
+  Large language models (LLMs) are increasingly asked to stand in for human respondents.
+  This manuscript asks whether an LLM asked to personify Prolific participants can recover
+  their self-reported communication apprehension (CA), and whether prediction error
+  tracks demographic or contextual cues in a stereotypic way. Using McCroskey’s PRCA
+  group and interpersonal subscales (range 6–30), we join Prolific demographics to
+  Qualtrics survey responses, build cumulative persona prompts (demographics → employment →
+  geography → transportation), and collect LLM self-reports via Ollama or OpenRouter.
+  On a small excerpt sample we illustrate the reproducible pipeline, report mean absolute
+  error by information tier, and outline the bias analyses intended for the full cohort.
+keywords:
+  - communication apprehension
+  - large language models
+  - persona prompting
+  - PRCA
+  - algorithmic bias
+---
+
+```{python}
+#| label: setup
+#| include: false
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+ROOT = Path.cwd()
+SRC = ROOT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
+
+from ca_personas.evaluate import summarize_errors
+from ca_personas.load import load_and_prepare
+from ca_personas.personas import TIERS, build_persona_prompts
+from ca_personas.pipeline import run_pipeline
+
+PROLIFIC = ROOT / "data" / "excerpts" / "prolific_excerpt.csv"
+QUALTRICS = ROOT / "data" / "excerpts" / "qualtrics_excerpt.csv"
+RENDER_OUT = ROOT / "outputs" / "quarto_render"
+
+# Re-run the offline mock pipeline at render time so Posit Connect Cloud
+# does not depend on gitignored local artifacts or live API keys.
+artifacts = run_pipeline(
+    prolific_path=PROLIFIC,
+    qualtrics_path=QUALTRICS,
+    tiers=list(TIERS),
+    provider="mock",
+    output_dir=RENDER_OUT,
+    join_how="inner",
+)
+
+participants = pd.read_csv(artifacts["participants"])
+evaluation = pd.read_csv(artifacts["evaluation"])
+summary = pd.read_csv(artifacts["summary"])
+prompts = build_persona_prompts(participants, tiers=list(TIERS))
+
+plt.rcParams.update(
+    {
+        "axes.spines.top": False,
+        "axes.spines.right": False,
+        "axes.grid": True,
+        "grid.alpha": 0.25,
+    }
+)
+```
+
+# Introduction
+
+Communication apprehension (CA) is a well-studied individual difference describing fear or anxiety associated with real or anticipated communication [@mccroskey1970; @mccroskey1984]. The Personal Report of Communication Apprehension (PRCA-24) yields context-specific subscale scores—including **group discussion** and **interpersonal** conversation—each ranging from 6 (very low apprehension) to 30 (very high) [@mccroskey1982; @beatty1988].
+
+Separately, LLMs can be prompted to adopt demographic “personas” and emit survey-like responses. Prior work shows that such prompts can surface social stereotypes and opinion distributions that do not faithfully track the populations they purport to represent [@cheng2023; @santurkar2023]. That raises a concrete measurement question for psychological research tooling:
+
+> When predicting an individual’s CA from demographic attributes alone, does an LLM’s prediction error correlate systematically with demographic group membership—i.e., does the model stereotype certain groups as more or less anxious than they actually reported being?
+
+## Research focus
+
+This project compares **information tiers** rather than a single prompt:
+
+1. Does **employment status** improve prediction accuracy over demographics alone, and does it change the bias pattern?
+2. Does **transportation-use** data improve prediction accuracy, and does the model use it sensibly?
+3. Does combining employment, geography, and transit help beyond either alone, or do the cues carry redundant signal?
+
+# Methods
+
+## Data sources
+
+Participants were recruited via Prolific and completed a Qualtrics instrument for PSYCH 755 coursework activities. The analytic join key is Prolific `Participant id` ↔ Qualtrics `PROLIFIC_PID` / `Q0`.
+
+```{python}
+#| label: tbl-sample
+#| tbl-cap: "Excerpt analysis sample after inner join (demographics + scored CA)."
+
+sample_cols = [
+    "participant_id",
+    "Age",
+    "Sex",
+    "Ethnicity simplified",
+    "Country of residence",
+    "Employment status",
+    "gt_group_ca",
+    "gt_interpersonal_ca",
+]
+sample = participants[sample_cols].copy()
+sample = sample.rename(
+    columns={
+        "Ethnicity simplified": "Ethnicity",
+        "Country of residence": "Country",
+        "Employment status": "Employment",
+        "gt_group_ca": "Group CA",
+        "gt_interpersonal_ca": "Interpersonal CA",
+    }
+)
+sample
+```
+
+::: {.callout-note}
+## Excerpt vs. full cohort
+Figures below are regenerated at Quarto render time from the public excerpt fixtures in `data/excerpts/` using the deterministic **mock** LLM provider. They demonstrate the manuscript pipeline on Posit Connect Cloud without requiring Ollama or OpenRouter credentials. Substitute `--provider ollama` or `--provider openrouter` locally for live model runs on the full sample.
+:::
+
+## Ground-truth PRCA scoring
+
+Group items (`Q1`–`Q6`) and interpersonal items (`Q13`–`Q18`) use five-point Likert labels mapped to 1–5. Comfort-oriented items are reverse-coded as $6 - x$. Each subscale is the sum of six items (range 6–30). Classroom bands follow low ≤ 13, moderate 14–19, and high ≥ 20.
+
+```{python}
+#| label: tbl-gt-summary
+#| tbl-cap: "Ground-truth PRCA subscale summary on the joined excerpt."
+
+gt = participants[["gt_group_ca", "gt_interpersonal_ca"]].describe().T
+gt[["count", "mean", "std", "min", "max"]]
+```
+
+## Persona tiers
+
+Persona prompts are cumulative. The system prompt asks the model to stay in first person and return JSON with group and interpersonal CA integers plus qualitative bands [@quarto].
+
+| Tier | Information revealed to the model |
+|---|---|
+| `demos` | Age, sex, ethnicity, countries, nationality, language, student status |
+| `employment` | `demos` + employment status |
+| `geo` | `employment` + country of residence + latitude/longitude |
+| `transit` | `geo` + public transit / ride-share / license / car access |
+
+```{python}
+#| label: lst-persona-example
+#| echo: false
+#| lst-cap: "Example user prompt fragment for the geo tier (first joined participant)."
+
+example = next(p for p in prompts if p.tier == "geo")
+print(example.user_prompt)
+```
+
+## Model calling
+
+The Python package `ca_personas` supports:
+
+- **Ollama** for local inference [@ollama]
+- **OpenRouter** for hosted models [@openrouter]
+- **mock** for offline CI / Posit Cloud rendering
+
+Predicted JSON fields are validated to the legal 6–30 range, then joined back to ground truth for signed and absolute errors.
+
+# Results
+
+## Prediction error by information tier
+
+```{python}
+#| label: tbl-mae
+#| tbl-cap: "Mean absolute error (MAE) by persona tier on the excerpt mock run."
+
+mae = summary.copy()
+mae
+```
+
+```{python}
+#| label: fig-mae
+#| fig-cap: "Mean absolute error for group and interpersonal CA by persona information tier (mock LLM, excerpt sample)."
+#| fig-alt: "Grouped bar chart of MAE for group and interpersonal subscales across demos, employment, geo, and transit tiers."
+
+plot_df = summary[summary["tier"] != "all"].copy()
+x = range(len(plot_df))
+width = 0.38
+
+fig, ax = plt.subplots(figsize=(8.5, 4.5))
+ax.bar([i - width / 2 for i in x], plot_df["mae_group"], width=width, label="Group CA", color="#C5050C")
+ax.bar([i + width / 2 for i in x], plot_df["mae_interpersonal"], width=width, label="Interpersonal CA", color="#333333")
+ax.set_xticks(list(x))
+ax.set_xticklabels(plot_df["tier"])
+ax.set_ylabel("Mean absolute error")
+ax.set_xlabel("Persona information tier")
+ax.set_ylim(0, max(plot_df[["mae_group", "mae_interpersonal"]].max()) + 2)
+ax.legend(frameon=False)
+ax.set_title("LLM CA prediction error by tier")
+fig.tight_layout()
+plt.show()
+```
+
+## Error dispersion
+
+```{python}
+#| label: fig-error-scatter
+#| fig-cap: "Predicted versus ground-truth group CA scores, faceted conceptually by tier via marker shape."
+#| fig-alt: "Scatterplot of predicted group CA against ground-truth group CA for each tier."
+
+fig, ax = plt.subplots(figsize=(6.5, 6))
+markers = {"demos": "o", "employment": "s", "geo": "D", "transit": "^"}
+for tier, frame in evaluation.groupby("tier"):
+    ax.scatter(
+        frame["gt_group_ca"],
+        frame["pred_group_ca"],
+        label=tier,
+        marker=markers.get(tier, "o"),
+        s=60,
+        alpha=0.85,
+    )
+lims = [6, 30]
+ax.plot(lims, lims, linestyle="--", color="gray", linewidth=1, label="Perfect prediction")
+ax.set_xlim(lims)
+ax.set_ylim(lims)
+ax.set_xlabel("Ground-truth group CA")
+ax.set_ylabel("Predicted group CA")
+ax.set_title("Group CA: predicted vs. observed")
+ax.legend(frameon=False, loc="upper left")
+fig.tight_layout()
+plt.show()
+```
+
+```{python}
+#| label: tbl-by-employment
+#| tbl-cap: "Absolute group-CA error by employment status and tier (excerpt mock run)."
+
+by_emp = (
+    evaluation.dropna(subset=["abs_error_group"])
+    .groupby(["Employment status", "tier"], dropna=False)["abs_error_group"]
+    .agg(n="count", mae="mean")
+    .reset_index()
+    .sort_values(["Employment status", "tier"])
+)
+by_emp
+```
+
+# Discussion
+
+Even on a tiny excerpt, the framework makes the research contrasts concrete: each participant yields four persona prompts that differ only in how much context the model sees, while ground-truth PRCA scores stay fixed. Live Ollama / OpenRouter runs on the full cohort can then test whether MAE shrinks as tiers accumulate information, and whether residual error still clusters by sex, ethnicity, employment, or geography—the stereotyping pattern named in the research question [@cheng2023; @santurkar2023].
+
+Limitations of the present render include (a) excerpt $N$, (b) use of a deterministic mock predictor rather than a production LLM, and (c) incomplete transit fields for some Prolific-linked rows. Those constraints are intentional for a credential-free Posit Cloud build; they do not change the measurement design.
+
+# Reproducibility and publishing
+
+The analysis package lives in `src/ca_personas/`. Locally:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+ca-personas --provider mock --join inner
+quarto render
+```
+
+For **Posit Connect Cloud** [@quarto]:
+
+1. Push this repository to GitHub (public).
+2. In Connect Cloud, choose **Publish → Quarto**.
+3. Select this repository and branch.
+4. Set the primary file to `_quarto.yml` (website) or `index.qmd` (single document).
+5. Confirm `requirements.txt` is present so Python dependencies (including Jupyter) install at build time.
+
+```{python}
+#| label: tbl-artifacts
+#| tbl-cap: "Artifacts written during this Quarto render."
+
+pd.DataFrame(
+    {"artifact": list(artifacts.keys()), "path": [str(p) for p in artifacts.values()]}
+)
+```
+
+# References
+
+::: {#refs}
+:::
