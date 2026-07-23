@@ -62,6 +62,29 @@ pytest
 
 Artifacts land in `outputs/personas/`, `outputs/predictions/`, and `outputs/evaluation/`.
 
+## Stage one: ML baselines (RF + KNN)
+
+Before comparing LLMs, establish tabular baselines on the **same** tiered prediction task (predict group / interpersonal CA from demographics → employment → geo → transit):
+
+```bash
+pip install -r requirements.txt
+pip install -e .
+jupyter nbconvert --to notebook --execute notebooks/stage_one_ml_baseline.ipynb --output stage_one_ml_baseline.executed.ipynb
+```
+
+Or from Python:
+
+```python
+from ca_personas.ml_baseline import run_stage_one_baselines, save_baseline_artifacts
+participants, preds, metrics = run_stage_one_baselines(
+    "data/excerpts/prolific_excerpt.csv",
+    "data/excerpts/qualtrics_excerpt.csv",
+)
+save_baseline_artifacts(preds, metrics, "outputs/ml_baseline")
+```
+
+Metrics land in `outputs/ml_baseline/` for later comparison to LLM MAE by tier.
+
 ## Reproducing this project
 
 ```bash
