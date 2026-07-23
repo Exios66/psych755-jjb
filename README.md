@@ -1,19 +1,16 @@
-# psych755-jjb
+# psych755-jjb - A Summer Semester Final Project
 
-**Group:** Jack J. Burleson
-**Course:** PSYCH 755, Summer Semester
+**Group:** Jack J. Burleson 
+**Course:** PSYCH 755, Summer Semester 2026 - UW-Madison | Madison, WI
+**Professor:** Dr. Adam Ross Nelson
 
-One or two sentences on what this project asks and what it found. Replace this before you submit.
+This is a final semester project for the course PSYCH 755 with Dr. Adam Ross Nelson; It is a showcase of the effective usage of mainstream data science software & utilities.
 
 ## Members
 
 | Name | GitHub username |
 |---|---|
 | Jack J. Burleson | @Exios66 |
-| | |
-| | |
-| | |
-| | |
 
 ## Suggested Project Structure + Contents
 
