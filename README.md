@@ -1,8 +1,10 @@
-# psych755-jjb - A Summer Semester Final Project
+# psych755-jjb 
 
-**Group:** Jack J. Burleson 
-**Course:** PSYCH 755, Summer Semester 2026 - UW-Madison | Madison, WI
-**Professor:** Dr. Adam Ross Nelson
+## A Summer Semester Final Project
+
+- **Group:** Jack J. Burleson 
+- **Course:** PSYCH 755, Summer Semester 2026 - UW-Madison | Madison, WI
+- **Professor:** Dr. Adam Ross Nelson
 
 <a href="https://www.python.org/downloads/release/python-3110/"><img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.11+"></a>
   <a href="https://wisc.edu/"><img src="https://img.shields.io/badge/UW--Madison-Research-C5050C?style=for-the-badge&logo=google-scholar&logoColor=white" alt="UW-Madison"></a>
@@ -16,8 +18,9 @@ This is a final semester project for the course PSYCH 755 with Dr. Adam Ross Nel
 | Jack J. Burleson | @Exios66 |
 | Jack J. Burleson | @jjburleson |
 
-## Research Question
+## Research Question(s)
 
+RQ1: Is an LLM able to predict 
 When predicting an individual’s communication-apprehension (CA) level from demographic attributes alone, does an LLM’s prediction error correlate systematically with demographic group membership — i.e., does the model stereotype certain groups as more or less anxious than they actually reported being?
 
 ## Research Focus
