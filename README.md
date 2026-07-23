@@ -13,6 +13,10 @@ This is a final semester project for the course PSYCH 755 with Dr. Adam Ross Nel
 | Jack J. Burleson | @Exios66 |
 | Jack J. Burleson | @jjburleson |
 
+## Research Question
+
+When predicting an individual’s communication-apprehension (CA) level from demographic attributes alone, does an LLM’s prediction error correlate systematically with demographic group membership — i.e., does the model stereotype certain groups as more or less anxious than they actually reported being?
+
 ## Research Focus
 
 1. Does employment status improve prediction accuracy over demographics alone, and does it change the bias pattern (e.g., does the model now stereotype “unemployed” respondents as higher-CA, correctly or not)?
