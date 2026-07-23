@@ -22,6 +22,8 @@ Sit down and decide, out loud, right now:
 
 Write the letters down on paper with names to help you remember who is who. The rest of this guide refers to you by letter.
 
+- **Students A-E:** Jack J. Burleson
+
 ### Everyone: Get an account (if you don't have one)
 
 If you don't have a GitHub account, make one now at <https://github.com/signup>. Use a username you'd be glad to show an employer.
