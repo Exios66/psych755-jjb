@@ -20,8 +20,7 @@ This is a final semester project for the course PSYCH 755 with Dr. Adam Ross Nel
 
 ## Research Question(s)
 
-RQ1: Is an LLM able to predict 
-When predicting an individual’s communication-apprehension (CA) level from demographic attributes alone, does an LLM’s prediction error correlate systematically with demographic group membership — i.e., does the model stereotype certain groups as more or less anxious than they actually reported being?
+**RQ1.** When an LLM is given a dynamically-constructed, first-person “embodiment” prompt built from an individual respondent’s demographic and behavioral attributes, and instructed to predict that person’s own communication-apprehension (CA) score, how accurately does the model recover the respondent’s true PRCA subscale scores — and where accuracy fails, does the error pattern correlate systematically with demographic group membership (i.e., stereotyping) rather than random noise?
 
 ## Research Focus
 
@@ -43,7 +42,7 @@ When predicting an individual’s communication-apprehension (CA) level from dem
 
 Python package under [`src/ca_personas/`](src/ca_personas/) extracts Prolific + Qualtrics fields, scores ground-truth PRCA subscales (6–30), builds **tiered** persona prompts (`demos` → `employment` → `geo` → `transit`), calls **Ollama** or **OpenRouter**, and writes prediction error tables.
 
-See [`docs/framework.md`](docs/framework.md) for architecture details.
+See [`docs/framework.qmd`](docs/framework.qmd) for architecture details.
 
 ```bash
 python -m venv .venv
@@ -65,13 +64,49 @@ pytest
 
 Artifacts land in `outputs/personas/`, `outputs/predictions/`, and `outputs/evaluation/`.
 
-## Reproducing this project
+## Stage one: ML baselines (RF + KNN)
+
+Before comparing LLMs, establish tabular baselines on the **same** tiered prediction task (predict group / interpersonal CA from demographics → employment → geo → transit):
+
+```bash
+pip install -r requirements.txt
+pip install -e .
+jupyter nbconvert --to notebook --execute notebooks/stage_one_ml_baseline.ipynb --output stage_one_ml_baseline.executed.ipynb
+```
+
+Or from Python:
+
+```python
+from ca_personas.ml_baseline import run_stage_one_baselines, save_baseline_artifacts
+participants, preds, metrics = run_stage_one_baselines(
+    "data/excerpts/prolific_excerpt.csv",
+    "data/excerpts/qualtrics_excerpt.csv",
+)
+save_baseline_artifacts(preds, metrics, "outputs/ml_baseline")
+```
+
+Metrics land in `outputs/ml_baseline/` for later comparison to LLM MAE by tier.
+
+## Quarto manuscript website
+
+The project is a Quarto **website** configured by [`_quarto.yml`](_quarto.yml). The primary manuscript is [`index.qmd`](index.qmd); it re-runs the excerpt analysis at render time so the site builds on Posit Connect Cloud without live LLM credentials.
 
 ```bash
 # from the root of the repo
-quarto render index.qmd
+pip install -r requirements.txt
+quarto check
+quarto render                 # builds _site/
+quarto preview                # local preview
 ```
+
+### Publish to Posit Connect Cloud
+
+1. Push this repository to GitHub (public).
+2. In [Posit Connect Cloud](https://connect.posit.cloud), choose **Publish → Quarto**.
+3. Select the repository and branch.
+4. Set the primary file to **`_quarto.yml`** (recommended website publish) or **`index.qmd`**.
+5. Confirm `requirements.txt` is present (Connect installs Jupyter + analysis deps from it).
 
 ## Notes
 
-Excerpt fixtures live in `data/excerpts/`. Generated `data/processed/` and `outputs/` are gitignored. Never commit API keys; use `.env` locally.
+Excerpt fixtures live in `data/excerpts/`. Generated `data/processed/`, `outputs/`, `_site/`, and `_freeze/` are gitignored. Never commit API keys; use `.env` locally.
