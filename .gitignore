@@ -43,6 +43,8 @@ data/excerpts/*
 !data/excerpts/README.md
 !data/excerpts/prolific_excerpt.csv
 !data/excerpts/qualtrics_excerpt.csv
+!data/excerpts/Excerpt For Testing Prolific Export.csv
+!data/excerpts/Excerpt For Testing Qualtrics Export.csv
 
 **/*.quarto_ipynb
 
