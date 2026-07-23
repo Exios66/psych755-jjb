@@ -1,0 +1,25 @@
+/.quarto/
+/_site/
+/_freeze/
+*.html
+!index.html
+~$*.docx
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# R / Python
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+__pycache__/
+*.pyc
+.venv/
+venv/
