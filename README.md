@@ -8,9 +8,14 @@ This is a final semester project for the course PSYCH 755 with Dr. Adam Ross Nel
 
 ## Members
 
-| Name | GitHub username |
+| Name | GitHub Username |
 |---|---|
 | Jack J. Burleson | @Exios66 |
+| Jack J. Burleson | @jjburleson |
+
+## Research Question
+
+When predicting an individual’s communication-apprehension (CA) level from demographic attributes alone, does an LLM’s prediction error correlate systematically with demographic group membership — i.e., does the model stereotype certain groups as more or less anxious than they actually reported being?
 
 ## Research Focus
 
