@@ -43,3 +43,6 @@ data/excerpts/*
 !data/excerpts/README.md
 !data/excerpts/prolific_excerpt.csv
 !data/excerpts/qualtrics_excerpt.csv
+
+# Executed notebook artifacts
+notebooks/*.executed.ipynb
