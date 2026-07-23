@@ -1,4 +1,6 @@
-# CA persona prediction framework
+---
+title: "CA persona prediction framework"
+---
 
 ## Goal
 
@@ -6,7 +8,7 @@ Estimate whether LLM-predicted communication apprehension (CA) from demographic 
 
 ## Pipeline
 
-```mermaid
+```{mermaid}
 flowchart LR
   prolific[ProlificCSV] --> join[JoinOnParticipantId]
   qualtrics[QualtricsCSV] --> join
@@ -37,4 +39,4 @@ Cumulative information revealed to the model:
 
 ## Providers
 
-Set `CA_LLM_PROVIDER` to `ollama` or `openrouter` (see `.env.example`). Use `--provider mock` for offline dry runs.
+Set `CA_LLM_PROVIDER` to `ollama` or `openrouter` (see `.env.example`). Use `--provider mock` for offline dry runs and Posit Connect Cloud renders.
