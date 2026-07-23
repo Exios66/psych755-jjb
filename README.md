@@ -36,6 +36,32 @@ When predicting an individual’s communication-apprehension (CA) level from dem
 | `references.bib` | Shared BibTeX file for the manuscript and memos. |
 | `data/` | Data used in this project. |
 
+## Persona / LLM prediction framework
+
+Python package under [`src/ca_personas/`](src/ca_personas/) extracts Prolific + Qualtrics fields, scores ground-truth PRCA subscales (6–30), builds **tiered** persona prompts (`demos` → `employment` → `geo` → `transit`), calls **Ollama** or **OpenRouter**, and writes prediction error tables.
+
+See [`docs/framework.md`](docs/framework.md) for architecture details.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+cp .env.example .env   # set Ollama or OpenRouter credentials
+
+# Offline dry run (deterministic mock model)
+ca-personas --provider mock --join inner
+
+# Local Ollama
+ca-personas --provider ollama --model llama3.2
+
+# OpenRouter
+ca-personas --provider openrouter --model meta-llama/llama-3.2-3b-instruct:free
+
+pytest
+```
+
+Artifacts land in `outputs/personas/`, `outputs/predictions/`, and `outputs/evaluation/`.
+
 ## Reproducing this project
 
 ```bash
@@ -45,4 +71,4 @@ quarto render index.qmd
 
 ## Notes
 
-[Anything a reader needs to know that does not belong in the manuscript. Delete this section if you have nothing to say here.]
+Excerpt fixtures live in `data/excerpts/`. Generated `data/processed/` and `outputs/` are gitignored. Never commit API keys; use `.env` locally.

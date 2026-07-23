@@ -23,5 +23,23 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+*.egg-info/
+.pytest_cache/
+dist/
+build/
 
-data/
+# Secrets / local env
+.env
+
+# Generated artifacts
+outputs/
+data/processed/
+
+# Keep excerpt fixtures + docs; ignore other local data drops
+data/*
+!data/README.md
+!data/excerpts/
+data/excerpts/*
+!data/excerpts/README.md
+!data/excerpts/prolific_excerpt.csv
+!data/excerpts/qualtrics_excerpt.csv
