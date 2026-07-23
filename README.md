@@ -15,7 +15,7 @@ This is a final semester project for the course PSYCH 755 with Dr. Adam Ross Nel
 
 ## Research Question
 
-When predicting an individual’s communication-apprehension (CA) level from demographic attributes alone, does an LLM’s prediction error correlate systematically with demographic group membership — i.e., does the model stereotype certain groups as more or less anxious than they actually reported being?
+When an LLM is given a dynamically-constructed, first-person “embodiment” prompt built from an individual respondent’s demographic and behavioral attributes, and instructed to predict that person’s own communication-apprehension (CA) score, how accurately does the model recover the respondent’s true PRCA subscale scores — and where accuracy fails, does the error pattern correlate systematically with demographic group membership (i.e., stereotyping) rather than random noise?
 
 ## Research Focus
 
