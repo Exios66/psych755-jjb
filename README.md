@@ -33,18 +33,24 @@ These questions use the **full Prolific↔Qualtrics matched analytic sample** (F
 1. **Regular public transit & CA:** Do individuals who take public transportation regularly have CA scores that differ statistically from the larger matched population? If so, by how many PRCA points, and what is the effect size?
 2. **Magnitude & distribution:** How are group and interpersonal CA distributed among regular riders vs non-regular riders vs the overall cohort (means, medians, bands, bootstrap CIs)?
 3. **Definition sensitivity:** Does the answer change when “regular” is defined more loosely (any use / twice-monthly+) or more strictly (8+ days/month only)?
+4. **Geography → regular transit:** Do Qualtrics survey latitude & longitude predict whether a respondent takes public transportation regularly? (Random Forest + stratified CV, vs chance and country-only baselines.)
 
-**Primary operationalization for (1):** `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more public transit).
+**Primary operationalization for (1) and (4):** `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more public transit).
 
 ```bash
-# Secondary RQ pipeline (tables + results card → outputs/transit_ca/)
+# Secondary RQ: regular transit vs cohort CA
 ca-personas transit-ca --join inner
-
-# Dedicated notebook
 jupyter nbconvert --to notebook --execute notebooks/secondary_rq_transit_ca.ipynb
+
+# Secondary RQ: lat/long Random Forest → regular transit
+ca-personas geo-transit-rf --join inner
+jupyter nbconvert --to notebook --execute notebooks/secondary_rq_geo_transit_rf.ipynb
 ```
 
-Supporting code: [`src/ca_personas/transit_ca.py`](src/ca_personas/transit_ca.py) · notebook: [`notebooks/secondary_rq_transit_ca.ipynb`](notebooks/secondary_rq_transit_ca.ipynb).
+Supporting code:
+
+- [`src/ca_personas/transit_ca.py`](src/ca_personas/transit_ca.py) · [`notebooks/secondary_rq_transit_ca.ipynb`](notebooks/secondary_rq_transit_ca.ipynb)
+- [`src/ca_personas/geo_transit_rf.py`](src/ca_personas/geo_transit_rf.py) · [`notebooks/secondary_rq_geo_transit_rf.ipynb`](notebooks/secondary_rq_geo_transit_rf.ipynb)
 
 ## Suggested Project Structure + Contents
 
