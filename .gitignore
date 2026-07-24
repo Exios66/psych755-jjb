@@ -30,6 +30,12 @@ build/
 
 # Secrets / local env
 .env
+hf_access_token.txt
+anthropic_api_key.txt
+
+# HuggingFace / vLLM local caches + run logs
+hf_cache/
+logging/
 
 # Generated artifacts
 outputs/
