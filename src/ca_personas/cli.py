@@ -6,6 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
+from ca_personas.compare_agents import run_ml_vs_llm_comparison
 from ca_personas.ground_truth import export_ground_truth_bundle
 from ca_personas.load import load_and_prepare
 from ca_personas.personas import RESEARCH_TIERS, TIERS, build_persona_prompts, write_persona_bundle
@@ -85,6 +86,32 @@ def build_parser() -> argparse.ArgumentParser:
         help="Directory for persona CSV + markdown bundle",
     )
 
+    compare = sub.add_parser(
+        "compare",
+        help="Evaluate RF/KNN vs LLM persona agents on shared CA metrics",
+    )
+    _add_shared_data_args(compare)
+    compare.add_argument(
+        "--tiers",
+        nargs="+",
+        choices=list(RESEARCH_TIERS),
+        default=list(RESEARCH_TIERS),
+        help="Research tiers to compare (default: all four)",
+    )
+    compare.add_argument(
+        "--provider",
+        choices=["ollama", "openrouter", "mock"],
+        default="mock",
+        help="LLM provider for the persona agent side",
+    )
+    compare.add_argument("--model", default=None, help="LLM model override")
+    compare.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/ml_vs_llm"),
+        help="Directory for comparison artifacts",
+    )
+
     # Flat args retained so `ca-personas --provider mock` still works.
     _add_shared_data_args(parser)
     parser.add_argument("--tiers", nargs="+", choices=list(TIERS), default=None)
@@ -130,6 +157,25 @@ def main(argv: list[str] | None = None) -> int:
                     "n_prompts": bundle["n_prompts"],
                     "markdown_dir": str(args.output_dir),
                 },
+                indent=2,
+            )
+        )
+        return 0
+
+    if command == "compare":
+        prolific, qualtrics = _paths_or_defaults(args)
+        result = run_ml_vs_llm_comparison(
+            prolific,
+            qualtrics,
+            tiers=args.tiers,
+            llm_provider=args.provider,
+            llm_model=args.model,
+            join_how=args.join,
+            output_dir=args.output_dir,
+        )
+        print(
+            json.dumps(
+                {k: str(v) for k, v in result["artifacts"].items()},
                 indent=2,
             )
         )
