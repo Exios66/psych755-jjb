@@ -4,6 +4,7 @@ project:
   render:
     - index.qmd
     - docs/framework.qmd
+    - docs/secondary_rq_ca_predicts_transit.md
 
 website:
   title: "LLM Prediction of Communication Apprehension"
@@ -20,6 +21,8 @@ website:
         text: Manuscript
       - href: docs/framework.qmd
         text: Framework
+      - href: docs/secondary_rq_ca_predicts_transit.md
+        text: CA → Transit RQ
       - href: https://github.com/Exios66/psych755-jjb
         text: GitHub
   page-footer:

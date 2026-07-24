@@ -28,29 +28,37 @@ When an LLM is given a dynamically-constructed, first-person “embodiment” pr
 
 ## Secondary research questions (observational — matched cohort)
 
-These questions use the **full Prolific↔Qualtrics matched analytic sample** (File A + File B stacked joined to File C on `Q0` / `Participant id`, complete PRCA ground truth). They do **not** require an LLM; they characterize real self-reported CA in the cohort.
+These questions use the **full Prolific↔Qualtrics matched analytic sample** (File A + File B stacked joined to File C on `Q0` / `Participant id`, complete PRCA ground truth). They do **not** require an LLM; they characterize real self-reported CA and transit behavior in the cohort.
 
-1. **Regular public transit & CA:** Do individuals who take public transportation regularly have CA scores that differ statistically from the larger matched population? If so, by how many PRCA points, and what is the effect size?
-2. **Magnitude & distribution:** How are group and interpersonal CA distributed among regular riders vs non-regular riders vs the overall cohort (means, medians, bands, bootstrap CIs)?
-3. **Definition sensitivity:** Does the answer change when “regular” is defined more loosely (any use / twice-monthly+) or more strictly (8+ days/month only)?
-4. **Geography → regular transit:** Do Qualtrics survey latitude & longitude predict whether a respondent takes public transportation regularly? (Random Forest + stratified CV, vs chance and country-only baselines.)
+| # | Question | Notebook | CLI / write-up |
+|---|---|---|---|
+| 1 | Do regular public-transit riders differ in CA from the larger matched population? By how much? | [`secondary_rq_transit_ca.ipynb`](notebooks/secondary_rq_transit_ca.ipynb) | `ca-personas transit-ca` |
+| 2 | How are group / interpersonal CA distributed among regular vs non-regular vs overall? | same notebook | `outputs/transit_ca/` |
+| 3 | Does the answer change under alternate “regular” cutoffs on `Q26`? | same notebook | sensitivity tables in `outputs/transit_ca/` |
+| 4 | Do Qualtrics **latitude & longitude** predict regular transit use? (RF + CV) | [`secondary_rq_geo_transit_rf.ipynb`](notebooks/secondary_rq_geo_transit_rf.ipynb) | `ca-personas geo-transit-rf` |
+| 5 | Do **group & interpersonal CA** scores predict regular transit use? (RF + CV) | [`secondary_rq_ca_transit_rf.ipynb`](notebooks/secondary_rq_ca_transit_rf.ipynb) | `ca-personas ca-transit-rf` · [write-up](docs/secondary_rq_ca_predicts_transit.md) |
 
-**Primary operationalization for (1) and (4):** `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more public transit).
+**Primary operationalization of “regular transit” (RQs 1–5):** `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more public transit).
 
 ```bash
-# Secondary RQ: regular transit vs cohort CA
+# RQ1–3: regular transit vs cohort CA
 ca-personas transit-ca --join inner
 jupyter nbconvert --to notebook --execute notebooks/secondary_rq_transit_ca.ipynb
 
-# Secondary RQ: lat/long Random Forest → regular transit
+# RQ4: lat/long Random Forest → regular transit
 ca-personas geo-transit-rf --join inner
 jupyter nbconvert --to notebook --execute notebooks/secondary_rq_geo_transit_rf.ipynb
+
+# RQ5: group + interpersonal CA Random Forest → regular transit
+ca-personas ca-transit-rf --join inner
+jupyter nbconvert --to notebook --execute notebooks/secondary_rq_ca_transit_rf.ipynb
 ```
 
 Supporting code:
 
 - [`src/ca_personas/transit_ca.py`](src/ca_personas/transit_ca.py) · [`notebooks/secondary_rq_transit_ca.ipynb`](notebooks/secondary_rq_transit_ca.ipynb)
 - [`src/ca_personas/geo_transit_rf.py`](src/ca_personas/geo_transit_rf.py) · [`notebooks/secondary_rq_geo_transit_rf.ipynb`](notebooks/secondary_rq_geo_transit_rf.ipynb)
+- [`src/ca_personas/ca_transit_rf.py`](src/ca_personas/ca_transit_rf.py) · [`notebooks/secondary_rq_ca_transit_rf.ipynb`](notebooks/secondary_rq_ca_transit_rf.ipynb) · [`docs/secondary_rq_ca_predicts_transit.md`](docs/secondary_rq_ca_predicts_transit.md)
 
 ## Suggested Project Structure + Contents
 

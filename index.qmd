@@ -95,7 +95,7 @@ This project compares **information tiers** rather than a single prompt:
 
 ### Secondary questions (matched cohort, observational)
 
-Independently of LLM personification, we also ask whether **regular public-transit riders** in the Prolific↔Qualtrics matched sample have PRCA scores that differ from the larger cohort (Welch *t*-tests, effect sizes, and distributional summaries; see `notebooks/secondary_rq_transit_ca.ipynb` and `ca-personas transit-ca`), and whether **survey latitude/longitude** predict regular transit use via a Random Forest classifier (`notebooks/secondary_rq_geo_transit_rf.ipynb`, `ca-personas geo-transit-rf`).
+Independently of LLM personification, secondary analyses on the Prolific↔Qualtrics matched sample ask: (1) whether **regular public-transit riders** differ in PRCA scores from the larger cohort (`notebooks/secondary_rq_transit_ca.ipynb`); (2) whether **survey latitude/longitude** predict regular transit use (`notebooks/secondary_rq_geo_transit_rf.ipynb`); and (3) whether **group and interpersonal CA** themselves predict regular transit use via a Random Forest (`notebooks/secondary_rq_ca_transit_rf.ipynb`; write-up in `docs/secondary_rq_ca_predicts_transit.md`).
 
 # Methods
 

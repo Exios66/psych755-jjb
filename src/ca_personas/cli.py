@@ -12,6 +12,7 @@ from ca_personas.load import load_and_prepare, load_full_cohort
 from ca_personas.paths import default_prolific_paths, default_qualtrics_path
 from ca_personas.personas import RESEARCH_TIERS, TIERS, build_persona_prompts, write_persona_bundle
 from ca_personas.pipeline import prepare_analytic_sample, run_pipeline
+from ca_personas.ca_transit_rf import run_ca_transit_rf_pipeline
 from ca_personas.geo_transit_rf import run_geo_transit_rf_pipeline
 from ca_personas.transit_ca import run_transit_ca_pipeline
 
@@ -198,6 +199,29 @@ def build_parser() -> argparse.ArgumentParser:
     )
     geo.add_argument("--seed", type=int, default=42, help="RNG seed")
 
+    ca_rf = sub.add_parser(
+        "ca-transit-rf",
+        help=(
+            "Secondary RQ: Random Forest testing whether group & interpersonal "
+            "CA predict regular public-transit use"
+        ),
+    )
+    _add_shared_data_args(ca_rf)
+    ca_rf.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/ca_transit_rf"),
+        help="Directory for RF metrics, importances, OOF predictions, results card",
+    )
+    ca_rf.add_argument("--splits", type=int, default=5, help="Stratified CV folds")
+    ca_rf.add_argument(
+        "--perm-repeats",
+        type=int,
+        default=30,
+        help="Permutation-importance repeats",
+    )
+    ca_rf.add_argument("--seed", type=int, default=42, help="RNG seed")
+
     # Flat args retained so `ca-personas --provider mock` still works.
     _add_shared_data_args(parser)
     parser.add_argument("--tiers", nargs="+", choices=list(TIERS), default=None)
@@ -344,6 +368,20 @@ def main(argv: list[str] | None = None) -> int:
     if command == "geo-transit-rf":
         prolific, qualtrics = _paths_or_defaults(args)
         artifacts = run_geo_transit_rf_pipeline(
+            prolific_paths=prolific,
+            qualtrics_path=qualtrics,
+            join_how=args.join,
+            output_dir=args.output_dir,
+            n_splits=args.splits,
+            n_perm_repeats=args.perm_repeats,
+            random_state=args.seed,
+        )
+        print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
+        return 0
+
+    if command == "ca-transit-rf":
+        prolific, qualtrics = _paths_or_defaults(args)
+        artifacts = run_ca_transit_rf_pipeline(
             prolific_paths=prolific,
             qualtrics_path=qualtrics,
             join_how=args.join,
