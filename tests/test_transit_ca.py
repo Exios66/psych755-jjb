@@ -47,6 +47,21 @@ def _synthetic_cohort(n_regular: int = 40, n_other: int = 60, seed: int = 0) -> 
     return pd.DataFrame(rows)
 
 
+def test_q26_scale_matches_excerpt_and_file_c_choices():
+    """Closed choices used in code must match Qualtrics exports."""
+    from ca_personas.load import load_qualtrics
+    from ca_personas.transit_ca import Q26_ORDER, RIDES_PER_DAY_ORDER
+
+    root = Path(__file__).resolve().parents[1]
+    excerpt = load_qualtrics(root / "data/excerpts/qualtrics_excerpt.csv")
+    observed_q26 = set(excerpt["Q26"].dropna().astype(str).str.strip()) - {""}
+    assert observed_q26 <= set(Q26_ORDER)
+
+    # Rides-per-day choices seen in excerpt are a subset of the full scale.
+    observed_q27 = set(excerpt["Q27"].dropna().astype(str).str.strip()) - {""}
+    assert observed_q27 <= set(RIDES_PER_DAY_ORDER)
+
+
 def test_label_regular_riders_primary_cutoff():
     df = pd.DataFrame(
         {

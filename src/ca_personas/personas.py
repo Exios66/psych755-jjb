@@ -130,14 +130,33 @@ def geo_block(row: pd.Series) -> list[str]:
     return [line for line in lines if line]
 
 
+# Qualtrics transportation instrument stems (File C / excerpt header labels).
+# Choice text is passed through unchanged from the export (see transit_ca.Q26_ORDER).
+TRANSIT_ITEM_LABELS = {
+    "Q26": (
+        "In the last three months, on how many days did you use public "
+        "transportation (bus, train, tram, etc.)"
+    ),
+    "Q27": "On a typical day of public transportation use, how many rides do you take",
+    "Q28": (
+        "In the last three months, on how many days did you use ride share "
+        "platforms (Lyft, Uber, DiDi, etc.)"
+    ),
+    "Q29": "On a typical day of ride share use, how many rides do you take",
+    "Q20": "Do you have a license to drive a car",
+    "Q21": "Do you have access to a car you can use for transportation",
+}
+
+
 def transit_block(row: pd.Series) -> list[str]:
+    """Persona lines for Q26–Q29 / Q20–Q21 using survey-aligned stems + raw answers."""
     lines = [
-        _line("Public transportation days (last 3 months)", row.get("Q26")),
-        _line("Typical public-transit rides per day", row.get("Q27")),
-        _line("Ride-share days (last 3 months)", row.get("Q28")),
-        _line("Typical ride-share rides per day", row.get("Q29")),
-        _line("Has a driver's license", row.get("Q20")),
-        _line("Has access to a car", row.get("Q21")),
+        _line(TRANSIT_ITEM_LABELS["Q26"], row.get("Q26")),
+        _line(TRANSIT_ITEM_LABELS["Q27"], row.get("Q27")),
+        _line(TRANSIT_ITEM_LABELS["Q28"], row.get("Q28")),
+        _line(TRANSIT_ITEM_LABELS["Q29"], row.get("Q29")),
+        _line(TRANSIT_ITEM_LABELS["Q20"], row.get("Q20")),
+        _line(TRANSIT_ITEM_LABELS["Q21"], row.get("Q21")),
     ]
     return [line for line in lines if line]
 

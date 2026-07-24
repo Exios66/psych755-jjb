@@ -29,7 +29,15 @@ from ca_personas.load import load_full_cohort
 CA_TARGETS = ("gt_group_ca", "gt_interpersonal_ca")
 BAND_TARGETS = ("gt_group_band", "gt_interpersonal_band")
 
-# Canonical Q26 labels observed in File C / excerpts.
+# Official Qualtrics stem (from the 3-row export question-label row).
+Q26_STEM = (
+    "In the last three months on how many days did you use public transportation "
+    "(bus, train, tram, etc.)?"
+)
+
+# Canonical Q26 choice labels — identical in the testing excerpt, repo excerpt,
+# and full File C sibling export. Note: the stem asks about days in the last
+# three months, but the closed choices are worded as "days a month".
 Q26_ORDER = [
     "Never",
     "0-1 days a month",
@@ -38,7 +46,21 @@ Q26_ORDER = [
     "8 or more days a month",
 ]
 
-# Primary definition: weekly-or-more public transit.
+# Parallel day-frequency scale used by ride-share item Q28.
+Q28_ORDER = list(Q26_ORDER)
+
+# Rides-per-typical-day scale for Q27 (public transit) and Q29 (ride share).
+RIDES_PER_DAY_ORDER = [
+    "1-2 rides in a typical day",
+    "3-4 rides in a typical day",
+    "5-6 rides in a typical day",
+    "7 or more rides in a typical day",
+]
+
+Q20_CHOICES = ["Yes", "No"]
+Q21_CHOICES = ["Yes", "No", "Not Sure"]  # "Not Sure" appears in full File C
+
+# Primary definition: weekly-or-more public transit (per Q26 choice wording).
 PRIMARY_REGULAR_LABELS = frozenset({"4-8 days a month", "8 or more days a month"})
 
 CUTOFF_DEFINITIONS: dict[str, frozenset[str]] = {
