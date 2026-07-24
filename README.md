@@ -36,13 +36,35 @@ When an LLM is given a dynamically-constructed, first-person “embodiment” pr
 | `references.bib` | Shared BibTeX file for the manuscript and memos. |
 | `data/` | Data used in this project. |
 
+## Data layout (private full cohort)
+
+‼️ **Do not commit Prolific/Qualtrics exports to GitHub.** Place them in a sibling folder:
+
+```text
+../sibling_data/PRCAProlificExport_FileA.csv
+../sibling_data/PRCAProlificExport_FileB.csv
+../sibling_data/PRCAQualtricsExport_FileC.csv
+```
+
+```python
+pd.read_csv("../sibling_data/PRCAProlificExport_FileA.csv")
+```
+
+- **File A + File B** — two Prolific recruitment waves (same columns; stacked).
+- **File C** — Qualtrics responses; merge key is typed Prolific ID in `Q0`.
+- Public **excerpt fixtures** in `data/excerpts/` remain for tests / Posit Connect Cloud.
+
+See [`data/README.md`](data/README.md).
+
 ## Persona / LLM prediction framework
 
-Python package under [`src/ca_personas/`](src/ca_personas/) extracts Prolific + Qualtrics fields, scores ground-truth PRCA subscales (6–30), builds **tiered / full** persona prompts, calls **Ollama** or **OpenRouter**, and evaluates agents on:
+Python package under [`src/ca_personas/`](src/ca_personas/) extracts Prolific + Qualtrics fields, **cleans** to an analytic sample, runs **RQ-aligned EDA**, scores ground-truth PRCA subscales (6–30), builds **tiered / full** persona prompts, calls **Ollama** or **OpenRouter**, and evaluates agents on:
 
 1. **Exact score precision** — MAE + exact integer match on the 6–30 scale  
 2. **Band accuracy** — whether predicted low / moderate / high matches the participant  
 3. **Distance from correct** — normalized score distance (`|pred−gt| / 24`) and ordinal band distance (0–2 steps; also normalized to 0–1)  
+
+Information tiers map to the research focus: `demos` → `employment` (RQ1) → `geo` → `transit` (RQ2) → `full` (RQ3 / richest personification).
 
 See [`docs/framework.qmd`](docs/framework.qmd) for architecture details.
 
@@ -52,13 +74,16 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 cp .env.example .env   # set Ollama or OpenRouter credentials
 
+# Clean File A/B/C + EDA only (no LLM)
+ca-personas prepare --join inner
+
 # Score + aggregate participant ground truth (shared ML/LLM evaluation targets)
 ca-personas score-gt --join inner
 
 # Build foolproof persona prompts (research tiers + full Qualtrics voice)
 ca-personas build-personas --tiers demos employment geo transit full
 
-# Offline dry run (deterministic mock model)
+# Offline dry run on the full cohort (deterministic mock model)
 ca-personas run --provider mock --join inner
 
 # Local Ollama / OpenRouter
@@ -68,7 +93,7 @@ ca-personas run --provider openrouter --model meta-llama/llama-3.2-3b-instruct:f
 pytest
 ```
 
-Artifacts land in `outputs/ground_truth/`, `outputs/personas/`, `outputs/predictions/`, and `outputs/evaluation/` (includes `band_acc_*` + `exact_acc_*` in `summary_by_tier.csv`).
+Artifacts land in `data/processed/`, `outputs/eda/`, `outputs/ground_truth/`, `outputs/personas/`, `outputs/predictions/`, and `outputs/evaluation/` (includes `band_acc_*` + `exact_acc_*` in `summary_by_tier.csv`).
 
 ## Stage one: ML baselines (RF + KNN)
 

@@ -8,16 +8,32 @@ Estimate whether LLM-predicted communication apprehension (CA) from demographic 
 
 ## Pipeline
 
+Private full-cohort inputs live in `../sibling_data/` (File A + File B stacked Prolific waves; File C Qualtrics; merge on `Q0`). Excerpt fixtures under `data/excerpts/` are the CI / Posit Cloud fallback.
+
 ```{mermaid}
 flowchart LR
-  prolific[ProlificCSV] --> join[JoinOnParticipantId]
-  qualtrics[QualtricsCSV] --> join
-  join --> score[ScoreGroundTruthPRCA]
+  fileA[ProlificFileA] --> stack[StackWaves]
+  fileB[ProlificFileB] --> stack
+  stack --> join[JoinOnParticipantId]
+  fileC[QualtricsFileC] --> join
+  join --> clean[CleanAnalyticSample]
+  clean --> eda[RQAlignedEDA]
+  clean --> score[ScoreGroundTruthPRCA]
   score --> tiers[BuildTieredPersonaPrompts]
   tiers --> llm[OllamaOrOpenRouter]
   llm --> eval[JoinPredictionsToGroundTruth]
-  eval --> out[MAEByTier]
+  eval --> out[MAEByTierAndGroupBias]
 ```
+
+### Research-question alignment
+
+| Tier / artifact | Research question |
+|---|---|
+| `demos` | Baseline demographics for stereotyping checks |
+| `employment` | RQ1 — does employment improve accuracy / change bias? |
+| `transit` | RQ2 — does transportation-use help, and is it used sensibly? |
+| `employment` + `transit` (+ `full`) | RQ3 — combined signal vs redundancy |
+| `outputs/eda/ca_by_group.csv` | Empirical CA means by sex / employment / transit for bias interpretation |
 
 ## Ground-truth scoring
 
@@ -50,9 +66,11 @@ Against ground-truth PRCA subscales (`outputs/ground_truth/`):
 | Band distance | Ordinal steps between bands (0 same, 1 adjacent, 2 low↔high); normalized `/ 2` |
 
 ```bash
-ca-personas score-gt
+# Place exports in ../sibling_data/ first (never commit them)
+ca-personas prepare --join inner
+ca-personas score-gt --join inner
 ca-personas build-personas --tiers demos employment geo transit full
-ca-personas run --provider mock
+ca-personas run --provider mock --join inner
 ```
 
 ## Providers

@@ -8,14 +8,34 @@ from pathlib import Path
 
 from ca_personas.compare_agents import run_ml_vs_llm_comparison
 from ca_personas.ground_truth import export_ground_truth_bundle
-from ca_personas.load import load_and_prepare
+from ca_personas.load import load_and_prepare, load_full_cohort
+from ca_personas.paths import default_prolific_paths, default_qualtrics_path
 from ca_personas.personas import RESEARCH_TIERS, TIERS, build_persona_prompts, write_persona_bundle
-from ca_personas.pipeline import run_pipeline
+from ca_personas.pipeline import prepare_analytic_sample, run_pipeline
 
 
 def _add_shared_data_args(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--prolific", type=Path, default=None, help="Prolific export CSV")
-    parser.add_argument("--qualtrics", type=Path, default=None, help="Qualtrics export CSV")
+    parser.add_argument(
+        "--prolific",
+        type=Path,
+        nargs="+",
+        default=None,
+        help=(
+            "One or more Prolific export CSVs (File A + File B). "
+            "Default: ../sibling_data/PRCAProlificExport_FileA.csv + FileB, "
+            "else data/excerpts/prolific_excerpt.csv"
+        ),
+    )
+    parser.add_argument(
+        "--qualtrics",
+        type=Path,
+        default=None,
+        help=(
+            "Qualtrics export CSV (File C). "
+            "Default: ../sibling_data/PRCAQualtricsExport_FileC.csv, "
+            "else data/excerpts/qualtrics_excerpt.csv"
+        ),
+    )
     parser.add_argument(
         "--join",
         choices=["inner", "outer", "left"],
@@ -28,14 +48,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="ca-personas",
         description=(
-            "Score ground-truth CA, build foolproof persona prompts, predict via "
-            "Ollama/OpenRouter, and evaluate exact-score + band accuracy."
+            "Clean & score ground-truth CA, run EDA aligned to the research "
+            "questions, build persona prompts, predict via Ollama/OpenRouter, "
+            "and evaluate exact-score + band accuracy."
         ),
     )
     sub = parser.add_subparsers(dest="command")
 
     # Default / legacy: running with no subcommand still executes the full pipeline.
-    run = sub.add_parser("run", help="Full pipeline: GT → personas → LLM predict → evaluate")
+    run = sub.add_parser("run", help="Full pipeline: clean → EDA → GT → personas → LLM → evaluate")
     _add_shared_data_args(run)
     run.add_argument(
         "--tiers",
@@ -54,6 +75,24 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--config", type=Path, default=Path("config/default.yaml"))
     run.add_argument("--output-dir", type=Path, default=Path("outputs"))
     run.add_argument("--sleep", type=float, default=0.0)
+    run.add_argument(
+        "--no-clean",
+        action="store_true",
+        help="Skip analytic-sample cleaning filters (not recommended for File A/B/C)",
+    )
+    run.add_argument(
+        "--no-eda",
+        action="store_true",
+        help="Skip writing EDA artifacts under outputs/eda/",
+    )
+
+    prepare = sub.add_parser(
+        "prepare",
+        help="Load sibling-data File A/B/C, clean, score GT, and write EDA (no LLM)",
+    )
+    _add_shared_data_args(prepare)
+    prepare.add_argument("--config", type=Path, default=Path("config/default.yaml"))
+    prepare.add_argument("--output-dir", type=Path, default=Path("outputs"))
 
     score = sub.add_parser(
         "score-gt",
@@ -123,10 +162,10 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _paths_or_defaults(args: argparse.Namespace) -> tuple[Path, Path]:
-    prolific = args.prolific or Path("data/excerpts/prolific_excerpt.csv")
-    qualtrics = args.qualtrics or Path("data/excerpts/qualtrics_excerpt.csv")
-    return Path(prolific), Path(qualtrics)
+def _paths_or_defaults(args: argparse.Namespace) -> tuple[list[Path], Path]:
+    prolific = list(args.prolific) if args.prolific else default_prolific_paths()
+    qualtrics = args.qualtrics or default_qualtrics_path()
+    return [Path(p) for p in prolific], Path(qualtrics)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -134,10 +173,45 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     command = args.command or "run"
 
+    if command == "prepare":
+        artifacts = prepare_analytic_sample(
+            prolific_path=args.prolific,
+            qualtrics_path=args.qualtrics,
+            config_path=args.config,
+            join_how=args.join,
+            output_dir=args.output_dir,
+        )
+        print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
+        return 0
+
     if command == "score-gt":
         prolific, qualtrics = _paths_or_defaults(args)
+        # When multiple Prolific waves are provided, stack via load_full_cohort.
+        if len(prolific) > 1:
+            participants, report = load_full_cohort(
+                prolific_paths=prolific,
+                qualtrics_path=qualtrics,
+                join_how=args.join,
+            )
+            out = Path(args.output_dir)
+            out.mkdir(parents=True, exist_ok=True)
+            from ca_personas.ground_truth import aggregate_ground_truth, ground_truth_table
+
+            paths = {
+                "participants_scored": out / "participants_scored.csv",
+                "ground_truth": out / "ground_truth.csv",
+                "aggregates": out / "ground_truth_aggregates.csv",
+                "cleaning_report": out / "cleaning_report.json",
+            }
+            participants.to_csv(paths["participants_scored"], index=False)
+            ground_truth_table(participants).to_csv(paths["ground_truth"], index=False)
+            aggregate_ground_truth(participants).to_csv(paths["aggregates"], index=False)
+            paths["cleaning_report"].write_text(json.dumps(report, indent=2), encoding="utf-8")
+            print(json.dumps({k: str(v) for k, v in paths.items()}, indent=2))
+            return 0
+
         paths = export_ground_truth_bundle(
-            prolific,
+            prolific[0],
             qualtrics,
             args.output_dir,
             join_how=args.join,
@@ -147,7 +221,19 @@ def main(argv: list[str] | None = None) -> int:
 
     if command == "build-personas":
         prolific, qualtrics = _paths_or_defaults(args)
-        participants = load_and_prepare(prolific, qualtrics, how=args.join)
+        if len(prolific) > 1:
+            participants, _report = load_full_cohort(
+                prolific_paths=prolific,
+                qualtrics_path=qualtrics,
+                join_how=args.join,
+            )
+        else:
+            participants = load_and_prepare(
+                prolific[0],
+                qualtrics,
+                how=args.join,
+                clean=True,
+            )
         prompts = build_persona_prompts(participants, tiers=args.tiers)
         bundle = write_persona_bundle(prompts, args.output_dir)
         print(
@@ -164,8 +250,22 @@ def main(argv: list[str] | None = None) -> int:
 
     if command == "compare":
         prolific, qualtrics = _paths_or_defaults(args)
+        # compare_agents currently takes a single prolific path; stack if needed.
+        prolific_arg: Path | list[Path]
+        if len(prolific) == 1:
+            prolific_arg = prolific[0]
+        else:
+            from ca_personas.load import load_prolific
+
+            stacked = load_prolific(prolific, wave_labels=("A", "B"))
+            tmp = Path("data/processed")
+            tmp.mkdir(parents=True, exist_ok=True)
+            prolific_arg = tmp / "prolific_stacked.csv"
+            export_df = stacked.rename(columns={"participant_id": "Participant id"})
+            export_df.to_csv(prolific_arg, index=False)
+
         result = run_ml_vs_llm_comparison(
-            prolific,
+            prolific_arg,
             qualtrics,
             tiers=args.tiers,
             llm_provider=args.provider,
@@ -192,6 +292,8 @@ def main(argv: list[str] | None = None) -> int:
         output_dir=args.output_dir,
         sleep_seconds=args.sleep,
         join_how=args.join,
+        clean=not getattr(args, "no_clean", False),
+        run_eda_step=not getattr(args, "no_eda", False),
     )
     print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
     return 0
