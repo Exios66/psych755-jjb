@@ -58,12 +58,14 @@ class CleaningReport:
     n_qualtrics_with_pid: int = 0
     n_qualtrics_complete_ca: int = 0
     n_joined: int = 0
+    n_matched_both: int = 0
     n_analytic: int = 0
     n_dropped_missing_pid: int = 0
     n_dropped_incomplete_ca: int = 0
     n_dropped_unjoined: int = 0
     n_prolific_only: int = 0
     n_qualtrics_only: int = 0
+    n_qualtrics_missing_pid: int = 0
     waves: dict[str, int] = field(default_factory=dict)
     notes: list[str] = field(default_factory=list)
 
@@ -75,12 +77,14 @@ class CleaningReport:
             "n_qualtrics_with_pid": self.n_qualtrics_with_pid,
             "n_qualtrics_complete_ca": self.n_qualtrics_complete_ca,
             "n_joined": self.n_joined,
+            "n_matched_both": self.n_matched_both,
             "n_analytic": self.n_analytic,
             "n_dropped_missing_pid": self.n_dropped_missing_pid,
             "n_dropped_incomplete_ca": self.n_dropped_incomplete_ca,
             "n_dropped_unjoined": self.n_dropped_unjoined,
             "n_prolific_only": self.n_prolific_only,
             "n_qualtrics_only": self.n_qualtrics_only,
+            "n_qualtrics_missing_pid": self.n_qualtrics_missing_pid,
             "waves": self.waves,
             "notes": self.notes,
         }

@@ -84,9 +84,11 @@ Supporting code:
 pd.read_csv("../sibling_data/PRCAProlificExport_FileA.csv")
 ```
 
-- **File A + File B** — two Prolific recruitment waves (same columns; stacked).
-- **File C** — Qualtrics responses; merge key is typed Prolific ID in `Q0`.
+- **File A + File B** — two Prolific recruitment waves (same columns; stacked; **262** unique IDs).
+- **File C** — Qualtrics responses; merge key is typed Prolific ID in `Q0` (**273** rows).
+- **Merge coverage:** **252** matched · **21** Qualtrics-only (disregard) · **10** Prolific-only (disregard).
 - Public **excerpt fixtures** in `data/excerpts/` remain for tests / Posit Connect Cloud.
+- Column labels: [`docs/qualtrics_data_dictionary.csv`](docs/qualtrics_data_dictionary.csv).
 
 See [`data/README.md`](data/README.md).
 
