@@ -93,6 +93,7 @@ save_baseline_artifacts(preds, metrics, "outputs/ml_baseline")
 
 Metrics land in `outputs/ml_baseline/` (MAE, exact-score accuracy, band accuracy, and distance-from-correct) for later comparison to LLM summaries by tier.
 
+<<<<<<< HEAD
 ## ML vs LLM comparison
 
 Evaluate Random Forest / KNN against LLM persona agents on the **same** tiers and shared metrics:
@@ -104,6 +105,17 @@ CA_LLM_PROVIDER=mock jupyter nbconvert --to notebook --execute notebooks/ml_vs_l
 ```
 
 Artifacts write to `outputs/ml_vs_llm/` (`ml_vs_llm_comparison.csv`, deltas, shared evaluation tables).
+=======
+## Factor analysis & feature importance
+
+Rank the strongest predictive covariates in the sample and inspect PRCA item factor structure:
+
+```bash
+jupyter nbconvert --to notebook --execute notebooks/factor_feature_importance.ipynb
+```
+
+Artifacts (loadings, permutation/impurity importances, `top_predictive_features.csv`) write to `outputs/feature_importance/`.
+>>>>>>> origin/main
 
 ## Quarto manuscript website
 
