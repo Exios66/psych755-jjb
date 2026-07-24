@@ -38,7 +38,10 @@ When an LLM is given a dynamically-constructed, first-person “embodiment” pr
 
 ## Persona / LLM prediction framework
 
-Python package under [`src/ca_personas/`](src/ca_personas/) extracts Prolific + Qualtrics fields, scores ground-truth PRCA subscales (6–30), builds **tiered** persona prompts (`demos` → `employment` → `geo` → `transit`), calls **Ollama** or **OpenRouter**, and writes prediction error tables.
+Python package under [`src/ca_personas/`](src/ca_personas/) extracts Prolific + Qualtrics fields, scores ground-truth PRCA subscales (6–30), builds **tiered / full** persona prompts, calls **Ollama** or **OpenRouter**, and evaluates agents on:
+
+1. **Exact score precision** — MAE + exact integer match on the 6–30 scale  
+2. **Band accuracy** — whether predicted low / moderate / high matches the participant  
 
 See [`docs/framework.qmd`](docs/framework.qmd) for architecture details.
 
@@ -48,19 +51,23 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 cp .env.example .env   # set Ollama or OpenRouter credentials
 
+# Score + aggregate participant ground truth (shared ML/LLM evaluation targets)
+ca-personas score-gt --join inner
+
+# Build foolproof persona prompts (research tiers + full Qualtrics voice)
+ca-personas build-personas --tiers demos employment geo transit full
+
 # Offline dry run (deterministic mock model)
-ca-personas --provider mock --join inner
+ca-personas run --provider mock --join inner
 
-# Local Ollama
-ca-personas --provider ollama --model llama3.2
-
-# OpenRouter
-ca-personas --provider openrouter --model meta-llama/llama-3.2-3b-instruct:free
+# Local Ollama / OpenRouter
+ca-personas run --provider ollama --model llama3.2
+ca-personas run --provider openrouter --model meta-llama/llama-3.2-3b-instruct:free
 
 pytest
 ```
 
-Artifacts land in `outputs/personas/`, `outputs/predictions/`, and `outputs/evaluation/`.
+Artifacts land in `outputs/ground_truth/`, `outputs/personas/`, `outputs/predictions/`, and `outputs/evaluation/` (includes `band_acc_*` + `exact_acc_*` in `summary_by_tier.csv`).
 
 ## Stage one: ML baselines (RF + KNN)
 
@@ -83,7 +90,7 @@ participants, preds, metrics = run_stage_one_baselines(
 save_baseline_artifacts(preds, metrics, "outputs/ml_baseline")
 ```
 
-Metrics land in `outputs/ml_baseline/` for later comparison to LLM MAE by tier.
+Metrics land in `outputs/ml_baseline/` (MAE, exact-score accuracy, and band accuracy) for later comparison to LLM summaries by tier.
 
 ## Quarto manuscript website
 
