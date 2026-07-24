@@ -1,8 +1,8 @@
 # psych755-jjb - A Summer Semester Final Project
 
-**Group:** Jack J. Burleson 
-**Course:** PSYCH 755, Summer Semester 2026 - UW-Madison | Madison, WI
-**Professor:** Dr. Adam Ross Nelson
+- **Group:** Jack J. Burleson 
+- **Course:** PSYCH 755, Summer Semester 2026 - UW-Madison | Madison, WI
+- **Professor:** Dr. Adam Ross Nelson
 
 <a href="https://www.python.org/downloads/release/python-3110/"><img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.11+"></a>
   <a href="https://wisc.edu/"><img src="https://img.shields.io/badge/UW--Madison-Research-C5050C?style=for-the-badge&logo=google-scholar&logoColor=white" alt="UW-Madison"></a>
