@@ -38,7 +38,7 @@ def test_tiered_prompts_include_expected_sections():
     assert "Employment status" not in demos
     assert "Employment status" in employment
     assert "Approximate latitude" in geo
-    assert "Public transportation days" in transit or "Transportation use" in transit
+    assert "public transportation" in transit.lower() or "Transportation use" in transit
 
     prompts = build_persona_prompts(df, tiers=["demos", "employment"])
     assert len(prompts) == len(df) * 2

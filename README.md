@@ -16,15 +16,35 @@ This is a final semester project for the course PSYCH 755 with Dr. Adam Ross Nel
 | Jack J. Burleson | @Exios66 |
 | Jack J. Burleson | @jjburleson |
 
-## Research Question
+## Research Question (primary)
 
 When an LLM is given a dynamically-constructed, first-person “embodiment” prompt built from an individual respondent’s demographic and behavioral attributes, and instructed to predict that person’s own communication-apprehension (CA) score, how accurately does the model recover the respondent’s true PRCA subscale scores — and where accuracy fails, does the error pattern correlate systematically with demographic group membership (i.e., stereotyping) rather than random noise?
 
-## Research Focus
+## Research Focus (primary — persona tiers)
 
 1. Does employment status improve prediction accuracy over demographics alone, and does it change the bias pattern (e.g., does the model now stereotype “unemployed” respondents as higher-CA, correctly or not)?
 2. Does transportation-use data improve prediction accuracy, and does the model use it sensibly (e.g., inferring low transit use → higher avoidance → higher CA) or does it ignore it/misuse it?
 3. Does combining both help beyond either alone, or do they carry redundant signal (e.g., employment and transit use may correlate with each other in your sample, so Tier 3 may not beat Tier 1 or 2 individually)?
+
+## Secondary research questions (observational — matched cohort)
+
+These questions use the **full Prolific↔Qualtrics matched analytic sample** (File A + File B stacked joined to File C on `Q0` / `Participant id`, complete PRCA ground truth). They do **not** require an LLM; they characterize real self-reported CA in the cohort.
+
+1. **Regular public transit & CA:** Do individuals who take public transportation regularly have CA scores that differ statistically from the larger matched population? If so, by how many PRCA points, and what is the effect size?
+2. **Magnitude & distribution:** How are group and interpersonal CA distributed among regular riders vs non-regular riders vs the overall cohort (means, medians, bands, bootstrap CIs)?
+3. **Definition sensitivity:** Does the answer change when “regular” is defined more loosely (any use / twice-monthly+) or more strictly (8+ days/month only)?
+
+**Primary operationalization for (1):** `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more public transit).
+
+```bash
+# Secondary RQ pipeline (tables + results card → outputs/transit_ca/)
+ca-personas transit-ca --join inner
+
+# Dedicated notebook
+jupyter nbconvert --to notebook --execute notebooks/secondary_rq_transit_ca.ipynb
+```
+
+Supporting code: [`src/ca_personas/transit_ca.py`](src/ca_personas/transit_ca.py) · notebook: [`notebooks/secondary_rq_transit_ca.ipynb`](notebooks/secondary_rq_transit_ca.ipynb).
 
 ## Suggested Project Structure + Contents
 
