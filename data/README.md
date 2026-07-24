@@ -39,6 +39,17 @@ ca-personas run --provider mock --join inner
 
 Prolific `Participant id` ↔ Qualtrics `Q0` (File C) or `PROLIFIC_PID` when present in richer exports.
 
+### Expected merge coverage (File A + File B vs File C)
+
+| Bucket | N | Use in analysis? |
+|---|---:|---|
+| Matched Prolific ∩ Qualtrics | **252** | Yes (then apply complete-CA filters) |
+| Qualtrics-only (incl. blank `Q0` test rows) | **21** | No — disregard |
+| Prolific-only | **10** | No — disregard |
+
+Sanity check: `252 + 10 = 262` Prolific IDs; `252 + 21 = 273` Qualtrics rows.  
+See `ca_personas.load.merge_coverage_audit` and `docs/qualtrics_data_dictionary.csv`.
+
 ### Schema notes (full cohort vs excerpts)
 
 | Source | Notes |

@@ -1,0 +1,42 @@
+field,label
+StartDate,Start Date
+EndDate,End Date
+Status,Response Type
+IPAddress,IP Address
+Progress,Progress
+Duration (in seconds),Duration (in seconds)
+Finished,Finished
+RecordedDate,Recorded Date
+ResponseId,Response ID
+RecipientLastName,Recipient Last Name
+RecipientFirstName,Recipient First Name
+RecipientEmail,Recipient Email
+ExternalReference,External Data Reference
+LocationLatitude,Location Latitude
+LocationLongitude,Location Longitude
+DistributionChannel,Distribution Channel
+UserLanguage,User Language
+Q0,"This survey is conducted as a part of course related learning activities (Psych 755) at the University of Wisconsin - Madison. Please provide your Prolific ID number (if you have one)."
+Q1,I dislike participating in group discussions
+Q2,"Generally, I am comfortable while participating in group discussions"
+Q3,I am tense and nervous while participating in group discussions
+Q4,I like to get involved in group discussions
+Q5,Engaging in a group discussion with new people makes me tense and nervous
+Q6,I am calm and relaxed while participating in group discussions
+Q13,"While participating in a conversation with a new acquaintance, I feel very nervous"
+Q14,I have no fear of speaking up in conversations
+Q15,Ordinarily I am very tense and nervous in conversations
+Q16,Ordinarily I am very calm and relaxed in conversations
+Q17,"While conversing with a new acquaintance, I feel very relaxed"
+Q18,I'm afraid to speak up in conversations
+Q26,"In the last three months on how many days did you use public transportation (bus, train, tram, etc.)?"
+Q27,"On a typical day of public transportation use, how many rides do you take?"
+Q28,"In the last three months on how many days did you use ride share platforms (Lyft, Uber, DiDi, etc.)?"
+Q29,"On a typical day of ride share use, how many rides do you take?"
+Q20,Do you have a license to drive a car?
+Q21,Do you have access to a car you can use for transportation?
+Q18.1,"If a friend told you they get nervous talking to new people, what advice would you give them?"
+Q19,"Describe your ideal way to get around your city, and why you prefer it."
+PROLIFIC_PID,PROLIFIC_PID
+STUDY_ID,STUDY_ID
+SESSION_ID,SESSION_ID

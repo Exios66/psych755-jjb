@@ -145,17 +145,18 @@ def _looks_like_qualtrics_three_row_header(raw: pd.DataFrame) -> bool:
     Detect the standard Qualtrics export block:
 
     Row 0: field names, Row 1: question labels, Row 2: ImportIds.
+
+    File C is a *flat* single-header export. Do **not** treat long ResponseId /
+    hash values in the first data row as question labels — require ImportId
+    markers in row 2 (present in the 3-row excerpt fixture, absent in File C).
     """
     if raw.shape[0] < 4:
         return False
     row0 = [str(c).strip() for c in raw.iloc[0].tolist()]
-    row1 = [str(c).strip() for c in raw.iloc[1].tolist()]
     row2 = [str(c).strip().lower() for c in raw.iloc[2].tolist()]
     has_field_names = "ResponseId" in row0 or "StartDate" in row0
-    # Question-label row is long prose, not another copy of field names.
-    labelish = any(len(x) > 40 for x in row1)
     importish = any(x.startswith("{") or "importid" in x for x in row2)
-    return bool(has_field_names and (labelish or importish))
+    return bool(has_field_names and importish)
 
 
 def _disambiguate_q18_columns(header: list[str]) -> list[str]:
@@ -293,6 +294,40 @@ def load_and_prepare(
     return scored
 
 
+def merge_coverage_audit(
+    prolific: pd.DataFrame,
+    qualtrics: pd.DataFrame,
+) -> dict[str, int]:
+    """
+    Account for Prolific↔Qualtrics coverage on ``participant_id``.
+
+    Expected full-cohort totals (File A+B vs File C):
+
+    - ``n_matched_both`` = 252
+    - ``n_qualtrics_only`` = 21 (test / unmatched Qualtrics rows, including blank Q0)
+    - ``n_prolific_only`` = 10
+    """
+    prol_ids = set(prolific["participant_id"].dropna().astype(str))
+    has_pid = qualtrics["participant_id"].notna()
+    qual_ids = set(qualtrics.loc[has_pid, "participant_id"].astype(str))
+    n_missing_pid = int((~has_pid).sum())
+    n_matched = len(prol_ids & qual_ids)
+    n_prol_only = len(prol_ids - qual_ids)
+    n_qual_only_with_pid = len(qual_ids - prol_ids)
+    # Qualtrics-only for analysis exclusion = unmatched IDs + blank/missing Q0.
+    n_qual_only = n_qual_only_with_pid + n_missing_pid
+    return {
+        "n_prolific": int(len(prol_ids)),
+        "n_qualtrics": int(len(qualtrics)),
+        "n_qualtrics_with_pid": int(has_pid.sum()),
+        "n_qualtrics_missing_pid": n_missing_pid,
+        "n_matched_both": n_matched,
+        "n_prolific_only": n_prol_only,
+        "n_qualtrics_only": n_qual_only,
+        "n_qualtrics_only_with_pid": n_qual_only_with_pid,
+    }
+
+
 def load_full_cohort(
     *,
     prolific_paths: Iterable[str | Path] | None = None,
@@ -305,6 +340,9 @@ def load_full_cohort(
     Load File A + File B + File C from ``../sibling_data/``, clean, and score.
 
     Returns ``(analytic_frame, cleaning_report_dict)``.
+
+    Merge coverage (before complete-CA filters) should be 252 matched, 21
+    Qualtrics-only (disregard), and 10 Prolific-only (disregard).
     """
     from ca_personas.paths import default_prolific_paths, default_qualtrics_path
 
@@ -316,12 +354,10 @@ def load_full_cohort(
         wave_labels=("A", "B") if len(prolific_list) == 2 else None,
     )
     qdf = load_qualtrics(qualtrics)
+    audit = merge_coverage_audit(prolific, qdf)
     joined = join_participant_data(prolific, qdf, how=join_how)
 
     from ca_personas.clean import complete_ca_mask
-
-    prolific_ids = set(prolific["participant_id"].dropna().astype(str))
-    qual_ids = set(qdf["participant_id"].dropna().astype(str))
 
     analytic, clean_report = clean_joined_participants(
         joined,
@@ -329,12 +365,23 @@ def load_full_cohort(
         low_max=low_max,
         high_min=high_min,
     )
-    clean_report.n_prolific_raw = int(len(prolific))
-    clean_report.n_prolific_unique = int(prolific["participant_id"].nunique())
-    clean_report.n_qualtrics_raw = int(len(qdf))
-    clean_report.n_qualtrics_with_pid = int(qdf["participant_id"].notna().sum())
+    clean_report.n_prolific_raw = audit["n_prolific"]
+    clean_report.n_prolific_unique = audit["n_prolific"]
+    clean_report.n_qualtrics_raw = audit["n_qualtrics"]
+    clean_report.n_qualtrics_with_pid = audit["n_qualtrics_with_pid"]
+    clean_report.n_qualtrics_missing_pid = audit["n_qualtrics_missing_pid"]
     clean_report.n_qualtrics_complete_ca = int(complete_ca_mask(qdf).sum())
-    clean_report.n_prolific_only = len(prolific_ids - qual_ids)
-    clean_report.n_qualtrics_only = len(qual_ids - prolific_ids)
-    clean_report.n_dropped_unjoined = clean_report.n_prolific_only + clean_report.n_qualtrics_only
+    clean_report.n_matched_both = audit["n_matched_both"]
+    clean_report.n_prolific_only = audit["n_prolific_only"]
+    clean_report.n_qualtrics_only = audit["n_qualtrics_only"]
+    clean_report.n_dropped_unjoined = (
+        clean_report.n_prolific_only + clean_report.n_qualtrics_only
+    )
+    clean_report.notes.append(
+        "Merge coverage (pre-CA filter): "
+        f"{audit['n_matched_both']} matched Prolific∩Qualtrics; "
+        f"{audit['n_qualtrics_only']} Qualtrics-only (incl. "
+        f"{audit['n_qualtrics_missing_pid']} blank Q0 test rows; disregard); "
+        f"{audit['n_prolific_only']} Prolific-only (disregard)."
+    )
     return analytic, clean_report.to_dict()
