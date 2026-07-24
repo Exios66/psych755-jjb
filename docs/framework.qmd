@@ -58,3 +58,16 @@ ca-personas run --provider mock
 ## Providers
 
 Set `CA_LLM_PROVIDER` to `ollama` or `openrouter` (see `.env.example`). Use `--provider mock` for offline dry runs and Posit Connect Cloud renders.
+
+## vLLM batch path
+
+For offline GPU batch inference, persona prompts are exported to the digital-twin CSV schema (`caseid`, `prompt`) and scored with `python -m inference.predict_vllm`. Results (`generated_text`) are ingested back into the same CA prediction table used by `evaluate_predictions`.
+
+```bash
+python -m inference.export_prompts --output-dir outputs/vllm_prompts
+python -m inference.predict_vllm \
+  --prompt_csv outputs/vllm_prompts/prompts.csv \
+  --result_csv outputs/vllm_results/results.csv
+python -m inference.ingest_results \
+  --result_csv outputs/vllm_results/results.csv
+```

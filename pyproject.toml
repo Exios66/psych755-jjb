@@ -24,6 +24,12 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
+vllm = [
+  "vllm>=0.6",
+  "transformers>=4.44",
+  "tqdm>=4.66",
+  "huggingface_hub>=0.24",
+]
 
 [project.scripts]
 ca-personas = "ca_personas.cli:main"

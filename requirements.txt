@@ -13,3 +13,10 @@ ipykernel>=6.29
 
 # Local development
 pytest>=8.0
+
+# Optional: local vLLM digital-twin inference (heavy CUDA stack)
+# pip install -e ".[vllm]"
+# vllm>=0.6
+# transformers>=4.44
+# tqdm>=4.66
+# huggingface_hub>=0.24
