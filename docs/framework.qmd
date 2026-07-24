@@ -36,6 +36,22 @@ Cumulative information revealed to the model:
 2. `employment`
 3. `geo` (country + lat/long)
 4. `transit`
+5. `full` — all tabular fields plus Qualtrics free-response attitudes (foolproof personification bundle)
+
+## Evaluation metrics
+
+Against ground-truth PRCA subscales (`outputs/ground_truth/`):
+
+| Metric | What it measures |
+|---|---|
+| MAE / exact match | Precision on the continuous 6–30 score |
+| Band accuracy | Whether predicted low/moderate/high matches the participant band |
+
+```bash
+ca-personas score-gt
+ca-personas build-personas --tiers demos employment geo transit full
+ca-personas run --provider mock
+```
 
 ## Providers
 

@@ -22,7 +22,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 from ca_personas.load import load_and_prepare
-from ca_personas.personas import TIERS
+from ca_personas.personas import RESEARCH_TIERS
+from ca_personas.scoring import ca_band
 
 TARGETS = ("gt_group_ca", "gt_interpersonal_ca")
 
@@ -204,6 +205,14 @@ def run_baselines_for_tier(
             mae = float(mean_absolute_error(y, y_hat))
             rmse = float(np.sqrt(mean_squared_error(y, y_hat)))
             r2 = float(r2_score(y, y_hat)) if n >= 3 else float("nan")
+            exact = y.to_numpy().round() == np.rint(y_hat)
+            exact_acc = float(exact.mean())
+            true_bands = [ca_band(int(v)) for v in y.to_numpy().round().astype(int)]
+            pred_bands = [ca_band(int(v)) for v in np.rint(y_hat).astype(int)]
+            band_match = np.array(
+                [tb == pb and tb is not None for tb, pb in zip(true_bands, pred_bands, strict=True)]
+            )
+            band_acc = float(band_match.mean()) if len(band_match) else float("nan")
 
             metric_rows.append(
                 {
@@ -216,14 +225,20 @@ def run_baselines_for_tier(
                     "mae": mae,
                     "rmse": rmse,
                     "r2": r2,
+                    "exact_acc": exact_acc,
+                    "band_acc": band_acc,
                 }
             )
 
             side = "group" if "group" in target else "interpersonal"
-            for pid, truth, pred in zip(
+            for pid, truth, pred, tb, pb, em, bm in zip(
                 model_df["participant_id"],
                 y.to_numpy(),
                 y_hat,
+                true_bands,
+                pred_bands,
+                exact,
+                band_match,
                 strict=True,
             ):
                 pred_rows.append(
@@ -237,6 +252,10 @@ def run_baselines_for_tier(
                         "y_pred": float(pred),
                         "error": float(pred - truth),
                         "abs_error": float(abs(pred - truth)),
+                        "gt_band": tb,
+                        "pred_band": pb,
+                        "exact_match": bool(em),
+                        "band_match": bool(bm),
                     }
                 )
 
@@ -247,17 +266,19 @@ def run_stage_one_baselines(
     prolific_path: str | Path,
     qualtrics_path: str | Path,
     *,
-    tiers: Iterable[str] = TIERS,
+    tiers: Iterable[str] = RESEARCH_TIERS,
     join_how: str = "inner",
     n_neighbors: int = 3,
     random_state: int = 42,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Load data and evaluate RF/KNN baselines across all tiers."""
+    """Load data and evaluate RF/KNN baselines across research tiers."""
     participants = load_and_prepare(prolific_path, qualtrics_path, how=join_how)
     all_preds: list[pd.DataFrame] = []
     all_metrics: list[pd.DataFrame] = []
 
-    for tier in tiers:
+    # ML baselines use tabular tiers only (not free-text "full" persona tier).
+    selected = [t for t in tiers if t != "full"]
+    for tier in selected:
         preds, metrics = run_baselines_for_tier(
             participants,
             tier=tier,
@@ -282,6 +303,8 @@ def metrics_wide(metrics: pd.DataFrame) -> pd.DataFrame:
             row[f"mae_{side}"] = r["mae"]
             row[f"rmse_{side}"] = r["rmse"]
             row[f"r2_{side}"] = r["r2"]
+            row[f"exact_acc_{side}"] = r.get("exact_acc")
+            row[f"band_acc_{side}"] = r.get("band_acc")
         rows.append(row)
     return pd.DataFrame(rows).sort_values(["model", "tier"]).reset_index(drop=True)
 

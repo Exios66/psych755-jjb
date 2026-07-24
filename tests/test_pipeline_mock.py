@@ -17,6 +17,9 @@ def test_mock_pipeline_writes_evaluation(tmp_path: Path):
     assert artifacts["predictions"].exists()
     assert artifacts["evaluation"].exists()
     assert artifacts["summary"].exists()
+    assert artifacts["ground_truth"].exists()
     summary_text = artifacts["summary"].read_text()
     assert "demos" in summary_text
     assert "mae_group" in summary_text
+    assert "band_acc_group" in summary_text
+    assert "exact_acc_group" in summary_text
