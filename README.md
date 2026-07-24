@@ -91,7 +91,19 @@ participants, preds, metrics = run_stage_one_baselines(
 save_baseline_artifacts(preds, metrics, "outputs/ml_baseline")
 ```
 
-Metrics land in `outputs/ml_baseline/` (MAE, exact-score accuracy, and band accuracy) for later comparison to LLM summaries by tier.
+Metrics land in `outputs/ml_baseline/` (MAE, exact-score accuracy, band accuracy, and distance-from-correct) for later comparison to LLM summaries by tier.
+
+## ML vs LLM comparison
+
+Evaluate Random Forest / KNN against LLM persona agents on the **same** tiers and shared metrics:
+
+```bash
+ca-personas compare --provider mock --join inner
+# or
+CA_LLM_PROVIDER=mock jupyter nbconvert --to notebook --execute notebooks/ml_vs_llm_comparison.ipynb
+```
+
+Artifacts write to `outputs/ml_vs_llm/` (`ml_vs_llm_comparison.csv`, deltas, shared evaluation tables).
 
 ## Quarto manuscript website
 
