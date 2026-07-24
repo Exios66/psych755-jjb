@@ -42,6 +42,7 @@ Python package under [`src/ca_personas/`](src/ca_personas/) extracts Prolific + 
 
 1. **Exact score precision** — MAE + exact integer match on the 6–30 scale  
 2. **Band accuracy** — whether predicted low / moderate / high matches the participant  
+3. **Distance from correct** — normalized score distance (`|pred−gt| / 24`) and ordinal band distance (0–2 steps; also normalized to 0–1)  
 
 See [`docs/framework.qmd`](docs/framework.qmd) for architecture details.
 

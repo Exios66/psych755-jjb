@@ -1,4 +1,4 @@
-"""Join predictions to ground-truth CA scores; score precision + band accuracy."""
+"""Join predictions to ground-truth CA scores; score precision, bands, and distance."""
 
 from __future__ import annotations
 
@@ -6,7 +6,12 @@ from typing import Any
 
 import pandas as pd
 
-from ca_personas.scoring import ca_band
+from ca_personas.scoring import (
+    band_distance,
+    ca_band,
+    normalized_band_distance,
+    normalized_score_distance,
+)
 
 
 def _normalize_band(value: object) -> str | None:
@@ -44,8 +49,10 @@ def evaluate_predictions(
     Merge predictions onto ground-truth scores and compute:
 
     - signed / absolute score error (precision on the 6–30 scale)
+    - normalized score distance in [0, 1] (abs error / 24)
     - exact score match (pred integer equals ground truth)
     - band match (low / moderate / high agreement)
+    - ordinal band distance (0–2) and normalized band distance in [0, 1]
     """
     gt_cols = [
         "participant_id",
@@ -75,6 +82,10 @@ def evaluate_predictions(
         if pred_col in merged.columns and gt_col in merged.columns:
             merged[f"error_{side}"] = merged[pred_col] - merged[gt_col]
             merged[f"abs_error_{side}"] = merged[f"error_{side}"].abs()
+            merged[f"score_distance_{side}"] = merged[f"abs_error_{side}"]
+            merged[f"norm_score_distance_{side}"] = merged[f"abs_error_{side}"].map(
+                normalized_score_distance
+            )
             merged[f"exact_match_{side}"] = (
                 merged[pred_col].round().astype("Int64") == merged[gt_col].round().astype("Int64")
             )
@@ -84,25 +95,34 @@ def evaluate_predictions(
             reported = merged[pred_band_col].map(_normalize_band)
         else:
             reported = pd.Series([None] * len(merged), index=merged.index)
-        derived = merged[pred_col].map(
-            lambda s: derive_band_from_score(s, low_max=low_max, high_min=high_min)
-        ) if pred_col in merged.columns else reported
+        derived = (
+            merged[pred_col].map(
+                lambda s: derive_band_from_score(s, low_max=low_max, high_min=high_min)
+            )
+            if pred_col in merged.columns
+            else reported
+        )
         merged[f"pred_{side}_band_resolved"] = reported.where(reported.notna(), derived)
 
         if gt_band_col in merged.columns:
             pred_b = merged[f"pred_{side}_band_resolved"].map(_normalize_band)
             gt_b = merged[gt_band_col].map(_normalize_band)
-            match = pred_b.eq(gt_b)
-            # Use nullable boolean so missing bands stay as <NA>, not False.
-            match = match.astype("boolean")
-            match = match.mask(pred_b.isna() | gt_b.isna())
+            match = pred_b.eq(gt_b).astype("boolean").mask(pred_b.isna() | gt_b.isna())
             merged[f"band_match_{side}"] = match
+
+            distances = [
+                band_distance(pb, gb) for pb, gb in zip(pred_b.tolist(), gt_b.tolist(), strict=True)
+            ]
+            merged[f"band_distance_{side}"] = pd.Series(distances, index=merged.index, dtype="Int64")
+            merged[f"norm_band_distance_{side}"] = merged[f"band_distance_{side}"].map(
+                normalized_band_distance
+            )
 
     return merged
 
 
 def summarize_errors(evaluation: pd.DataFrame) -> pd.DataFrame:
-    """MAE, exact-score accuracy, and band accuracy by tier (and overall)."""
+    """MAE, exact/band accuracy, and mean distance-from-correct by tier."""
     rows: list[dict[str, Any]] = []
     frames = [("all", evaluation)]
     if "tier" in evaluation.columns:
@@ -133,10 +153,21 @@ def summarize_errors(evaluation: pd.DataFrame) -> pd.DataFrame:
         for side in ("group", "interpersonal"):
             exact_col = f"exact_match_{side}"
             band_col = f"band_match_{side}"
+            norm_score_col = f"norm_score_distance_{side}"
+            band_dist_col = f"band_distance_{side}"
+            norm_band_col = f"norm_band_distance_{side}"
+
             if exact_col in score_usable.columns and len(score_usable):
                 row[f"exact_acc_{side}"] = float(score_usable[exact_col].mean())
             else:
                 row[f"exact_acc_{side}"] = None
+
+            if norm_score_col in score_usable.columns and len(score_usable):
+                row[f"mean_norm_score_distance_{side}"] = float(
+                    score_usable[norm_score_col].mean()
+                )
+            else:
+                row[f"mean_norm_score_distance_{side}"] = None
 
             if band_col in frame.columns:
                 band_usable = frame.dropna(subset=[band_col])
@@ -147,6 +178,20 @@ def summarize_errors(evaluation: pd.DataFrame) -> pd.DataFrame:
             else:
                 row[f"band_acc_{side}"] = None
                 row[f"n_band_{side}"] = 0
+
+            if band_dist_col in frame.columns:
+                dist_usable = frame.dropna(subset=[band_dist_col])
+                row[f"mean_band_distance_{side}"] = (
+                    float(dist_usable[band_dist_col].mean()) if len(dist_usable) else None
+                )
+                row[f"mean_norm_band_distance_{side}"] = (
+                    float(dist_usable[norm_band_col].mean())
+                    if len(dist_usable) and norm_band_col in dist_usable.columns
+                    else None
+                )
+            else:
+                row[f"mean_band_distance_{side}"] = None
+                row[f"mean_norm_band_distance_{side}"] = None
 
         rows.append(row)
     return pd.DataFrame(rows)

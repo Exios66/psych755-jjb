@@ -46,6 +46,8 @@ Against ground-truth PRCA subscales (`outputs/ground_truth/`):
 |---|---|
 | MAE / exact match | Precision on the continuous 6–30 score |
 | Band accuracy | Whether predicted low/moderate/high matches the participant band |
+| Score distance | Absolute error; normalized as `\|pred−gt\| / 24` ∈ [0, 1] |
+| Band distance | Ordinal steps between bands (0 same, 1 adjacent, 2 low↔high); normalized `/ 2` |
 
 ```bash
 ca-personas score-gt

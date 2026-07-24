@@ -23,3 +23,5 @@ def test_mock_pipeline_writes_evaluation(tmp_path: Path):
     assert "mae_group" in summary_text
     assert "band_acc_group" in summary_text
     assert "exact_acc_group" in summary_text
+    assert "mean_band_distance_group" in summary_text
+    assert "mean_norm_score_distance_group" in summary_text

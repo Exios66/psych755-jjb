@@ -1,6 +1,13 @@
 import pandas as pd
 
-from ca_personas.scoring import add_ground_truth_scores, likert_to_int, subscale_score
+from ca_personas.scoring import (
+    add_ground_truth_scores,
+    band_distance,
+    likert_to_int,
+    normalized_band_distance,
+    normalized_score_distance,
+    subscale_score,
+)
 
 
 def test_likert_mapping():
@@ -22,6 +29,13 @@ def test_subscale_all_neutral_is_eighteen():
         }
     )
     assert subscale_score(row, ("Q1", "Q3", "Q5"), ("Q2", "Q4", "Q6")) == 18
+
+
+def test_distance_from_correct_helpers():
+    assert band_distance("moderate", "high") == 1
+    assert normalized_band_distance(2) == 1.0
+    assert normalized_score_distance(24) == 1.0
+    assert normalized_score_distance(0) == 0.0
 
 
 def test_low_apprehension_group_score():
