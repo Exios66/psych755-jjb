@@ -86,9 +86,32 @@ class CleaningReport:
         }
 
 
+# Prolific sometimes emits sentinel strings instead of blank cells.
+PROLIFIC_SENTINELS = {
+    "",
+    "nan",
+    "none",
+    "na",
+    "n/a",
+    "data_expired",
+    "consented_not_submitted",
+    "not applicable",
+}
+
+
 def _nonempty(series: pd.Series) -> pd.Series:
     text = series.astype(str).str.strip()
-    return series.notna() & text.ne("") & ~text.str.lower().isin({"nan", "none", "na"})
+    return series.notna() & ~text.str.lower().isin(PROLIFIC_SENTINELS)
+
+
+def normalize_prolific_sentinels(df: pd.DataFrame) -> pd.DataFrame:
+    """Replace Prolific sentinel strings with NA so personas skip them."""
+    out = df.copy()
+    for col in out.columns:
+        if out[col].dtype == object or pd.api.types.is_string_dtype(out[col]):
+            mask = out[col].astype(str).str.strip().str.lower().isin(PROLIFIC_SENTINELS)
+            out.loc[mask, col] = pd.NA
+    return out
 
 
 def ca_item_completeness(df: pd.DataFrame) -> pd.Series:
@@ -166,13 +189,26 @@ def clean_joined_participants(
             joined["prolific_wave"].astype(str).value_counts(dropna=False).to_dict()
         )
 
-    work = joined.copy()
+    work = normalize_prolific_sentinels(joined)
     if "Q18_ca" in work.columns and "Q18" not in work.columns:
         work = work.rename(columns={"Q18_ca": "Q18"})
 
     before_pid = len(work)
     work = work.loc[_nonempty(work["participant_id"])].copy()
     report.n_dropped_missing_pid = before_pid - len(work)
+    if "Student status" in joined.columns:
+        n_expired = int(
+            joined["Student status"]
+            .astype(str)
+            .str.strip()
+            .str.lower()
+            .eq("data_expired")
+            .sum()
+        )
+        if n_expired:
+            report.notes.append(
+                f"Normalized {n_expired} DATA_EXPIRED Student status values to missing."
+            )
 
     if require_complete_ca:
         complete = complete_ca_mask(work)
