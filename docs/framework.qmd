@@ -58,6 +58,17 @@ Observational contrast on the matched analytic sample (no LLM):
 | CLI / notebook | `ca-personas geo-transit-rf` · `notebooks/secondary_rq_geo_transit_rf.ipynb` |
 | Artifacts | `outputs/geo_transit_rf/` |
 
+### Secondary RQ — CA scores predict regular transit?
+
+| Piece | Detail |
+|---|---|
+| Features | Ground-truth `gt_group_ca`, `gt_interpersonal_ca` (PRCA 6–30) |
+| Outcome | Same `regular_transit` flag from `Q26` |
+| Model | Balanced Random Forest + stratified CV; group-only / interpersonal-only ablations |
+| CLI / notebook | `ca-personas ca-transit-rf` · `notebooks/secondary_rq_ca_transit_rf.ipynb` |
+| Write-up | [`docs/secondary_rq_ca_predicts_transit.md`](secondary_rq_ca_predicts_transit.md) |
+| Artifacts | `outputs/ca_transit_rf/` |
+
 ## Ground-truth scoring
 
 Group items: `Q1–Q6`. Interpersonal items: `Q13–Q18`.
