@@ -12,6 +12,7 @@ from ca_personas.load import load_and_prepare, load_full_cohort
 from ca_personas.paths import default_prolific_paths, default_qualtrics_path
 from ca_personas.personas import RESEARCH_TIERS, TIERS, build_persona_prompts, write_persona_bundle
 from ca_personas.pipeline import prepare_analytic_sample, run_pipeline
+from ca_personas.transit_ca import run_transit_ca_pipeline
 
 
 def _add_shared_data_args(parser: argparse.ArgumentParser) -> None:
@@ -151,6 +152,28 @@ def build_parser() -> argparse.ArgumentParser:
         help="Directory for comparison artifacts",
     )
 
+    transit = sub.add_parser(
+        "transit-ca",
+        help=(
+            "Secondary RQ: test whether regular public-transit riders differ "
+            "in CA from the larger matched cohort"
+        ),
+    )
+    _add_shared_data_args(transit)
+    transit.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/transit_ca"),
+        help="Directory for transit–CA tables, distributions, and results card",
+    )
+    transit.add_argument(
+        "--n-boot",
+        type=int,
+        default=5000,
+        help="Bootstrap resamples for mean-difference CIs (default: 5000)",
+    )
+    transit.add_argument("--seed", type=int, default=42, help="RNG seed for bootstrap")
+
     # Flat args retained so `ca-personas --provider mock` still works.
     _add_shared_data_args(parser)
     parser.add_argument("--tiers", nargs="+", choices=list(TIERS), default=None)
@@ -279,6 +302,19 @@ def main(argv: list[str] | None = None) -> int:
                 indent=2,
             )
         )
+        return 0
+
+    if command == "transit-ca":
+        prolific, qualtrics = _paths_or_defaults(args)
+        artifacts = run_transit_ca_pipeline(
+            prolific_paths=prolific,
+            qualtrics_path=qualtrics,
+            join_how=args.join,
+            output_dir=args.output_dir,
+            n_boot=args.n_boot,
+            random_state=args.seed,
+        )
+        print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
         return 0
 
     # Full pipeline

@@ -35,6 +35,18 @@ flowchart LR
 | `employment` + `transit` (+ `full`) | RQ3 — combined signal vs redundancy |
 | `outputs/eda/ca_by_group.csv` | Empirical CA means by sex / employment / transit for bias interpretation |
 
+### Secondary RQ — regular transit vs cohort CA
+
+Observational contrast on the matched analytic sample (no LLM):
+
+| Piece | Detail |
+|---|---|
+| Exposure | `Q26` weekly-or-more (`4-8` or `8+` days/month) |
+| Outcomes | Ground-truth group + interpersonal PRCA (6–30) |
+| Tests | Welch *t*, Mann–Whitney, Cohen's *d*, bootstrap CI |
+| CLI / notebook | `ca-personas transit-ca` · `notebooks/secondary_rq_transit_ca.ipynb` |
+| Artifacts | `outputs/transit_ca/` (descriptives, comparisons, distributions, results card) |
+
 ## Ground-truth scoring
 
 Group items: `Q1–Q6`. Interpersonal items: `Q13–Q18`.
