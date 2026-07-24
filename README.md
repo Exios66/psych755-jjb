@@ -91,7 +91,17 @@ participants, preds, metrics = run_stage_one_baselines(
 save_baseline_artifacts(preds, metrics, "outputs/ml_baseline")
 ```
 
-Metrics land in `outputs/ml_baseline/` (MAE, exact-score accuracy, and band accuracy) for later comparison to LLM summaries by tier.
+Metrics land in `outputs/ml_baseline/` (MAE, exact-score accuracy, band accuracy, and distance-from-correct) for later comparison to LLM summaries by tier.
+
+## Factor analysis & feature importance
+
+Rank the strongest predictive covariates in the sample and inspect PRCA item factor structure:
+
+```bash
+jupyter nbconvert --to notebook --execute notebooks/factor_feature_importance.ipynb
+```
+
+Artifacts (loadings, permutation/impurity importances, `top_predictive_features.csv`) write to `outputs/feature_importance/`.
 
 ## Quarto manuscript website
 
