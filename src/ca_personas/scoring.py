@@ -73,6 +73,49 @@ def ca_band(score: int | None, low_max: int = 13, high_min: int = 20) -> str | N
     return "moderate"
 
 
+# Ordinal encoding for band-distance metrics (adjacent miss < opposite miss).
+BAND_ORDINAL = {"low": 0, "moderate": 1, "high": 2}
+PRCA_SCORE_MIN = 6
+PRCA_SCORE_MAX = 30
+PRCA_SCORE_RANGE = PRCA_SCORE_MAX - PRCA_SCORE_MIN  # 24
+MAX_BAND_DISTANCE = 2
+
+
+def band_ordinal(band: object) -> int | None:
+    """Map a band label to an ordinal rank for distance calculations."""
+    if band is None or (isinstance(band, float) and pd.isna(band)):
+        return None
+    text = str(band).strip().lower()
+    return BAND_ORDINAL.get(text)
+
+
+def band_distance(pred_band: object, gt_band: object) -> int | None:
+    """
+    Ordinal steps between predicted and ground-truth bands.
+
+    Returns 0 (same band), 1 (adjacent), or 2 (low↔high). None if either missing.
+    """
+    pred_ord = band_ordinal(pred_band)
+    gt_ord = band_ordinal(gt_band)
+    if pred_ord is None or gt_ord is None:
+        return None
+    return abs(pred_ord - gt_ord)
+
+
+def normalized_score_distance(abs_error: float | None) -> float | None:
+    """Scale absolute 6–30 error into [0, 1] (1 = maximum possible miss)."""
+    if abs_error is None or (isinstance(abs_error, float) and pd.isna(abs_error)):
+        return None
+    return float(abs_error) / float(PRCA_SCORE_RANGE)
+
+
+def normalized_band_distance(distance: int | None) -> float | None:
+    """Scale ordinal band distance into [0, 1] (1 = low↔high miss)."""
+    if distance is None:
+        return None
+    return float(distance) / float(MAX_BAND_DISTANCE)
+
+
 def add_ground_truth_scores(
     df: pd.DataFrame,
     *,

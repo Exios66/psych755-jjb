@@ -23,7 +23,12 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 from ca_personas.load import load_and_prepare
 from ca_personas.personas import RESEARCH_TIERS
-from ca_personas.scoring import ca_band
+from ca_personas.scoring import (
+    band_distance,
+    ca_band,
+    normalized_band_distance,
+    normalized_score_distance,
+)
 
 TARGETS = ("gt_group_ca", "gt_interpersonal_ca")
 
@@ -213,6 +218,22 @@ def run_baselines_for_tier(
                 [tb == pb and tb is not None for tb, pb in zip(true_bands, pred_bands, strict=True)]
             )
             band_acc = float(band_match.mean()) if len(band_match) else float("nan")
+            band_distances = [
+                band_distance(pb, tb) for pb, tb in zip(pred_bands, true_bands, strict=True)
+            ]
+            mean_band_dist = float(np.mean([d for d in band_distances if d is not None]))
+            mean_norm_score_dist = float(
+                np.mean([normalized_score_distance(abs(float(p - t))) for t, p in zip(y, y_hat)])
+            )
+            mean_norm_band_dist = float(
+                np.mean(
+                    [
+                        normalized_band_distance(d)
+                        for d in band_distances
+                        if d is not None
+                    ]
+                )
+            )
 
             metric_rows.append(
                 {
@@ -227,11 +248,14 @@ def run_baselines_for_tier(
                     "r2": r2,
                     "exact_acc": exact_acc,
                     "band_acc": band_acc,
+                    "mean_band_distance": mean_band_dist,
+                    "mean_norm_score_distance": mean_norm_score_dist,
+                    "mean_norm_band_distance": mean_norm_band_dist,
                 }
             )
 
             side = "group" if "group" in target else "interpersonal"
-            for pid, truth, pred, tb, pb, em, bm in zip(
+            for pid, truth, pred, tb, pb, em, bm, bd in zip(
                 model_df["participant_id"],
                 y.to_numpy(),
                 y_hat,
@@ -239,8 +263,10 @@ def run_baselines_for_tier(
                 pred_bands,
                 exact,
                 band_match,
+                band_distances,
                 strict=True,
             ):
+                abs_err = float(abs(pred - truth))
                 pred_rows.append(
                     {
                         "participant_id": pid,
@@ -251,11 +277,15 @@ def run_baselines_for_tier(
                         "y_true": float(truth),
                         "y_pred": float(pred),
                         "error": float(pred - truth),
-                        "abs_error": float(abs(pred - truth)),
+                        "abs_error": abs_err,
+                        "score_distance": abs_err,
+                        "norm_score_distance": normalized_score_distance(abs_err),
                         "gt_band": tb,
                         "pred_band": pb,
                         "exact_match": bool(em),
                         "band_match": bool(bm),
+                        "band_distance": bd,
+                        "norm_band_distance": normalized_band_distance(bd),
                     }
                 )
 
@@ -305,6 +335,9 @@ def metrics_wide(metrics: pd.DataFrame) -> pd.DataFrame:
             row[f"r2_{side}"] = r["r2"]
             row[f"exact_acc_{side}"] = r.get("exact_acc")
             row[f"band_acc_{side}"] = r.get("band_acc")
+            row[f"mean_band_distance_{side}"] = r.get("mean_band_distance")
+            row[f"mean_norm_score_distance_{side}"] = r.get("mean_norm_score_distance")
+            row[f"mean_norm_band_distance_{side}"] = r.get("mean_norm_band_distance")
         rows.append(row)
     return pd.DataFrame(rows).sort_values(["model", "tier"]).reset_index(drop=True)
 

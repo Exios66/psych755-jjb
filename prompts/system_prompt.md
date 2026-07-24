@@ -46,3 +46,6 @@ Against ground-truth PRCA subscales we report:
 
 1. **Precision / score error** — MAE and exact integer match rate on the 6–30 scale  
 2. **Band accuracy** — whether predicted low/moderate/high matches the participant’s band  
+3. **Distance from correct** — because CA is a complex construct, near-misses matter:
+   - `norm_score_distance = |pred − gt| / 24` (0 = exact, 1 = maximum miss on 6–30)
+   - `band_distance` ∈ {0, 1, 2} ordinal steps between bands (also normalized `/ 2`)
