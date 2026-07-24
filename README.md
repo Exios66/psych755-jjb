@@ -107,4 +107,4 @@ quarto preview                # local preview
 
 ## Notes
 
-Excerpt fixtures live in `data/excerpts/`. Generated `data/processed/`, `outputs/`, `_site/`, and `_freeze/` are gitignored. Never commit API keys; use `.env` locally.
+Excerpt fixtures live in `data/excerpts/` (canonical `prolific_excerpt.csv` / `qualtrics_excerpt.csv`, plus original export filenames). Generated `data/processed/`, `outputs/`, `_site/`, and `_freeze/` are gitignored. Never commit API keys; use `.env` locally.
