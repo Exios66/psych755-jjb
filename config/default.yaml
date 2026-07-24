@@ -1,10 +1,26 @@
+# Default paths prefer private full-cohort exports beside the repo:
+#   ../sibling_data/PRCAProlificExport_FileA.csv
+#   ../sibling_data/PRCAProlificExport_FileB.csv
+#   ../sibling_data/PRCAQualtricsExport_FileC.csv
+# Excerpt fixtures remain available for CI / Posit Connect Cloud when sibling
+# data is absent (see ca_personas.paths).
+
 paths:
-  prolific: data/excerpts/prolific_excerpt.csv
-  qualtrics: data/excerpts/qualtrics_excerpt.csv
+  prolific_files:
+    - ../sibling_data/PRCAProlificExport_FileA.csv
+    - ../sibling_data/PRCAProlificExport_FileB.csv
+  qualtrics: ../sibling_data/PRCAQualtricsExport_FileC.csv
   personas_dir: data/processed/personas
   predictions_dir: outputs/predictions
   evaluation_dir: outputs/evaluation
+  eda_dir: outputs/eda
 
+# Cumulative information tiers mapped to the research questions:
+#   demos      → baseline demographics (Age, Sex, country, student status)
+#   employment → RQ1: does employment improve prediction / change bias?
+#   geo        → country + survey lat/long context
+#   transit    → RQ2: transportation-use signal
+#   full       → all of the above + open-text attitudes (Q18.1 / Q19)
 tiers:
   - demos
   - employment
@@ -22,3 +38,7 @@ scoring:
   # McCroskey PRCA subscale bands commonly used in classroom settings
   band_low_max: 13
   band_high_min: 20
+
+cleaning:
+  require_complete_ca: true
+  join_how: inner

@@ -97,7 +97,7 @@ This project compares **information tiers** rather than a single prompt:
 
 ## Data sources
 
-Participants were recruited via Prolific and completed a Qualtrics instrument for PSYCH 755 coursework activities. The analytic join key is Prolific `Participant id` ↔ Qualtrics `PROLIFIC_PID` / `Q0`.
+Participants were recruited via Prolific in two waves (File A + File B; stacked) and completed a Qualtrics instrument (File C) for PSYCH 755 coursework activities. Private full-cohort exports live in `../sibling_data/` and are **not** committed to git; this manuscript render uses the public excerpt fixtures. The analytic join key is Prolific `Participant id` ↔ Qualtrics `Q0` (or `PROLIFIC_PID` when present). Cleaning keeps inner-join respondents with complete PRCA group and interpersonal items so every information tier shares the same ground-truth targets.
 
 ```{python}
 #| label: tbl-sample
