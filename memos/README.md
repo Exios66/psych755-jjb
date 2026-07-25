@@ -1,6 +1,7 @@
 # Research Memos
 
-Individual research memoranda for PSYCH 755.
+Individual research memoranda for PSYCH 755, following the course template
+(question → results summary → remaining uncertainties).
 
 | Memo | Researcher | Question |
 |---|---|---|
