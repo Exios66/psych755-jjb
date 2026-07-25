@@ -133,7 +133,10 @@ def test_flat_qualtrics_and_sparse_prolific(tmp_path: Path):
     prompts = build_persona_prompts(analytic, tiers=["demos", "employment", "transit", "full"])
     assert len(prompts) == 4
     transit_prompt = next(p for p in prompts if p.tier == "transit")
-    assert "Employment status" in transit_prompt.user_prompt
+    assert (
+        "work part-time" in transit_prompt.user_prompt.lower()
+        or "part-time" in transit_prompt.user_prompt.lower()
+    )
     assert "public transportation" in transit_prompt.user_prompt.lower()
     full_prompt = next(p for p in prompts if p.tier == "full")
     assert "Take a breath" in full_prompt.user_prompt

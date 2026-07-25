@@ -39,14 +39,19 @@ def test_full_persona_includes_qualtrics_voice_when_present():
     row = df.dropna(subset=["Age", "participant_id"]).iloc[0]
 
     prompt = build_persona_prompt(row, "full")
-    assert "Demographics:" in prompt.user_prompt
-    assert "Fully personify" in prompt.user_prompt
+    assert prompt.user_prompt.startswith("You ")
+    assert "How anxious or apprehensive" in prompt.user_prompt
     assert "band" in prompt.user_prompt.lower()
-    # Free-response section appears only when voice fields are truly present
+    assert "Fully personify" not in prompt.user_prompt
+    assert "Demographics:" not in prompt.user_prompt
+    # Free-response attitudes appear as narrative paraphrase when present
     # (NaN stringifies to "nan"; do not treat that as content).
     has_voice = _present(row.get("Q18_advice")) or _present(row.get("Q19"))
     if has_voice:
-        assert "Self-described attitudes" in prompt.user_prompt
+        assert (
+            "you would advise" in prompt.user_prompt.lower()
+            or "ideal way to get around" in prompt.user_prompt.lower()
+        )
     else:
         # Prefer a row that actually has open text when the fixture provides one.
         voice_rows = df[
@@ -57,7 +62,10 @@ def test_full_persona_includes_qualtrics_voice_when_present():
         ]
         if len(voice_rows):
             voiced = build_persona_prompt(voice_rows.iloc[0], "full")
-            assert "Self-described attitudes" in voiced.user_prompt
+            assert (
+                "you would advise" in voiced.user_prompt.lower()
+                or "ideal way to get around" in voiced.user_prompt.lower()
+            )
         else:
             assert isinstance(row.get("participant_id"), (str, int)) or pd.notna(
                 row.get("participant_id")
