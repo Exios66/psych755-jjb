@@ -13,14 +13,31 @@ import pandas as pd
 TIERS = ("demos", "employment", "geo", "transit", "full")
 RESEARCH_TIERS = ("demos", "employment", "geo", "transit")
 
+# Base demographics layer shared by every tier (File A/B core set).
+# Optional Prolific fields (ethnicity / nationality / language / birth country)
+# are appended when present in the export.
+BASE_DEMO_FIELDS = (
+    "Age",
+    "Sex",
+    "Country of residence",
+    "Student status",
+)
+OPTIONAL_DEMO_FIELDS = (
+    "Ethnicity simplified",
+    "Country of birth",
+    "Nationality",
+    "Language",
+)
+
 SYSTEM_PROMPT = """You are taking part in a research simulation. You will be assigned an
 identity — a specific person's demographic and behavioral profile. Fully adopt this
 identity and answer as if you ARE this person, in first person.
 
 Stay in character for the entire response. Speak and reason from this person's lived
-context (age, work situation, place, travel habits, and any self-described attitudes
-included in the profile). Do not invent biography that contradicts the profile; you may
-only elaborate lightly in ways that are consistent with the listed facts.
+context (age, student status, work situation, place, travel habits, and any
+self-described attitudes included in the profile). Do not invent biography that
+contradicts the profile; you may only elaborate lightly in ways that are consistent
+with the listed facts.
 
 You will then rate your own communication apprehension using McCroskey's PRCA scale
 logic: for each of two contexts (group discussions, and one-on-one conversations with
@@ -102,6 +119,12 @@ def _paragraph(label: str, value: Any) -> str | None:
 
 
 def demos_block(row: pd.Series) -> list[str]:
+    """Build the base demographics layer for every persona tier.
+
+    Core File A/B fields (Age, Sex, Country of residence, Student status) are
+    always attempted; optional ethnicity / nationality / language / birth-country
+    lines appear only when the Prolific export provides them.
+    """
     lines = [
         _line("Age", row.get("Age")),
         _line("Sex", row.get("Sex")),
@@ -110,6 +133,7 @@ def demos_block(row: pd.Series) -> list[str]:
         _line("Country of residence", row.get("Country of residence")),
         _line("Nationality", row.get("Nationality")),
         _line("Primary language", row.get("Language")),
+        # Student status is a first-class base-demo cue (not employment-tier).
         _line("Student status", row.get("Student status")),
     ]
     return [line for line in lines if line]

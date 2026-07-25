@@ -15,6 +15,7 @@ from ca_personas.evaluate import (
     evaluate_predictions,
     summarize_band_confusion,
     summarize_errors,
+    summarize_errors_by_group,
 )
 from ca_personas.ground_truth import (
     aggregate_ground_truth,
@@ -250,6 +251,16 @@ def run_pipeline(
                 "Check participant_id alignment between predictions and scored cohort."
             )
 
+    # Stereotyping slices for base demos (student status) and RQ1 (employment).
+    student_err_path = evaluation_dir / "error_by_student_status.csv"
+    employment_err_path = evaluation_dir / "error_by_employment.csv"
+    summarize_errors_by_group(evaluation, "Student status").to_csv(
+        student_err_path, index=False
+    )
+    summarize_errors_by_group(evaluation, "Employment status").to_csv(
+        employment_err_path, index=False
+    )
+
     for side in ("group", "interpersonal"):
         confusion = summarize_band_confusion(evaluation, side=side)
         if not confusion.empty:
@@ -263,6 +274,8 @@ def run_pipeline(
         "predictions": predictions_path,
         "evaluation": evaluation_path,
         "summary": summary_path,
+        "error_by_student_status": student_err_path,
+        "error_by_employment": employment_err_path,
     }
     if report_path is not None:
         artifacts["cleaning_report"] = report_path

@@ -62,6 +62,15 @@ def main() -> int:
     (out / "evaluation.csv").write_bytes(evaluation)
     (out / "summary.csv").write_bytes(summary)
 
+    # Stereotyping slices for base demos (student status) and RQ1 employment.
+    for key, name in (
+        ("error_by_student_status", "error_by_student_status.csv"),
+        ("error_by_employment", "error_by_employment.csv"),
+    ):
+        src = artifacts.get(key)
+        if src is not None and Path(src).is_file():
+            (out / name).write_bytes(Path(src).read_bytes())
+
     import pandas as pd
 
     n = len(pd.read_csv(out / "participants.csv"))

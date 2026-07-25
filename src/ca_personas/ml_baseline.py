@@ -22,7 +22,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 from ca_personas.load import load_and_prepare
-from ca_personas.personas import RESEARCH_TIERS
+from ca_personas.personas import BASE_DEMO_FIELDS, RESEARCH_TIERS
 from ca_personas.scoring import (
     band_distance,
     ca_band,
@@ -32,6 +32,9 @@ from ca_personas.scoring import (
 
 TARGETS = ("gt_group_ca", "gt_interpersonal_ca")
 
+# Mirror personas.demos_block / BASE_DEMO_FIELDS. Core File A/B demos are
+# Age, Sex, Country of residence, and Student status; optional Prolific
+# ethnicity / nationality / language / birth-country columns are used when present.
 DEMO_FEATURES = [
     "Age",
     "Sex",
@@ -42,6 +45,7 @@ DEMO_FEATURES = [
     "Language",
     "Student status",
 ]
+assert set(BASE_DEMO_FIELDS).issubset(DEMO_FEATURES)
 EMPLOYMENT_FEATURES = ["Employment status"]
 GEO_FEATURES = ["LocationLatitude", "LocationLongitude"]
 TRANSIT_FEATURES = ["Q26", "Q27", "Q28", "Q29", "Q20", "Q21"]

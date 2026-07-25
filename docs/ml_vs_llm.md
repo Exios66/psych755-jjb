@@ -66,7 +66,7 @@ When a live comparison is in hand, ask:
 
 1. **Does any LLM tier beat RF MAE?** If not, persona prompting is not recovering CA better than a shallow tabular learner.
 2. **Does error shrink with richer tiers?** Parallel improvement with ML would suggest both families use employment/geo/transit signal; flat LLM curves with falling ML MAE would suggest the LLM ignores those cues.
-3. **Does residual error track demographics?** That is the stereotyping RQ in the manuscript — compare absolute error by sex / employment / country / student status.
+3. **Does residual error track demographics?** That is the stereotyping RQ in the manuscript — compare absolute error by sex / **student status** (base `demos` layer) / employment / country. Use `summarize_errors_by_group(evaluation, "Student status")` or the committed `artifacts/posit_full_cohort/error_by_student_status.csv` table.
 4. **Mock ≠ science.** Treat `provider=mock` outputs as deterministic pipeline diagnostics, not production-LLM claims.
 
 ## 5. Reproducibility

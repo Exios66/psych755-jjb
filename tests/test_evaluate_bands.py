@@ -1,6 +1,10 @@
 import pandas as pd
 
-from ca_personas.evaluate import evaluate_predictions, summarize_errors
+from ca_personas.evaluate import (
+    evaluate_predictions,
+    summarize_errors,
+    summarize_errors_by_group,
+)
 from ca_personas.scoring import band_distance, normalized_score_distance
 
 
@@ -18,6 +22,7 @@ def test_exact_and_band_accuracy_metrics():
                 "participant_id": "p1",
                 "Age": 30,
                 "Sex": "Female",
+                "Student status": "Yes",
                 "gt_group_ca": 12,
                 "gt_interpersonal_ca": 18,
                 "gt_group_band": "low",
@@ -27,6 +32,7 @@ def test_exact_and_band_accuracy_metrics():
                 "participant_id": "p2",
                 "Age": 40,
                 "Sex": "Male",
+                "Student status": "No",
                 "gt_group_ca": 22,
                 "gt_interpersonal_ca": 10,
                 "gt_group_band": "high",
@@ -56,11 +62,18 @@ def test_exact_and_band_accuracy_metrics():
     )
 
     evaluated = evaluate_predictions(participants, predictions)
+    assert "Student status" in evaluated.columns
+    assert evaluated.loc[0, "Student status"] == "Yes"
+    assert evaluated.loc[1, "Student status"] == "No"
     assert bool(evaluated.loc[0, "exact_match_group"]) is True
     assert bool(evaluated.loc[0, "exact_match_interpersonal"]) is False
     assert bool(evaluated.loc[0, "band_match_group"]) is True
     assert bool(evaluated.loc[0, "band_match_interpersonal"]) is False
     assert bool(evaluated.loc[1, "band_match_group"]) is True
+
+    by_student = summarize_errors_by_group(evaluated, "Student status")
+    assert set(by_student["group_key"]) == {"Yes", "No"}
+    assert (by_student["tier"] == "demos").all()
 
     # p1 interpersonal: moderate→high => band distance 1; score error |20-18|=2
     assert int(evaluated.loc[0, "band_distance_interpersonal"]) == 1

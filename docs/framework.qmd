@@ -34,7 +34,7 @@ flowchart LR
 | `geo` | Intermediate place cue (country + survey lat/long) |
 | `transit` | RQ2 — does transportation-use help, and is it used sensibly? |
 | `full` | RQ3 — combined signal vs redundancy (+ open-text attitudes) |
-| `outputs/eda/ca_by_group.csv` | Empirical CA means by sex / employment / transit for bias interpretation |
+| `outputs/eda/ca_by_group.csv` | Empirical CA means by sex / student status / employment / transit for bias interpretation |
 
 ### Secondary RQ — regular transit vs cohort CA
 

@@ -56,8 +56,15 @@ ca-personas run --provider mock --join inner
 ca-personas prepare --join inner
 
 # Ground-truth scoring + persona export
+# (demos tier base layer = Age, Sex, Country of residence, Student status)
 ca-personas score-gt --join inner
 ca-personas build-personas --tiers demos employment geo transit full
+
+# Refresh committed Posit mock tables after persona/prompt changes
+# (uses sibling File A/B/C when present; otherwise regenerate from
+# artifacts/posit_full_cohort/participants.csv):
+#   python scripts/sync_posit_full_cohort_artifacts.py
+#   python scripts/rerun_posit_mock_from_participants.py
 
 pytest
 ```

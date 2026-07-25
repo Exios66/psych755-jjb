@@ -16,7 +16,7 @@ Before asking whether an LLM stereotypes CA from persona prompts, we need a **ta
 
 | Tier | Features (available in full File A/B/C) |
 |---|---|
-| `demos` | Age, Sex, Country of residence, Student status |
+| `demos` | Age, Sex, Country of residence, **Student status** (base demographics layer; optional ethnicity/nationality/language when present) |
 | `employment` | + Employment status |
 | `geo` | + survey lat/long |
 | `transit` | + Q26–Q29, Q20, Q21 |
@@ -56,7 +56,7 @@ Targets: `gt_group_ca`, `gt_interpersonal_ca` (6–30). Models: Random Forest re
 ## 4. Link to the LLM manuscript
 
 - These MAE numbers are the **classical reference** for [`ml_vs_llm.md`](ml_vs_llm.md): an LLM tier “helps” only if it approaches or beats the best ML MAE on the same tier.
-- Because even the best RF MAE remains **4.27–4.68** points, persona prompts that land in that range are competitive with the tabular learner — not magical. The mock LLM on Posit remains higher (group MAE 8.31→7.42; [`index.qmd`](../index.qmd)).
+- Because even the best RF MAE remains **4.27–4.68** points, persona prompts that land in that range are competitive with the tabular learner — not magical. The mock LLM on Posit remains higher (group MAE ≈7.70 at `demos` / ≈8.40 at `transit` after the student-status base-demos prompt refresh; [`index.qmd`](../index.qmd)).
 - Feature-importance diagnostics ([factor_feature_importance.md](factor_feature_importance.md); [memo](../memos/feature_predictive_power_ml_llm.md)) show *which* covariates carry the tabular signal the LLM is being asked to use (Q28 ranks first for predicting CA).
 
 ## 5. Reproducibility

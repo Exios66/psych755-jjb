@@ -10,14 +10,24 @@ QUALTRICS = ROOT / "data" / "excerpts" / "qualtrics_excerpt.csv"
 
 
 def test_ground_truth_export_bundle(tmp_path: Path):
+    import pandas as pd
+
+    from ca_personas.ground_truth import aggregate_ground_truth
+
     paths = export_ground_truth_bundle(PROLIFIC, QUALTRICS, tmp_path, join_how="inner")
     assert paths["ground_truth"].exists()
     assert paths["aggregates"].exists()
-    gt = ground_truth_table(
-        __import__("pandas").read_csv(paths["participants_scored"])
-    )
+    scored = pd.read_csv(paths["participants_scored"])
+    gt = ground_truth_table(scored)
     assert gt["gt_group_ca"].between(6, 30).all()
     assert set(gt["gt_group_band"]).issubset({"low", "moderate", "high"})
+    assert "Student status" in gt.columns
+
+    aggregates = pd.read_csv(paths["aggregates"])
+    assert "student_status" in set(aggregates["scope"])
+    # Direct call mirrors the export path and keeps student in base demos reporting.
+    direct = aggregate_ground_truth(scored)
+    assert "student_status" in set(direct["scope"])
 
 
 def test_full_persona_includes_qualtrics_voice_when_present():
