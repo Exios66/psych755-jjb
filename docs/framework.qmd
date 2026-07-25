@@ -34,7 +34,7 @@ flowchart LR
 | `geo` | Intermediate place cue (country + survey lat/long) |
 | `transit` | RQ2 — does transportation-use help, and is it used sensibly? |
 | `full` | RQ3 — combined signal vs redundancy (+ open-text attitudes) |
-| `outputs/eda/ca_by_group.csv` | Empirical CA means by sex / employment / transit for bias interpretation |
+| `outputs/eda/ca_by_group.csv` | Empirical CA means by sex / student status / employment / transit for bias interpretation |
 
 ### Secondary RQ — regular transit vs cohort CA
 
@@ -74,6 +74,18 @@ Observational contrast on the matched analytic sample (no LLM):
 | Write-up | [`docs/secondary_rq_ca_predicts_transit.md`](secondary_rq_ca_predicts_transit.md) |
 | Memo | [`memos/ca_scores_predict_transit.md`](../memos/ca_scores_predict_transit.md) |
 | Artifacts | `outputs/ca_transit_rf/` |
+
+### Secondary RQ — wave-2 extended follow-ups
+
+| Piece | Detail |
+|---|---|
+| Experiments | Demographics · country · nested Q28\|car · CA+Q28+car · country×car · Q27-among-riders · common-*N* · residual CA |
+| Outcome | Same `regular_transit` (except Q27-among-riders high-intensity target) |
+| Model | Mixed / categorical balanced RFs + Welch strata where noted |
+| CLI / notebook | `ca-personas followup-experiments` · `notebooks/secondary_rq_followup_experiments.ipynb` |
+| Agenda | [`docs/research_memo_agenda.md`](research_memo_agenda.md) |
+| Write-up | [`docs/secondary_rq_followup_experiments.md`](secondary_rq_followup_experiments.md) |
+| Artifacts | `outputs/followup_experiments/` |
 
 ## Ground-truth scoring
 

@@ -13,11 +13,16 @@ from ca_personas.paths import default_prolific_paths, default_qualtrics_path
 from ca_personas.personas import RESEARCH_TIERS, TIERS, build_persona_prompts, write_persona_bundle
 from ca_personas.pipeline import prepare_analytic_sample, run_pipeline
 from ca_personas.ca_transit_rf import run_ca_transit_rf_pipeline
+from ca_personas.comprehensive_transit_rf import run_comprehensive_transit_rf_pipeline
 from ca_personas.geo_transit_rf import run_geo_transit_rf_pipeline
 from ca_personas.transit_ca import run_transit_ca_pipeline
 from ca_personas.transit_covariate_rf import (
     FEATURE_SPECS,
     run_transit_covariate_pipeline,
+)
+from ca_personas.followup_experiments import (
+    EXPERIMENT_RUNNERS,
+    run_followup_experiments_pipeline,
 )
 
 
@@ -262,6 +267,48 @@ def build_parser() -> argparse.ArgumentParser:
         help="Directory for memo figures (default: memos/figures)",
     )
 
+    followups = sub.add_parser(
+        "followup-experiments",
+        help=(
+            "Extended secondary RQs: demographics/country/nested Q28|car/"
+            "CA+mobility/common-N/residual CA/Q27-among-riders"
+        ),
+    )
+    _add_shared_data_args(followups)
+    followups.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/followup_experiments"),
+        help="Directory for extended follow-up experiment artifacts",
+    )
+    followups.add_argument(
+        "--experiments",
+        nargs="+",
+        choices=sorted(EXPERIMENT_RUNNERS),
+        default=None,
+        help="Subset of experiments to run (default: all)",
+    )
+    followups.add_argument("--splits", type=int, default=5, help="Stratified CV folds")
+    followups.add_argument(
+        "--perm-repeats",
+        type=int,
+        default=30,
+        help="Permutation-importance repeats",
+    )
+    followups.add_argument(
+        "--n-boot",
+        type=int,
+        default=2000,
+        help="Bootstrap resamples for residual-CA Welch CIs",
+    )
+    followups.add_argument("--seed", type=int, default=42, help="RNG seed")
+    followups.add_argument(
+        "--figures-dir",
+        type=Path,
+        default=Path("memos/figures"),
+        help="Directory for memo figures (default: memos/figures)",
+    )
+
     shap_cmd = sub.add_parser(
         "shap-eval",
         help=(
@@ -474,6 +521,9 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
         return 0
 
+    if command == "comprehensive-transit-rf":
+        prolific, qualtrics = _paths_or_defaults(args)
+        artifacts = run_comprehensive_transit_rf_pipeline(
     if command == "covariate-transit-rf":
         prolific, qualtrics = _paths_or_defaults(args)
         artifacts = run_transit_covariate_pipeline(
@@ -483,9 +533,29 @@ def main(argv: list[str] | None = None) -> int:
             output_dir=args.output_dir,
             n_splits=args.splits,
             n_perm_repeats=args.perm_repeats,
+            n_tune_iter=args.tune_iter,
+            random_state=args.seed,
+            include_upper_bound=not args.no_upper_bound,
             random_state=args.seed,
             spec_keys=args.specs,
             figures_dir=args.figures_dir,
+        )
+        print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
+        return 0
+
+    if command == "followup-experiments":
+        prolific, qualtrics = _paths_or_defaults(args)
+        artifacts = run_followup_experiments_pipeline(
+            prolific_paths=prolific,
+            qualtrics_path=qualtrics,
+            join_how=args.join,
+            output_dir=args.output_dir,
+            figures_dir=args.figures_dir,
+            experiment_keys=args.experiments,
+            n_splits=args.splits,
+            n_perm_repeats=args.perm_repeats,
+            n_boot=args.n_boot,
+            random_state=args.seed,
         )
         print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
         return 0

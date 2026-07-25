@@ -67,3 +67,73 @@ main p:has(+ .quarto-figure) {
   background: #fff;
   border: 0;
 }
+
+/* GitHub access buttons under title */
+.github-access {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0 0 1.5rem 0;
+  align-items: center;
+}
+
+.github-access .github-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid rgba(197, 5, 12, 0.35);
+  border-radius: 0.35rem;
+  color: #C5050C;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: rgba(197, 5, 12, 0.04);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.github-access .github-btn:hover {
+  background: rgba(197, 5, 12, 0.1);
+  border-color: #C5050C;
+  color: #9a0409;
+  text-decoration: none;
+}
+
+.github-access .github-btn .bi {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+/* Research focus / secondary RQ presentation blocks */
+.research-focus-block {
+  margin: 1.25rem 0 1.75rem 0;
+  padding: 1rem 1.15rem 1.15rem 1.15rem;
+  border-left: 4px solid #C5050C;
+  background: linear-gradient(180deg, rgba(197, 5, 12, 0.04), rgba(0, 0, 0, 0.015));
+}
+
+.research-focus-block > h3 {
+  margin-top: 0;
+  margin-bottom: 0.65rem;
+  color: #222;
+}
+
+.research-focus-block p {
+  margin-bottom: 0.55rem;
+}
+
+.research-focus-block table {
+  margin-bottom: 0.25rem;
+  width: 100%;
+}
+
+.research-focus-block table th {
+  background: rgba(197, 5, 12, 0.08);
+  font-weight: 700;
+}
+
+.research-focus-block table td:first-child,
+.research-focus-block table th:first-child {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}

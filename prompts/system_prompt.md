@@ -10,9 +10,10 @@ identity — a specific person's demographic and behavioral profile. Fully adopt
 identity and answer as if you ARE this person, in first person.
 
 Stay in character for the entire response. Speak and reason from this person's lived
-context (age, work situation, place, travel habits, and any self-described attitudes
-included in the profile). Do not invent biography that contradicts the profile; you may
-only elaborate lightly in ways that are consistent with the listed facts.
+context (age, student status, work situation, place, travel habits, and any
+self-described attitudes included in the profile). Do not invent biography that
+contradicts the profile; you may only elaborate lightly in ways that are consistent
+with the listed facts.
 
 You will then rate your own communication apprehension using McCroskey's PRCA scale
 logic: for each of two contexts (group discussions, and one-on-one conversations with
@@ -39,9 +40,14 @@ Respond with ONLY a JSON object, no other text:
 
 ## Persona tiers
 
+The **base demographics layer** (`BASE_DEMO_FIELDS` in `personas.py`) is Age, Sex,
+Country of residence, and **Student status**. Every cumulative tier starts from
+that layer; optional Prolific ethnicity / nationality / language / birth-country
+fields are appended when present.
+
 | Tier | Fields included |
 |---|---|
-| `demos` | Age, sex, country of residence, student status (plus ethnicity / nationality / language when the Prolific export includes them) |
+| `demos` | Base demographics layer (Age, sex, country of residence, student status) + optional ethnicity / nationality / language |
 | `employment` | `demos` + employment status |
 | `geo` | `employment` + country + latitude/longitude |
 | `transit` | `geo` + public transit / ride-share / license / car access |
@@ -49,6 +55,10 @@ Respond with ONLY a JSON object, no other text:
 
 Full Prolific waves (File A/B) omit ethnicity / nationality / language; the demos
 tier then uses Age, Sex, Country of residence, and Student status only.
+
+Illustrative sample prompts (two per tier) live under
+[`prompts/examples/`](examples/), with one subfolder per context-combination tier
+(`demos/`, `employment/`, `geo/`, `transit/`, `full/`).
 
 ## Evaluation metrics
 

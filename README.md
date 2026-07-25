@@ -26,7 +26,7 @@ Cumulative information tiers map onto the research focus:
 
 | Tier | Adds | Research focus |
 |---|---|---|
-| `demos` | Age, Sex, Country, Student status (+ optional ethnicity/language when present) | Baseline |
+| `demos` | **Base demographics layer:** Age, Sex, Country, Student status (+ optional ethnicity/language when present) | Baseline / demos stereotyping |
 | `employment` | Employment status | RQ1 — does employment improve accuracy / change bias? |
 | `geo` | Survey lat/long context | Intermediate place cue |
 | `transit` | Public transit / ride-share / license / car access | RQ2 — does transportation-use help, and is it used sensibly? |
@@ -49,6 +49,7 @@ These questions use the **full Prolific↔Qualtrics matched analytic sample** (F
 | 5 | Do **group & interpersonal CA** scores predict regular transit use? (RF + CV) | [`secondary_rq_ca_transit_rf.ipynb`](notebooks/secondary_rq_ca_transit_rf.ipynb) | `ca-personas ca-transit-rf` · [write-up](docs/secondary_rq_ca_predicts_transit.md) |
 | 6 | Do **car access / employment / ride-share** predict regular transit? (geo-memo follow-ups) | [`secondary_rq_transit_covariate_followups.ipynb`](notebooks/secondary_rq_transit_covariate_followups.ipynb) | `ca-personas covariate-transit-rf` · [write-up](docs/secondary_rq_transit_covariate_followups.md) |
 | 7 | Do **Q27** (transit intensity) & **Q28** (ride-share days) predict regular transit? (traditional ML) | same follow-up CLI (`--specs q27_intensity q28_days q27_q28`) | [write-up](docs/secondary_rq_q27_q28_predict_transit.md) · [memo](memos/q27_q28_predict_transit.md) · manuscript `index.qmd` |
+| 8–15 | **Wave-2 follow-ups** answering open memo questions (demographics, country, Q28\|car, CA+mobility, country×car, Q27-among-riders, common-*N*, residual CA) | [`secondary_rq_followup_experiments.ipynb`](notebooks/secondary_rq_followup_experiments.ipynb) | `ca-personas followup-experiments` · [agenda](docs/research_memo_agenda.md) · [write-up](docs/secondary_rq_followup_experiments.md) |
 
 **Primary operationalization of “regular transit” (RQs 1–6):** `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more public transit).
 
@@ -68,6 +69,10 @@ jupyter nbconvert --to notebook --execute notebooks/secondary_rq_ca_transit_rf.i
 # RQ6: car access / employment / ride-share follow-ups
 ca-personas covariate-transit-rf --join inner --seed 42
 jupyter nbconvert --to notebook --execute notebooks/secondary_rq_transit_covariate_followups.ipynb
+
+# RQ8–15: wave-2 extended follow-ups (demographics, nesting, residual CA, …)
+ca-personas followup-experiments --join inner --seed 42
+jupyter nbconvert --to notebook --execute notebooks/secondary_rq_followup_experiments.ipynb
 ```
 
 Supporting code:
@@ -76,6 +81,7 @@ Supporting code:
 - [`src/ca_personas/geo_transit_rf.py`](src/ca_personas/geo_transit_rf.py) · [`notebooks/secondary_rq_geo_transit_rf.ipynb`](notebooks/secondary_rq_geo_transit_rf.ipynb)
 - [`src/ca_personas/ca_transit_rf.py`](src/ca_personas/ca_transit_rf.py) · [`notebooks/secondary_rq_ca_transit_rf.ipynb`](notebooks/secondary_rq_ca_transit_rf.ipynb) · [`docs/secondary_rq_ca_predicts_transit.md`](docs/secondary_rq_ca_predicts_transit.md)
 - [`src/ca_personas/transit_covariate_rf.py`](src/ca_personas/transit_covariate_rf.py) · [`notebooks/secondary_rq_transit_covariate_followups.ipynb`](notebooks/secondary_rq_transit_covariate_followups.ipynb) · [`docs/secondary_rq_transit_covariate_followups.md`](docs/secondary_rq_transit_covariate_followups.md)
+- [`src/ca_personas/followup_experiments.py`](src/ca_personas/followup_experiments.py) · [`notebooks/secondary_rq_followup_experiments.ipynb`](notebooks/secondary_rq_followup_experiments.ipynb) · [`docs/secondary_rq_followup_experiments.md`](docs/secondary_rq_followup_experiments.md) · [`docs/research_memo_agenda.md`](docs/research_memo_agenda.md)
 
 ## Suggested Project Structure + Contents
 
@@ -94,6 +100,7 @@ Supporting code:
 | `data/excerpts/` | Public fixtures for **unit tests only** (never displayed on Posit). |
 | `artifacts/posit_full_cohort/` | Committed full-cohort mock tables for Connect Cloud renders. |
 | `prompts/system_prompt.md` | Documented system prompt (synced with code). |
+| `prompts/examples/<tier>/` | Two sample persona prompts per cumulative tier. |
 
 ## Data layout (private full cohort)
 
@@ -231,6 +238,17 @@ python -m inference.ingest_results \
 ```
 
 See [`src/inference/README.md`](src/inference/README.md) for checkpoint-resume, GPU flags, and HF token setup. Bug-fix notes from the 2026-07-25 audit live in [`docs/bugfix_audit.md`](docs/bugfix_audit.md).
+
+## Regenerating memo figures
+
+Publication-styled figures (Liberation Sans, shared palette, annotated AUC/prevalence panels) are produced by:
+
+```bash
+ca-personas followup-experiments --join inner --seed 42
+python scripts/regenerate_memo_figures.py
+```
+
+Shared styling lives in [`src/ca_personas/viz_style.py`](src/ca_personas/viz_style.py).
 
 ## Quarto manuscript website
 
