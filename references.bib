@@ -1,22 +1,9 @@
-@book{mccroskey1982,
-  author    = {McCroskey, James C.},
-  title     = {An Introduction to Rhetorical Communication},
-  publisher = {Prentice-Hall},
-  year      = {1982},
-  address   = {Englewood Cliffs, NJ},
-  note      = {PRCA-24 communication apprehension instrument widely used in subsequent editions and instructional materials}
-}
+% =============================================================================
+% PSYCH 755 manuscript bibliography (APA via Quarto / CSL)
+% Keep citation keys stable; prefer `url`/`doi` over BibTeX `\url{...}`.
+% =============================================================================
 
-@article{mccroskey1984,
-  author  = {McCroskey, James C. and Beatty, Michael J. and Kearney, Patricia and Plax, Timothy G.},
-  title   = {The Content Validity of the {PRCA-24} as a Measure of Communication Apprehension across Communication Contexts},
-  journal = {Communication Quarterly},
-  year    = {1985},
-  volume  = {33},
-  number  = {3},
-  pages   = {165--173},
-  doi     = {10.1080/01463378509369595}
-}
+% --- Communication apprehension / PRCA ---------------------------------------
 
 @article{mccroskey1970,
   author  = {McCroskey, James C.},
@@ -27,6 +14,29 @@
   number  = {4},
   pages   = {269--277},
   doi     = {10.1080/03637757009375677}
+}
+
+@book{mccroskey1982,
+  author    = {McCroskey, James C.},
+  title     = {An Introduction to Rhetorical Communication},
+  edition   = {4},
+  year      = {1982},
+  publisher = {Prentice-Hall},
+  address   = {Englewood Cliffs, NJ},
+  isbn      = {978-0-13-495457-8},
+  note      = {Original published source of the PRCA-24}
+}
+
+% Key retained as mccroskey1984 for stable in-text citations; published 1985.
+@article{mccroskey1984,
+  author  = {McCroskey, James C. and Beatty, Michael J. and Kearney, Patricia and Plax, Timothy G.},
+  title   = {The Content Validity of the {PRCA-24} as a Measure of Communication Apprehension across Communication Contexts},
+  journal = {Communication Quarterly},
+  year    = {1985},
+  volume  = {33},
+  number  = {3},
+  pages   = {165--173},
+  doi     = {10.1080/01463378509369595}
 }
 
 @article{beatty1988,
@@ -40,12 +50,18 @@
   doi     = {10.1080/03634528809378701}
 }
 
+% --- LLM persona / opinion stereotyping --------------------------------------
+
 @inproceedings{santurkar2023,
   author    = {Santurkar, Shibani and Durmus, Esin and Ladhak, Faisal and Lee, Cinoo and Liang, Percy and Hashimoto, Tatsunori},
   title     = {Whose Opinions Do Language Models Reflect?},
   booktitle = {Proceedings of the 40th International Conference on Machine Learning},
   year      = {2023},
+  editor    = {Krause, Andreas and Brunskill, Emma and Cho, Kyunghyun and Engelhardt, Barbara and Sabato, Sivan and Scarlett, Jonathan},
+  volume    = {202},
+  series    = {Proceedings of Machine Learning Research},
   pages     = {29971--30004},
+  publisher = {PMLR},
   url       = {https://proceedings.mlr.press/v202/santurkar23a.html}
 }
 
@@ -54,10 +70,15 @@
   title     = {Marked Personas: Using Natural Language Prompts to Measure Stereotypes in Language Models},
   booktitle = {Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
   year      = {2023},
+  editor    = {Rogers, Anna and Boyd-Graber, Jordan and Okazaki, Naoaki},
   pages     = {1504--1532},
+  publisher = {Association for Computational Linguistics},
+  address   = {Toronto, Canada},
   doi       = {10.18653/v1/2023.acl-long.84},
-  publisher = {Association for Computational Linguistics}
+  url       = {https://aclanthology.org/2023.acl-long.84/}
 }
+
+% --- Classical ML ------------------------------------------------------------
 
 @article{breiman2001,
   author  = {Breiman, Leo},
@@ -72,65 +93,81 @@
 
 @article{pedregosa2011,
   author  = {Pedregosa, Fabian and Varoquaux, Ga{\"e}l and Gramfort, Alexandre and Michel, Vincent and Thirion, Bertrand and Grisel, Olivier and Blondel, Mathieu and Prettenhofer, Peter and Weiss, Ron and Dubourg, Vincent and Vanderplas, Jake and Passos, Alexandre and Cournapeau, David and Brucher, Matthieu and Perrot, Matthieu and Duchesnay, {\'E}douard},
-  title   = {Scikit-learn: Machine Learning in {Python}},
+  title   = {{Scikit-learn}: Machine Learning in {Python}},
   journal = {Journal of Machine Learning Research},
   year    = {2011},
   volume  = {12},
   pages   = {2825--2830},
-  url     = {http://jmlr.org/papers/v12/pedregosa11a.html}
+  url     = {https://www.jmlr.org/papers/volume12/pedregosa11a/pedregosa11a.pdf}
 }
+
+% --- Data collection platforms -----------------------------------------------
 
 @misc{prolific,
   author       = {{Prolific}},
-  title        = {Prolific: Online participant recruitment for research},
+  title        = {{Prolific}},
   year         = {2024},
-  howpublished = {\url{https://www.prolific.com}},
-  note         = {Online research platform}
+  url          = {https://www.prolific.com},
+  type         = {Online research platform}
+}
+
+@misc{qualtrics,
+  author       = {{Qualtrics}},
+  title        = {{Qualtrics XM}},
+  year         = {2024},
+  url          = {https://www.qualtrics.com},
+  type         = {Survey software}
+}
+
+% --- Software / publishing infrastructure ------------------------------------
+
+@misc{ollama,
+  author       = {{Ollama}},
+  title        = {{Ollama}},
+  year         = {2024},
+  url          = {https://ollama.com},
+  type         = {Computer software},
+  note         = {Local large language model runtime}
+}
+
+@misc{openrouter,
+  author       = {{OpenRouter}},
+  title        = {{OpenRouter}},
+  year         = {2024},
+  url          = {https://openrouter.ai},
+  type         = {Computer software},
+  note         = {Unified API for large language models}
+}
+
+@manual{quarto,
+  author       = {{Posit PBC}},
+  title        = {{Quarto}: An Open-Source Scientific and Technical Publishing System},
+  year         = {2024},
+  url          = {https://quarto.org},
+  version      = {1.10}
 }
 
 @misc{positconnect,
   author       = {{Posit PBC}},
-  title        = {Posit Connect Cloud},
+  title        = {{Posit Connect Cloud}},
   year         = {2024},
-  howpublished = {\url{https://connect.posit.cloud}},
-  note         = {Publishing and sharing platform for data products}
+  url          = {https://connect.posit.cloud},
+  type         = {Web application}
 }
 
 @misc{github,
   author       = {{GitHub}},
-  title        = {GitHub},
+  title        = {{GitHub}},
   year         = {2024},
-  howpublished = {\url{https://github.com}},
-  note         = {Software development and version-control platform}
+  url          = {https://github.com},
+  type         = {Web application}
 }
 
 @misc{psych755repo,
   author       = {Burleson, Jack J.},
   title        = {{psych755-jjb}: {LLM} Prediction of Communication Apprehension},
   year         = {2026},
-  howpublished = {\url{https://github.com/Exios66/psych755-jjb}},
-  note         = {PSYCH 755 course manuscript repository}
-}
-
-@misc{ollama,
-  author       = {{Ollama}},
-  title        = {Ollama: Run large language models locally},
-  year         = {2024},
-  howpublished = {\url{https://ollama.com}},
-  note         = {Software}
-}
-
-@misc{openrouter,
-  author       = {{OpenRouter}},
-  title        = {OpenRouter: A unified interface for {LLMs}},
-  year         = {2024},
-  howpublished = {\url{https://openrouter.ai}},
-  note         = {Software}
-}
-
-@manual{quarto,
-  title        = {Quarto: An open-source scientific and technical publishing system},
-  author       = {{Posit PBC}},
-  year         = {2024},
-  url          = {https://quarto.org}
+  url          = {https://github.com/Exios66/psych755-jjb},
+  type         = {Computer software},
+  note         = {{PSYCH} 755 course manuscript repository}
 }

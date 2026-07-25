@@ -56,7 +56,7 @@ keywords:
   - Qualtrics
   - PSYCH 755
 nocite: |
-  @breiman2001, @pedregosa2011, @prolific, @positconnect, @github, @psych755repo
+  @breiman2001, @pedregosa2011, @prolific, @qualtrics, @positconnect, @github, @psych755repo
 ---
 
 ```{python}
@@ -252,7 +252,7 @@ Supporting methods pages: [cohort EDA](docs/cohort_eda.md), [ML baselines](docs/
 
 ## Data sources
 
-Participants were recruited via Prolific [@prolific] in two waves (File A + File B; stacked) and completed a Qualtrics instrument (File C). Private full-cohort exports are not committed to git. **All statistics on this site use the full matched analytic cohort**: 252 Prolific∩Qualtrics matches → **N = 241** with complete scorable PRCA. The join key is Prolific `Participant id` ↔ Qualtrics `Q0`. Cleaning retains inner-join respondents with complete PRCA group and interpersonal items so every information tier shares the same ground-truth targets.
+Participants were recruited via Prolific [@prolific] in two waves (File A + File B; stacked) and completed a Qualtrics [@qualtrics] instrument (File C). Private full-cohort exports are not committed to git. **All statistics on this site use the full matched analytic cohort**: 252 Prolific∩Qualtrics matches → **N = 241** with complete scorable PRCA. The join key is Prolific `Participant id` ↔ Qualtrics `Q0`. Cleaning retains inner-join respondents with complete PRCA group and interpersonal items so every information tier shares the same ground-truth targets.
 
 ```{python}
 #| label: tbl-sample
