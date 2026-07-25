@@ -26,7 +26,7 @@ Cumulative information tiers map onto the research focus:
 
 | Tier | Adds | Research focus |
 |---|---|---|
-| `demos` | Age, Sex, Country, Student status (+ optional ethnicity/language when present) | Baseline |
+| `demos` | **Base demographics layer:** Age, Sex, Country, Student status (+ optional ethnicity/language when present) | Baseline / demos stereotyping |
 | `employment` | Employment status | RQ1 — does employment improve accuracy / change bias? |
 | `geo` | Survey lat/long context | Intermediate place cue |
 | `transit` | Public transit / ride-share / license / car access | RQ2 — does transportation-use help, and is it used sensibly? |

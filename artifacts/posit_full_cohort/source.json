@@ -12,5 +12,7 @@
     "full"
   ],
   "n_prolific_files": 2,
-  "note": "Committed for Posit Connect Cloud renders when private File A/B/C are absent. Never generated from data/excerpts/."
+  "note": "Mock predictions regenerated from committed participants so persona system-prompt / demos-layer updates (incl. Student status) stay aligned without private File A/B/C.",
+  "base_demos_includes_student_status": true,
+  "rerun_from": "artifacts/posit_full_cohort/participants.csv"
 }
