@@ -51,11 +51,12 @@ def test_demos_block_includes_student_status_when_present():
         }
     )
     lines = demos_block(row)
-    joined = "\n".join(lines)
-    assert "Age: 22" in joined
-    assert "Sex: Female" in joined
-    assert "Country of residence: United States" in joined
-    assert "Student status: Yes" in joined
+    joined = " ".join(lines)
+    # Natural-language digital-twin framing (AI Terrarium style).
+    assert "22-year-old" in joined
+    assert "woman" in joined
+    assert "United States" in joined
+    assert "You are a student." in joined
 
 
 def test_tiered_prompts_include_expected_sections():
@@ -66,21 +67,36 @@ def test_tiered_prompts_include_expected_sections():
     geo = build_persona_prompt(row, "geo").user_prompt
     transit = build_persona_prompt(row, "transit").user_prompt
 
-    assert "Demographics:" in demos
-    assert "Employment status" not in demos
-    assert "Employment status" in employment
-    assert "Approximate latitude" in geo
-    assert "public transportation" in transit.lower() or "Transportation use" in transit
+    # Persona is conveyed as second-person prose, not a labeled checklist.
+    assert demos.startswith("You are")
+    assert "Demographics:" not in demos
+    assert "Adopt the following identity" not in demos
+    assert "Fully personify" not in demos
+
+    # Employment cue appears only from the employment tier onward.
+    emp_sentence_markers = (
+        "You work",
+        "You are unemployed",
+        "not in paid work",
+        "employment status",
+    )
+    assert not any(marker in demos for marker in emp_sentence_markers)
+    has_emp = pd.notna(row.get("Employment status")) and str(row.get("Employment status")).strip()
+    if has_emp:
+        assert any(marker in employment for marker in emp_sentence_markers)
+    assert "latitude" in geo.lower()
+    assert "public transportation" in transit.lower()
 
     # Student status is part of the base demos layer for every tier when present.
     if pd.notna(row.get("Student status")) and str(row.get("Student status")).strip():
-        assert "Student status" in demos
-        assert "Student status" in employment
-        assert "Student status" in geo
-        assert "Student status" in transit
+        assert "student" in demos.lower()
+        assert "student" in employment.lower()
+        assert "student" in geo.lower()
+        assert "student" in transit.lower()
 
     system = build_persona_prompt(row, "demos").system_prompt
     assert "student status" in system.lower()
+    assert "inhabit" in system.lower()
 
     prompts = build_persona_prompts(df, tiers=["demos", "employment"])
     assert len(prompts) == len(df) * 2

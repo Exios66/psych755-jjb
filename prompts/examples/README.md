@@ -1,8 +1,12 @@
 # Example persona prompts by context-combination tier
 
 Two illustrative samples per progressive / cumulative tier, built with
-`ca_personas.personas.build_persona_prompt` so the system + user text matches
-the research pipeline (`prompts/system_prompt.md`, `src/ca_personas/personas.py`).
+`ca_personas.personas.build_persona_prompt` in the **AI Terrarium** digital-twin
+style: natural-language, second-person persona narratives (“You are a …”), not
+structured questionnaire checklists.
+
+See `prompts/system_prompt.md` and the ICA 2026 extended abstract on prompt
+framing vs contextual depth.
 
 | Folder | Tier | Cumulative fields |
 |---|---|---|
