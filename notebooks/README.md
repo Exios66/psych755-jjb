@@ -9,6 +9,7 @@
 | [`stage_one_ml_baseline.ipynb`](stage_one_ml_baseline.ipynb) | Stage one | Train/evaluate Random Forest + KNN baselines on the same tiered CA prediction task used for LLM personas |
 | [`ml_vs_llm_comparison.ipynb`](ml_vs_llm_comparison.ipynb) | Comparison | Side-by-side ML vs LLM evaluation on shared metrics (MAE, exact/band accuracy, distance-from-correct) |
 | [`factor_feature_importance.ipynb`](factor_feature_importance.ipynb) | Diagnostics | Factor analysis of PRCA items + RF/permutation feature importance for persona covariates |
+| [`feature_predictive_power_shap.ipynb`](feature_predictive_power_shap.ipynb) | Feature power | Dedicated SHAP + band-F1 suite for ML and LLM persona agents across tiers · [memo](../memos/feature_predictive_power_ml_llm.md) |
 
 Supporting code:
 
@@ -19,6 +20,7 @@ Supporting code:
 - [`src/ca_personas/ml_baseline.py`](../src/ca_personas/ml_baseline.py)
 - [`src/ca_personas/compare_agents.py`](../src/ca_personas/compare_agents.py)
 - [`src/ca_personas/feature_importance.py`](../src/ca_personas/feature_importance.py)
+- [`src/ca_personas/shap_eval.py`](../src/ca_personas/shap_eval.py)
 
 ```bash
 pip install -r requirements.txt
@@ -39,4 +41,8 @@ jupyter nbconvert --to notebook --execute notebooks/secondary_rq_ca_transit_rf.i
 jupyter nbconvert --to notebook --execute notebooks/stage_one_ml_baseline.ipynb
 CA_LLM_PROVIDER=mock jupyter nbconvert --to notebook --execute notebooks/ml_vs_llm_comparison.ipynb
 jupyter nbconvert --to notebook --execute notebooks/factor_feature_importance.ipynb
+
+# SHAP + band F1 feature predictive power (ML + LLM)
+ca-personas shap-eval --join inner --provider mock --shap-tier transit
+jupyter nbconvert --to notebook --execute notebooks/feature_predictive_power_shap.ipynb
 ```

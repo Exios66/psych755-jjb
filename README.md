@@ -194,6 +194,18 @@ jupyter nbconvert --to notebook --execute notebooks/factor_feature_importance.ip
 
 Artifacts (loadings, permutation/impurity importances, `top_predictive_features.csv`) write to `outputs/feature_importance/`.
 
+### SHAP values, band F1, and ML vs LLM feature power
+
+Dedicated evaluation of which tier features drive CA predictions for Random Forest / KNN **and** LLM persona agents (TreeSHAP + LLM-surrogate SHAP, macro/per-band F1, tier ablation):
+
+```bash
+pip install -e ".[dev]"   # includes shap>=0.44
+ca-personas shap-eval --join inner --provider mock --shap-tier transit
+jupyter nbconvert --to notebook --execute notebooks/feature_predictive_power_shap.ipynb
+```
+
+Artifacts write to `outputs/shap_eval/` (metrics, SHAP tables, figures). Research memo: [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md).
+
 ## vLLM digital-twin batch inference
 
 For local GPU batch runs, export persona prompts into the `caseid` / `prompt` schema and generate with vLLM (launcher adapted from [`ai_terrarium_v2`](https://github.com/Exios66/ai_terrarium_v2)):

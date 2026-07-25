@@ -222,6 +222,47 @@ def build_parser() -> argparse.ArgumentParser:
     )
     ca_rf.add_argument("--seed", type=int, default=42, help="RNG seed")
 
+    shap_cmd = sub.add_parser(
+        "shap-eval",
+        help=(
+            "SHAP values, band F1, and ML-vs-LLM feature predictive-power "
+            "evaluation across persona tiers"
+        ),
+    )
+    _add_shared_data_args(shap_cmd)
+    shap_cmd.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/shap_eval"),
+        help="Directory for SHAP tables, metrics, and figures",
+    )
+    shap_cmd.add_argument(
+        "--figures-dir",
+        type=Path,
+        default=None,
+        help="Optional figure directory (default: <output-dir>/figures)",
+    )
+    shap_cmd.add_argument(
+        "--provider",
+        choices=["ollama", "openrouter", "mock"],
+        default="mock",
+        help="LLM provider for the persona-agent arm (default: mock)",
+    )
+    shap_cmd.add_argument("--model", default=None, help="LLM model override")
+    shap_cmd.add_argument(
+        "--shap-tier",
+        choices=list(RESEARCH_TIERS),
+        default="transit",
+        help="Tier used for detailed SHAP explanations (default: transit)",
+    )
+    shap_cmd.add_argument("--seed", type=int, default=42, help="RNG seed")
+    shap_cmd.add_argument(
+        "--max-shap-samples",
+        type=int,
+        default=200,
+        help="Max rows for TreeExplainer sampling",
+    )
+
     # Flat args retained so `ca-personas --provider mock` still works.
     _add_shared_data_args(parser)
     parser.add_argument("--tiers", nargs="+", choices=list(TIERS), default=None)
@@ -391,6 +432,36 @@ def main(argv: list[str] | None = None) -> int:
             random_state=args.seed,
         )
         print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
+        return 0
+
+    if command == "shap-eval":
+        from ca_personas.shap_eval import run_shap_feature_eval
+
+        prolific, qualtrics = _paths_or_defaults(args)
+        result = run_shap_feature_eval(
+            prolific_paths=prolific,
+            qualtrics_path=qualtrics,
+            join_how=args.join,
+            llm_provider=args.provider,
+            llm_model=args.model,
+            shap_tier=args.shap_tier,
+            output_dir=args.output_dir,
+            figures_dir=args.figures_dir,
+            random_state=args.seed,
+            max_shap_samples=args.max_shap_samples,
+        )
+        print(
+            json.dumps(
+                {
+                    "output_dir": str(result["output_dir"]),
+                    "figures_dir": str(result["figures_dir"]),
+                    "results_card": str(result["paths"]["results_card"]),
+                    "n_figures": len(result["figure_paths"]),
+                    "n_analytic": int(len(result["participants"])),
+                },
+                indent=2,
+            )
+        )
         return 0
 
     # Full pipeline
