@@ -42,9 +42,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from ca_personas.evaluate import summarize_errors
-from ca_personas.load import load_and_prepare
-from ca_personas.personas import TIERS, build_persona_prompts
+from ca_personas.personas import RESEARCH_TIERS, TIERS, build_persona_prompts
 from ca_personas.pipeline import run_pipeline
 
 PROLIFIC = ROOT / "data" / "excerpts" / "prolific_excerpt.csv"
@@ -53,6 +51,7 @@ RENDER_OUT = ROOT / "outputs" / "quarto_render"
 
 # Re-run the offline mock pipeline at render time so Posit Connect Cloud
 # does not depend on gitignored local artifacts or live API keys.
+# All five tiers (research + full) are rendered; MAE bars focus on RESEARCH_TIERS.
 artifacts = run_pipeline(
     prolific_path=PROLIFIC,
     qualtrics_path=QUALTRICS,
@@ -149,14 +148,15 @@ gt[["count", "mean", "std", "min", "max"]]
 
 ## Persona tiers
 
-Persona prompts are cumulative. The system prompt asks the model to stay in first person and return JSON with group and interpersonal CA integers plus qualitative bands [@quarto].
+Persona prompts are cumulative. The system prompt asks the model to stay in first person and return JSON with group and interpersonal CA integers plus qualitative bands [@quarto]. Full Prolific waves (File A/B) omit ethnicity / nationality / language; those fields appear only when the export provides them (e.g. excerpt fixtures).
 
 | Tier | Information revealed to the model |
 |---|---|
-| `demos` | Age, sex, ethnicity, countries, nationality, language, student status |
+| `demos` | Age, sex, country of residence, student status (+ ethnicity / nationality / language when present) |
 | `employment` | `demos` + employment status |
 | `geo` | `employment` + country of residence + latitude/longitude |
 | `transit` | `geo` + public transit / ride-share / license / car access |
+| `full` | `transit` + Qualtrics free-response attitudes (advice + mobility ideal) |
 
 ```{python}
 #| label: lst-persona-example
@@ -194,7 +194,7 @@ mae
 #| fig-cap: "Mean absolute error for group and interpersonal CA by persona information tier (mock LLM, excerpt sample)."
 #| fig-alt: "Grouped bar chart of MAE for group and interpersonal subscales across demos, employment, geo, and transit tiers."
 
-plot_df = summary[summary["tier"] != "all"].copy()
+plot_df = summary[summary["tier"].isin(RESEARCH_TIERS)].copy()
 x = range(len(plot_df))
 width = 0.38
 
@@ -220,7 +220,7 @@ plt.show()
 #| fig-alt: "Scatterplot of predicted group CA against ground-truth group CA for each tier."
 
 fig, ax = plt.subplots(figsize=(6.5, 6))
-markers = {"demos": "o", "employment": "s", "geo": "D", "transit": "^"}
+markers = {"demos": "o", "employment": "s", "geo": "D", "transit": "^", "full": "P"}
 for tier, frame in evaluation.groupby("tier"):
     ax.scatter(
         frame["gt_group_ca"],
@@ -258,7 +258,7 @@ by_emp
 
 # Discussion
 
-Even on a tiny excerpt, the framework makes the research contrasts concrete: each participant yields four persona prompts that differ only in how much context the model sees, while ground-truth PRCA scores stay fixed. Live Ollama / OpenRouter runs on the full cohort can then test whether MAE shrinks as tiers accumulate information, and whether residual error still clusters by sex, ethnicity, employment, or geography—the stereotyping pattern named in the research question [@cheng2023; @santurkar2023].
+Even on a tiny excerpt, the framework makes the research contrasts concrete: each participant yields five persona prompts (`demos` → `employment` → `geo` → `transit` → `full`) that differ only in how much context the model sees, while ground-truth PRCA scores stay fixed. Live Ollama / OpenRouter runs on the full cohort can then test whether MAE shrinks as tiers accumulate information, and whether residual error still clusters by sex, ethnicity, employment, or geography—the stereotyping pattern named in the research question [@cheng2023; @santurkar2023].
 
 Limitations of the present render include (a) excerpt $N$, (b) use of a deterministic mock predictor rather than a production LLM, and (c) incomplete transit fields for some Prolific-linked rows. Those constraints are intentional for a credential-free Posit Cloud build; they do not change the measurement design.
 
@@ -270,6 +270,7 @@ The analysis package lives in `src/ca_personas/`. Locally:
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+pip install -e .
 ca-personas --provider mock --join inner
 quarto render
 ```

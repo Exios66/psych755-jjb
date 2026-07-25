@@ -62,6 +62,7 @@ class CleaningReport:
     n_analytic: int = 0
     n_dropped_missing_pid: int = 0
     n_dropped_incomplete_ca: int = 0
+    n_dropped_unscorable_ca: int = 0
     n_dropped_unjoined: int = 0
     n_prolific_only: int = 0
     n_qualtrics_only: int = 0
@@ -81,6 +82,7 @@ class CleaningReport:
             "n_analytic": self.n_analytic,
             "n_dropped_missing_pid": self.n_dropped_missing_pid,
             "n_dropped_incomplete_ca": self.n_dropped_incomplete_ca,
+            "n_dropped_unscorable_ca": self.n_dropped_unscorable_ca,
             "n_dropped_unjoined": self.n_dropped_unjoined,
             "n_prolific_only": self.n_prolific_only,
             "n_qualtrics_only": self.n_qualtrics_only,
@@ -162,8 +164,9 @@ def flag_research_covariates(df: pd.DataFrame) -> pd.DataFrame:
         out["has_transit_info"] = False
     out["has_employment_and_transit"] = out["has_employment_info"] & out["has_transit_info"]
     demo_cols = [c for c in DEMO_COLS_AVAILABLE if c in out.columns]
+    # Require all core demographic fields present (Age, Sex, Country, Student).
     out["has_core_demos"] = (
-        out[demo_cols].apply(lambda r: bool(_nonempty(r).any()), axis=1)
+        out[demo_cols].apply(lambda r: bool(_nonempty(r).all()), axis=1)
         if demo_cols
         else False
     )
@@ -230,7 +233,14 @@ def clean_joined_participants(
 
     scored = add_ground_truth_scores(work, low_max=low_max, high_min=high_min)
     # Drop rows that still failed scoring (e.g. unmapped Likert labels).
+    before_score = len(scored)
     scored = scored.dropna(subset=["gt_group_ca", "gt_interpersonal_ca"], how="any")
+    report.n_dropped_unscorable_ca = before_score - len(scored)
+    if report.n_dropped_unscorable_ca:
+        report.notes.append(
+            f"Dropped {report.n_dropped_unscorable_ca} rows with non-empty but "
+            "unmapped/unscorable PRCA Likert labels after completeness filter."
+        )
     report.n_analytic = int(len(scored))
 
     if "Ethnicity simplified" not in scored.columns:
@@ -239,6 +249,7 @@ def clean_joined_participants(
             "demos tier uses Age, Sex, Country of residence, and Student status."
         )
     report.notes.append(
-        "Analytic sample = Prolific∩Qualtrics with complete PRCA group + interpersonal items."
+        "Analytic sample = Prolific∩Qualtrics with complete scorable PRCA "
+        "group + interpersonal items."
     )
     return scored.reset_index(drop=True), report

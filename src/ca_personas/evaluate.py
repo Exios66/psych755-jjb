@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import warnings
 from typing import Any
 
 import pandas as pd
@@ -72,6 +73,14 @@ def evaluate_predictions(
     gt = participants[available].drop_duplicates("participant_id")
 
     merged = predictions.merge(gt, on="participant_id", how="left")
+    if "gt_group_ca" in merged.columns and len(merged):
+        n_unmatched = int(merged["gt_group_ca"].isna().sum())
+        if n_unmatched:
+            warnings.warn(
+                f"{n_unmatched}/{len(merged)} prediction rows have no matching ground truth "
+                "(participant_id left-join miss). Metrics use the matched subset only.",
+                stacklevel=2,
+            )
 
     for side in ("group", "interpersonal"):
         pred_col = f"pred_{side}_ca"
@@ -90,7 +99,8 @@ def evaluate_predictions(
                 merged[pred_col].round().astype("Int64") == merged[gt_col].round().astype("Int64")
             )
 
-        # Prefer model-reported band; otherwise derive from predicted score.
+        # Band metrics always follow the predicted score so inconsistent
+        # model-reported bands cannot silently disagree with score accuracy.
         if pred_band_col in merged.columns:
             reported = merged[pred_band_col].map(_normalize_band)
         else:
@@ -102,7 +112,8 @@ def evaluate_predictions(
             if pred_col in merged.columns
             else reported
         )
-        merged[f"pred_{side}_band_resolved"] = reported.where(reported.notna(), derived)
+        merged[f"pred_{side}_band_reported"] = reported
+        merged[f"pred_{side}_band_resolved"] = derived.where(derived.notna(), reported)
 
         if gt_band_col in merged.columns:
             pred_b = merged[f"pred_{side}_band_resolved"].map(_normalize_band)

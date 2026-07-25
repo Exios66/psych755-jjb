@@ -29,10 +29,11 @@ flowchart LR
 
 | Tier / artifact | Research question |
 |---|---|
-| `demos` | Baseline demographics for stereotyping checks |
+| `demos` | Baseline demographics for stereotyping checks (Age, Sex, Country, Student; optional ethnicity/language) |
 | `employment` | RQ1 — does employment improve accuracy / change bias? |
+| `geo` | Intermediate place cue (country + survey lat/long) |
 | `transit` | RQ2 — does transportation-use help, and is it used sensibly? |
-| `employment` + `transit` (+ `full`) | RQ3 — combined signal vs redundancy |
+| `full` | RQ3 — combined signal vs redundancy (+ open-text attitudes) |
 | `outputs/eda/ca_by_group.csv` | Empirical CA means by sex / employment / transit for bias interpretation |
 
 ### Secondary RQ — regular transit vs cohort CA

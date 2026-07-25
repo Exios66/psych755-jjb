@@ -118,7 +118,7 @@ def _cv_proba(
 def null_baselines(frame: pd.DataFrame) -> pd.DataFrame:
     y = frame["y"].to_numpy()
     prev = majority_baseline_probs(y)
-    mode = int(np.round(y.mean()))
+    mode = 1 if float(y.mean()) >= 0.5 else 0
     hard = np.full(len(y), mode, dtype=float)
     return pd.DataFrame(
         [
@@ -303,7 +303,9 @@ def run_ca_transit_rf_analysis(
             "interpersonal_only": interp_auc,
         },
         "baselines": {
-            "prevalence_roc_auc": 0.5,
+            "prevalence_roc_auc": float(
+                nulls.loc[nulls["model"] == "prevalence_prob", "roc_auc"].iloc[0]
+            ),
             "majority_accuracy": float(
                 nulls.loc[nulls["model"] == "majority_class", "accuracy"].iloc[0]
             ),

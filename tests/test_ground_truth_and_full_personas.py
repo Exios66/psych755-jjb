@@ -21,16 +21,37 @@ def test_ground_truth_export_bundle(tmp_path: Path):
 
 
 def test_full_persona_includes_qualtrics_voice_when_present():
-    df = load_and_prepare(PROLIFIC, QUALTRICS, how="inner")
+    import pandas as pd
+
+    from ca_personas.personas import _present
+
+    df = load_and_prepare(PROLIFIC, QUALTRICS, how="inner", clean=True)
     row = df.dropna(subset=["Age", "participant_id"]).iloc[0]
 
     prompt = build_persona_prompt(row, "full")
     assert "Demographics:" in prompt.user_prompt
     assert "Fully personify" in prompt.user_prompt
     assert "band" in prompt.user_prompt.lower()
-    # Free-response section appears when Qualtrics voice fields exist on the row.
-    if str(row.get("Q18_advice", "")).strip() or str(row.get("Q19", "")).strip():
+    # Free-response section appears only when voice fields are truly present
+    # (NaN stringifies to "nan"; do not treat that as content).
+    has_voice = _present(row.get("Q18_advice")) or _present(row.get("Q19"))
+    if has_voice:
         assert "Self-described attitudes" in prompt.user_prompt
+    else:
+        # Prefer a row that actually has open text when the fixture provides one.
+        voice_rows = df[
+            df.apply(
+                lambda r: _present(r.get("Q18_advice")) or _present(r.get("Q19")),
+                axis=1,
+            )
+        ]
+        if len(voice_rows):
+            voiced = build_persona_prompt(voice_rows.iloc[0], "full")
+            assert "Self-described attitudes" in voiced.user_prompt
+        else:
+            assert isinstance(row.get("participant_id"), (str, int)) or pd.notna(
+                row.get("participant_id")
+            )
 
 
 def test_write_persona_bundle(tmp_path: Path):

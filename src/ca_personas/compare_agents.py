@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import warnings
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -9,7 +10,6 @@ import pandas as pd
 
 from ca_personas.evaluate import evaluate_predictions, summarize_errors
 from ca_personas.llm.base import get_client
-from ca_personas.load import load_and_prepare
 from ca_personas.ml_baseline import run_stage_one_baselines
 from ca_personas.personas import RESEARCH_TIERS, build_persona_prompts
 from ca_personas.predict import run_predictions
@@ -41,18 +41,28 @@ def ml_long_to_eval_format(ml_predictions: pd.DataFrame) -> pd.DataFrame:
     if missing:
         raise ValueError(f"ML predictions missing columns: {sorted(missing)}")
 
+    def _band_or_derive(side_row: pd.Series, score: float) -> str | None:
+        band = side_row["pred_band"] if "pred_band" in side_row.index else None
+        if band is None or pd.isna(band):
+            return ca_band(int(round(score)))
+        text = str(band).strip().lower()
+        if not text or text in {"nan", "none", "null"}:
+            return ca_band(int(round(score)))
+        return text
+
     rows: list[dict[str, Any]] = []
+    n_incomplete = 0
     group_keys = ["participant_id", "tier", "model"]
     for keys, frame in ml_predictions.groupby(group_keys, dropna=False):
         participant_id, tier, model = keys
         by_side = {str(r["side"]): r for _, r in frame.iterrows()}
         if "group" not in by_side or "interpersonal" not in by_side:
+            n_incomplete += 1
             continue
         group_pred = float(by_side["group"]["y_pred"])
         inter_pred = float(by_side["interpersonal"]["y_pred"])
-        # Prefer stored bands when present; otherwise derive from score.
-        group_band = by_side["group"].get("pred_band") or ca_band(int(round(group_pred)))
-        inter_band = by_side["interpersonal"].get("pred_band") or ca_band(int(round(inter_pred)))
+        group_band = _band_or_derive(by_side["group"], group_pred)
+        inter_band = _band_or_derive(by_side["interpersonal"], inter_pred)
         rows.append(
             {
                 "participant_id": participant_id,
@@ -65,6 +75,11 @@ def ml_long_to_eval_format(ml_predictions: pd.DataFrame) -> pd.DataFrame:
                 "pred_group_band": group_band,
                 "pred_interpersonal_band": inter_band,
             }
+        )
+    if n_incomplete:
+        warnings.warn(
+            f"Dropped {n_incomplete} ML prediction groups missing group or interpersonal side.",
+            stacklevel=2,
         )
     return pd.DataFrame(rows)
 

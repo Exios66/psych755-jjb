@@ -266,14 +266,15 @@ def load_and_prepare(
     how: str = "outer",
     low_max: int = 13,
     high_min: int = 20,
-    clean: bool = False,
+    clean: bool = True,
     wave_labels: Sequence[str] | None = None,
 ) -> pd.DataFrame:
     """
     End-to-end load → join → ground-truth CA scoring.
 
-    Set ``clean=True`` to apply the analytic-sample filters (complete CA,
-    research-covariate flags) used for the full-cohort pipeline.
+    ``clean=True`` (default) applies analytic-sample filters (complete / scorable
+    CA, research-covariate flags) so ML, LLM, and secondary-RQ entry points share
+    the same cohort definition. Pass ``clean=False`` only for raw join diagnostics.
     """
     prolific = load_prolific(prolific_path, wave_labels=wave_labels)
     qualtrics = load_qualtrics(qualtrics_path)

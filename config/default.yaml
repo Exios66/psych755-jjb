@@ -2,25 +2,23 @@
 #   ../sibling_data/PRCAProlificExport_FileA.csv
 #   ../sibling_data/PRCAProlificExport_FileB.csv
 #   ../sibling_data/PRCAQualtricsExport_FileC.csv
-# Excerpt fixtures remain available for CI / Posit Connect Cloud when sibling
-# data is absent (see ca_personas.paths).
+# When those files are absent, ca_personas.pipeline / paths fall back to
+# data/excerpts/ fixtures (CI / Posit Connect Cloud).
 
 paths:
   prolific_files:
     - ../sibling_data/PRCAProlificExport_FileA.csv
     - ../sibling_data/PRCAProlificExport_FileB.csv
   qualtrics: ../sibling_data/PRCAQualtricsExport_FileC.csv
-  personas_dir: data/processed/personas
-  predictions_dir: outputs/predictions
-  evaluation_dir: outputs/evaluation
-  eda_dir: outputs/eda
 
 # Cumulative information tiers mapped to the research questions:
-#   demos      → baseline demographics (Age, Sex, country, student status)
+#   demos      → baseline demographics (Age, Sex, country, student status;
+#                optional ethnicity/nationality/language when the Prolific
+#                export includes them)
 #   employment → RQ1: does employment improve prediction / change bias?
 #   geo        → country + survey lat/long context
-#   transit    → RQ2: transportation-use signal
-#   full       → all of the above + open-text attitudes (Q18.1 / Q19)
+#   transit    → RQ2: transportation-use signal (includes demos+employment+geo)
+#   full       → all of the above + open-text attitudes (Q18.1 / Q19)  [RQ3]
 tiers:
   - demos
   - employment
@@ -39,6 +37,8 @@ scoring:
   band_low_max: 13
   band_high_min: 20
 
+# Applied by run/prepare when cleaning is enabled (see pipeline.py).
+# CLI --join remains authoritative for the join strategy.
 cleaning:
   require_complete_ca: true
   join_how: inner
