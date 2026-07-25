@@ -362,6 +362,17 @@ assert "You are a" in example_demos.user_prompt
 print(example_demos.user_prompt)
 ```
 
+```{python}
+#| label: lst-persona-example-transit
+#| echo: false
+#| lst-cap: "AI Terrarium Transit-Tier User Prompt (Same Participant; Richest Research Tier)"
+
+example_transit = next(p for p in prompts if p.tier == "transit")
+assert "You are a" in example_transit.user_prompt
+assert "Adopt the following identity" not in example_transit.user_prompt
+print(example_transit.user_prompt)
+```
+
 ## Model calling and classical baselines
 
 The Python package `ca_personas` supports Ollama, OpenRouter, and a deterministic **mock** provider for credential-free Posit renders [@ollama; @openrouter]. Predicted JSON fields are validated to the legal 6–30 range, then joined to ground truth for signed and absolute errors.
