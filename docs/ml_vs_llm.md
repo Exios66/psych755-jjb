@@ -11,7 +11,7 @@ subtitle: "Head-to-head evaluation across persona information tiers"
 
 ---
 
-## 1. What is compared
+## What is compared
 
 Both agent families predict the same targets — PRCA **group** and **interpersonal** scores (6–30) — from the same cumulative information tiers (`demos` → `employment` → `geo` → `transit`).
 
@@ -27,26 +27,26 @@ Shared metrics (via `evaluate_predictions` / `summarize_errors`):
 - Band accuracy (low / moderate / high)
 - Normalized score distance and band distance
 
-## 2. How to read the comparison
+## How to read the comparison
 
 For each tier:
 
-1. Identify the **best ML MAE** across the full suite (often Ridge / Elastic Net / MLP — not always RF; see [ml_baselines.md](ml_baselines.md)).
+1. Identify the **best ML MAE** across the full suite (often Ridge / Elastic Net — not always RF or MLP; see [ml_baselines.md](ml_baselines.md)).
 2. Compute `delta_vs_best_ml` for each LLM agent.
 3. **Negative** Δ MAE means the LLM beat the strongest tabular baseline on that tier; **positive** means it did worse.
 
 Band accuracy is the coarser stereotyping-relevant lens: does the model place someone in the right low/moderate/high bin even when the exact integer is off?
 
-## 3. Classical reference (full cohort, N = 241)
+## Classical reference (full cohort, N = 241)
 
 Suite **best** MAE by tier (seed = 42; full tables in [`ml_baselines.md`](ml_baselines.md)):
 
 | Tier | Best group MAE (model) | Best interpersonal MAE (model) | RF group (ref) |
 |---|---:|---:|---:|
-| demos | **4.91** (MLP) | **4.54** (MLP) | 5.72 |
-| employment | **4.65** (Elastic Net) | **4.38** (MLP) | 5.59 |
+| demos | **4.90** (MLP) | **4.52** (MLP) | 5.72 |
+| employment | **4.65** (Elastic Net) | **4.39** (Ridge) | 5.59 |
 | geo | **4.68** (Ridge) | **4.35** (Ridge) | 5.05 |
-| transit | **4.49** (Ridge) | **4.24** (MLP) | 4.68 |
+| transit | **4.49** (Ridge) | **4.25** (Elastic Net) | 4.68 |
 
 Live LLM numbers depend on provider/model and are **not** baked into the Posit Connect render (the manuscript uses `provider="mock"` so Cloud builds stay keyless). To publish a specific model’s head-to-head table:
 
@@ -60,7 +60,7 @@ CA_LLM_PROVIDER=ollama jupyter nbconvert --to notebook --execute \
 
 Artifacts land in `outputs/ml_vs_llm/` (comparison CSV, deltas, optional figures).
 
-## 4. Interpretation checklist for results
+## Interpretation checklist for results
 
 When a live comparison is in hand, ask:
 
@@ -69,7 +69,7 @@ When a live comparison is in hand, ask:
 3. **Does residual error track demographics?** That is the stereotyping RQ in the manuscript — compare absolute error by sex / **student status** (base `demos` layer) / employment / country. Use `summarize_errors_by_group(evaluation, "Student status")` or the committed `artifacts/posit_full_cohort/error_by_student_status.csv` table.
 4. **Mock ≠ science.** Treat `provider=mock` outputs as deterministic pipeline diagnostics, not production-LLM claims.
 
-## 5. Reproducibility
+## Reproducibility
 
 ```bash
 pip install -e .

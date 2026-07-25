@@ -98,14 +98,32 @@ def cohort_source_label() -> str:
     return "data/excerpts (File A/B/C not found; small-N demo)"
 
 
+def _partial_sibling_files() -> list[Path]:
+    """Return any staged A/B/C files that exist without a complete trio."""
+    present: list[Path] = []
+    for directory in _staging_dirs():
+        for name in (FILE_A_NAME, FILE_B_NAME, FILE_C_NAME):
+            path = directory / name
+            if path.is_file():
+                present.append(path)
+        if present and not _dir_has_full_cohort(directory):
+            return present
+        present = []
+    return []
+
+
 def default_prolific_paths(*, allow_excerpt_fallback: bool = True) -> list[Path]:
     """Prefer stacked full-cohort Prolific waves; optionally fall back to excerpt."""
     directory = resolve_sibling_data_dir()
     if directory is not None:
         return [directory / FILE_A_NAME, directory / FILE_B_NAME]
-    # Partial canonical sibling (only A present) — keep historical behavior.
-    if DEFAULT_PROLIFIC_A.is_file():
-        return [DEFAULT_PROLIFIC_A]
+    partial = _partial_sibling_files()
+    if partial:
+        raise FileNotFoundError(
+            "Partial File A/B/C staging detected; refusing to mix with excerpt "
+            f"fixtures. Present: {partial}. Stage the complete trio or remove "
+            "the partial exports."
+        )
     if not allow_excerpt_fallback:
         full_cohort_paths()  # raises with a clear message
     return [EXCERPT_PROLIFIC]
@@ -116,8 +134,13 @@ def default_qualtrics_path(*, allow_excerpt_fallback: bool = True) -> Path:
     directory = resolve_sibling_data_dir()
     if directory is not None:
         return directory / FILE_C_NAME
-    if DEFAULT_QUALTRICS_C.is_file():
-        return DEFAULT_QUALTRICS_C
+    partial = _partial_sibling_files()
+    if partial:
+        raise FileNotFoundError(
+            "Partial File A/B/C staging detected; refusing to mix with excerpt "
+            f"fixtures. Present: {partial}. Stage the complete trio or remove "
+            "the partial exports."
+        )
     if not allow_excerpt_fallback:
         full_cohort_paths()  # raises with a clear message
     return EXCERPT_QUALTRICS

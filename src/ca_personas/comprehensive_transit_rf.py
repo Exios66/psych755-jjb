@@ -257,7 +257,14 @@ def univariate_auc_table(
                 model_name=f"univariate_{feat}",
             )
             auc = float(result["metrics"]["roc_auc"])
-        except Exception:
+        except Exception as exc:  # pragma: no cover - rare single-feature CV failures
+            import warnings
+
+            warnings.warn(
+                f"Univariate AUC failed for feature={feat!r}: {exc}",
+                RuntimeWarning,
+                stacklevel=2,
+            )
             auc = float("nan")
         group = next(
             (g for g, cols in FEATURE_GROUPS.items() if feat in cols),

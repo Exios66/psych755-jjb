@@ -208,14 +208,51 @@ def device_auth() -> dict:
             raise SystemExit(f"OAuth error: {code}")
 
 
+def refresh_access_token(refresh: str) -> dict:
+    """Exchange a refresh token for a new access token (and rotated refresh)."""
+    return post_form(
+        f"https://{AUTH_HOST}/oauth/token",
+        {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh,
+            "client_id": CLIENT_ID,
+            "scope": SCOPE,
+        },
+    )
+
+
 def load_tokens() -> tuple[str, str | None]:
     access = os.environ.get("POSIT_CONNECT_CLOUD_ACCESS_TOKEN")
     refresh = os.environ.get("POSIT_CONNECT_CLOUD_REFRESH_TOKEN")
+    token_path = Path("/tmp/posit-tokens.json")
+    if not refresh and token_path.is_file():
+        try:
+            saved = json.loads(token_path.read_text(encoding="utf-8"))
+            refresh = saved.get("refresh_token") or refresh
+            access = access or saved.get("access_token")
+        except Exception:
+            pass
+
     if access:
-        _log("Using POSIT_CONNECT_CLOUD_* environment tokens")
-        return access, refresh
+        # Probe the API; on 401, refresh if possible instead of failing publish.
+        try:
+            api("GET", "accounts?has_user_role=true", access)
+            _log("Using POSIT_CONNECT_CLOUD_* environment tokens")
+            return access, refresh
+        except SystemExit as exc:
+            msg = str(exc)
+            if "401" not in msg or not refresh:
+                raise
+            _log("Access token rejected (401); refreshing via refresh_token grant")
+            tok = refresh_access_token(refresh)
+            token_path.write_text(json.dumps(tok, indent=2), encoding="utf-8")
+            os.environ["POSIT_CONNECT_CLOUD_ACCESS_TOKEN"] = tok["access_token"]
+            if tok.get("refresh_token"):
+                os.environ["POSIT_CONNECT_CLOUD_REFRESH_TOKEN"] = tok["refresh_token"]
+            return tok["access_token"], tok.get("refresh_token")
+
     tok = device_auth()
-    Path("/tmp/posit-tokens.json").write_text(json.dumps(tok, indent=2), encoding="utf-8")
+    token_path.write_text(json.dumps(tok, indent=2), encoding="utf-8")
     return tok["access_token"], tok.get("refresh_token")
 
 

@@ -16,7 +16,7 @@ subtitle: "Secondary research questions — geo-memo follow-up Random Forests"
 
 ---
 
-## 1. Research questions
+## Research questions
 
 The geography → transit memo ([`memos/geo_predicts_transit.md`](../memos/geo_predicts_transit.md)) asked which other features might predict regular public-transit use after finding lat/long discrimination of AUC = **0.551**. Communication-apprehension scores were already tested (AUC = **0.590**; [`memos/ca_scores_predict_transit.md`](../memos/ca_scores_predict_transit.md)). This write-up evaluates the remaining named candidates:
 
@@ -25,22 +25,22 @@ The geography → transit memo ([`memos/geo_predicts_transit.md`](../memos/geo_p
 3. Ride-share frequency (`Q28`, `Q29`)
 4. Joint mobility bundle (all of the above)
 
-## 2. Methods
+## Methods
 
-### 2.1 Sample & outcome
+### Sample & outcome
 
 - **Sources:** Prolific File A + File B stacked, inner-joined to Qualtrics File C  
 - **Base analytic cohort:** n = 241 with complete PRCA group/interpersonal items and usable `Q26`  
 - **Outcome:** `regular_transit` = `Q26` ∈ {`4-8 days a month`, `8 or more days a month`}  
 - **Complete-case frames:** car access n = 149; employment n = 241; ride-share n = 233; bundle n = 143  
 
-### 2.2 Models
+### Models
 
 For each feature family: `OneHotEncoder` → balanced `RandomForestClassifier` (500 trees, `min_samples_leaf=3`), stratified 5-fold `cross_val_predict` probabilities, Gini + permutation importance (`scoring="roc_auc"`, 30 repeats). Seed = 42.
 
 Benchmarks pasted from companion seeded runs: geo AUC = 0.551; CA AUC = 0.590; chance = 0.500.
 
-## 3. Results
+## Results
 
 | Spec | n | ROC-AUC | AP | Bal. acc. | F1 |
 |---|---:|---:|---:|---:|---:|
@@ -54,11 +54,11 @@ Benchmarks pasted from companion seeded runs: geo AUC = 0.551; CA AUC = 0.590; c
 
 **Ride-share days (`Q28`)** dominate: regular-transit prevalence rises from 15.7% (Never) to 94.1% (8+ days/month). **Car access (`Q21`)** is the main car-family driver (No access = 75.9% regular vs Yes = 30.8%). **Employment** differences are small.
 
-## 4. Interpretation
+## Interpretation
 
 Mobility self-reports—especially ride-share frequency—predict weekly+ transit far better than survey geolocation or CA scores in this cohort. The joint bundle’s near-parity with ride-share alone suggests limited incremental value from car/employment once `Q28` is included, on the smaller overlapping sample. Associations are descriptive, not causal.
 
-## 5. Limitations
+## Limitations
 
 - Unequal complete-case *N* across families; car items are ~38% missing.  
 - Same-wave survey items; shared method variance between `Q26` and `Q28` is possible.  

@@ -89,7 +89,10 @@ quarto check
 quarto render    # writes _site/
 ```
 
-Note: `index.qmd` live Python cells use **excerpt + mock LLM** for Posit-safe MAE figures. That is OK. Secondary RQ numbers in prose/memos must still reflect the **full-cohort** runs above.
+Note: `index.qmd` live Python cells use the **full matched cohort + mock LLM**
+for Posit-safe MAE figures (or committed `artifacts/posit_full_cohort/` when
+File A/B/C are absent). Secondary RQ numbers in prose/memos must still reflect
+the seeded full-cohort RF runs above.
 
 ### 4. Authenticate to Posit Connect Cloud
 

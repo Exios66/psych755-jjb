@@ -429,8 +429,18 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _paths_or_defaults(args: argparse.Namespace) -> tuple[list[Path], Path]:
-    prolific = list(args.prolific) if args.prolific else default_prolific_paths()
-    qualtrics = args.qualtrics or default_qualtrics_path()
+    # Analysis / pipeline commands must not silently fall back to excerpt fixtures
+    # when the caller omitted --prolific/--qualtrics. Tests pass paths explicitly.
+    prolific = (
+        list(args.prolific)
+        if args.prolific
+        else default_prolific_paths(allow_excerpt_fallback=False)
+    )
+    qualtrics = (
+        args.qualtrics
+        if args.qualtrics
+        else default_qualtrics_path(allow_excerpt_fallback=False)
+    )
     return [Path(p) for p in prolific], Path(qualtrics)
 
 

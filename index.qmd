@@ -35,14 +35,17 @@ abstract: |
   comparing car access, employment, demographics, country vs coordinates, Q28 conditioned on
   car access, joint CA+mobility models, and residual CA after ride-share.
 
-  On a deterministic mock LLM, group-CA mean absolute error (MAE) is about 7.7–8.4 across
-  research tiers. On the same cohort, traditional Random Forests show that ride-share days
-  (Q28) predict regular transit at CV ROC-AUC = 0.762, whereas transit-day intensity (Q27)
-  yields AUC = 0.589; geography (≈ 0.551) and CA scores (≈ 0.590) remain near chance.
-  Extended follow-ups show Q28 retains lift after car access, demographics (especially age)
-  modestly predict ridership, and CA adds little once Q28 is known. Together, the primary
-  and secondary results clarify which mobility cues belong in persona tiers and which
-  reverse predictors of transit habits are empirically strong in this sample.
+  On a deterministic mock LLM, group-CA mean absolute error (MAE) ranges from 7.84
+  (`demos`) to 8.56 (`geo`) across research tiers (transit = 8.01)—well above the
+  classical suite floor (best transit group MAE = 4.49 Ridge). On the same cohort,
+  traditional Random Forests show that ride-share days (Q28) predict regular transit at
+  CV ROC-AUC = 0.762, whereas transit-day intensity (Q27) yields AUC = 0.589; geography
+  (0.551) and CA scores (0.590) remain near chance. Extended follow-ups show Q28 retains
+  lift after car access, demographics (especially age) modestly predict ridership, and CA
+  adds little once Q28 is known. A kitchen-sink mobility+demo forest reaches AUC = 0.824
+  but remains Q28-dominated. Together, the primary and secondary results clarify which
+  mobility cues belong in persona tiers and which reverse predictors of transit habits
+  carry the strongest tabular signal in this sample.
 keywords:
   - communication apprehension
   - large language models
@@ -153,6 +156,12 @@ if not SECONDARY_PATH.is_file():
         f"Missing {SECONDARY_PATH}. Run scripts that sync full-cohort secondary results."
     )
 secondary = json.loads(SECONDARY_PATH.read_text(encoding="utf-8"))
+_secondary_n = int(secondary.get("n_analytic", 0))
+if _secondary_n and _secondary_n != len(participants):
+    raise RuntimeError(
+        f"secondary_results.json n_analytic={_secondary_n} does not match "
+        f"participants N={len(participants)}; re-sync artifacts before render."
+    )
 
 prompts = build_persona_prompts(participants, tiers=list(TIERS))
 
@@ -235,15 +244,15 @@ The primary design compares **information tiers** rather than a single prompt: e
 ### Secondary research questions — predictors of regular transit use
 
 **Outcome.** Binary regular public-transit use from Qualtrics `Q26` (`4-8 days a month` or `8 or more days a month`).  
-**Design.** Classical Random Forests with nested group-*k*-fold CV on the same Prolific↔Qualtrics matched sample (**N = 241**) — not LLM inference [@breiman2001; @pedregosa2011; @prolific].
+**Design.** Classical Random Forests with stratified 5-fold CV (`random_state=42`) on the same Prolific↔Qualtrics matched sample (**N = 241**) — not LLM inference [@breiman2001; @pedregosa2011; @prolific].
 
 | ID | Research question | Primary finding (seed = 42) | Sources |
 |:--:|:---|:---|:---|
-| **S1** | Do regular riders differ in **group / interpersonal CA** from non-regular riders? | Yes — lower CA among regulars (group Δ ≈ −2.72, *d* ≈ −0.46; interpersonal Δ ≈ −1.73, *d* ≈ −0.30); not a high-CA rider stereotype | [memo](memos/transit_riders_ca.md) · [write-up](docs/secondary_rq_transit_ca.md) |
-| **S2** | Does survey **latitude / longitude** predict regular transit? | Near chance / modest (CV ROC-AUC ≈ **0.551**; ≈ country-only) | [memo](memos/geo_predicts_transit.md) · [write-up](docs/secondary_rq_geo_predicts_transit.md) |
-| **S3** | Do **group & interpersonal CA** scores predict regular transit? | Modest (CV ROC-AUC ≈ **0.590**; group > interpersonal) | [memo](memos/ca_scores_predict_transit.md) · [write-up](docs/secondary_rq_ca_predicts_transit.md) |
-| **S4** | Do **Q27** (transit intensity) and **Q28** (ride-share days) predict regular transit? | **Q28 strong** (AUC ≈ **0.762**); **Q27 weak** (≈ **0.589**) and redundant beside Q28 | [memo](memos/q27_q28_predict_transit.md) · [write-up](docs/secondary_rq_q27_q28_predict_transit.md) · [follow-ups](memos/transit_covariate_followups.md) |
-| **S5** | Wave-2 follow-ups: demographics, country vs coordinates, Q28 \| car access, joint CA+mobility, residual CA after ride-share | Q28 retains lift after car access; age/demos modest; CA adds little once Q28 is known | [agenda](docs/research_memo_agenda.md) · [write-up](docs/secondary_rq_followup_experiments.md) |
+| **S1** | Do regular riders differ in **group / interpersonal CA** from non-regular riders? | Yes — lower CA among regulars (group Δ = −2.72, *d* = −0.46; interpersonal Δ = −1.73, *d* = −0.30); not a high-CA rider stereotype | [memo](memos/transit_riders_ca.md) · [write-up](docs/secondary_rq_transit_ca.md) |
+| **S2** | Does survey **latitude / longitude** predict regular transit? | Near chance (CV ROC-AUC = **0.551**; country-only = 0.549) | [memo](memos/geo_predicts_transit.md) · [write-up](docs/secondary_rq_geo_predicts_transit.md) |
+| **S3** | Do **group & interpersonal CA** scores predict regular transit? | Modest (CV ROC-AUC = **0.590**; group-only = 0.555; interpersonal-only = 0.506) | [memo](memos/ca_scores_predict_transit.md) · [write-up](docs/secondary_rq_ca_predicts_transit.md) |
+| **S4** | Do **Q27** (transit intensity) and **Q28** (ride-share days) predict regular transit? | **Q28** AUC = **0.762**; **Q27** AUC = **0.589** and redundant beside Q28 (joint = 0.761) | [memo](memos/q27_q28_predict_transit.md) · [write-up](docs/secondary_rq_q27_q28_predict_transit.md) · [follow-ups](memos/transit_covariate_followups.md) |
+| **S5** | Wave-2 follow-ups: demographics, country vs coordinates, Q28 \| car access, joint CA+mobility, residual CA after ride-share | Q28 retains lift after car access (+0.066 AUC); age/demos modest (0.618); CA adds +0.021 once Q28 is known | [agenda](docs/research_memo_agenda.md) · [write-up](docs/secondary_rq_followup_experiments.md) |
 :::
 
 Supporting methods pages: [cohort EDA](docs/cohort_eda.md), [ML baselines](docs/ml_baselines.md), [ML vs LLM metrics](docs/ml_vs_llm.md), and [feature importance](docs/factor_feature_importance.md). Code and site source: [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb) [@psych755repo]; author profile: [github.com/Exios66](https://github.com/Exios66) [@github].
@@ -259,10 +268,16 @@ Participants were recruited via Prolific [@prolific] in two waves (File A + File
 #| tbl-cap: "Analytic Sample Composition for the Full Matched Cohort"
 #| tbl-colwidths: [40, 60]
 
-sex_counts = participants["Sex"].astype(str).value_counts()
-emp_counts = participants["Employment status"].astype(str).value_counts()
-stu_counts = participants["Student status"].astype(str).value_counts(dropna=False)
-cty_counts = participants["Country of residence"].astype(str).value_counts().head(5)
+def _label_counts(series: pd.Series) -> pd.Series:
+    """Value counts with missing coded as Missing (avoid displaying 'nan')."""
+    labeled = series.fillna("Missing").astype(str).replace({"nan": "Missing", "<NA>": "Missing"})
+    return labeled.value_counts(dropna=False)
+
+
+sex_counts = _label_counts(participants["Sex"])
+emp_counts = _label_counts(participants["Employment status"])
+stu_counts = _label_counts(participants["Student status"])
+cty_counts = _label_counts(participants["Country of residence"]).head(5)
 pd.DataFrame(
     [
         {"Metric": "Analytic N (complete PRCA)", "Value": f"{N}"},
@@ -398,13 +413,13 @@ for tier in TIERS:
 
 The Python package `ca_personas` supports Ollama, OpenRouter, and a deterministic **mock** provider for credential-free Posit renders [@ollama; @openrouter]. Predicted JSON fields are validated to the legal 6–30 range, then joined to ground truth for signed and absolute errors.
 
-A seven-model tabular suite (Ridge, Elastic Net, k-NN, Random Forest, HistGradientBoosting, XGBoost, MLP) on the same tiers and targets is reported in [`docs/ml_baselines.md`](docs/ml_baselines.md). On the full cohort, the **best** group-CA MAE reaches **4.49** at `transit` (Ridge; RF = 4.68); the best interpersonal MAE reaches **4.24** (MLP). Feature attributions and ML-vs-LLM comparisons are documented in [`docs/factor_feature_importance.md`](docs/factor_feature_importance.md), [`docs/ml_vs_llm.md`](docs/ml_vs_llm.md), and [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md).
+A seven-model tabular suite (Ridge, Elastic Net, k-NN, Random Forest, HistGradientBoosting, XGBoost, MLP) on the same tiers and targets is reported in [`docs/ml_baselines.md`](docs/ml_baselines.md). On the full cohort, the **best** group-CA MAE reaches **4.49** at `transit` (Ridge; RF = 4.68); the best interpersonal MAE reaches **4.25** (Elastic Net; MLP = 4.31). Feature attributions and ML-vs-LLM comparisons are documented in [`docs/factor_feature_importance.md`](docs/factor_feature_importance.md), [`docs/ml_vs_llm.md`](docs/ml_vs_llm.md), and [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md).
 
 # Results
 
 ## Mock LLM prediction error by information tier
 
-On the full analytic cohort (**N = 241**), the offline mock LLM yields the MAE values in @tbl-mae. Group-CA MAE moves from **`{python} f"{MAE_GROUP_DEMOS:.2f}"`** at `demos` to **`{python} f"{MAE_GROUP_TRANSIT:.2f}"`** at `transit` (Δ = `{python} f"{MAE_GROUP_DELTA:+.2f}"`). Interpersonal-CA MAE is **`{python} f"{MAE_IP_DEMOS:.2f}"`** at `demos` and **`{python} f"{MAE_IP_TRANSIT:.2f}"`** at `transit`. Band accuracy for group CA is **`{python} f"{BAND_GROUP_DEMOS:.3f}"`** (`demos`) vs **`{python} f"{BAND_GROUP_TRANSIT:.3f}"`** (`transit`). These mock figures establish the measurement pipeline; they are not claims about a production LLM. Live-provider comparisons should be read against the full ML suite ceiling in [`docs/ml_baselines.md`](docs/ml_baselines.md) (best group MAE = **4.49** Ridge at `transit`; RF = 4.68).
+On the full analytic cohort (**N = 241**), the offline mock LLM yields the MAE values in @tbl-mae. Group-CA MAE moves from **`{python} f"{MAE_GROUP_DEMOS:.2f}"`** at `demos` to **`{python} f"{MAE_GROUP_TRANSIT:.2f}"`** at `transit` (Δ = `{python} f"{MAE_GROUP_DELTA:+.2f}"`). Interpersonal-CA MAE is **`{python} f"{MAE_IP_DEMOS:.2f}"`** at `demos` and **`{python} f"{MAE_IP_TRANSIT:.2f}"`** at `transit`. Band accuracy for group CA is **`{python} f"{BAND_GROUP_DEMOS:.3f}"`** (`demos`) vs **`{python} f"{BAND_GROUP_TRANSIT:.3f}"`** (`transit`). These mock figures establish the measurement pipeline; they are not claims about a production LLM. These mock figures do **not** meet the RQ1/RQ2 success criterion of lower MAE with richer tiers (group MAE rises from demos to geo before a partial recovery at transit). Live-provider comparisons should be read against the full ML suite ceiling in [`docs/ml_baselines.md`](docs/ml_baselines.md) (best group MAE = **4.49** Ridge; best interpersonal = **4.25** Elastic Net at `transit`; RF group = 4.68).
 
 ```{python}
 #| label: tbl-mae
@@ -767,29 +782,31 @@ Wave-1 memos left concrete open questions (unused Prolific demographics; country
 | Experiment | Memo | n | ROC-AUC | Takeaway |
 |---|---|---:|---:|---|
 | CA + Q28 + car (joint) | [memo](memos/ca_mobility_joint_predicts_transit.md) | 149 | **0.736** | Mobility-dominated joint model |
-| Q28 \| car (nested) | [memo](memos/q28_conditioned_on_car.md) | 149 | **0.730** | Q28 retains lift; car adds ≈0.07 |
+| Q28 \| car (nested) | [memo](memos/q28_conditioned_on_car.md) | 149 | **0.730** | Q28 retains lift; car adds +0.066 AUC |
 | Country + car | [memo](memos/country_car_predicts_transit.md) | 149 | **0.699** | Place × auto access synergy |
 | Common-*N* best (Q28) | [memo](memos/common_n_head_to_head.md) | 139 | **0.659** | Rideshare ranking robust to equal *N* |
-| Demographics (Age+Sex+Student) | [memo](memos/demographics_predict_transit.md) | 224 | **0.618** | Age-driven modest signal |
-| Residual CA (CA-only arm) | [memo](memos/residual_ca_after_rideshare.md) | 241 | **0.590** | CA adds only +0.021 over Q28 |
+| Demographics (Age+Sex+Student) | [memo](memos/demographics_predict_transit.md) | 224 | **0.618** | Age-driven modest signal (younger 57.1% vs older 24.6% regular) |
+| Residual CA (CA-only arm) | [memo](memos/residual_ca_after_rideshare.md) | 241 | **0.590** | CA-only AUC; joint CA+Q28 = 0.783 (+0.021 over Q28) |
 | Country only | [memo](memos/country_predicts_transit.md) | 241 | **0.552** | Ties lat/long geo |
 | Q27 intensity among riders | [memo](memos/q27_intensity_among_riders.md) | 95–101 | **0.549** | No useful within-rider classifier |
 
 ### Findings that change interpretation of the `transit` tier
 
-1. **Q28 is not just “no car.”** On the car-complete overlap (n=149), Q28 alone AUC ≈ 0.665 and Q28+Q21 ≈ 0.730—ride-share days retain discrimination after car conditioning, and car access adds incremental lift ([nested memo](memos/q28_conditioned_on_car.md)).
+1. **Q28 is not just “no car.”** On the car-complete overlap (n=149), Q28 alone AUC = 0.665 and Q28+Q21 = 0.730—ride-share days retain discrimination after car conditioning, and car access adds +0.066 AUC ([nested memo](memos/q28_conditioned_on_car.md)).
 
 2. **Fair rankings still crown rideshare.** Forcing Q28, car, country, geo, employment, CA, and demographics onto one complete-case frame (n=139) preserves **Q28 > country > car > geo > employment ≈ CA ≈ demos** ([common-*N* memo](memos/common_n_head_to_head.md)).
 
-3. **Demographics matter for bias audits.** Age+Sex+Student reach AUC ≈ 0.618 on n=224; younger tertiles are far more often weekly+ riders (≈57% vs ≈25% older). That is relevant to whether `demos`-tier LLM errors track age stereotyping ([demographics memo](memos/demographics_predict_transit.md)).
+3. **Demographics matter for bias audits.** Age+Sex+Student reach AUC = 0.618 on n=224; younger tertiles are far more often weekly+ riders (57.1% vs 24.6% older). That is relevant to whether `demos`-tier LLM errors track age stereotyping ([demographics memo](memos/demographics_predict_transit.md)). Note this Age+Sex+Student feature set differs from the comprehensive-memo “demographics” ablation that also includes country (AUC = 0.636).
 
-4. **CA is descriptively real, predictively redundant with Q28.** The overall regular-rider CA gap replicates (group Δ ≈ −2.72, *d* ≈ −0.46), but nesting CA with Q28 lifts AUC only from 0.762 → 0.783. Within Q28 strata the CA gap is heterogeneous—including a sign reversal in the 0–1 days cell ([residual CA memo](memos/residual_ca_after_rideshare.md)).
+4. **CA is descriptively real, predictively redundant with Q28.** The overall regular-rider CA gap replicates (group Δ = −2.72, *d* = −0.46), but nesting CA with Q28 lifts AUC only from 0.762 → 0.783. Within Q28 strata the CA gap is heterogeneous—including a sign reversal in the 0–1 days cell ([residual CA memo](memos/residual_ca_after_rideshare.md)).
 
-5. **Q27 remains weak even as an among-rider outcome.** High intensity among weekly+ riders is not recoverable from CA, Q28, car, employment, or demos (best AUC ≈ 0.55).
+5. **Q27 remains weak even as an among-rider outcome.** High intensity among weekly+ riders is not recoverable from CA, Q28, car, employment, or demos (best AUC = 0.549).
+
+6. **Kitchen-sink ceiling still looks like Q28.** A tuned comprehensive forest over demos + employment + geo + car + ride-share + CA reaches CV ROC-AUC = **0.824**, but permutation importance remains Q28-dominated ([comprehensive memo](memos/comprehensive_predictors_transit.md)).
 
 # Discussion
 
-On the full matched analytic cohort (**N = 241**), the framework makes the research contrasts concrete: each participant yields five persona prompts (`demos` → `employment` → `geo` → `transit` → `full`) with fixed ground-truth PRCA scores. The base `demos` layer includes **student status** alongside age, sex, and country of residence. Under the deterministic mock provider, group-CA MAE moves from **`{python} f"{MAE_GROUP_DEMOS:.2f}"`** (`demos`) to **`{python} f"{MAE_GROUP_TRANSIT:.2f}"`** (`transit`), while remaining well above the classical ML suite floor of **≈ 4.49** group MAE at the same tier ([`docs/ml_baselines.md`](docs/ml_baselines.md); [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md)). Residual MAE differences by student status (base demos) and employment status (RQ1) are the stereotyping diagnostics once a live LLM provider replaces the mock.
+On the full matched analytic cohort (**N = 241**), the framework makes the research contrasts concrete: each participant yields five persona prompts (`demos` → `employment` → `geo` → `transit` → `full`) with fixed ground-truth PRCA scores. The base `demos` layer includes **student status** alongside age, sex, and country of residence. Under the deterministic mock provider, group-CA MAE moves from **`{python} f"{MAE_GROUP_DEMOS:.2f}"`** (`demos`) to **`{python} f"{MAE_GROUP_TRANSIT:.2f}"`** (`transit`), while remaining well above the classical ML suite floor of **4.49** group MAE / **4.25** interpersonal MAE at the same tier ([`docs/ml_baselines.md`](docs/ml_baselines.md); [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md)). Residual MAE differences by student status (base demos) and employment status (RQ1) are the stereotyping diagnostics once a live LLM provider replaces the mock.
 
 Secondary analyses quantify what the `transit` tier contributes. Regular riders have lower group CA (Δ = −2.72, d = −0.46, p = .0003) and interpersonal CA (Δ = −1.73, d = −0.30, p = .020) ([`memos/transit_riders_ca.md`](memos/transit_riders_ca.md)). As reverse classifiers of weekly+ transit, survey coordinates (AUC = 0.551) and CA scores (AUC = 0.590) remain near chance, whereas **Q28 ride-share days** reach AUC = **0.762** and dominate Q27 (AUC = 0.589) in joint models ([`memos/q27_q28_predict_transit.md`](memos/q27_q28_predict_transit.md)). Wave-2 follow-ups strengthen that claim: Q28 retains lift after car access, still ranks first on a common-*N* frame, and leaves CA with only marginal incremental AUC ([`docs/secondary_rq_followup_experiments.md`](docs/secondary_rq_followup_experiments.md)). That asymmetry supports treating ride-share exposure—not transit-day intensity alone—as the high-value mobility cue in both tabular baselines and persona prompts ([`docs/factor_feature_importance.md`](docs/factor_feature_importance.md) likewise ranks Q28 first for predicting CA). Age-linked demographic structure in reverse transit prediction also flags the `demos` tier as a natural surface for stereotyping audits.
 
