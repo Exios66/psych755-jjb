@@ -60,6 +60,15 @@ def _synthetic(n: int = 200, seed: int = 0) -> pd.DataFrame:
             "participant_id": [f"p{i}" for i in range(n)],
             "Q20": license_,
             "Q21": car,
+            "Q27": rng.choice(
+                [
+                    "1-2 rides in a typical day",
+                    "3-4 rides in a typical day",
+                    "5-6 rides in a typical day",
+                ],
+                size=n,
+                p=[0.75, 0.2, 0.05],
+            ),
             "Q28": q28,
             "Q29": q29,
             "Employment status": emp,
@@ -69,9 +78,18 @@ def _synthetic(n: int = 200, seed: int = 0) -> pd.DataFrame:
 
 
 def test_feature_specs_cover_geo_memo_candidates():
-    assert set(FEATURE_SPECS) >= {"car_access", "employment", "rideshare", "mobility_bundle"}
+    assert set(FEATURE_SPECS) >= {
+        "car_access",
+        "employment",
+        "rideshare",
+        "mobility_bundle",
+        "q27_intensity",
+        "q28_days",
+        "q27_q28",
+    }
     assert FEATURE_SPECS["car_access"]["features"] == ["Q20", "Q21"]
     assert FEATURE_SPECS["rideshare"]["features"] == ["Q28", "Q29"]
+    assert FEATURE_SPECS["q27_q28"]["features"] == ["Q27", "Q28"]
 
 
 def test_prepare_drops_missing_car_items():

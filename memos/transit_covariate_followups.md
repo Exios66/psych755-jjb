@@ -8,7 +8,7 @@ date: 2026-07-25
 **Research question:** Among the candidates listed in the geography → transit memo—car license/access (`Q20`/`Q21`), employment status, and ride-share frequency (`Q28`/`Q29`)—which features best predict regular public-transit use?
 
 **Parent memo:** [`geo_predicts_transit.md`](geo_predicts_transit.md)  
-**Family memos:** [`car_access_predicts_transit.md`](car_access_predicts_transit.md) · [`employment_predicts_transit.md`](employment_predicts_transit.md) · [`rideshare_predicts_transit.md`](rideshare_predicts_transit.md)
+**Family memos:** [`car_access_predicts_transit.md`](car_access_predicts_transit.md) · [`employment_predicts_transit.md`](employment_predicts_transit.md) · [`rideshare_predicts_transit.md`](rideshare_predicts_transit.md) · [`q27_q28_predict_transit.md`](q27_q28_predict_transit.md) (Q27 vs Q28 traditional ML)
 
 ---
 

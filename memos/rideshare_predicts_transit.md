@@ -8,6 +8,7 @@ date: 2026-07-25
 **Research question:** Does ride-share use (`Q28` days; `Q29` typical rides) predict whether a matched respondent takes public transportation regularly?
 
 **Parent memo:** [`geo_predicts_transit.md`](geo_predicts_transit.md)  
+**Q27/Q28 focused memo:** [`q27_q28_predict_transit.md`](q27_q28_predict_transit.md) · manuscript § in [`index.qmd`](../index.qmd)  
 **Comparison memo:** [`transit_covariate_followups.md`](transit_covariate_followups.md)
 
 ---
