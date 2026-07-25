@@ -13,5 +13,15 @@ Individual research memoranda for PSYCH 755.
 | [`rideshare_predicts_transit.md`](rideshare_predicts_transit.md) | Jack J. Burleson | Does ride-share frequency (`Q28`/`Q29`) predict regular transit? |
 | [`q27_q28_predict_transit.md`](q27_q28_predict_transit.md) | Jack J. Burleson | Do Q27 (transit intensity) & Q28 (ride-share days) predict regular transit in traditional ML? |
 | [`transit_covariate_followups.md`](transit_covariate_followups.md) | Jack J. Burleson | Head-to-head geo-memo follow-ups (car / employment / ride-share) |
+| [`demographics_predict_transit.md`](demographics_predict_transit.md) | Jack J. Burleson | Do Age, Sex, and Student status predict regular transit? |
+| [`country_predicts_transit.md`](country_predicts_transit.md) | Jack J. Burleson | Does country of residence predict regular transit (vs lat/long)? |
+| [`q28_conditioned_on_car.md`](q28_conditioned_on_car.md) | Jack J. Burleson | Does Q28 retain lift after conditioning on car access? |
+| [`ca_mobility_joint_predicts_transit.md`](ca_mobility_joint_predicts_transit.md) | Jack J. Burleson | Do CA scores add to Q28 and car access on a complete-case frame? |
+| [`country_car_predicts_transit.md`](country_car_predicts_transit.md) | Jack J. Burleson | Do country and car access jointly predict regular transit? |
+| [`q27_intensity_among_riders.md`](q27_intensity_among_riders.md) | Jack J. Burleson | What predicts Q27 intensity among already-regular riders? |
+| [`common_n_head_to_head.md`](common_n_head_to_head.md) | Jack J. Burleson | Equal complete-case ranking of major transit predictors |
+| [`residual_ca_after_rideshare.md`](residual_ca_after_rideshare.md) | Jack J. Burleson | Does CA still separate riders after accounting for Q28? |
+
+Agenda / hub write-up: [`docs/research_memo_agenda.md`](../docs/research_memo_agenda.md) · [`docs/secondary_rq_followup_experiments.md`](../docs/secondary_rq_followup_experiments.md)
 
 Supporting figure(s) live under [`figures/`](figures/).

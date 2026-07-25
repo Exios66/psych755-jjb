@@ -554,46 +554,49 @@ def plot_family_memo_figure(
     """Two-panel memo figure: prevalence by feature level + ROC curve."""
     import matplotlib.pyplot as plt
 
-    out = Path(output_path)
-    out.parent.mkdir(parents=True, exist_ok=True)
+    from ca_personas.viz_style import (
+        PRIMARY,
+        SUCCESS,
+        add_title_block,
+        apply_memo_style,
+        plot_prevalence_bars,
+        plot_roc_curve,
+        save_figure,
+        short_level,
+    )
+
+    apply_memo_style()
     assoc = analysis["associations"]
     roc = analysis["roc"]
     label = analysis["summary"]["label"]
     auc = float(analysis["metrics"]["roc_auc"])
     n = int(analysis["summary"]["sample"]["n"])
-
-    fig, axes = plt.subplots(1, 2, figsize=(11.2, 4.4))
-    # Left: stacked prevalence bars for the primary feature (first in family).
     primary = analysis["features"][0]
-    sub = assoc.loc[assoc["feature"] == primary].copy()
-    sub = sub.sort_values("pct_regular", ascending=True)
-    colors = ["#2F6F7E" if p >= sub["pct_regular"].median() else "#8FA3A8" for p in sub["pct_regular"]]
-    axes[0].barh(sub["level"].astype(str), sub["pct_regular"], color=colors, edgecolor="white")
-    axes[0].axvline(analysis["summary"]["sample"]["prevalence"], color="#B35C2E", ls="--", lw=1.2, label="sample prevalence")
-    axes[0].set_xlabel("Share regular transit (weekly+)")
-    axes[0].set_title(f"{primary}: prevalence by level (n={n})")
-    axes[0].set_xlim(0, max(0.75, float(sub["pct_regular"].max()) + 0.08))
-    axes[0].legend(loc="lower right", fontsize=8, frameon=False)
+    sub = assoc.loc[assoc["feature"] == primary].copy().sort_values("pct_regular", ascending=True)
 
-    axes[1].plot(roc["fpr"], roc["tpr"], color="#2F6F7E", lw=2.2, label=f"RF AUC = {auc:.3f}")
-    axes[1].plot([0, 1], [0, 1], color="#999999", ls="--", lw=1, label="Chance = 0.500")
-    axes[1].axhline(0, color="none")
-    axes[1].set_xlabel("False positive rate")
-    axes[1].set_ylabel("True positive rate")
-    axes[1].set_title(f"{label}\nstratified CV ROC")
-    axes[1].legend(loc="lower right", fontsize=8, frameon=False)
-    axes[1].set_xlim(0, 1)
-    axes[1].set_ylim(0, 1)
-
-    fig.suptitle(
-        f"Follow-up predictor of regular transit: {label}",
-        fontsize=12,
-        y=1.02,
+    fig, axes = plt.subplots(1, 2, figsize=(11.8, 5.2), gridspec_kw={"width_ratios": [1.15, 1.0]})
+    plot_prevalence_bars(
+        axes[0],
+        [short_level(x) for x in sub["level"]],
+        sub["pct_regular"],
+        ns=sub["n"].astype(int).tolist(),
+        sample_prevalence=float(analysis["summary"]["sample"]["prevalence"]),
+        title=f"{primary}: prevalence by level",
     )
-    fig.tight_layout()
-    fig.savefig(out, dpi=160, bbox_inches="tight")
-    plt.close(fig)
-    return out
+    plot_roc_curve(
+        axes[1],
+        roc,
+        auc=auc,
+        title="Stratified CV ROC",
+        color=SUCCESS if auc >= 0.70 else PRIMARY,
+    )
+    add_title_block(
+        fig,
+        f"Predictor of regular transit: {label}",
+        f"Balanced Random Forest  ·  n={n}  ·  CV ROC-AUC={auc:.3f}  ·  outcome = Q26 weekly+",
+    )
+    fig.subplots_adjust(top=0.80, left=0.12, right=0.98, bottom=0.12, wspace=0.28)
+    return save_figure(fig, Path(output_path))
 
 
 def plot_comparison_memo_figure(
@@ -605,39 +608,39 @@ def plot_comparison_memo_figure(
     """Bar chart comparing follow-up AUCs against geo/CA/chance benchmarks."""
     import matplotlib.pyplot as plt
 
-    out = Path(output_path)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    frame = comparison.copy()
-    # Keep readable order: candidates then benchmarks mixed by AUC already sorted.
-    labels = frame["label"].tolist()
-    aucs = frame["roc_auc"].astype(float).tolist()
-    colors = []
-    for key in frame["spec_key"]:
-        if key in {"geo_benchmark", "ca_benchmark", "chance"}:
-            colors.append("#A67C52")
-        elif key in {"mobility_bundle", "q27_q28", "q28_days"}:
-            colors.append("#1F4E5F")
-        else:
-            colors.append("#2F6F7E")
+    from ca_personas.viz_style import (
+        WARN,
+        add_title_block,
+        apply_memo_style,
+        family_color,
+        plot_auc_bars,
+        save_figure,
+    )
 
-    fig, ax = plt.subplots(figsize=(9.5, 4.8))
-    y = np.arange(len(labels))[::-1]
-    ax.barh(y, aucs[::-1], color=colors[::-1], edgecolor="white")
-    ax.axvline(0.5, color="#999999", ls="--", lw=1, label="Chance")
-    ax.axvline(0.551, color="#B35C2E", ls=":", lw=1.2, label="Geo benchmark")
-    ax.axvline(0.590, color="#6B3E26", ls="-.", lw=1.2, label="CA benchmark")
-    ax.set_yticks(y)
-    ax.set_yticklabels(labels[::-1], fontsize=9)
-    ax.set_xlabel("CV ROC-AUC")
-    ax.set_xlim(0.45, max(0.75, max(aucs) + 0.04))
-    ax.set_title(title)
-    ax.legend(loc="lower right", fontsize=8, frameon=False)
-    for yi, auc in zip(y, aucs[::-1]):
-        ax.text(auc + 0.004, yi, f"{auc:.3f}", va="center", fontsize=8)
-    fig.tight_layout()
-    fig.savefig(out, dpi=160, bbox_inches="tight")
-    plt.close(fig)
-    return out
+    apply_memo_style()
+    frame = comparison.dropna(subset=["roc_auc"]).copy()
+    colors = [
+        WARN if k in {"geo_benchmark", "ca_benchmark", "chance"} else family_color(str(k))
+        for k in frame["spec_key"]
+    ]
+    fig, ax = plt.subplots(figsize=(10.4, max(4.8, 0.48 * len(frame) + 2.0)))
+    plot_auc_bars(
+        ax,
+        frame["label"].tolist(),
+        frame["roc_auc"].astype(float).tolist(),
+        colors=colors,
+        ns=frame["n"].tolist() if "n" in frame.columns else None,
+        benchmarks=("chance", "geo", "ca"),
+        xlim=(0.45, min(0.88, float(frame["roc_auc"].max()) + 0.08)),
+    )
+    best = frame.sort_values("roc_auc", ascending=False).iloc[0]
+    add_title_block(
+        fig,
+        title,
+        f"Best family: {best['label']} (AUC={best['roc_auc']:.3f})  ·  seeded stratified CV  ·  unequal complete-case N noted in memo",
+    )
+    fig.subplots_adjust(top=0.82, left=0.32, right=0.96, bottom=0.12)
+    return save_figure(fig, Path(output_path))
 
 
 def run_transit_covariate_pipeline(
