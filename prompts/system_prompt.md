@@ -56,6 +56,10 @@ fields are appended when present.
 Full Prolific waves (File A/B) omit ethnicity / nationality / language; the demos
 tier then uses Age, Sex, Country of residence, and Student status only.
 
+Illustrative sample prompts (two per tier) live under
+[`prompts/examples/`](examples/), with one subfolder per context-combination tier
+(`demos/`, `employment/`, `geo/`, `transit/`, `full/`).
+
 ## Evaluation metrics
 
 Against ground-truth PRCA subscales we report:
