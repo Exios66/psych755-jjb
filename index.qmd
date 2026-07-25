@@ -15,8 +15,9 @@ abstract: |
   interpersonal subscales (range 6–30), we join Prolific demographics to Qualtrics responses,
   build cumulative persona prompts (demographics → employment → geography → transportation),
   and score predictions against ground-truth PRCA. All displayed statistics use the full
-  Prolific↔Qualtrics matched analytic cohort (N = 241). On a deterministic mock LLM, mean
-  absolute error (MAE) for group CA ranges from 8.31 (demos) to 7.42 (transit). On the same
+  Prolific↔Qualtrics matched analytic cohort (N = 241). Base demographics include student
+  status alongside age, sex, and country of residence. On a deterministic mock LLM, mean
+  absolute error (MAE) for group CA is 7.70 at demos and 8.40 at transit. On the same
   cohort, traditional Random Forests show that ride-share days (Q28) predict regular public
   transit at CV ROC-AUC = 0.762, whereas transit-day intensity (Q27) yields AUC = 0.589
   ([memo](memos/q27_q28_predict_transit.md)).
@@ -144,6 +145,24 @@ _emp_mae = (
 EMP_MAE_FULL = float(_emp_mae.get("Full-Time", float("nan")))
 EMP_MAE_PART = float(_emp_mae.get("Part-Time", float("nan")))
 EMP_MAE_OTHER = float(_emp_mae.get("Other", float("nan")))
+
+# Base-demos stereotyping slice: student status at demos tier
+_stu_mae = (
+    evaluation.loc[evaluation["tier"] == "demos"]
+    .groupby("Student status", dropna=False)["abs_error_group"]
+    .mean()
+)
+STU_MAE_YES = float(_stu_mae.get("Yes", float("nan")))
+STU_MAE_NO = float(_stu_mae.get("No", float("nan")))
+
+_mae_idx = mae_tiers.set_index("tier")
+MAE_GROUP_DEMOS = float(_mae_idx.loc["demos", "mae_group"])
+MAE_GROUP_TRANSIT = float(_mae_idx.loc["transit", "mae_group"])
+MAE_IP_DEMOS = float(_mae_idx.loc["demos", "mae_interpersonal"])
+MAE_IP_TRANSIT = float(_mae_idx.loc["transit", "mae_interpersonal"])
+BAND_GROUP_DEMOS = float(_mae_idx.loc["demos", "band_acc_group"])
+BAND_GROUP_TRANSIT = float(_mae_idx.loc["transit", "band_acc_group"])
+MAE_GROUP_DELTA = MAE_GROUP_TRANSIT - MAE_GROUP_DEMOS
 ```
 
 # Introduction
@@ -186,6 +205,7 @@ Participants were recruited via Prolific in two waves (File A + File B; stacked)
 
 sex_counts = participants["Sex"].astype(str).value_counts()
 emp_counts = participants["Employment status"].astype(str).value_counts()
+stu_counts = participants["Student status"].astype(str).value_counts(dropna=False)
 cty_counts = participants["Country of residence"].astype(str).value_counts().head(5)
 pd.DataFrame(
     [
@@ -201,6 +221,10 @@ pd.DataFrame(
         {
             "Metric": "Sex",
             "Value": "; ".join(f"{k} = {v}" for k, v in sex_counts.items()),
+        },
+        {
+            "Metric": "Student status (base demos)",
+            "Value": "; ".join(f"{k} = {v}" for k, v in stu_counts.items()),
         },
         {
             "Metric": "Employment status",
@@ -277,7 +301,7 @@ Classical Random Forest and KNN baselines on the same tiers and targets are repo
 
 ## Mock LLM prediction error by information tier
 
-On the full analytic cohort (**N = 241**), the offline mock LLM yields the MAE values in @tbl-mae. Group-CA MAE decreases from **8.31** at `demos` to **7.42** at `transit` (Δ = −0.89). Interpersonal-CA MAE is **8.30** at `demos` and **8.56** at `transit` (no monotonic improvement). Band accuracy for group CA rises from **0.311** (`demos`) to **0.386** (`transit`). These mock figures establish the measurement pipeline; they are not claims about a production LLM. Live-provider comparisons should be read against the RF ceiling in [`docs/ml_baselines.md`](docs/ml_baselines.md) (best RF group MAE = 4.68 at `transit`).
+On the full analytic cohort (**N = 241**), the offline mock LLM yields the MAE values in @tbl-mae. Group-CA MAE moves from **`{python} f"{MAE_GROUP_DEMOS:.2f}"`** at `demos` to **`{python} f"{MAE_GROUP_TRANSIT:.2f}"`** at `transit` (Δ = `{python} f"{MAE_GROUP_DELTA:+.2f}"`). Interpersonal-CA MAE is **`{python} f"{MAE_IP_DEMOS:.2f}"`** at `demos` and **`{python} f"{MAE_IP_TRANSIT:.2f}"`** at `transit`. Band accuracy for group CA is **`{python} f"{BAND_GROUP_DEMOS:.3f}"`** (`demos`) vs **`{python} f"{BAND_GROUP_TRANSIT:.3f}"`** (`transit`). These mock figures establish the measurement pipeline; they are not claims about a production LLM. Live-provider comparisons should be read against the RF ceiling in [`docs/ml_baselines.md`](docs/ml_baselines.md) (best RF group MAE = 4.68 at `transit`).
 
 ```{python}
 #| label: tbl-mae
@@ -331,7 +355,7 @@ plt.show()
 
 ## Predicted versus observed group CA
 
-@fig-error-scatter shows predicted versus ground-truth group CA for each research tier. Points cluster away from the identity line, consistent with MAE values near 7–8 points on a 24-point scale. The `geo` and `transit` panels show slightly tighter vertical spread for mid-range ground-truth scores than `demos`, matching the MAE reduction from 8.31 to 7.42.
+@fig-error-scatter shows predicted versus ground-truth group CA for each research tier. Points cluster away from the identity line, consistent with MAE values near 7–8 points on a 24-point scale. Compare panels against the cohort MAE path from `{python} f"{MAE_GROUP_DEMOS:.2f}"` (`demos`) to `{python} f"{MAE_GROUP_TRANSIT:.2f}"` (`transit`).
 
 ```{python}
 #| label: fig-error-scatter
@@ -371,6 +395,28 @@ plt.show()
 ```
 
 *Note.* Each panel contains N = 241 participant predictions from the mock LLM. The dashed line is the identity (perfect prediction).
+
+## Absolute group-CA error by student status (base demos)
+
+@tbl-by-student reports mock-LLM absolute group-CA error by **student status** — a first-class field in the base `demos` layer — crossed with persona tier. At the `demos` tier, Student = Yes MAE = `{python} f"{STU_MAE_YES:.2f}"` and Student = No MAE = `{python} f"{STU_MAE_NO:.2f}"`. Residual gaps here are the demographics-only stereotyping diagnostic before employment or transit cues are added ([`docs/ml_vs_llm.md`](docs/ml_vs_llm.md); [`docs/cohort_eda.md`](docs/cohort_eda.md)).
+
+```{python}
+#| label: tbl-by-student
+#| tbl-cap: "Mock LLM Absolute Group-CA Error by Student Status and Persona Tier (Base Demos Layer)"
+
+by_stu = (
+    evaluation.dropna(subset=["abs_error_group"])
+    .groupby(["Student status", "tier"], dropna=False)["abs_error_group"]
+    .agg(n="count", MAE="mean", SD="std")
+    .reset_index()
+)
+by_stu = by_stu[by_stu["tier"].isin(RESEARCH_TIERS)].copy()
+by_stu["tier"] = pd.Categorical(by_stu["tier"], categories=list(RESEARCH_TIERS), ordered=True)
+by_stu = by_stu.sort_values(["Student status", "tier"])
+by_stu = by_stu.round({"MAE": 2, "SD": 2})
+by_stu.columns = ["Student status", "Tier", "n", "MAE", "SD"]
+by_stu
+```
 
 ## Absolute group-CA error by employment status
 
@@ -609,7 +655,7 @@ plt.show()
 
 # Discussion
 
-On the full matched analytic cohort (**N = 241**), the framework makes the research contrasts concrete: each participant yields five persona prompts (`demos` → `employment` → `geo` → `transit` → `full`) with fixed ground-truth PRCA scores. Under the deterministic mock provider, group-CA MAE improves from **8.31** (`demos`) to **7.42** (`transit`), while remaining well above the classical RF floor of **4.68** at the same tier ([`docs/ml_baselines.md`](docs/ml_baselines.md); [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md)). Residual MAE differences by employment status are the RQ1 stereotyping diagnostic once a live LLM provider replaces the mock.
+On the full matched analytic cohort (**N = 241**), the framework makes the research contrasts concrete: each participant yields five persona prompts (`demos` → `employment` → `geo` → `transit` → `full`) with fixed ground-truth PRCA scores. The base `demos` layer includes **student status** alongside age, sex, and country of residence. Under the deterministic mock provider, group-CA MAE moves from **`{python} f"{MAE_GROUP_DEMOS:.2f}"`** (`demos`) to **`{python} f"{MAE_GROUP_TRANSIT:.2f}"`** (`transit`), while remaining well above the classical RF floor of **4.68** at the same tier ([`docs/ml_baselines.md`](docs/ml_baselines.md); [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md)). Residual MAE differences by student status (base demos) and employment status (RQ1) are the stereotyping diagnostics once a live LLM provider replaces the mock.
 
 Secondary analyses quantify what the `transit` tier contributes. Regular riders have lower group CA (Δ = −2.72, d = −0.46, p = .0003) and interpersonal CA (Δ = −1.73, d = −0.30, p = .020) ([`memos/transit_riders_ca.md`](memos/transit_riders_ca.md)). As reverse classifiers of weekly+ transit, survey coordinates (AUC = 0.551) and CA scores (AUC = 0.590) remain near chance, whereas **Q28 ride-share days** reach AUC = **0.762** and dominate Q27 (AUC = 0.589) in joint models ([`memos/q27_q28_predict_transit.md`](memos/q27_q28_predict_transit.md)). That asymmetry supports treating ride-share exposure—not transit-day intensity alone—as the high-value mobility cue in both tabular baselines and persona prompts ([`docs/factor_feature_importance.md`](docs/factor_feature_importance.md) likewise ranks Q28 first for predicting CA).
 

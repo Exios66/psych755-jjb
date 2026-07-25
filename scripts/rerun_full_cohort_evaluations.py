@@ -119,7 +119,9 @@ def main() -> int:
     for nb in notebooks:
         _run(nbconvert + [nb])
 
-    # Posit committed mock artifacts
+    # Posit committed mock artifacts (from sibling File A/B/C).
+    # If only committed participants exist, prefer:
+    #   python scripts/rerun_posit_mock_from_participants.py
     _run([sys.executable, "scripts/sync_posit_full_cohort_artifacts.py"])
 
     # Refresh docs/figures that notebooks write under outputs/ then copy if present

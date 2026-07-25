@@ -61,6 +61,7 @@ def evaluate_predictions(
         "Sex",
         "Ethnicity simplified",
         "Country of residence",
+        "Student status",
         "Employment status",
         "LocationLatitude",
         "LocationLongitude",
@@ -130,6 +131,57 @@ def evaluate_predictions(
             )
 
     return merged
+
+
+def summarize_errors_by_group(
+    evaluation: pd.DataFrame,
+    group_col: str,
+) -> pd.DataFrame:
+    """MAE / band accuracy by demographic group × tier (stereotyping slices)."""
+    if group_col not in evaluation.columns:
+        return pd.DataFrame()
+    rows: list[dict[str, Any]] = []
+    for (group_key, tier), frame in evaluation.groupby([group_col, "tier"], dropna=False):
+        score_usable = frame.dropna(
+            subset=["abs_error_group", "abs_error_interpersonal"],
+            how="any",
+        )
+        row: dict[str, Any] = {
+            "group_col": group_col,
+            "group_key": str(group_key),
+            "tier": str(tier),
+            "n_predictions": int(len(frame)),
+            "n_with_ground_truth": int(len(score_usable)),
+            "mae_group": (
+                float(score_usable["abs_error_group"].mean()) if len(score_usable) else None
+            ),
+            "mae_interpersonal": (
+                float(score_usable["abs_error_interpersonal"].mean())
+                if len(score_usable)
+                else None
+            ),
+            "mean_error_group": (
+                float(score_usable["error_group"].mean()) if len(score_usable) else None
+            ),
+            "mean_error_interpersonal": (
+                float(score_usable["error_interpersonal"].mean())
+                if len(score_usable)
+                else None
+            ),
+        }
+        for side in ("group", "interpersonal"):
+            band_col = f"band_match_{side}"
+            if band_col in frame.columns:
+                band_usable = frame.dropna(subset=[band_col])
+                row[f"band_acc_{side}"] = (
+                    float(band_usable[band_col].astype(bool).mean())
+                    if len(band_usable)
+                    else None
+                )
+            else:
+                row[f"band_acc_{side}"] = None
+        rows.append(row)
+    return pd.DataFrame(rows)
 
 
 def summarize_errors(evaluation: pd.DataFrame) -> pd.DataFrame:

@@ -13,7 +13,7 @@ subtitle: "Analytic sample support for primary and secondary research questions"
 
 ## 1. Why this page exists
 
-Every persona tier, ML baseline, and secondary RQ rests on the same cleaned analytic sample. This page records how that sample is built and what the empirical CA patterns look like by employment, transit, sex, and country — the slices used later when interpreting LLM stereotyping error.
+Every persona tier, ML baseline, and secondary RQ rests on the same cleaned analytic sample. This page records how that sample is built and what the empirical CA patterns look like by employment, transit, sex, student status, and country — the slices used later when interpreting LLM stereotyping error. The `demos` persona tier’s base demographics layer is Age, Sex, Country of residence, and Student status.
 
 ## 2. Sample construction
 
@@ -64,7 +64,7 @@ Full-time respondents report lower CA. If an LLM stereotypes “unemployed / oth
 
 Higher ridership ↔ lower mean CA (Never group M = 17.38 → 8+ days M = 12.84). This is the descriptive foundation for [Transit → CA](secondary_rq_transit_ca.md) ([memo](../memos/transit_riders_ca.md)) and [CA → Transit](secondary_rq_ca_predicts_transit.md) ([memo](../memos/ca_scores_predict_transit.md)).
 
-## 6. Stereotyping lens — sex & country
+## 6. Stereotyping lens — sex, student status & country
 
 | Slice | n | Mean group CA | Mean interpersonal CA |
 |---|---:|---:|---:|
