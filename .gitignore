@@ -54,3 +54,9 @@ data/excerpts/*
 
 # Executed notebook artifacts
 notebooks/*.executed.ipynb
+
+# Committed full-cohort Posit mock tables (no raw exports)
+!artifacts/
+!artifacts/posit_full_cohort/
+!artifacts/posit_full_cohort/**
+.sibling_data_link

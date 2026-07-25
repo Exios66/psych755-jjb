@@ -17,7 +17,7 @@ Using the Prolific↔Qualtrics matched cohort for this project (File A + File B 
 
 Figures below match the formal write-up [`docs/secondary_rq_ca_predicts_transit.md`](../docs/secondary_rq_ca_predicts_transit.md) and the seeded CLI artifacts under `outputs/ca_transit_rf/` (`ca-personas ca-transit-rf --join inner --seed 42`).
 
-**Short answer:** Yes — but modestly. Higher CA is associated with *lower* odds of regular transit, and a CA-only Random Forest recovers **above-chance** discrimination (CV ROC-AUC = **0.590**). Group CA is the stronger predictor.
+**Short answer:** Yes. Higher CA is associated with *lower* odds of regular transit, and a CA-only Random Forest recovers above-chance discrimination (CV ROC-AUC = **0.590**; group-only = **0.555**; interpersonal-only = **0.506**). Group CA is the larger contributor (permutation mean AUC drop = 0.309 vs 0.223).
 
 ![Mean CA by transit group and ROC curve for the CA Random Forest](figures/ca_predicts_transit_memo.png)
 
@@ -37,7 +37,7 @@ Figures below match the formal write-up [`docs/secondary_rq_ca_predicts_transit.
 
 Permutation importance likewise ranks **group CA** above interpersonal CA. Combining both subscales improves AUC by about +0.035 over the better single-feature model.
 
-**Conclusion.** Group and interpersonal CA do carry usable—but weak—predictive signal for regular public-transit use in this matched sample. The relationship is consistent in direction (higher apprehension ↔ less weekly+ transit) and is driven more by **group** than interpersonal CA. CA alone is not a strong classifier of transit habits (many high-CA respondents still ride regularly), so these scores should be treated as a modest behavioral correlate, not a deterministic proxy.
+**Conclusion.** Group and interpersonal CA recover CV ROC-AUC = **0.590** for weekly+ transit — above chance (+0.090) and above geo (0.551), but below Q28 (0.762; [`q27_q28_predict_transit.md`](q27_q28_predict_transit.md)). The relationship is consistent in direction (higher apprehension ↔ less weekly+ transit) and is driven more by **group** than interpersonal CA. CA alone does not separate riders cleanly (OOF confusion TN=76, FP=64, FN=40, TP=61), so treat these scores as a behavioral correlate, not a deterministic proxy.
 
 *Sources:* `notebooks/secondary_rq_ca_transit_rf.ipynb` · `src/ca_personas/ca_transit_rf.py` · `ca-personas ca-transit-rf` · write-up `docs/secondary_rq_ca_predicts_transit.md` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
 
@@ -49,4 +49,4 @@ Is the CA–transit link causal (e.g., anxiety reducing use of shared vehicles),
 
 ## What other features may also well-predict regular public transit use?
 
-Survey geolocation (latitude/longitude) was examined in a companion Random Forest (`secondary_rq_geo_transit_rf.ipynb`) and showed similarly modest AUC (≈ 0.55). Geo-memo follow-ups are now written up: ride-share (`Q28`/`Q29`) is substantially stronger (AUC ≈ **0.745**), car access (`Q20`/`Q21`) mid-tier (≈ **0.607**), and employment alone weak (≈ **0.528**) — see [`transit_covariate_followups.md`](transit_covariate_followups.md).
+Survey geolocation recovers AUC = **0.551** ([`geo_predicts_transit.md`](geo_predicts_transit.md)). Head-to-head mobility follow-ups: ride-share family Q28/Q29 AUC = **0.745**, car access Q20/Q21 AUC = **0.607**, employment AUC = **0.528**, Q28 alone AUC = **0.762** — see [`transit_covariate_followups.md`](transit_covariate_followups.md) and [`q27_q28_predict_transit.md`](q27_q28_predict_transit.md).

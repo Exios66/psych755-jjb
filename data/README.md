@@ -33,9 +33,10 @@ ca-personas prepare --join inner
 ca-personas run --provider mock --join inner
 ```
 
-When sibling files are absent, path resolution in `ca_personas.paths` /
-`pipeline.py` falls back to `excerpts/` so CI and Posit Connect Cloud still run.
-See [`excerpts/README.md`](excerpts/README.md).
+When sibling files are absent, path resolution also checks `/tmp/sibling_data` and
+`CA_SIBLING_DATA`. Excerpt fixtures remain for **unit tests only**. Posit Connect
+pages display full-cohort statistics via live File A/B/C or committed
+`artifacts/posit_full_cohort/` (never excerpt N). See [`excerpts/README.md`](excerpts/README.md).
 
 **Never commit** File A/B/C (or any other full Prolific/Qualtrics dump) into git. The repo `.gitignore` already blocks `data/*` except the approved excerpt fixtures.
 

@@ -15,9 +15,9 @@ date: 2026-07-25
 
 ## Answer, Response, + Summary of Results
 
-Using the matched analytic cohort with complete `Q28`/`Q29` (**n = 233**; 99 regular / 134 not regular; prevalence ≈ 42.5%), we fit a balanced Random Forest (stratified 5-fold CV, `seed=42`) predicting weekly+ transit from ride-share **days in the last three months** (`Q28`) and **rides on a typical ride-share day** (`Q29`).
+Using the matched analytic cohort with complete `Q28`/`Q29` (**n = 233**; 99 regular / 134 not regular; prevalence = 42.5%), we fit a balanced Random Forest (stratified 5-fold CV, `seed=42`) predicting weekly+ transit from ride-share **days in the last three months** (`Q28`) and **rides on a typical ride-share day** (`Q29`).
 
-**Short answer:** Yes — clearly, and much more strongly than geography or CA. Ride-share frequency recovers CV ROC-AUC ≈ **0.745**, well above chance (0.500), geo (≈ **0.551**), and CA (≈ **0.590**). Signal is driven almost entirely by **`Q28`**.
+**Short answer:** Yes — ride-share frequency exceeds geography and CA on CV ROC-AUC. Ride-share frequency recovers CV ROC-AUC = **0.745**, well above chance (0.500), geo (**0.551**), and CA (**0.590**). Signal is driven almost entirely by **`Q28`**.
 
 ![Ride-share prevalence by level and ROC curve](figures/rideshare_predicts_transit_memo.png)
 
@@ -42,9 +42,9 @@ Using the matched analytic cohort with complete `Q28`/`Q29` (**n = 233**; 99 reg
 | Geo RF benchmark | 241 | 0.551 | — | — |
 | Chance | — | 0.500 | 0.500 | — |
 
-Permutation importance: **Q28** mean AUC drop ≈ 0.29 vs much smaller contribution from **Q29**. Average precision ≈ 0.655 and Brier ≈ 0.197 indicate useful ranking and calibration relative to the weaker geo/CA forests.
+Permutation importance: **Q28** mean AUC drop = 0.291 vs **Q29** = 0.015. Average precision = 0.655 and Brier = 0.197. Relative to geo (AUC = 0.551) and CA (AUC = 0.590), the rideshare family gains +0.194 and +0.155 AUC respectively.
 
-**Conclusion.** Among the geo-memo follow-up candidates, ride-share frequency is the **strongest** stand-alone predictor of regular public-transit use. The association is theoretically expected (shared mobility habits / multimodal travelers) but is still same-wave and non-causal; `Q28` and `Q26` may also share response styles or urban lifestyle confounds.
+**Conclusion.** Among the geo-memo follow-up candidates, the Q28/Q29 family recovers the highest stand-alone AUC in that trio (**0.745**); Q28 alone reaches **0.762** ([`q27_q28_predict_transit.md`](q27_q28_predict_transit.md)). The association is theoretically expected (shared mobility habits / multimodal travelers) but is still same-wave and non-causal; `Q28` and `Q26` may also share response styles or urban lifestyle confounds.
 
 *Sources:* `notebooks/secondary_rq_rideshare_transit_rf.ipynb` · `src/ca_personas/transit_covariate_rf.py` · `ca-personas covariate-transit-rf --specs rideshare` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
 
@@ -56,4 +56,4 @@ How much of the `Q28`→`Q26` link is multimodality versus correlated urbanicity
 
 ## What other features may also well-predict regular public transit use?
 
-Car access adds incremental descriptive signal (AUC ≈ 0.607) but the joint car+employment+ride-share bundle (AUC ≈ 0.747) barely exceeds ride-share alone on the smaller complete-case subset—see the comparison memo.
+Car access recovers AUC = **0.607** ([`car_access_predicts_transit.md`](car_access_predicts_transit.md)); the joint car+employment+ride-share bundle recovers AUC = **0.747** on n = 143 — only +0.002 over ride-share alone on that smaller complete-case subset ([`transit_covariate_followups.md`](transit_covariate_followups.md)).

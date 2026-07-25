@@ -8,7 +8,7 @@ Estimate whether LLM-predicted communication apprehension (CA) from demographic 
 
 ## Pipeline
 
-Private full-cohort inputs live in `../sibling_data/` (File A + File B stacked Prolific waves; File C Qualtrics; merge on `Q0`). Excerpt fixtures under `data/excerpts/` are the CI / Posit Cloud fallback.
+Private full-cohort inputs live in `../sibling_data/` (File A + File B stacked Prolific waves; File C Qualtrics; merge on `Q0`). Path resolution also accepts staged cloud copies (`/tmp/sibling_data` or `CA_SIBLING_DATA`). Excerpt fixtures under `data/excerpts/` are for unit tests only — Posit Connect pages never display excerpt statistics (they use full-cohort runs or committed `artifacts/posit_full_cohort/`).
 
 ```{mermaid}
 flowchart LR

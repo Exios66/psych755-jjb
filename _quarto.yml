@@ -143,6 +143,11 @@ website:
           - memos/common_n_head_to_head.md
           - memos/residual_ca_after_rideshare.md
 
+crossref:
+  fig-title: "Figure"
+  tbl-title: "Table"
+  title-delim: "."
+
 format:
   html:
     theme:
@@ -160,6 +165,8 @@ format:
     smooth-scroll: true
     citations-hover: true
     footnotes-hover: true
+    fig-cap-location: bottom
+    tbl-cap-location: top
 
 execute:
   echo: true
