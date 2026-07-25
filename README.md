@@ -48,6 +48,7 @@ These questions use the **full Prolific↔Qualtrics matched analytic sample** (F
 | 4 | Do Qualtrics **latitude & longitude** predict regular transit use? (RF + CV) | [`secondary_rq_geo_transit_rf.ipynb`](notebooks/secondary_rq_geo_transit_rf.ipynb) | `ca-personas geo-transit-rf` |
 | 5 | Do **group & interpersonal CA** scores predict regular transit use? (RF + CV) | [`secondary_rq_ca_transit_rf.ipynb`](notebooks/secondary_rq_ca_transit_rf.ipynb) | `ca-personas ca-transit-rf` · [write-up](docs/secondary_rq_ca_predicts_transit.md) |
 | 6 | Do **car access / employment / ride-share** predict regular transit? (geo-memo follow-ups) | [`secondary_rq_transit_covariate_followups.ipynb`](notebooks/secondary_rq_transit_covariate_followups.ipynb) | `ca-personas covariate-transit-rf` · [write-up](docs/secondary_rq_transit_covariate_followups.md) |
+| 7 | Do **Q27** (transit intensity) & **Q28** (ride-share days) predict regular transit? (traditional ML) | same follow-up CLI (`--specs q27_intensity q28_days q27_q28`) | [write-up](docs/secondary_rq_q27_q28_predict_transit.md) · [memo](memos/q27_q28_predict_transit.md) · manuscript `index.qmd` |
 
 **Primary operationalization of “regular transit” (RQs 1–6):** `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more public transit).
 

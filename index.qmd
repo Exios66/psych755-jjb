@@ -15,8 +15,11 @@ abstract: |
   group and interpersonal subscales (range 6–30), we join Prolific demographics to
   Qualtrics survey responses, build cumulative persona prompts (demographics → employment →
   geography → transportation), and collect LLM self-reports via Ollama or OpenRouter.
-  On a small excerpt sample we illustrate the reproducible pipeline, report mean absolute
-  error by information tier, and outline the bias analyses intended for the full cohort.
+  On a small excerpt sample we illustrate the reproducible pipeline and report mean absolute
+  error by information tier. On the full matched cohort we also evaluate traditional
+  Random Forest classifiers of regular public-transit use: ride-share days (Q28) show
+  strong discrimination (CV ROC-AUC ≈ 0.76), whereas transit-day intensity (Q27) is only
+  modest (≈ 0.59)—findings detailed in the companion research memo.
 keywords:
   - communication apprehension
   - large language models
@@ -94,7 +97,7 @@ This project compares **information tiers** rather than a single prompt:
 
 ### Secondary questions (matched cohort, observational)
 
-Independently of LLM personification, secondary analyses on the Prolific↔Qualtrics matched sample ask: (1) whether **regular public-transit riders** differ in PRCA scores from the larger cohort ([write-up](docs/secondary_rq_transit_ca.md); [memo](memos/transit_riders_ca.md)); (2) whether **survey latitude/longitude** predict regular transit use ([write-up](docs/secondary_rq_geo_predicts_transit.md); [memo](memos/geo_predicts_transit.md)); and (3) whether **group and interpersonal CA** themselves predict regular transit use via a Random Forest ([write-up](docs/secondary_rq_ca_predicts_transit.md); [memo](memos/ca_scores_predict_transit.md)). Supporting methods pages cover [cohort EDA](docs/cohort_eda.md), [ML baselines](docs/ml_baselines.md), [ML vs LLM metrics](docs/ml_vs_llm.md), and [feature importance](docs/factor_feature_importance.md).
+Independently of LLM personification, secondary analyses on the Prolific↔Qualtrics matched sample ask: (1) whether **regular public-transit riders** differ in PRCA scores from the larger cohort ([write-up](docs/secondary_rq_transit_ca.md); [memo](memos/transit_riders_ca.md)); (2) whether **survey latitude/longitude** predict regular transit use ([write-up](docs/secondary_rq_geo_predicts_transit.md); [memo](memos/geo_predicts_transit.md)); (3) whether **group and interpersonal CA** themselves predict regular transit use via a Random Forest ([write-up](docs/secondary_rq_ca_predicts_transit.md); [memo](memos/ca_scores_predict_transit.md)); and (4) whether mobility items **Q27** (rides on a typical public-transit day) and **Q28** (ride-share days) predict regular transit in traditional ML classifiers ([write-up](docs/secondary_rq_q27_q28_predict_transit.md); [memo](memos/q27_q28_predict_transit.md); head-to-head [follow-ups](memos/transit_covariate_followups.md)). Supporting methods pages cover [cohort EDA](docs/cohort_eda.md), [ML baselines](docs/ml_baselines.md), [ML vs LLM metrics](docs/ml_vs_llm.md), and [feature importance](docs/factor_feature_importance.md).
 
 # Methods
 
@@ -256,11 +259,64 @@ by_emp = (
 by_emp
 ```
 
+## Secondary results: Q27 and Q28 as traditional ML predictors of regular transit
+
+The persona pipeline treats transportation items as *inputs* when predicting CA. The reverse question—how well those same items predict **regular public-transit use**—matters for interpreting the `transit` tier and for ranking which mobility cues carry real tabular signal. Full-cohort results below come from seeded Random Forests on the matched File A/B/C sample (`ca-personas covariate-transit-rf --seed 42`); they are reported statically here because Quarto Cloud renders use excerpt fixtures only. The complete research memorandum is [`memos/q27_q28_predict_transit.md`](memos/q27_q28_predict_transit.md), with methods detail in [`docs/secondary_rq_q27_q28_predict_transit.md`](docs/secondary_rq_q27_q28_predict_transit.md) and the broader mobility head-to-head in [`memos/transit_covariate_followups.md`](memos/transit_covariate_followups.md).
+
+### Outcome, items, and estimators
+
+**Regular transit** is the project’s primary binary label: `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more public transit; 101/241 = 41.9% in the analytic PRCA cohort). Predictors are:
+
+| Item | Survey stem (abridged) | Construct |
+|---|---|---|
+| **Q27** | On a typical day of public transportation use, how many rides do you take? | Within-mode **intensity** on use days |
+| **Q28** | In the last three months on how many days did you use ride-share platforms (Lyft, Uber, DiDi, etc.)? | Cross-mode **ride-share exposure** |
+
+Each model is a balanced `RandomForestClassifier` (500 trees, `min_samples_leaf=3`) over one-hot category levels, evaluated with stratified 5-fold out-of-fold probabilities (`random_state=42`). Chance ROC-AUC = 0.50; companion benchmarks from the same cohort definition are geo lat/long AUC ≈ **0.551** and group+interpersonal CA AUC ≈ **0.590** ([geo memo](memos/geo_predicts_transit.md); [CA memo](memos/ca_scores_predict_transit.md)).
+
+### Descriptive associations
+
+![Regular-transit prevalence by Q27/Q28 levels and joint-model ROC](memos/figures/q27_q28_predicts_transit_memo.png){fig-alt="Two-panel figure: bar chart of regular-transit share by Q27 intensity level and ROC curve for the Q27+Q28 Random Forest."}
+
+**Q27 (n = 239 complete cases).** Most respondents report 1–2 rides on a typical transit day (n = 190; 34.7% regular). Higher intensity bins are smaller but much more often weekly+ riders (3–4 rides: 68.9% regular; 5+ rides: all regular in this sample). The gradient is real but sparse.
+
+**Q28 (n = 241).** Ride-share days show a steep, monotonic association with regular transit: Never ≈ 15.7% regular → 0–1 days/month ≈ 23.4% → 2–4 ≈ 52.3% → 4–8 ≈ 69.0% → 8+ days/month ≈ **94.1%** regular. This is the clearest single-item mobility gradient among the geo-memo follow-up candidates ([rideshare memo](memos/rideshare_predicts_transit.md)).
+
+### Cross-validated Random Forest performance
+
+![Head-to-head CV ROC-AUC for Q27, Q28, and benchmarks](memos/figures/q27_q28_predicts_transit_comparison.png){fig-alt="Horizontal bar chart comparing ROC-AUC for Q28, Q27+Q28, Q28+Q29, CA, Q27, geo, and chance baselines."}
+
+| Model | Analytic n | ROC-AUC | Average precision | Balanced accuracy | F1 |
+|---|---:|---:|---:|---:|---:|
+| **Q28 only** | 241 | **0.762** | 0.689 | 0.730 | 0.702 |
+| **Q27 + Q28** | 239 | **0.761** | 0.690 | 0.696 | 0.667 |
+| Q28 + Q29 (ride-share family) | 233 | 0.745 | 0.655 | 0.731 | 0.709 |
+| Group + interpersonal CA (benchmark) | 241 | 0.590 | — | — | — |
+| **Q27 only** | 239 | **0.589** | 0.513 | 0.623 | 0.467 |
+| Lat/long geo (benchmark) | 241 | 0.551 | — | — | — |
+| Chance / prevalence | — | 0.500 | — | 0.500 | — |
+
+**Q28 alone** is the strongest of these traditional-ML specifications: roughly +0.21 AUC over chance, +0.21 over geography, and +0.17 over CA scores. **Q27 alone** lands essentially on the CA benchmark (AUC ≈ 0.589)—detectable but weak. The **joint Q27+Q28** forest does not improve on Q28 (Δ AUC ≈ −0.001); permutation importance attributes almost all joint-model signal to Q28 (mean AUC drop ≈ 0.24 vs ≈ 0.04 for Q27). Adding Q29 (rides on a typical ride-share day) likewise fails to beat Q28 alone, confirming that **ride-share days**, not intensity-on-use items, drive discrimination ([follow-up comparison memo](memos/transit_covariate_followups.md)).
+
+### Full results interpretation
+
+1. **Predictive significance of Q28.** In this matched cohort, a single categorical ride-share-days item recovers ranking quality that is *practically* as well as *statistically* above chance (balanced accuracy ≈ 0.73; F1 ≈ 0.70; average precision ≈ 0.69). For traditional ML approaches to weekly+ transit, Q28 is the standout mobility predictor among items named in the geography memo’s follow-up paragraph—stronger than car access (AUC ≈ 0.607), employment (≈ 0.528), survey coordinates, or CA subscales.
+
+2. **Limited significance of Q27.** Transit-day intensity is associated with regular ridership in the expected direction, but category imbalance (most people in 1–2 rides) caps out-of-sample AUC near 0.59. Q27 is also conceptually adjacent to the `Q26` outcome (both describe public-transit behavior), so even that modest lift should not be read as an independent “lifestyle” feature on the same footing as ride-share exposure or demographics.
+
+3. **Joint redundancy.** Because Q27 adds almost no ROC lift once Q28 is present, multi-item transit bundles that include both are, in practice, ride-share classifiers. Persona prompts that emphasize bus/train intensity without ride-share may therefore under-specify the mobility cue that tabular learners actually use—consistent with permutation-importance rankings when predicting CA itself, where Q28 also ranks first ([feature-importance write-up](docs/factor_feature_importance.md)).
+
+4. **Tie-back to the research memo and primary LLM RQs.** The research memo ([`memos/q27_q28_predict_transit.md`](memos/q27_q28_predict_transit.md)) concludes that **Q28 is a strong traditional-ML predictor and Q27 is not competitive**. For this manuscript’s primary questions: (a) the `transit` information tier is justified partly because ride-share days carry real sample signal for both CA prediction and transit-habit prediction; (b) if an LLM ignores Q28 while overweighting weaker cues, that pattern looks less like “using the data” and more like stereotype or prompt bias; (c) reverse-prediction AUCs remain associative—same-wave self-reports cannot establish that ride-share *causes* weekly+ transit (or vice versa), and shared urbanicity/method variance remains plausible.
+
+5. **Reporting caveats.** Complete-case *N* is nearly full-cohort for Q27/Q28 (239–241), unlike car-access items (~149). AUCs are not calibrated decision thresholds for operations; they summarize ranking quality under stratified CV with a fixed seed for reproducibility.
+
 # Discussion
 
 Even on a tiny excerpt, the framework makes the research contrasts concrete: each participant yields five persona prompts (`demos` → `employment` → `geo` → `transit` → `full`) that differ only in how much context the model sees, while ground-truth PRCA scores stay fixed. Live Ollama / OpenRouter runs on the full cohort can then test whether MAE shrinks as tiers accumulate information, and whether residual error still clusters by sex, ethnicity, employment, or geography—the stereotyping pattern named in the research question [@cheng2023; @santurkar2023].
 
-Limitations of the present render include (a) excerpt $N$, (b) use of a deterministic mock predictor rather than a production LLM, and (c) incomplete transit fields for some Prolific-linked rows. Those constraints are intentional for a credential-free Posit Cloud build; they do not change the measurement design.
+Full-cohort secondary analyses sharpen what the `transit` tier is *for*. Traditional Random Forests show that **Q28 (ride-share days)** strongly predicts regular public-transit use (CV ROC-AUC ≈ 0.76), whereas **Q27 (transit-day intensity)** is only modest (≈ 0.59) and redundant beside Q28—see [`memos/q27_q28_predict_transit.md`](memos/q27_q28_predict_transit.md). That asymmetry argues for treating ride-share exposure as a first-class mobility cue in both tabular baselines and persona prompts, rather than assuming all Q26–Q29 items are interchangeable.
+
+Limitations of the present render include (a) excerpt $N$ for the live LLM mock figures, (b) use of a deterministic mock predictor rather than a production LLM for tier MAE, (c) incomplete transit fields for some Prolific-linked rows in excerpts, and (d) same-wave observational designs for the Q27/Q28 reverse-prediction results. Those constraints are intentional for a credential-free Posit Cloud build of the LLM pipeline; they do not change the measurement design or the seeded full-cohort ML findings reported above.
 
 # Reproducibility and publishing
 

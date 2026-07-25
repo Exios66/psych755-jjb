@@ -12,9 +12,14 @@ project:
     - docs/secondary_rq_transit_ca.md
     - docs/secondary_rq_geo_predicts_transit.md
     - docs/secondary_rq_ca_predicts_transit.md
+    - docs/secondary_rq_q27_q28_predict_transit.md
+    - docs/secondary_rq_transit_covariate_followups.md
     - memos/transit_riders_ca.md
     - memos/ca_scores_predict_transit.md
     - memos/geo_predicts_transit.md
+    - memos/q27_q28_predict_transit.md
+    - memos/rideshare_predicts_transit.md
+    - memos/transit_covariate_followups.md
 
 website:
   title: "LLM Prediction of Communication Apprehension"
@@ -57,6 +62,12 @@ website:
             text: CA → Transit (write-up)
           - href: memos/ca_scores_predict_transit.md
             text: CA → Transit (memo)
+          - href: docs/secondary_rq_q27_q28_predict_transit.md
+            text: Q27/Q28 → Transit (write-up)
+          - href: memos/q27_q28_predict_transit.md
+            text: Q27/Q28 → Transit (memo)
+          - href: memos/transit_covariate_followups.md
+            text: Mobility follow-ups (memo)
       - href: https://github.com/Exios66/psych755-jjb
         text: GitHub
   page-footer:
@@ -84,6 +95,11 @@ website:
           - memos/geo_predicts_transit.md
           - docs/secondary_rq_ca_predicts_transit.md
           - memos/ca_scores_predict_transit.md
+          - docs/secondary_rq_q27_q28_predict_transit.md
+          - memos/q27_q28_predict_transit.md
+          - docs/secondary_rq_transit_covariate_followups.md
+          - memos/transit_covariate_followups.md
+          - memos/rideshare_predicts_transit.md
 
 format:
   html:

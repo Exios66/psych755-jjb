@@ -55,6 +55,30 @@ FEATURE_SPECS: dict[str, dict[str, Any]] = {
             "matched respondent takes public transportation regularly?"
         ),
     },
+    "q27_intensity": {
+        "features": ["Q27"],
+        "label": "Transit intensity on use days (Q27)",
+        "research_question": (
+            "Does rides-per-typical-public-transit-day (Q27) predict whether a "
+            "matched respondent takes public transportation regularly?"
+        ),
+    },
+    "q28_days": {
+        "features": ["Q28"],
+        "label": "Ride-share days (Q28)",
+        "research_question": (
+            "Do ride-share days in the last three months (Q28) predict whether a "
+            "matched respondent takes public transportation regularly?"
+        ),
+    },
+    "q27_q28": {
+        "features": ["Q27", "Q28"],
+        "label": "Transit intensity + ride-share days (Q27/Q28)",
+        "research_question": (
+            "Do public-transit intensity (Q27) and ride-share days (Q28) jointly "
+            "predict regular public-transit use in a traditional ML classifier?"
+        ),
+    },
     "mobility_bundle": {
         "features": ["Q20", "Q21", "Q28", "Q29", "Employment status"],
         "label": "Car + ride-share + employment bundle",
@@ -98,6 +122,7 @@ def prepare_covariate_frame(
             "Employment status",
             "Q20",
             "Q21",
+            "Q27",
             "Q28",
             "Q29",
         )
@@ -575,6 +600,7 @@ def plot_comparison_memo_figure(
     comparison: pd.DataFrame,
     *,
     output_path: str | Path,
+    title: str = "Geo-memo follow-ups: predictors of regular public transit",
 ) -> Path:
     """Bar chart comparing follow-up AUCs against geo/CA/chance benchmarks."""
     import matplotlib.pyplot as plt
@@ -589,7 +615,7 @@ def plot_comparison_memo_figure(
     for key in frame["spec_key"]:
         if key in {"geo_benchmark", "ca_benchmark", "chance"}:
             colors.append("#A67C52")
-        elif key == "mobility_bundle":
+        elif key in {"mobility_bundle", "q27_q28", "q28_days"}:
             colors.append("#1F4E5F")
         else:
             colors.append("#2F6F7E")
@@ -604,7 +630,7 @@ def plot_comparison_memo_figure(
     ax.set_yticklabels(labels[::-1], fontsize=9)
     ax.set_xlabel("CV ROC-AUC")
     ax.set_xlim(0.45, max(0.75, max(aucs) + 0.04))
-    ax.set_title("Geo-memo follow-ups: predictors of regular public transit")
+    ax.set_title(title)
     ax.legend(loc="lower right", fontsize=8, frameon=False)
     for yi, auc in zip(y, aucs[::-1]):
         ax.text(auc + 0.004, yi, f"{auc:.3f}", va="center", fontsize=8)
