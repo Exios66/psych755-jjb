@@ -1,12 +1,11 @@
-# Reproducible Science
+---
+title: "Memo: Comprehensive predictors of regular transit"
+subtitle: "Research memorandum — kitchen-sink RF screen of survey covariates"
+author: Jack J. Burleson
+date: 2026-07-25
+---
 
-## A Research Memorandum
-
-**Researcher:** Jack J. Burleson  
-**Date:** July 25, 2026  
-
-**Research Or Analytical Question:**  
-Among available survey fields in the matched Prolific↔Qualtrics cohort (excluding the outcome source itself), which predictors most powerfully discriminate whether an individual takes public transportation regularly, and what ROC-AUC can a tuned Random Forest achieve?
+**Research question:** Among available survey fields in the matched Prolific↔Qualtrics cohort (excluding the outcome source itself), which predictors most powerfully discriminate whether an individual takes public transportation regularly, and what ROC-AUC can a tuned Random Forest achieve?
 
 ---
 
