@@ -328,9 +328,9 @@ gt
 
 ## Persona tiers
 
-Persona prompts are cumulative. The system prompt asks the model to stay in first person and return JSON with group and interpersonal CA integers plus qualitative bands [@quarto]. Full Prolific waves omit ethnicity / nationality / language; the `demos` tier therefore uses Age, Sex, Country of residence, and Student status.
+Persona prompts are cumulative and follow the **AI Terrarium / ICA 2026** digital-twin framing: the *user* message is a fluent second-person narrative (“You are a …”) that *conveys* the persona, not a bullet-list profile or a meta-instruction to “adopt” / “fully personify” an identity. The system message only sets inhabitance and the CA JSON response contract (group and interpersonal integers 6–30 plus low/moderate/high bands) [@quarto]. Full Prolific waves omit ethnicity / nationality / language; the `demos` tier therefore uses Age, Sex, Country of residence, and Student status. Illustrative samples for every tier live under [`prompts/examples/`](prompts/examples/).
 
-| Tier | Information revealed to the model |
+| Tier | Information woven into the narrative |
 |---|---|
 | `demos` | Age, sex, country of residence, student status |
 | `employment` | `demos` + employment status |
@@ -341,10 +341,25 @@ Persona prompts are cumulative. The system prompt asks the model to stay in firs
 ```{python}
 #| label: lst-persona-example
 #| echo: false
-#| lst-cap: "Example Geo-Tier User Prompt Fragment for the First Analytic Participant"
+#| lst-cap: "AI Terrarium Geo-Tier User Prompt (First Analytic Participant)"
 
+# Always show the live build_persona_prompt narrative — never a checklist /
+# "Adopt the following identity" stub from older freeze caches.
 example = next(p for p in prompts if p.tier == "geo")
+assert "You are a" in example.user_prompt, "Expected Terrarium second-person narrative"
+assert "Adopt the following identity" not in example.user_prompt
+assert "Fully personify" not in example.user_prompt
 print(example.user_prompt)
+```
+
+```{python}
+#| label: lst-persona-example-demos
+#| echo: false
+#| lst-cap: "AI Terrarium Demos-Tier User Prompt (Same Participant; Base Layer Only)"
+
+example_demos = next(p for p in prompts if p.tier == "demos")
+assert "You are a" in example_demos.user_prompt
+print(example_demos.user_prompt)
 ```
 
 ## Model calling and classical baselines
