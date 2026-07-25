@@ -110,7 +110,7 @@ Public share URL: https://019f9a10-ebb9-d1d5-839f-97e794bfd0ca.share.connect.pos
 | `notebooks/` | Executable analyses (ML, FA, secondary RQs, ML vs LLM) |
 | `docs/` | Framework notes, merge audit, secondary RQ write-up, bugfix audit |
 | `config/default.yaml` | Default paths, tiers, LLM + cleaning settings |
-| `data/excerpts/` | Public fixtures for tests / Connect Cloud |
+| `data/excerpts/` | Public fixtures for unit tests only (never shown on Connect) |
 | `memos/` | Research memos |
 | `Contributions.md` | Authorship / ownership record |
 | `prompts/system_prompt.md` | Documented system prompt (kept in sync with code) |

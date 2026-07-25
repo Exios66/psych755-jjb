@@ -11,11 +11,11 @@ subtitle: "Analytic sample support for primary and secondary research questions"
 
 ---
 
-## 1. Why this page exists
+## Why this page exists
 
 Every persona tier, ML baseline, and secondary RQ rests on the same cleaned analytic sample. This page records how that sample is built and what the empirical CA patterns look like by employment, transit, sex, student status, and country — the slices used later when interpreting LLM stereotyping error. The `demos` persona tier’s base demographics layer is Age, Sex, Country of residence, and Student status.
 
-## 2. Sample construction
+## Sample construction
 
 | Step | N |
 |---|---:|
@@ -31,7 +31,7 @@ Waves: File A = 99, File B = 153 (of the matched/analytic pipeline). Full Prolif
 
 **Covariate coverage in the analytic sample:** employment 100%, transit (`Q26–Q29`) 100%, Student status 93.0% non-missing (17/241 `DATA_EXPIRED` → missing).
 
-## 3. Ground-truth CA
+## Ground-truth CA
 
 | Subscale | n | Mean | SD | Median | Range |
 |---|---:|---:|---:|---:|---|
@@ -40,7 +40,7 @@ Waves: File A = 99, File B = 153 (of the matched/analytic pipeline). Full Prolif
 
 Band prevalence (low ≤13 / moderate 14–19 / high ≥20): group **53.9% / 25.3% / 20.7%**; interpersonal **53.1% / 28.6% / 18.3%**.
 
-## 4. RQ1 lens — employment
+## RQ1 lens — employment
 
 ![Mean CA by employment](figures/eda_ca_by_employment.png)
 
@@ -52,7 +52,7 @@ Band prevalence (low ≤13 / moderate 14–19 / high ≥20): group **53.9% / 25.
 
 Full-time respondents report lower CA. If an LLM stereotypes “unemployed / other → higher anxiety,” that pattern has some empirical footing in this sample — residual error analyses should still check whether the model *over*-applies it.
 
-## 5. RQ2 lens — public transit (`Q26`)
+## RQ2 lens — public transit (`Q26`)
 
 | Q26 | n | Mean group CA | Mean interpersonal CA |
 |---|---:|---:|---:|
@@ -64,7 +64,7 @@ Full-time respondents report lower CA. If an LLM stereotypes “unemployed / oth
 
 Higher ridership ↔ lower mean CA (Never group M = 17.38 → 8+ days M = 12.84). This is the descriptive foundation for [Transit → CA](secondary_rq_transit_ca.md) ([memo](../memos/transit_riders_ca.md)) and [CA → Transit](secondary_rq_ca_predicts_transit.md) ([memo](../memos/ca_scores_predict_transit.md)).
 
-## 6. Stereotyping lens — sex, student status & country
+## Stereotyping lens — sex, student status & country
 
 | Slice | n | Mean group CA | Mean interpersonal CA |
 |---|---:|---:|---:|
@@ -78,13 +78,13 @@ Higher ridership ↔ lower mean CA (Never group M = 17.38 → 8+ days M = 12.84)
 
 Sex differences are small. UK means sit higher than US in this sample; students show elevated interpersonal CA. Sparse countries (n = 1–2) are not interpretable alone.
 
-## 7. Implication for the manuscript
+## Implication for the manuscript
 
 - Persona tiers that add **employment** or **transit** are adding covariates that track true CA in the cohort.
 - Bias analyses should compare LLM absolute error against these empirical group means — not against a flat “everyone is average” null.
 - Secondary RQs convert the transit gradient into formal tests and predictive metrics.
 
-## 8. Reproducibility
+## Reproducibility
 
 ```bash
 ca-personas prepare --join inner

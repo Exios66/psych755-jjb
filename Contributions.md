@@ -39,7 +39,7 @@ Open a file on GitHub → select lines → press **`y`** to pin the URL to a com
 - **Owning this component means** designing the cumulative persona tiers mapped
   to the research questions; implementing File A/B/C merge coverage (252 / 21 /
   10); writing the cleaning + PRCA scoring path; building secondary RQ analyses
-  and memos; wiring Quarto / Posit Connect Cloud reproduction on excerpt fixtures;
+  and memos; wiring Quarto / Posit Connect Cloud reproduction on full-cohort artifacts;
   and maintaining tests under `tests/`.
 - **The commits or PRs that are most relevant are**
   [#4 — tiered CA persona framework](https://github.com/Exios66/psych755-jjb/pull/4),

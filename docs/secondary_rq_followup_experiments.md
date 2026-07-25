@@ -12,11 +12,11 @@ subtitle: "Secondary research questions — wave-2 Random Forests answering open
 
 ---
 
-## 1. Motivation
+## Motivation
 
 Wave-1 secondary memos left specific uncertainties: unused Prolific demographics, country vs coordinates, whether **Q28** survives conditioning on car access, whether **CA** adds signal beside mobility items, country×car interactions, Q27 usefulness *within* regular riders, fair common-*N* rankings, and residual CA after ride-share stratification. Wave 2 implements eight offline experiments on the same matched cohort.
 
-## 2. Shared methods
+## Shared methods
 
 | Piece | Detail |
 |---|---|
@@ -26,7 +26,7 @@ Wave-1 secondary memos left specific uncertainties: unused Prolific demographics
 | Mixed features | `ColumnTransformer` with scaled numerics + one-hot categoricals |
 | Benchmarks | Chance 0.500 · geo ≈ 0.551 · CA ≈ 0.590 · Q28 ≈ 0.762 |
 
-## 3. Results overview (seed 42)
+## Results overview (seed 42)
 
 | Experiment | Analytic n | Primary ROC-AUC | Interpretation |
 |---|---:|---:|---|
@@ -41,17 +41,17 @@ Wave-1 secondary memos left specific uncertainties: unused Prolific demographics
 
 ![Overview of wave-2 experiment AUCs](../memos/figures/followup_experiments_overview.png)
 
-## 4. Experiment-by-experiment notes
+## Experiment-by-experiment notes
 
-### 4.1 Demographics → transit
+### Demographics → transit
 
 Younger tertile ≈ 57% regular vs older ≈ 25%. Permutation importance: Age ≫ Sex ≫ Student. Students are sparse (n=34) after cleaning `DATA_EXPIRED`.
 
-### 4.2 Country → transit
+### Country → transit
 
 US 37% regular · UK 48% · Canada 60% (small n). AUC ≈ 0.552 matches the geo memo’s country-only baseline and lat/long RF—place labels and IP coordinates carry similar weak signal.
 
-### 4.3 Nested Q28 \| car (common n=149)
+### Nested Q28 \| car (common n=149)
 
 | Model | ROC-AUC |
 |---|---:|
@@ -62,27 +62,27 @@ US 37% regular · UK 48% · Canada 60% (small n). AUC ≈ 0.552 matches the geo 
 
 Q28 retains discrimination after car conditioning; car access adds ~0.07 AUC on the overlapping frame (where car items are non-missing).
 
-### 4.4 CA + Q28 + car
+### CA + Q28 + car
 
 On the car-complete subset, **CA alone collapses** (AUC ≈ 0.47) while Q28 (0.665) and Q21 (0.631) remain useful. Joint model 0.736; permutation importance ranks Q28 > Q21 > interpersonal CA > group CA.
 
-### 4.5 Country × car
+### Country × car
 
 Additive country+car (0.699) slightly beats an explicit interaction feature (0.683) and clearly beats either alone.
 
-### 4.6 Q27 among regular riders
+### Q27 among regular riders
 
 Among 101 weekly+ riders, 35 (34.7%) report high intensity (≥3–4 rides/day). No candidate family exceeds AUC ≈ 0.55; intensity is not recoverable from CA, Q28, car, employment, or demos in this subgroup.
 
-### 4.7 Common-*N* head-to-head (n=139)
+### Common-*N* head-to-head (n=139)
 
 Equal-complete-case ranking: **Q28 (0.659) > country (0.619) > car (0.602) > geo (0.573) > employment (0.533) > CA (0.517) > demographics (0.511)**. Wave-1 “rideshare wins” is not an artifact of unequal *N*.
 
-### 4.8 Residual CA after Q28
+### Residual CA after Q28
 
 Overall transit→CA contrast replicates (group Δ ≈ −2.72, *p* < .001). Nested RF: Q28 AUC 0.762 → CA+Q28 0.783 (**+0.021**). Within Q28 strata, CA differences are heterogeneous (significant in Never and 0–1 days; near zero in 2–4 days).
 
-## 5. Implications for persona tiers
+## Implications for persona tiers
 
 1. Ride-share days remain the dominant tabular mobility cue—even after car conditioning and common-*N* equalization.  
 2. Demographics (especially age) deserve attention in bias audits of the `demos` tier.  
@@ -90,6 +90,6 @@ Overall transit→CA contrast replicates (group Δ ≈ −2.72, *p* < .001). Nes
 4. CA’s association with regular transit is largely redundant with Q28 for *prediction*, though the mean CA gap among riders remains descriptively real.  
 5. Q27 intensity is not a useful secondary target among already-regular riders.
 
-## 6. Limitations
+## Limitations
 
 Complete-case shrinkage for car items (~149 / 139); same-wave self-reports; convenience sample; AUCs are ranking metrics, not decision thresholds; within-stratum Welch tests are exploratory and underpowered in sparse Q28 cells.

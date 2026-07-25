@@ -12,7 +12,7 @@ subtitle: "Secondary research questions 1–3 — observational contrast"
 
 ---
 
-## 1. Research questions
+## Research questions
 
 On the Prolific↔Qualtrics **matched** analytic sample (no LLM):
 
@@ -22,19 +22,19 @@ On the Prolific↔Qualtrics **matched** analytic sample (no LLM):
 
 These questions establish the descriptive association that later predictive models (CA→transit RF; geo→transit RF) quantify out of sample.
 
-## 2. Methods
+## Methods
 
-### 2.1 Sample
+### Sample
 
 - **Sources:** Prolific File A + File B (stacked) joined to Qualtrics File C on `Q0` ↔ `Participant id`
 - **Analytic N:** 241 respondents with complete PRCA group + interpersonal items
 - **Exposure labeled N:** 241 with usable `Q26` (101 regular / 140 not regular)
 
-### 2.2 Exposure
+### Exposure
 
 **Regular public transit** = `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more).
 
-### 2.3 Outcomes & tests
+### Outcomes & tests
 
 | Piece | Detail |
 |---|---|
@@ -44,9 +44,9 @@ These questions establish the descriptive association that later predictive mode
 | Effect size | Cohen's *d*, Hedges' *g* |
 | Extra contrasts | Regular mean vs overall cohort mean; alternate `Q26` cutoffs |
 
-## 3. Results
+## Results
 
-### 3.1 Primary contrast (regular vs not-regular)
+### Primary contrast (regular vs not-regular)
 
 ![CA distributions by transit group](figures/transit_ca_distributions.png)
 
@@ -61,7 +61,7 @@ Both subscales differ significantly at α = .05. Group CA shows the larger mean 
 
 Relative to the **overall** cohort mean (group 14.62; interpersonal 14.31), regular riders sit about **−1.58** / **−1.00** PRCA points lower (−10.8% / −7.0%).
 
-### 3.2 Gradient by ridership intensity
+### Gradient by ridership intensity
 
 Mean CA falls roughly monotonically as `Q26` ridership increases:
 
@@ -75,11 +75,11 @@ Mean CA falls roughly monotonically as `Q26` ridership increases:
 
 “Never” riders are the high-CA pole; weekly+ riders are the low-CA pole.
 
-### 3.3 Sensitivity
+### Sensitivity
 
 Alternate definitions of “regular” (e.g., 8+ only vs weekly+) preserve the **direction** of the group-CA gap; magnitude and *p*-values shift with class balance. The weekly+ operationalization used elsewhere in the project is retained as the primary cut.
 
-## 4. Interpretation
+## Interpretation
 
 **Yes — regular public-transit riders report lower communication apprehension than non-regular riders in this matched cohort.**
 
@@ -88,14 +88,14 @@ Alternate definitions of “regular” (e.g., 8+ only vs weekly+) preserve the *
 3. **Link to other secondary RQs.** Mean differences here become the CA→transit Random Forest signal (ROC-AUC = 0.590; [memo](../memos/ca_scores_predict_transit.md)) and sit beside geo→transit AUC = 0.551 ([memo](../memos/geo_predicts_transit.md)).
 4. **Implication for persona tiers.** When LLM prompts include transit frequency, they receive a cue empirically associated with true CA — so transit is a legitimate contextual feature, not an arbitrary demographic tag.
 
-## 5. Limitations
+## Limitations
 
 1. Same-wave association; causality (anxiety → avoid transit, transit → reduce anxiety, or third variables) cannot be separated.
 2. Self-report for both PRCA and `Q26`.
 3. Weekly+ threshold discards intensity within the regular group.
 4. Results describe this Prolific/Qualtrics matched cohort only.
 
-## 6. Reproducibility
+## Reproducibility
 
 ```bash
 ca-personas transit-ca --join inner

@@ -21,9 +21,12 @@ Full notebook: [`notebooks/feature_predictive_power_shap.ipynb`](../notebooks/fe
 
 ### Traditional ML — predictive power by tier
 
-Mean metrics across Group + Interpersonal targets (`random_state=42`, stratified/K-fold CV):
+Mean metrics across Group + Interpersonal targets (`random_state=42`, stratified/K-fold CV).
+**Note:** the RF MAE column is the **mean of group and interpersonal MAE** from the
+classic RF+k-NN SHAP suite — not the group-only transit RF MAE (**4.68**) reported in
+[`docs/ml_baselines.md`](../docs/ml_baselines.md).
 
-| Tier | RF MAE ↓ | RF macro-F1 ↑ | RF band acc | KNN MAE | KNN macro-F1 |
+| Tier | RF MAE ↓ (mean of both targets) | RF macro-F1 ↑ | RF band acc | KNN MAE | KNN macro-F1 |
 |---|---:|---:|---:|---:|---:|
 | demos | 5.47 | 0.314 | 0.367 | 5.54 | 0.309 |
 | employment | 5.35 | 0.312 | 0.369 | 5.54 | 0.334 |
@@ -36,7 +39,10 @@ At the transit tier, Group CA RF band F1 components were low=0.64 · moderate=0.
 
 ### SHAP — features driving ML predictions of true CA
 
-TreeSHAP mean |SHAP| (aggregated to raw fields) for RF → true **Group CA** at the transit tier:
+TreeSHAP mean |SHAP| (aggregated to raw fields) for RF → true **Group CA** at the transit tier.
+This ranking (predicting **CA**) is not interchangeable with the permutation ranking in
+[`docs/factor_feature_importance.md`](../docs/factor_feature_importance.md) (predicting
+**regular transit**), where Age outranks employment.
 
 | Rank | Feature | Mean \|SHAP\| |
 |---|---|---:|

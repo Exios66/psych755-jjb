@@ -12,21 +12,21 @@ subtitle: "Secondary research question 4 — Random Forest write-up"
 
 ---
 
-## 1. Research question
+## Research question
 
 Among Prolific↔Qualtrics **matched** respondents with complete PRCA ground truth, do Qualtrics survey **latitude and longitude** predict whether an individual takes **public transportation regularly**?
 
 This complements the observational CA contrast (`secondary_rq_transit_ca`) and the CA→transit RF (`secondary_rq_ca_transit_rf`) by asking how much **place** alone classifies the same binary transit outcome.
 
-## 2. Methods
+## Methods
 
-### 2.1 Sample
+### Sample
 
 - **Sources:** Prolific File A + File B (stacked) joined to Qualtrics File C
 - **Analytic N:** 241 with complete PRCA items and non-missing `LocationLatitude` / `LocationLongitude`
 - **Class balance:** 101 regular (41.9%) / 140 not regular (58.1%)
 
-### 2.2 Outcome & features
+### Outcome & features
 
 | Piece | Detail |
 |---|---|
@@ -36,7 +36,7 @@ This complements the observational CA contrast (`secondary_rq_transit_ca`) and t
 | Validation | Stratified 5-fold CV; out-of-fold probabilities |
 | Baselines | Chance (ROC-AUC = 0.50); country-of-residence-only RF |
 
-## 3. Results
+## Results
 
 ![Survey geolocation by transit use](figures/geo_scatter_latlon_by_transit.png)
 
@@ -49,7 +49,7 @@ This complements the observational CA contrast (`secondary_rq_transit_ca`) and t
 
 ![ROC-AUC vs baselines](figures/geo_rf_auc_vs_baselines.png)
 
-### 3.1 Predictive performance
+### Predictive performance
 
 | Model | ROC-AUC |
 |---|---:|
@@ -59,7 +59,7 @@ This complements the observational CA contrast (`secondary_rq_transit_ca`) and t
 
 Permutation importance ranks **longitude** (mean AUC drop = 0.335) above **latitude** (0.260). Continuous coordinates lift AUC by only **+0.002** over a country-only forest (0.551 − 0.549) — essentially no gain beyond coarse country membership.
 
-## 4. Interpretation
+## Interpretation
 
 **Geography, as captured by Qualtrics lat/long, recovers CV ROC-AUC = 0.551 in this sample** ([memo](../memos/geo_predicts_transit.md)).
 
@@ -68,14 +68,14 @@ Permutation importance ranks **longitude** (mean AUC drop = 0.335) above **latit
 3. Compared with the CA→transit RF (AUC = 0.590; [memo](../memos/ca_scores_predict_transit.md)), place alone is a weaker classifier; Q28 recovers AUC = 0.762 ([memo](../memos/q27_q28_predict_transit.md)).
 4. For the primary persona project, the `geo` tier supplies a coarse place cue that may help CA prediction indirectly (via country / urbanicity correlates) but should not be treated as a precise transit-accessibility measure.
 
-## 5. Limitations
+## Limitations
 
 1. Qualtrics coordinates are approximate IP/browser locations, not verified home addresses.
 2. Country composition and urbanicity may confound continuous lat/long effects.
 3. Observational association ≠ causal effect of place on transit use.
 4. External validity limited to this matched cohort.
 
-## 6. Reproducibility
+## Reproducibility
 
 ```bash
 ca-personas geo-transit-rf --join inner

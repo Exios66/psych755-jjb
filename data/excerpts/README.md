@@ -1,7 +1,7 @@
 # Excerpt fixtures
 
-Public fixtures used by tests, Quarto / Posit Connect Cloud renders, and as a
-**fallback** when private full-cohort exports are absent.
+Public fixtures used by **unit tests and offline CI only**. They are **not**
+displayed on the Posit Connect Cloud site.
 
 | File | Role |
 |---|---|
@@ -10,7 +10,7 @@ Public fixtures used by tests, Quarto / Posit Connect Cloud renders, and as a
 
 ## Path resolution
 
-`config/default.yaml` lists preferred sibling-data paths:
+`ca_personas.paths` prefers full-cohort File A/B/C when staged:
 
 ```text
 ../sibling_data/PRCAProlificExport_FileA.csv
@@ -18,8 +18,8 @@ Public fixtures used by tests, Quarto / Posit Connect Cloud renders, and as a
 ../sibling_data/PRCAQualtricsExport_FileC.csv
 ```
 
-`ca_personas.pipeline` and `ca_personas.paths` use those paths **only when the
-files exist**. Otherwise they fall back to the excerpt CSVs in this directory.
-CLI flags `--prolific` / `--qualtrics` always override both.
-
-Join key: Prolific `Participant id` ↔ Qualtrics `PROLIFIC_PID` / `Q0`.
+Cloud agents may also stage the same filenames under `/tmp/sibling_data` or
+`$CA_SIBLING_DATA`. Posit Connect renders use those full-cohort exports when
+present, otherwise the committed full-cohort mock tables in
+`artifacts/posit_full_cohort/` (N = 241). Excerpt fixtures remain a last-resort
+fallback for tests when no full cohort is available.

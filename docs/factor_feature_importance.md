@@ -9,22 +9,24 @@ subtitle: "Diagnostics for subscale targets and persona features"
 
 ---
 
-## 1. Why these diagnostics matter
+## Why these diagnostics matter
 
 Two measurement questions sit under the LLM persona work:
 
 1. Are the **group** and **interpersonal** PRCA item sets behaving like distinct (or at least coherent) subscales in this cohort?
 2. Which **persona covariates** actually predict ground-truth CA in a tabular learner — i.e., which cues *should* matter if an LLM is using information “sensibly”?
 
-## 2. Item factor structure (PRCA items)
+## Item factor structure (PRCA items)
 
 Exploratory factor analysis / PCA on the scored group (`Q1–Q6`) and interpersonal (`Q13–Q18`) items (after reverse-coding comfort items) supports treating the two subscales as related but separable evaluation targets. Loadings concentrate on the intended item blocks; reverse-coded calm/comfort items load strongly on the dominant apprehension factor.
 
 Practical takeaway for the manuscript: reporting **separate** MAE for group vs interpersonal CA is justified; collapsing to a single “CA” score would hide subscale-specific error.
 
-## 3. Covariate permutation importance
+## Covariate permutation importance
 
-A Random Forest predicting CA from persona-style covariates on the **full matched analytic cohort (N = 241)**, with permutation importance on held-out folds, ranks features as follows (mean importance across group + interpersonal targets):
+A Random Forest predicting CA from persona-style covariates on the **full matched analytic cohort (N = 241)**, with permutation importance on held-out folds, ranks features as follows (mean importance across group + interpersonal targets).
+
+**Reconciliation note.** This table ranks covariates for predicting **CA**. The TreeSHAP ranking in [`memos/feature_predictive_power_ml_llm.md`](../memos/feature_predictive_power_ml_llm.md) also predicts CA but with a different explainer (Age is 6th there; Employment is 2nd). Neither ranking is a “global” importance order for predicting **regular transit** (see secondary RQ memos).
 
 ![Top covariates](figures/feature_importance_top.png)
 
@@ -43,7 +45,7 @@ A Random Forest predicting CA from persona-style covariates on the **full matche
 
 Full File A/B waves omit ethnicity / nationality / language, so those fields are not in this ranking. `Q27`/`Q29` and license (`Q20`) remain low relative to Q28, age, geo, and employment.
 
-## 4. Interpretation against LLM tiers
+## Interpretation against LLM tiers
 
 | Finding | Implication for persona prompts |
 |---|---|
@@ -52,7 +54,7 @@ Full File A/B waves omit ethnicity / nationality / language, so those fields are
 | Sex importance = 0.258 (rank 7) | Large LLM error gaps by sex would look more like stereotyping than “using the sample’s real signal” |
 | Ride-share Q28 (1.518) > public transit Q26 (0.731) for predicting CA | Models (and prompts) that only mention bus/train may miss the higher-ranked mobility cue; reverse-prediction also favors Q28 (AUC = 0.762; [memo](../memos/q27_q28_predict_transit.md)) |
 
-## 5. Reproducibility
+## Reproducibility
 
 ```bash
 # Requires staged File A/B/C (never excerpts for reported tables)

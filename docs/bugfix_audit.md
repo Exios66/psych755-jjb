@@ -42,7 +42,7 @@ reproducibility and silent-failure risk.
 | 22 | `Getstarted.md` multi-student hour-zero template | Rewritten as project setup for this repo |
 | 23 | Excerpts README claimed config consumed excerpt filenames | Document path-resolution + fallback |
 | 24 | README tier naming / structure incomplete; `contributions.md` casing | Align tiers, layout, and file casing |
-| 25 | Secondary RQ memo vs formal write-up N/AUC drift | Sync memo figures to formal write-up (N=240, AUC=0.572) |
+| 25 | Secondary RQ memo vs formal write-up N/AUC drift | Sync memo figures to formal write-up (historical: N=240/AUC=0.572; current full-cohort seed=42: N=241, geo AUC=0.551) |
 | 26 | `index.qmd` missing `pip install -e .`; four-vs-five tier drift | Install step + consistent tier language |
 | 27 | `.env.example` omitted `mock` provider | Document dry-run provider |
 | 28 | `requirements.txt` / `pyproject.toml` drift | Align packages and comments |
