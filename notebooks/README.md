@@ -22,6 +22,7 @@ Supporting code:
 - [`src/ca_personas/transit_ca.py`](../src/ca_personas/transit_ca.py)
 - [`src/ca_personas/geo_transit_rf.py`](../src/ca_personas/geo_transit_rf.py)
 - [`src/ca_personas/ca_transit_rf.py`](../src/ca_personas/ca_transit_rf.py)
+- [`src/ca_personas/comprehensive_transit_rf.py`](../src/ca_personas/comprehensive_transit_rf.py)
 - [`src/ca_personas/transit_covariate_rf.py`](../src/ca_personas/transit_covariate_rf.py)
 - [`src/ca_personas/followup_experiments.py`](../src/ca_personas/followup_experiments.py)
 - [`src/ca_personas/ml_baseline.py`](../src/ca_personas/ml_baseline.py)
@@ -46,6 +47,8 @@ jupyter nbconvert --to notebook --execute notebooks/secondary_rq_geo_transit_rf.
 jupyter nbconvert --to notebook --execute notebooks/secondary_rq_ca_transit_rf.ipynb
 # or: ca-personas ca-transit-rf --join inner
 
+jupyter nbconvert --to notebook --execute notebooks/secondary_rq_comprehensive_transit_rf.ipynb
+# or: ca-personas comprehensive-transit-rf --join inner
 jupyter nbconvert --to notebook --execute notebooks/secondary_rq_transit_covariate_followups.ipynb
 # or: ca-personas covariate-transit-rf --join inner --seed 42
 

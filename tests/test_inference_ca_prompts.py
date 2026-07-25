@@ -47,7 +47,8 @@ def test_personas_to_prompt_frame_includes_user_prompt():
     participants = load_and_prepare(PROLIFIC, QUALTRICS, how="inner")
     prompts = build_persona_prompts(participants, tiers=["demos"])
     frame = personas_to_prompt_frame(prompts, participants)
-    assert "Fully personify" in frame.iloc[0]["prompt"]
+    assert frame.iloc[0]["prompt"].startswith("You ")
+    assert "How anxious or apprehensive" in frame.iloc[0]["prompt"]
     assert "answer" in frame.columns
 
 

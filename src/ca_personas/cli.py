@@ -14,6 +14,7 @@ from ca_personas.paths import default_prolific_paths, default_qualtrics_path
 from ca_personas.personas import RESEARCH_TIERS, TIERS, build_persona_prompts, write_persona_bundle
 from ca_personas.pipeline import prepare_analytic_sample, run_pipeline
 from ca_personas.ca_transit_rf import run_ca_transit_rf_pipeline
+from ca_personas.comprehensive_transit_rf import run_comprehensive_transit_rf_pipeline
 from ca_personas.geo_transit_rf import run_geo_transit_rf_pipeline
 from ca_personas.transit_ca import run_transit_ca_pipeline
 from ca_personas.transit_covariate_rf import (
@@ -585,6 +586,9 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
         return 0
 
+    if command == "comprehensive-transit-rf":
+        prolific, qualtrics = _paths_or_defaults(args)
+        artifacts = run_comprehensive_transit_rf_pipeline(
     if command == "covariate-transit-rf":
         prolific, qualtrics = _paths_or_defaults(args)
         artifacts = run_transit_covariate_pipeline(
@@ -594,6 +598,9 @@ def main(argv: list[str] | None = None) -> int:
             output_dir=args.output_dir,
             n_splits=args.splits,
             n_perm_repeats=args.perm_repeats,
+            n_tune_iter=args.tune_iter,
+            random_state=args.seed,
+            include_upper_bound=not args.no_upper_bound,
             random_state=args.seed,
             spec_keys=args.specs,
             figures_dir=args.figures_dir,

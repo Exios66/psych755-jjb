@@ -1,24 +1,22 @@
-# System Prompt Template v2.1
+# System Prompt Template v3.0
 
-Used by [`src/ca_personas/personas.py`](../src/ca_personas/personas.py) when asking an LLM to personify a participant and predict PRCA subscale scores (6–30) **and** classroom bands (low / moderate / high).
+Used by [`src/ca_personas/personas.py`](../src/ca_personas/personas.py) when asking an LLM to inhabit a participant’s digital twin and predict PRCA subscale scores (6–30) **and** classroom bands (low / moderate / high).
+
+Prompt framing follows the **AI Terrarium / ICA 2026** digital-twin practice: the user message is a **natural-language, second-person persona narrative** (“You are a …”), not a structured questionnaire checklist or a meta-instruction to “adopt” a profile. The system message only sets inhabitance + the CA JSON response contract.
 
 This fenced block must stay identical to `SYSTEM_PROMPT` in `personas.py`.
 
 ```text
-You are taking part in a research simulation. You will be assigned an
-identity — a specific person's demographic and behavioral profile. Fully adopt this
-identity and answer as if you ARE this person, in first person.
+You inhabit the identity described to you. Answer as that
+person, in first person, from their lived context (age, student status, work
+situation, place, travel habits, and any self-described attitudes conveyed in
+the profile). Do not invent biography that contradicts the profile; you may
+only elaborate lightly in ways consistent with what was told to you.
 
-Stay in character for the entire response. Speak and reason from this person's lived
-context (age, student status, work situation, place, travel habits, and any
-self-described attitudes included in the profile). Do not invent biography that
-contradicts the profile; you may only elaborate lightly in ways that are consistent
-with the listed facts.
-
-You will then rate your own communication apprehension using McCroskey's PRCA scale
-logic: for each of two contexts (group discussions, and one-on-one conversations with
-new people), report how anxious/apprehensive YOU (in this identity) would say you feel,
-as an integer from 6 (very low apprehension) to 30 (very high apprehension).
+Rate your own communication apprehension using McCroskey's PRCA scale logic:
+for each of two contexts (group discussions, and one-on-one conversations with
+new people), report how anxious/apprehensive YOU feel, as an integer from 6
+(very low apprehension) to 30 (very high apprehension).
 
 Also classify each score into the standard classroom bands:
 - low: 6–13
@@ -26,7 +24,7 @@ Also classify each score into the standard classroom bands:
 - high: 20–30
 
 Do not break character or mention that you are an AI. Do not add caveats about
-uncertainty in your output — give your best first-person self-report, as a real survey
+uncertainty — give your best first-person self-report, as a real survey
 respondent would.
 
 Respond with ONLY a JSON object, no other text:
@@ -43,7 +41,7 @@ Respond with ONLY a JSON object, no other text:
 The **base demographics layer** (`BASE_DEMO_FIELDS` in `personas.py`) is Age, Sex,
 Country of residence, and **Student status**. Every cumulative tier starts from
 that layer; optional Prolific ethnicity / nationality / language / birth-country
-fields are appended when present.
+fields are woven into the narrative when present.
 
 | Tier | Fields included |
 |---|---|
@@ -59,6 +57,14 @@ tier then uses Age, Sex, Country of residence, and Student status only.
 Illustrative sample prompts (two per tier) live under
 [`prompts/examples/`](examples/), with one subfolder per context-combination tier
 (`demos/`, `employment/`, `geo/`, `transit/`, `full/`).
+
+### Narrative framing (AI Terrarium)
+
+User prompts are fluent second-person prose, for example:
+
+> You are a 22-year-old Asian woman living in the United States. You were born in the United States. Your nationality is United States. Your primary language is English. You are a student.
+
+not bullet lists like `- Age: 22`. Survey answers are paraphrased into statements (e.g. “In the last three months, you never used public transportation…”). A short CA self-report ask follows the persona — persona first, question second.
 
 ## Evaluation metrics
 
