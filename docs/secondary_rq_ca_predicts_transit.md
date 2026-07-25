@@ -3,8 +3,11 @@
 **Project:** PSYCH 755 — CA persona / PRCA framework  
 **Analysis code:** [`src/ca_personas/ca_transit_rf.py`](../src/ca_personas/ca_transit_rf.py)  
 **Notebook:** [`notebooks/secondary_rq_ca_transit_rf.ipynb`](../notebooks/secondary_rq_ca_transit_rf.ipynb)  
-**CLI:** `ca-personas ca-transit-rf --join inner`  
-**Artifacts:** `outputs/ca_transit_rf/`
+**CLI:** `ca-personas ca-transit-rf --join inner --seed 42`  
+**Artifacts:** `outputs/ca_transit_rf/` (see `ca_transit_rf_results_card.json`)
+
+Figures below are from a seeded re-run on File A + File B + File C
+(`random_state=42`, stratified 5-fold CV, 2026-07-25).
 
 ---
 
@@ -19,8 +22,9 @@ This question reverses the predictive direction of the persona-tier work (where 
 ### 2.1 Sample
 
 - **Sources:** Prolific File A + File B (stacked) joined to Qualtrics File C on `Q0` ↔ `Participant id`
-- **Analytic N:** 240 respondents with complete PRCA group + interpersonal items and usable `Q26`
-- **Class balance:** 101 regular (42.1%) / 139 not regular (57.9%)
+- **Merge coverage:** 252 matched · 21 Qualtrics-only · 10 Prolific-only
+- **Analytic N:** **241** respondents with complete scorable PRCA group + interpersonal items and usable `Q26`
+- **Class balance:** 101 regular (41.9%) / 140 not regular (58.1%)
 
 ### 2.2 Outcome
 
@@ -55,8 +59,8 @@ Regular riders report **lower** CA than non-regular riders on both subscales:
 
 | Subscale | Regular M | Not-regular M | Δ (reg − not) | Point-biserial *r* | *p* |
 |---|---:|---:|---:|---:|---:|
-| Group CA | 13.04 | 15.80 | **−2.76** | −0.226 | 0.0004 |
-| Interpersonal CA | 13.31 | 15.06 | **−1.75** | −0.149 | 0.021 |
+| Group CA | 13.04 | 15.76 | **−2.72** | −0.223 | 0.0005 |
+| Interpersonal CA | 13.31 | 15.04 | **−1.73** | −0.147 | 0.023 |
 
 Both associations are statistically significant at α = .05. The group subscale shows the larger mean gap and stronger correlation with regular transit.
 
@@ -64,32 +68,32 @@ Both associations are statistically significant at α = .05. The group subscale 
 
 | Model | ROC-AUC | Avg. precision | Balanced accuracy | F1 |
 |---|---:|---:|---:|---:|
-| **Group + interpersonal RF** | **0.572** | 0.478 | 0.540 | 0.513 |
-| Group CA only | 0.552 | 0.466 | 0.541 | 0.523 |
-| Interpersonal CA only | 0.537 | 0.459 | 0.529 | 0.496 |
-| Chance / prevalence | 0.500 | 0.421 | 0.500 | — |
+| **Group + interpersonal RF** | **0.590** | 0.483 | 0.573 | 0.540 |
+| Group CA only | 0.555 | 0.450 | 0.557 | 0.542 |
+| Interpersonal CA only | 0.506 | 0.425 | 0.505 | 0.457 |
+| Chance / prevalence | 0.500 | 0.419 | 0.500 | — |
 
-At a 0.5 probability threshold, the primary model’s out-of-fold confusion counts were TN=69, FP=70, FN=42, TP=59.
+At a 0.5 probability threshold, the primary model’s out-of-fold confusion counts were TN=76, FP=64, FN=40, TP=61.
 
 ### 3.3 Which subscale matters more?
 
 - Single-feature AUCs and permutation importance both rank **group CA** above interpersonal CA.
-- Combining both subscales lifts ROC-AUC by about **+0.02** over the better single-feature model (group only).
+- Combining both subscales lifts ROC-AUC by about **+0.035** over the better single-feature model (group only).
 - On the fitted forest, permutation importance (ROC-AUC drop) is larger for `gt_group_ca` (~0.31) than `gt_interpersonal_ca` (~0.22).
 
 ## 4. Interpretation
 
 **Yes — CA scores carry modest, above-chance predictive information about regular public-transit use in this matched cohort.**
 
-1. **Direction.** Higher communication apprehension is associated with *lower* probability of weekly+ public transit. Regular riders sit roughly 1.8–2.8 PRCA points lower than non-regular riders, with the larger gap on the **group** subscale. This is consistent with a behavioral picture in which people who feel more anxious in group/social settings also report less routine use of shared public environments such as buses and trains — though the design cannot establish causality.
+1. **Direction.** Higher communication apprehension is associated with *lower* probability of weekly+ public transit. Regular riders sit roughly 1.7–2.7 PRCA points lower than non-regular riders, with the larger gap on the **group** subscale. This is consistent with a behavioral picture in which people who feel more anxious in group/social settings also report less routine use of shared public environments such as buses and trains — though the design cannot establish causality.
 
-2. **Magnitude of predictive power.** A CV ROC-AUC of **0.572** beats chance (0.50) but remains in the “weak–modest” discrimination band. CA alone is **not** a strong classifier of transit habits: many high-CA respondents still ride regularly, and many low-CA respondents do not. For presentation, frame this as a detectable psychological signal, not a deployable prediction rule.
+2. **Magnitude of predictive power.** A CV ROC-AUC of **0.590** beats chance (0.50) but remains in the “weak–modest” discrimination band. CA alone is **not** a strong classifier of transit habits: many high-CA respondents still ride regularly, and many low-CA respondents do not. For presentation, frame this as a detectable psychological signal, not a deployable prediction rule.
 
-3. **Group vs interpersonal.** Group CA is the stronger of the two predictors. Adding interpersonal CA helps only slightly. That pattern fits the idea that *group-context* anxiety is more relevant to public-transit settings (shared vehicles, crowds) than one-on-one conversational anxiety — a hypothesis, not a proof.
+3. **Group vs interpersonal.** Group CA is the stronger of the two predictors. Adding interpersonal CA helps modestly (+0.035 AUC). That pattern fits the idea that *group-context* anxiety is more relevant to public-transit settings (shared vehicles, crowds) than one-on-one conversational anxiety — a hypothesis, not a proof.
 
 4. **Link to other secondary RQs.**
-   - RQ1–3 (`transit_ca`): established that regular riders differ in mean CA; this RQ shows that difference translates into **weak out-of-sample classification signal**.
-   - RQ4 (`geo_transit_rf`): lat/long alone yielded ROC-AUC ≈ 0.555. CA subscales here yield a similar (slightly higher) AUC ≈ 0.572 — geography and CA are both modest predictors of regular transit in this sample.
+   - RQ1–3 (`transit_ca`): established that regular riders differ in mean CA (Group Δ ≈ −2.72, *d* ≈ −0.46; Interpersonal Δ ≈ −1.73, *d* ≈ −0.30); this RQ shows that difference translates into **weak out-of-sample classification signal**.
+   - RQ4 (`geo_transit_rf`): lat/long alone yielded ROC-AUC = **0.551** (country-only = 0.549). CA subscales here yield a higher AUC = **0.590** — both are modest predictors of regular transit in this sample.
 
 5. **Implication for the primary persona project.** When LLM persona tiers include transit information, the model is being given a cue that is empirically (if weakly) related to true CA. Conversely, when predicting transit-related behavior from CA, the relationship is real but limited — so persona prompts should not treat transit as a deterministic proxy for apprehension.
 
@@ -104,7 +108,7 @@ At a 0.5 probability threshold, the primary model’s out-of-fold confusion coun
 
 ```bash
 # Requires ../sibling_data/ File A, File B, File C
-ca-personas ca-transit-rf --join inner
+ca-personas ca-transit-rf --join inner --seed 42
 jupyter nbconvert --to notebook --execute notebooks/secondary_rq_ca_transit_rf.ipynb
 ```
 
@@ -112,4 +116,4 @@ Key outputs:
 
 - `outputs/ca_transit_rf/ca_transit_rf_results_card.json` — compact verdict for slides
 - `outputs/ca_transit_rf/ca_transit_rf_metrics.csv` — full metric table
-- `outputs/ca_transit_rf/fig_*.png` — presentation figures
+- `outputs/ca_transit_rf/ca_transit_associations.csv` — point-biserial table
