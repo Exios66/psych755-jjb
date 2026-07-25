@@ -31,7 +31,8 @@ Supporting code:
 pip install -r requirements.txt
 pip install -e .
 
-# Requires ../sibling_data/PRCA{ProlificExport_FileA,ProlificExport_FileB,QualtricsExport_FileC}.csv
+# Requires full-cohort File A/B/C (../sibling_data, /tmp/sibling_data, or CA_SIBLING_DATA).
+# Notebooks assert the full matched cohort and do not run on excerpt fixtures.
 jupyter nbconvert --to notebook --execute notebooks/cleaning_eda_full_cohort.ipynb
 
 jupyter nbconvert --to notebook --execute notebooks/secondary_rq_transit_ca.ipynb

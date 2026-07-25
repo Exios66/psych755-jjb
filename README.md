@@ -91,7 +91,8 @@ Supporting code:
 | `notebooks/` | Executable analyses (ML, FA, secondary RQs). |
 | `docs/` | Framework, merge audit, secondary RQ write-ups, bugfix audit. |
 | `config/default.yaml` | Default paths, tiers, LLM + cleaning settings. |
-| `data/excerpts/` | Public fixtures (sibling-data fallback). |
+| `data/excerpts/` | Public fixtures for **unit tests only** (never displayed on Posit). |
+| `artifacts/posit_full_cohort/` | Committed full-cohort mock tables for Connect Cloud renders. |
 | `prompts/system_prompt.md` | Documented system prompt (synced with code). |
 
 ## Data layout (private full cohort)
@@ -111,7 +112,7 @@ pd.read_csv("../sibling_data/PRCAProlificExport_FileA.csv")
 - **File A + File B** — two Prolific recruitment waves (same columns; stacked; **262** unique IDs).
 - **File C** — Qualtrics responses; merge key is typed Prolific ID in `Q0` (**273** rows).
 - **Merge coverage:** **252** matched · **21** Qualtrics-only (disregard) · **10** Prolific-only (disregard).
-- Public **excerpt fixtures** in `data/excerpts/` remain for tests / Posit Connect Cloud.
+- Public **excerpt fixtures** in `data/excerpts/` remain for unit tests only; Posit Connect displays full-cohort results via staged File A/B/C or `artifacts/posit_full_cohort/`.
 - Column labels: [`docs/qualtrics_data_dictionary.csv`](docs/qualtrics_data_dictionary.csv).
 
 See [`data/README.md`](data/README.md).
@@ -135,7 +136,7 @@ pip install -r requirements.txt
 pip install -e ".[dev]"
 cp .env.example .env   # set Ollama, OpenRouter, or CA_LLM_PROVIDER=mock
 
-# Clean File A/B/C + EDA only (no LLM); falls back to excerpts if sibling data absent
+# Clean File A/B/C + EDA only (no LLM); requires staged full cohort for research runs
 ca-personas prepare --join inner
 
 # Score + aggregate participant ground truth (shared ML/LLM evaluation targets)
@@ -233,7 +234,7 @@ See [`src/inference/README.md`](src/inference/README.md) for checkpoint-resume, 
 
 ## Quarto manuscript website
 
-The project is a Quarto **website** configured by [`_quarto.yml`](_quarto.yml). The primary manuscript is [`index.qmd`](index.qmd); it re-runs the excerpt analysis at render time so the site builds on Posit Connect Cloud without live LLM credentials.
+The project is a Quarto **website** configured by [`_quarto.yml`](_quarto.yml). The primary manuscript is [`index.qmd`](index.qmd); it runs the offline mock pipeline on the **full matched cohort** at render time (or loads committed `artifacts/posit_full_cohort/` on Connect Cloud) so the site never displays excerpt-fixture statistics.
 
 ```bash
 # from the root of the repo
@@ -253,4 +254,4 @@ quarto preview                # local preview
 
 ## Notes
 
-Excerpt fixtures live in `data/excerpts/`. Generated `data/processed/`, `outputs/`, `_site/`, and `_freeze/` are gitignored. Never commit API keys; use `.env` locally.
+Excerpt fixtures live in `data/excerpts/` (tests only). Full-cohort Posit mock tables live in `artifacts/posit_full_cohort/`. Generated `data/processed/`, `outputs/`, `_site/`, and `_freeze/` are gitignored. Never commit API keys; use `.env` locally.

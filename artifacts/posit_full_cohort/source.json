@@ -1,0 +1,16 @@
+{
+  "data_source": "full_cohort File A/B/C",
+  "resolved_source_label": "/tmp/sibling_data File A/B/C",
+  "n_analytic": 241,
+  "provider": "mock",
+  "join_how": "inner",
+  "tiers": [
+    "demos",
+    "employment",
+    "geo",
+    "transit",
+    "full"
+  ],
+  "n_prolific_files": 2,
+  "note": "Committed for Posit Connect Cloud renders when private File A/B/C are absent. Never generated from data/excerpts/."
+}

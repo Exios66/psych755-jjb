@@ -51,3 +51,5 @@ reproducibility and silent-failure risk.
 
 - Per-row `except Exception` in prediction loops still captures individual failures for batch CSV audit columns; the **job** now fails when the batch is unusable.
 - HF cache probe in `predict_vllm.py` still catches broad errors while checking local cache (usually offline); it only logs, then continues to Hub load.
+
+| 26 | Posit / notebook paths could silently fall back to excerpt fixtures for displayed stats | `paths.py`, `index.qmd`, notebooks | Prefer staged File A/B/C (`/tmp`/`CA_SIBLING_DATA`); Posit uses committed `artifacts/posit_full_cohort/`; notebooks assert full cohort |

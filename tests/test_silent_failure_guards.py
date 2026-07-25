@@ -55,9 +55,19 @@ def test_run_predictions_fails_when_all_rows_error():
         run_predictions(_FailClient(), prompts)
 
 
-def test_config_path_resolution_falls_back_to_excerpts():
-    # Config lists sibling_data paths that are absent in CI; resolution must
-    # fall back to public excerpt fixtures instead of raising FileNotFoundError.
+def test_config_path_resolution_falls_back_to_excerpts(monkeypatch, tmp_path):
+    # When no full-cohort staging directory is present, resolution must fall
+    # back to public excerpt fixtures instead of raising FileNotFoundError.
+    import ca_personas.paths as paths_mod
+
+    monkeypatch.delenv("CA_SIBLING_DATA", raising=False)
+    monkeypatch.setattr(paths_mod, "SIBLING_DATA_DIR", tmp_path / "missing_sibling")
+    monkeypatch.setattr(
+        paths_mod,
+        "_staging_dirs",
+        lambda: [tmp_path / "missing_sibling", tmp_path / "also_missing"],
+    )
+    # Config lists sibling_data paths that are absent in this sandbox.
     config = load_config(ROOT / "config" / "default.yaml")
     prolific = _resolve_prolific_paths(None, config)
     qualtrics = _resolve_qualtrics_path(None, config)

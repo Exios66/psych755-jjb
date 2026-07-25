@@ -181,7 +181,7 @@ def comparison_delta(
 
 
 def run_ml_vs_llm_comparison(
-    prolific_path: str | Path,
+    prolific_path: str | Path | list[Path],
     qualtrics_path: str | Path,
     *,
     tiers: Iterable[str] = RESEARCH_TIERS,

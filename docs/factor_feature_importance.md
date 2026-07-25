@@ -24,25 +24,24 @@ Practical takeaway for the manuscript: reporting **separate** MAE for group vs i
 
 ## 3. Covariate permutation importance
 
-A Random Forest predicting CA from persona-style covariates, with permutation importance on held-out folds, ranks features as follows (mean importance; zeros omitted below):
+A Random Forest predicting CA from persona-style covariates on the **full matched analytic cohort (N = 241)**, with permutation importance on held-out folds, ranks features as follows (mean importance across group + interpersonal targets):
 
 ![Top covariates](figures/feature_importance_top.png)
 
 | Rank | Feature | Permutation importance |
 |---:|---|---:|
-| 1 | Q28 (ride-share days) | 0.346 |
-| 2 | LocationLongitude | 0.239 |
-| 3 | LocationLatitude | 0.197 |
-| 4 | Q26 (public-transit days) | 0.139 |
-| 5 | Nationality* | 0.085 |
-| 6 | Employment status | 0.083 |
-| 7 | Age | 0.078 |
-| 8 | Country of birth* | 0.055 |
-| 9 | Country of residence | 0.053 |
+| 1 | Q28 (ride-share days) | 1.518 |
+| 2 | Age | 1.326 |
+| 3 | LocationLatitude | 1.254 |
+| 4 | Employment status | 1.075 |
+| 5 | LocationLongitude | 1.041 |
+| 6 | Q26 (public-transit days) | 0.731 |
+| 7 | Sex | 0.258 |
+| 8 | Student status | 0.170 |
+| 9 | Q21 (car access) | 0.167 |
+| 10 | Country of residence | 0.165 |
 
-\*Richer demographic fields appear in excerpt / importance runs when present; full File A/B waves often omit them, so the live `demos` tier may not expose every row above.
-
-Sex, student status, license/car (`Q20`/`Q21`), and several transit intensity items (`Q27`/`Q29`) show ~0 permutation importance in this fit — either weak signal or redundancy with higher-ranked features.
+Full File A/B waves omit ethnicity / nationality / language, so those fields are not in this ranking. `Q27`/`Q29` and license (`Q20`) remain low relative to Q28, age, geo, and employment.
 
 ## 4. Interpretation against LLM tiers
 
@@ -56,7 +55,8 @@ Sex, student status, license/car (`Q20`/`Q21`), and several transit intensity it
 ## 5. Reproducibility
 
 ```bash
+# Requires staged File A/B/C (never excerpts for reported tables)
 jupyter nbconvert --to notebook --execute notebooks/factor_feature_importance.ipynb
 ```
 
-Key outputs: `outputs/feature_importance/top_predictive_features.csv`, `ca_item_fa_loadings.csv`, importance CSVs per target.
+Key outputs: `outputs/feature_importance/top_predictive_features.csv`, `ca_item_fa_loadings.csv`, importance CSVs per target. Re-run verified on full cohort N = 241 (`seed`/defaults as in `feature_importance.py`).

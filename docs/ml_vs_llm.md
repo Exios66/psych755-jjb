@@ -7,7 +7,7 @@ subtitle: "Head-to-head evaluation across persona information tiers"
 **Code:** [`src/ca_personas/compare_agents.py`](../src/ca_personas/compare_agents.py)  
 **CLI:** `ca-personas compare --provider mock|ollama|openrouter`  
 **ML reference:** [`ml_baselines.md`](ml_baselines.md)  
-**Manuscript demo:** [`index.qmd`](../index.qmd) (mock pipeline on excerpt fixtures)
+**Manuscript demo:** [`index.qmd`](../index.qmd) (mock pipeline on the full matched cohort; Posit uses committed `artifacts/posit_full_cohort/`)
 
 ---
 
