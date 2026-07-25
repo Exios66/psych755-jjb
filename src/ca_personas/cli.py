@@ -9,6 +9,7 @@ from pathlib import Path
 from ca_personas.compare_agents import run_ml_vs_llm_comparison
 from ca_personas.ground_truth import export_ground_truth_bundle
 from ca_personas.load import load_and_prepare, load_full_cohort
+from ca_personas.ml_baseline import DEFAULT_MODEL_SUITE
 from ca_personas.paths import default_prolific_paths, default_qualtrics_path
 from ca_personas.personas import RESEARCH_TIERS, TIERS, build_persona_prompts, write_persona_bundle
 from ca_personas.pipeline import prepare_analytic_sample, run_pipeline
@@ -139,7 +140,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     compare = sub.add_parser(
         "compare",
-        help="Evaluate RF/KNN vs LLM persona agents on shared CA metrics",
+        help="Evaluate the ML baseline suite vs LLM persona agents on shared CA metrics",
     )
     _add_shared_data_args(compare)
     compare.add_argument(
@@ -162,6 +163,37 @@ def build_parser() -> argparse.ArgumentParser:
         default=Path("outputs/ml_vs_llm"),
         help="Directory for comparison artifacts",
     )
+
+    ml_base = sub.add_parser(
+        "ml-baseline",
+        help=(
+            "Stage-one ML suite for CA prediction (Ridge, Elastic Net, k-NN, "
+            "RF, HistGradientBoosting, XGBoost, MLP) across persona tiers"
+        ),
+    )
+    _add_shared_data_args(ml_base)
+    ml_base.add_argument(
+        "--tiers",
+        nargs="+",
+        choices=list(RESEARCH_TIERS),
+        default=list(RESEARCH_TIERS),
+        help="Research tiers to evaluate (default: all four)",
+    )
+    ml_base.add_argument(
+        "--models",
+        nargs="+",
+        choices=list(DEFAULT_MODEL_SUITE),
+        default=None,
+        help="Subset of models (default: full suite)",
+    )
+    ml_base.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/ml_baseline"),
+        help="Directory for metrics, predictions, leaderboard, and pivots",
+    )
+    ml_base.add_argument("--n-neighbors", type=int, default=3, help="k for k-NN")
+    ml_base.add_argument("--seed", type=int, default=42, help="RNG seed")
 
     transit = sub.add_parser(
         "transit-ca",
@@ -475,6 +507,39 @@ def main(argv: list[str] | None = None) -> int:
         print(
             json.dumps(
                 {k: str(v) for k, v in result["artifacts"].items()},
+                indent=2,
+            )
+        )
+        return 0
+
+    if command == "ml-baseline":
+        from ca_personas.ml_baseline import (
+            leaderboard,
+            run_stage_one_baselines,
+            save_baseline_artifacts,
+        )
+
+        prolific, qualtrics = _paths_or_defaults(args)
+        participants, predictions, metrics = run_stage_one_baselines(
+            prolific,
+            qualtrics,
+            tiers=args.tiers,
+            join_how=args.join,
+            n_neighbors=args.n_neighbors,
+            random_state=args.seed,
+            models=args.models,
+        )
+        paths = save_baseline_artifacts(predictions, metrics, args.output_dir)
+        board = leaderboard(metrics)
+        print(
+            json.dumps(
+                {
+                    "n_analytic": int(len(participants)),
+                    "n_models": int(metrics["model"].nunique()),
+                    "models": sorted(metrics["model"].unique().tolist()),
+                    "artifacts": {k: str(v) for k, v in paths.items()},
+                    "leaderboard_head": board.head(8).to_dict(orient="records"),
+                },
                 indent=2,
             )
         )

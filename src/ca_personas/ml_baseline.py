@@ -1,23 +1,34 @@
-"""Stage-one classical ML baselines for CA score prediction.
+"""Stage-one classical / modern ML baselines for CA score prediction.
 
 Mirrors the LLM persona information tiers and predicts the same targets:
 ground-truth PRCA group and interpersonal subscale scores (6–30).
+
+Default suite: Ridge, Elastic Net, k-NN, Random Forest, HistGradientBoosting,
+XGBoost, and a small MLP neural net — a mix of linear, instance-based,
+tree-ensemble, boosting, and neural baselines for LLM comparison.
 """
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Sequence
 
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import (
+    HistGradientBoostingRegressor,
+    RandomForestRegressor,
+)
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.impute import SimpleImputer
+from sklearn.linear_model import ElasticNet, Ridge
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import LeaveOneOut, KFold, cross_val_predict
 from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neural_network import MLPRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
@@ -59,11 +70,36 @@ TIER_FEATURES: dict[str, list[str]] = {
 
 NUMERIC_CANDIDATES = {"Age", "LocationLatitude", "LocationLongitude"}
 
+# Canonical suite order for tables / plots.
+DEFAULT_MODEL_SUITE: tuple[str, ...] = (
+    "ridge",
+    "elastic_net",
+    "knn",
+    "random_forest",
+    "hist_gradient_boosting",
+    "xgboost",
+    "mlp",
+)
+
+# Kept for SHAP / lighter compare paths that expect tree + instance baselines.
+CLASSIC_MODEL_SUITE: tuple[str, ...] = ("random_forest", "knn")
+
+MODEL_LABELS: dict[str, str] = {
+    "ridge": "Ridge",
+    "elastic_net": "Elastic Net",
+    "knn": "k-NN",
+    "random_forest": "Random Forest",
+    "hist_gradient_boosting": "Hist. Gradient Boosting",
+    "xgboost": "XGBoost",
+    "mlp": "Neural net (MLP)",
+}
+
 
 @dataclass(frozen=True)
 class BaselineSpec:
     name: str
     estimator: Any
+    family: str = "other"
 
 
 def available_feature_columns(df: pd.DataFrame, tier: str) -> list[str]:
@@ -136,22 +172,113 @@ def make_preprocessor(feature_cols: list[str]) -> ColumnTransformer:
     return ColumnTransformer(transformers=transformers)
 
 
-def baseline_models(*, n_neighbors: int = 3, random_state: int = 42) -> list[BaselineSpec]:
-    """Return untuned stage-one estimators used as LLM comparison baselines."""
-    return [
-        BaselineSpec(
+def _make_xgboost(*, random_state: int) -> Any:
+    try:
+        from xgboost import XGBRegressor
+    except ImportError as exc:  # pragma: no cover - exercised when dep missing
+        raise ImportError(
+            "xgboost is required for the stage-one ML suite. "
+            "Install with: pip install 'xgboost>=2.0'"
+        ) from exc
+    return XGBRegressor(
+        n_estimators=200,
+        max_depth=4,
+        learning_rate=0.08,
+        subsample=0.9,
+        colsample_bytree=0.9,
+        min_child_weight=2,
+        reg_lambda=1.0,
+        objective="reg:squarederror",
+        random_state=random_state,
+        n_jobs=1,
+        verbosity=0,
+    )
+
+
+def baseline_models(
+    *,
+    n_neighbors: int = 3,
+    random_state: int = 42,
+    include: Sequence[str] | None = None,
+) -> list[BaselineSpec]:
+    """Return stage-one estimators used as LLM comparison baselines.
+
+    Parameters
+    ----------
+    include :
+        Optional subset of model names. ``None`` selects the full default suite.
+    """
+    wanted = list(DEFAULT_MODEL_SUITE if include is None else include)
+    unknown = sorted(set(wanted) - set(DEFAULT_MODEL_SUITE))
+    if unknown:
+        raise ValueError(
+            f"Unknown model name(s) {unknown}; expected subset of {DEFAULT_MODEL_SUITE}"
+        )
+
+    builders: dict[str, BaselineSpec] = {
+        "ridge": BaselineSpec(
+            name="ridge",
+            family="linear",
+            estimator=Ridge(alpha=1.0, random_state=random_state),
+        ),
+        "elastic_net": BaselineSpec(
+            name="elastic_net",
+            family="linear",
+            estimator=ElasticNet(
+                alpha=0.05,
+                l1_ratio=0.5,
+                max_iter=5000,
+                random_state=random_state,
+            ),
+        ),
+        "knn": BaselineSpec(
+            name="knn",
+            family="instance",
+            estimator=KNeighborsRegressor(n_neighbors=n_neighbors, weights="distance"),
+        ),
+        "random_forest": BaselineSpec(
             name="random_forest",
+            family="tree_ensemble",
             estimator=RandomForestRegressor(
                 n_estimators=200,
                 random_state=random_state,
                 min_samples_leaf=1,
             ),
         ),
-        BaselineSpec(
-            name="knn",
-            estimator=KNeighborsRegressor(n_neighbors=n_neighbors, weights="distance"),
+        "hist_gradient_boosting": BaselineSpec(
+            name="hist_gradient_boosting",
+            family="boosting",
+            estimator=HistGradientBoostingRegressor(
+                max_depth=4,
+                learning_rate=0.08,
+                max_iter=200,
+                random_state=random_state,
+            ),
         ),
-    ]
+        "mlp": BaselineSpec(
+            name="mlp",
+            family="neural",
+            # Adam + modest width is stabler under 5-fold CV than lbfgs on
+            # one-hot demographic matrices (avoids iteration-limit warnings).
+            estimator=MLPRegressor(
+                hidden_layer_sizes=(32,),
+                activation="relu",
+                solver="adam",
+                alpha=1e-3,
+                learning_rate_init=1e-3,
+                max_iter=400,
+                tol=1e-3,
+                random_state=random_state,
+            ),
+        ),
+    }
+    if "xgboost" in wanted:
+        builders["xgboost"] = BaselineSpec(
+            name="xgboost",
+            family="boosting",
+            estimator=_make_xgboost(random_state=random_state),
+        )
+    return [builders[name] for name in wanted]
 
 
 def choose_cv(n_samples: int, *, random_state: int = 42):
@@ -176,9 +303,10 @@ def run_baselines_for_tier(
     targets: Iterable[str] = TARGETS,
     n_neighbors: int = 3,
     random_state: int = 42,
+    models: Sequence[str] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
-    Fit RF/KNN under cross-validation for one information tier.
+    Fit the ML suite under cross-validation for one information tier.
 
     Returns
     -------
@@ -197,7 +325,9 @@ def run_baselines_for_tier(
     pred_rows: list[dict[str, Any]] = []
     metric_rows: list[dict[str, Any]] = []
 
-    for spec in baseline_models(n_neighbors=knn_k, random_state=random_state):
+    for spec in baseline_models(
+        n_neighbors=knn_k, random_state=random_state, include=models
+    ):
         pipe = Pipeline(
             steps=[
                 ("preprocess", make_preprocessor(feature_cols)),
@@ -212,7 +342,9 @@ def run_baselines_for_tier(
             X[col] = X[col].astype("string").fillna("<NA>").astype(str)
         for target in targets:
             y = model_df[target].astype(float)
-            y_hat = cross_val_predict(pipe, X, y, cv=cv)
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", category=ConvergenceWarning)
+                y_hat = cross_val_predict(pipe, X, y, cv=cv)
             # Clamp to the legal PRCA subscale range for fair comparison with LLMs.
             y_hat = np.clip(y_hat, 6, 30)
 
@@ -248,6 +380,8 @@ def run_baselines_for_tier(
                 {
                     "tier": tier,
                     "model": spec.name,
+                    "model_label": MODEL_LABELS.get(spec.name, spec.name),
+                    "model_family": spec.family,
                     "target": target,
                     "n_samples": n,
                     "n_features": len(feature_cols),
@@ -281,6 +415,8 @@ def run_baselines_for_tier(
                         "participant_id": pid,
                         "tier": tier,
                         "model": spec.name,
+                        "model_label": MODEL_LABELS.get(spec.name, spec.name),
+                        "model_family": spec.family,
                         "target": target,
                         "side": side,
                         "y_true": float(truth),
@@ -309,8 +445,9 @@ def run_stage_one_baselines(
     join_how: str = "inner",
     n_neighbors: int = 3,
     random_state: int = 42,
+    models: Sequence[str] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Load data and evaluate RF/KNN baselines across research tiers."""
+    """Load data and evaluate the ML suite across research tiers."""
     participants = load_and_prepare(
         prolific_path,
         qualtrics_path,
@@ -328,6 +465,7 @@ def run_stage_one_baselines(
             tier=tier,
             n_neighbors=n_neighbors,
             random_state=random_state,
+            models=models,
         )
         all_preds.append(preds)
         all_metrics.append(metrics)
@@ -341,7 +479,14 @@ def metrics_wide(metrics: pd.DataFrame) -> pd.DataFrame:
     """Pivot MAE into a model × tier table for group and interpersonal targets."""
     rows: list[dict[str, Any]] = []
     for (model, tier), frame in metrics.groupby(["model", "tier"]):
-        row: dict[str, Any] = {"model": model, "tier": tier, "n_samples": int(frame["n_samples"].iloc[0])}
+        row: dict[str, Any] = {
+            "model": model,
+            "model_label": MODEL_LABELS.get(str(model), str(model)),
+            "tier": tier,
+            "n_samples": int(frame["n_samples"].iloc[0]),
+        }
+        if "model_family" in frame.columns:
+            row["model_family"] = frame["model_family"].iloc[0]
         for _, r in frame.iterrows():
             side = "group" if "group" in r["target"] else "interpersonal"
             row[f"mae_{side}"] = r["mae"]
@@ -353,7 +498,72 @@ def metrics_wide(metrics: pd.DataFrame) -> pd.DataFrame:
             row[f"mean_norm_score_distance_{side}"] = r.get("mean_norm_score_distance")
             row[f"mean_norm_band_distance_{side}"] = r.get("mean_norm_band_distance")
         rows.append(row)
-    return pd.DataFrame(rows).sort_values(["model", "tier"]).reset_index(drop=True)
+    wide = pd.DataFrame(rows)
+    if wide.empty:
+        return wide
+    model_order = {m: i for i, m in enumerate(DEFAULT_MODEL_SUITE)}
+    tier_order = {t: i for i, t in enumerate(("demos", "employment", "geo", "transit"))}
+    wide["_m"] = wide["model"].map(model_order).fillna(99)
+    wide["_t"] = wide["tier"].map(tier_order).fillna(99)
+    return (
+        wide.sort_values(["_m", "_t"])
+        .drop(columns=["_m", "_t"])
+        .reset_index(drop=True)
+    )
+
+
+def leaderboard(metrics: pd.DataFrame) -> pd.DataFrame:
+    """Best model (lowest MAE) per tier × target, plus runner-up delta."""
+    rows: list[dict[str, Any]] = []
+    for (tier, target), frame in metrics.groupby(["tier", "target"]):
+        ordered = frame.sort_values(["mae", "rmse", "model"]).reset_index(drop=True)
+        best = ordered.iloc[0]
+        second_mae = float(ordered.iloc[1]["mae"]) if len(ordered) > 1 else float("nan")
+        rows.append(
+            {
+                "tier": tier,
+                "target": target,
+                "best_model": best["model"],
+                "best_model_label": MODEL_LABELS.get(str(best["model"]), str(best["model"])),
+                "best_mae": float(best["mae"]),
+                "best_rmse": float(best["rmse"]),
+                "best_r2": float(best["r2"]),
+                "best_band_acc": float(best["band_acc"]),
+                "runner_up_mae": second_mae,
+                "mae_gap_to_second": float(second_mae - best["mae"])
+                if np.isfinite(second_mae)
+                else float("nan"),
+                "n_models": int(len(ordered)),
+                "n_samples": int(best["n_samples"]),
+            }
+        )
+    out = pd.DataFrame(rows)
+    if out.empty:
+        return out
+    tier_order = {t: i for i, t in enumerate(("demos", "employment", "geo", "transit"))}
+    out["_t"] = out["tier"].map(tier_order).fillna(99)
+    return out.sort_values(["_t", "target"]).drop(columns=["_t"]).reset_index(drop=True)
+
+
+def mae_pivot(
+    metrics: pd.DataFrame,
+    *,
+    target: str = "gt_group_ca",
+    value: str = "mae",
+) -> pd.DataFrame:
+    """Model × tier pivot of a metric for one target (for docs/tables)."""
+    frame = metrics[metrics["target"] == target].copy()
+    if frame.empty:
+        return frame
+    pivot = frame.pivot(index="model", columns="tier", values=value)
+    ordered_models = [m for m in DEFAULT_MODEL_SUITE if m in pivot.index] + [
+        m for m in pivot.index if m not in DEFAULT_MODEL_SUITE
+    ]
+    ordered_tiers = [t for t in ("demos", "employment", "geo", "transit") if t in pivot.columns]
+    pivot = pivot.reindex(index=ordered_models, columns=ordered_tiers)
+    pivot.index = [MODEL_LABELS.get(m, m) for m in pivot.index]
+    pivot.index.name = "model"
+    return pivot.reset_index()
 
 
 def save_baseline_artifacts(
@@ -367,8 +577,16 @@ def save_baseline_artifacts(
         "predictions": out / "ml_baseline_predictions.csv",
         "metrics": out / "ml_baseline_metrics.csv",
         "metrics_wide": out / "ml_baseline_metrics_wide.csv",
+        "leaderboard": out / "ml_baseline_leaderboard.csv",
+        "mae_pivot_group": out / "ml_baseline_mae_pivot_group.csv",
+        "mae_pivot_interpersonal": out / "ml_baseline_mae_pivot_interpersonal.csv",
     }
     predictions.to_csv(paths["predictions"], index=False)
     metrics.to_csv(paths["metrics"], index=False)
     metrics_wide(metrics).to_csv(paths["metrics_wide"], index=False)
+    leaderboard(metrics).to_csv(paths["leaderboard"], index=False)
+    mae_pivot(metrics, target="gt_group_ca").to_csv(paths["mae_pivot_group"], index=False)
+    mae_pivot(metrics, target="gt_interpersonal_ca").to_csv(
+        paths["mae_pivot_interpersonal"], index=False
+    )
     return paths
