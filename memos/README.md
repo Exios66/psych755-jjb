@@ -1,7 +1,10 @@
-# Research memos
+# Research Memos
 
-Concise research memoranda following the course template (question → results summary → remaining uncertainties).
+Individual research memoranda for PSYCH 755.
 
-| Memo | Research question |
-|------|-------------------|
-| [geo_predicts_transit.md](geo_predicts_transit.md) | Does geographical location predict regular public transit use? |
+| Memo | Researcher | Question |
+|---|---|---|
+| [`ca_scores_predict_transit.md`](ca_scores_predict_transit.md) | Jack J. Burleson | Do group & interpersonal CA scores predict regular public-transit use? |
+| [`geo_predicts_transit.md`](geo_predicts_transit.md) | Jack J. Burleson | Does geographical location predict regular public transit use? |
+
+Supporting figure(s) live under [`figures/`](figures/).
