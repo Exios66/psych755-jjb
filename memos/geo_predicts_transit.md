@@ -42,4 +42,4 @@ How much of the lat/long signal is simply country or urban/rural composition rat
 
 ## What other features may also well-predict regular public transit use?
 
-Communication-apprehension scores (group and interpersonal PRCA) were examined in a companion Random Forest (`secondary_rq_ca_transit_rf.ipynb` / `memos/ca_scores_predict_transit.md`) and showed slightly stronger discrimination (AUC ≈ 0.59). Other candidates include car access / license (`Q20`/`Q21`), employment status, and ride-share frequency (`Q28`/`Q29`).
+Communication-apprehension scores (group and interpersonal PRCA) were examined in a companion Random Forest (`notebooks/secondary_rq_ca_transit_rf.ipynb`) and showed slightly stronger discrimination (AUC ≈ 0.59). Other candidates include car access / license (`Q20`/`Q21`), employment status, and ride-share frequency (`Q28`/`Q29`).
