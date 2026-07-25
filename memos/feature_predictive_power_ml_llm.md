@@ -1,12 +1,11 @@
-# Reproducible Science
+---
+title: "Memo: Feature predictive power for CA (SHAP / F1)"
+subtitle: "Research memorandum — ML vs LLM attributions across persona tiers"
+author: Jack J. Burleson
+date: 2026-07-25
+---
 
-## A Research Memorandum
-
-**Researcher:** Jack J. Burleson  
-**Date:** July 25, 2026  
-
-**Research Or Analytical Question:**  
-Which demographic and behavioral features have the greatest predictive power for PRCA group and interpersonal communication-apprehension scores under traditional machine-learning models and LLM persona agents — as measured by SHAP attributions and band-level F1?
+**Research question:** Which demographic and behavioral features have the greatest predictive power for PRCA group and interpersonal communication-apprehension scores under traditional machine-learning models and LLM persona agents — as measured by SHAP attributions and band-level F1?
 
 ---
 
