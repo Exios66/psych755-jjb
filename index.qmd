@@ -346,9 +346,10 @@ Persona prompts are cumulative and follow the **AI Terrarium / ICA 2026** digita
 # Always show the live build_persona_prompt narrative — never a checklist /
 # "Adopt the following identity" stub from older freeze caches.
 example = next(p for p in prompts if p.tier == "geo")
-assert "You are a" in example.user_prompt, "Expected Terrarium second-person narrative"
-assert "Adopt the following identity" not in example.user_prompt
-assert "Fully personify" not in example.user_prompt
+if not example.user_prompt.lstrip().startswith("You are"):
+    raise AssertionError("Expected Terrarium second-person narrative user prompt")
+if any(bad in example.user_prompt for bad in ("Adopt the following", "Fully personify", "Demographics:")):
+    raise AssertionError("Stale checklist-style persona prompt leaked into listing")
 print(example.user_prompt)
 ```
 
@@ -358,7 +359,8 @@ print(example.user_prompt)
 #| lst-cap: "AI Terrarium Demos-Tier User Prompt (Same Participant; Base Layer Only)"
 
 example_demos = next(p for p in prompts if p.tier == "demos")
-assert "You are a" in example_demos.user_prompt
+if not example_demos.user_prompt.lstrip().startswith("You are"):
+    raise AssertionError("Expected Terrarium demos narrative")
 print(example_demos.user_prompt)
 ```
 
@@ -368,8 +370,10 @@ print(example_demos.user_prompt)
 #| lst-cap: "AI Terrarium Transit-Tier User Prompt (Same Participant; Richest Research Tier)"
 
 example_transit = next(p for p in prompts if p.tier == "transit")
-assert "You are a" in example_transit.user_prompt
-assert "Adopt the following identity" not in example_transit.user_prompt
+if not example_transit.user_prompt.lstrip().startswith("You are"):
+    raise AssertionError("Expected Terrarium transit narrative")
+if "Demographics:" in example_transit.user_prompt:
+    raise AssertionError("Stale checklist-style transit prompt leaked into listing")
 print(example_transit.user_prompt)
 ```
 
