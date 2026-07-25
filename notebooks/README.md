@@ -6,6 +6,10 @@
 | [`secondary_rq_transit_ca.ipynb`](secondary_rq_transit_ca.ipynb) | Secondary RQ 1–3 | Test whether regular public-transit riders differ in CA from the larger matched cohort (Welch *t*, effect sizes, distributions, sensitivity) |
 | [`secondary_rq_geo_transit_rf.ipynb`](secondary_rq_geo_transit_rf.ipynb) | Secondary RQ 4 | Random Forest: does lat/long predict regular public-transit use? (CV metrics, baselines, importances, decision surface) |
 | [`secondary_rq_ca_transit_rf.ipynb`](secondary_rq_ca_transit_rf.ipynb) | Secondary RQ 5 | Random Forest: do group & interpersonal CA scores predict regular public-transit use? (+ [write-up](../docs/secondary_rq_ca_predicts_transit.md)) |
+| [`secondary_rq_car_access_transit_rf.ipynb`](secondary_rq_car_access_transit_rf.ipynb) | Geo follow-up | RF: car license/access (`Q20`/`Q21`) → regular transit · [memo](../memos/car_access_predicts_transit.md) |
+| [`secondary_rq_employment_transit_rf.ipynb`](secondary_rq_employment_transit_rf.ipynb) | Geo follow-up | RF: employment status → regular transit · [memo](../memos/employment_predicts_transit.md) |
+| [`secondary_rq_rideshare_transit_rf.ipynb`](secondary_rq_rideshare_transit_rf.ipynb) | Geo follow-up | RF: ride-share (`Q28`/`Q29`) → regular transit · [memo](../memos/rideshare_predicts_transit.md) |
+| [`secondary_rq_transit_covariate_followups.ipynb`](secondary_rq_transit_covariate_followups.ipynb) | Geo follow-ups | Head-to-head comparison of car / employment / ride-share · [memo](../memos/transit_covariate_followups.md) · [write-up](../docs/secondary_rq_transit_covariate_followups.md) |
 | [`stage_one_ml_baseline.ipynb`](stage_one_ml_baseline.ipynb) | Stage one | Train/evaluate Random Forest + KNN baselines on the same tiered CA prediction task used for LLM personas |
 | [`ml_vs_llm_comparison.ipynb`](ml_vs_llm_comparison.ipynb) | Comparison | Side-by-side ML vs LLM evaluation on shared metrics (MAE, exact/band accuracy, distance-from-correct) |
 | [`factor_feature_importance.ipynb`](factor_feature_importance.ipynb) | Diagnostics | Factor analysis of PRCA items + RF/permutation feature importance for persona covariates |
@@ -17,6 +21,7 @@ Supporting code:
 - [`src/ca_personas/transit_ca.py`](../src/ca_personas/transit_ca.py)
 - [`src/ca_personas/geo_transit_rf.py`](../src/ca_personas/geo_transit_rf.py)
 - [`src/ca_personas/ca_transit_rf.py`](../src/ca_personas/ca_transit_rf.py)
+- [`src/ca_personas/transit_covariate_rf.py`](../src/ca_personas/transit_covariate_rf.py)
 - [`src/ca_personas/ml_baseline.py`](../src/ca_personas/ml_baseline.py)
 - [`src/ca_personas/compare_agents.py`](../src/ca_personas/compare_agents.py)
 - [`src/ca_personas/feature_importance.py`](../src/ca_personas/feature_importance.py)
@@ -37,6 +42,9 @@ jupyter nbconvert --to notebook --execute notebooks/secondary_rq_geo_transit_rf.
 
 jupyter nbconvert --to notebook --execute notebooks/secondary_rq_ca_transit_rf.ipynb
 # or: ca-personas ca-transit-rf --join inner
+
+jupyter nbconvert --to notebook --execute notebooks/secondary_rq_transit_covariate_followups.ipynb
+# or: ca-personas covariate-transit-rf --join inner --seed 42
 
 jupyter nbconvert --to notebook --execute notebooks/stage_one_ml_baseline.ipynb
 CA_LLM_PROVIDER=mock jupyter nbconvert --to notebook --execute notebooks/ml_vs_llm_comparison.ipynb

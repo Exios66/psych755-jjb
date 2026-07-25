@@ -15,6 +15,10 @@ from ca_personas.pipeline import prepare_analytic_sample, run_pipeline
 from ca_personas.ca_transit_rf import run_ca_transit_rf_pipeline
 from ca_personas.geo_transit_rf import run_geo_transit_rf_pipeline
 from ca_personas.transit_ca import run_transit_ca_pipeline
+from ca_personas.transit_covariate_rf import (
+    FEATURE_SPECS,
+    run_transit_covariate_pipeline,
+)
 
 
 def _add_shared_data_args(parser: argparse.ArgumentParser) -> None:
@@ -221,6 +225,42 @@ def build_parser() -> argparse.ArgumentParser:
         help="Permutation-importance repeats",
     )
     ca_rf.add_argument("--seed", type=int, default=42, help="RNG seed")
+
+    cov_rf = sub.add_parser(
+        "covariate-transit-rf",
+        help=(
+            "Follow-up RQs from the geo memo: Random Forests for car access "
+            "(Q20/Q21), employment, ride-share (Q28/Q29), and a joint bundle"
+        ),
+    )
+    _add_shared_data_args(cov_rf)
+    cov_rf.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/transit_covariate_rf"),
+        help="Directory for per-family RF artifacts and comparison table",
+    )
+    cov_rf.add_argument(
+        "--specs",
+        nargs="+",
+        choices=sorted(FEATURE_SPECS),
+        default=None,
+        help="Feature families to run (default: all)",
+    )
+    cov_rf.add_argument("--splits", type=int, default=5, help="Stratified CV folds")
+    cov_rf.add_argument(
+        "--perm-repeats",
+        type=int,
+        default=30,
+        help="Permutation-importance repeats",
+    )
+    cov_rf.add_argument("--seed", type=int, default=42, help="RNG seed")
+    cov_rf.add_argument(
+        "--figures-dir",
+        type=Path,
+        default=Path("memos/figures"),
+        help="Directory for memo figures (default: memos/figures)",
+    )
 
     shap_cmd = sub.add_parser(
         "shap-eval",
@@ -430,6 +470,22 @@ def main(argv: list[str] | None = None) -> int:
             n_splits=args.splits,
             n_perm_repeats=args.perm_repeats,
             random_state=args.seed,
+        )
+        print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
+        return 0
+
+    if command == "covariate-transit-rf":
+        prolific, qualtrics = _paths_or_defaults(args)
+        artifacts = run_transit_covariate_pipeline(
+            prolific_paths=prolific,
+            qualtrics_path=qualtrics,
+            join_how=args.join,
+            output_dir=args.output_dir,
+            n_splits=args.splits,
+            n_perm_repeats=args.perm_repeats,
+            random_state=args.seed,
+            spec_keys=args.specs,
+            figures_dir=args.figures_dir,
         )
         print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
         return 0
