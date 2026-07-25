@@ -1,0 +1,45 @@
+name: Feature request
+description: Propose a new capability, analysis, or site improvement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / motivation
+      description: What gap does this fill?
+      placeholder: As a researcher / agent, I need …
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Concrete behavior, CLI surface, or manuscript change
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - CLI / package (`src/ca_personas`)
+        - Inference / vLLM (`src/inference`)
+        - Analysis / notebooks / secondary RQs
+        - Quarto site / manuscript / memos
+        - Tooling / DX
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional — other approaches or workarounds
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints
+      options:
+        - label: Does not require committing private File A/B/C exports
+        - label: Offline `mock` provider path remains viable (if LLM-related)

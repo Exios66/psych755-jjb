@@ -1,0 +1,63 @@
+name: Bug report
+description: Something broken in code, CLI, tests, or the Quarto site
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug. Keep private Prolific/Qualtrics exports out of this issue.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What went wrong?
+      placeholder: Brief description of the failure
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Minimal commands or path that triggers the bug
+      placeholder: |
+        1. source .venv/bin/activate
+        2. ca-personas run --provider mock --join inner
+        3. …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual
+      placeholder: |
+        Expected: …
+        Actual: …
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - CLI / package (`src/ca_personas`)
+        - Inference / vLLM (`src/inference`)
+        - Analysis / notebooks
+        - Quarto site / manuscript
+        - Tests / CI tooling
+        - Docs
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python, Quarto (if relevant)
+      placeholder: "Linux, Python 3.11, Quarto 1.x"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / traceback
+      description: Paste relevant output (redact secrets)
+      render: text

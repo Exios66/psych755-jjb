@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Setup & CLI reference
+    url: https://github.com/Exios66/psych755-jjb/blob/main/Getstarted.md
+    about: Local install, sibling data, and ca-personas commands
+  - name: Live Posit site
+    url: https://019f9a10-ebb9-d1d5-839f-97e794bfd0ca.share.connect.posit.cloud/
+    about: Published Quarto manuscript on Posit Connect Cloud
