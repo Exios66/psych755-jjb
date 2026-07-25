@@ -149,7 +149,7 @@ ca-personas prepare --join inner
 # Score + aggregate participant ground truth (shared ML/LLM evaluation targets)
 ca-personas score-gt --join inner
 
-# Build foolproof persona prompts (research tiers + full Qualtrics voice)
+# Build digital-twin persona prompts (natural-language narrative; research tiers + full)
 ca-personas build-personas --tiers demos employment geo transit full
 
 # Offline dry run on the full cohort (deterministic mock model)
