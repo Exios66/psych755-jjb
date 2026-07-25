@@ -244,13 +244,19 @@ quarto render                 # builds _site/
 quarto preview                # local preview
 ```
 
-### Publish to Posit Connect Cloud
+### Publish to Posit Connect Cloud (JackJBurleson)
 
-1. Push this repository to GitHub (public).
-2. In [Posit Connect Cloud](https://connect.posit.cloud), choose **Publish → Quarto**.
-3. Select the repository and branch.
-4. Set the primary file to **`_quarto.yml`** (recommended website publish) or **`index.qmd`**.
-5. Confirm `requirements.txt` is present (Connect installs Jupyter + analysis deps from it).
+Canonical deployment: account **`jackjburleson`**, content  
+`019f9a10-ebb9-d1d5-839f-97e794bfd0ca`  
+(share: https://019f9a10-ebb9-d1d5-839f-97e794bfd0ca.share.connect.posit.cloud/).
+
+Publishing **requires full-cohort File A/B/C** (not excerpts). Use the helper (device-code OAuth or `POSIT_CONNECT_CLOUD_*` env vars):
+
+```bash
+python scripts/publish_posit_jackjburleson.py
+```
+
+Agent runbook: [`.cursor/skills/posit-connect-publish/SKILL.md`](.cursor/skills/posit-connect-publish/SKILL.md).
 
 ## Notes
 
