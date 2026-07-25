@@ -13,6 +13,7 @@ from ca_personas.paths import default_prolific_paths, default_qualtrics_path
 from ca_personas.personas import RESEARCH_TIERS, TIERS, build_persona_prompts, write_persona_bundle
 from ca_personas.pipeline import prepare_analytic_sample, run_pipeline
 from ca_personas.ca_transit_rf import run_ca_transit_rf_pipeline
+from ca_personas.comprehensive_transit_rf import run_comprehensive_transit_rf_pipeline
 from ca_personas.geo_transit_rf import run_geo_transit_rf_pipeline
 from ca_personas.transit_ca import run_transit_ca_pipeline
 
@@ -222,6 +223,41 @@ def build_parser() -> argparse.ArgumentParser:
     )
     ca_rf.add_argument("--seed", type=int, default=42, help="RNG seed")
 
+    comp_rf = sub.add_parser(
+        "comprehensive-transit-rf",
+        help=(
+            "Secondary RQ: feature-importance + tuned Random Forest over "
+            "demographics, employment, geo, car access, ride-share, and CA "
+            "scores to maximize ROC-AUC for regular transit"
+        ),
+    )
+    _add_shared_data_args(comp_rf)
+    comp_rf.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/comprehensive_transit_rf"),
+        help="Directory for metrics, ablations, importances, and results card",
+    )
+    comp_rf.add_argument("--splits", type=int, default=5, help="Stratified CV folds")
+    comp_rf.add_argument(
+        "--perm-repeats",
+        type=int,
+        default=30,
+        help="Permutation-importance repeats",
+    )
+    comp_rf.add_argument(
+        "--tune-iter",
+        type=int,
+        default=24,
+        help="RandomizedSearchCV iterations for ROC-AUC tuning",
+    )
+    comp_rf.add_argument("--seed", type=int, default=42, help="RNG seed")
+    comp_rf.add_argument(
+        "--no-upper-bound",
+        action="store_true",
+        help="Skip the Q27 upper-bound model",
+    )
+
     # Flat args retained so `ca-personas --provider mock` still works.
     _add_shared_data_args(parser)
     parser.add_argument("--tiers", nargs="+", choices=list(TIERS), default=None)
@@ -389,6 +425,22 @@ def main(argv: list[str] | None = None) -> int:
             n_splits=args.splits,
             n_perm_repeats=args.perm_repeats,
             random_state=args.seed,
+        )
+        print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
+        return 0
+
+    if command == "comprehensive-transit-rf":
+        prolific, qualtrics = _paths_or_defaults(args)
+        artifacts = run_comprehensive_transit_rf_pipeline(
+            prolific_paths=prolific,
+            qualtrics_path=qualtrics,
+            join_how=args.join,
+            output_dir=args.output_dir,
+            n_splits=args.splits,
+            n_perm_repeats=args.perm_repeats,
+            n_tune_iter=args.tune_iter,
+            random_state=args.seed,
+            include_upper_bound=not args.no_upper_bound,
         )
         print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
         return 0

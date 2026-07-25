@@ -37,8 +37,9 @@ These questions use the **full Prolific↔Qualtrics matched analytic sample** (F
 | 3 | Does the answer change under alternate “regular” cutoffs on `Q26`? | same notebook | sensitivity tables in `outputs/transit_ca/` |
 | 4 | Do Qualtrics **latitude & longitude** predict regular transit use? (RF + CV) | [`secondary_rq_geo_transit_rf.ipynb`](notebooks/secondary_rq_geo_transit_rf.ipynb) | `ca-personas geo-transit-rf` |
 | 5 | Do **group & interpersonal CA** scores predict regular transit use? (RF + CV) | [`secondary_rq_ca_transit_rf.ipynb`](notebooks/secondary_rq_ca_transit_rf.ipynb) | `ca-personas ca-transit-rf` · [write-up](docs/secondary_rq_ca_predicts_transit.md) |
+| 6 | Which available predictors most powerfully discriminate regular transit? (feature importance + ROC-maximizing RF) | [`secondary_rq_comprehensive_transit_rf.ipynb`](notebooks/secondary_rq_comprehensive_transit_rf.ipynb) | `ca-personas comprehensive-transit-rf` · [memo](memos/comprehensive_predictors_transit.md) |
 
-**Primary operationalization of “regular transit” (RQs 1–5):** `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more public transit).
+**Primary operationalization of “regular transit” (RQs 1–6):** `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more public transit).
 
 ```bash
 # RQ1–3: regular transit vs cohort CA
@@ -52,6 +53,10 @@ jupyter nbconvert --to notebook --execute notebooks/secondary_rq_geo_transit_rf.
 # RQ5: group + interpersonal CA Random Forest → regular transit
 ca-personas ca-transit-rf --join inner
 jupyter nbconvert --to notebook --execute notebooks/secondary_rq_ca_transit_rf.ipynb
+
+# RQ6: kitchen-sink feature importance + ROC-maximizing RF → regular transit
+ca-personas comprehensive-transit-rf --join inner
+jupyter nbconvert --to notebook --execute notebooks/secondary_rq_comprehensive_transit_rf.ipynb
 ```
 
 Supporting code:
@@ -59,6 +64,7 @@ Supporting code:
 - [`src/ca_personas/transit_ca.py`](src/ca_personas/transit_ca.py) · [`notebooks/secondary_rq_transit_ca.ipynb`](notebooks/secondary_rq_transit_ca.ipynb)
 - [`src/ca_personas/geo_transit_rf.py`](src/ca_personas/geo_transit_rf.py) · [`notebooks/secondary_rq_geo_transit_rf.ipynb`](notebooks/secondary_rq_geo_transit_rf.ipynb)
 - [`src/ca_personas/ca_transit_rf.py`](src/ca_personas/ca_transit_rf.py) · [`notebooks/secondary_rq_ca_transit_rf.ipynb`](notebooks/secondary_rq_ca_transit_rf.ipynb) · [`docs/secondary_rq_ca_predicts_transit.md`](docs/secondary_rq_ca_predicts_transit.md)
+- [`src/ca_personas/comprehensive_transit_rf.py`](src/ca_personas/comprehensive_transit_rf.py) · [`notebooks/secondary_rq_comprehensive_transit_rf.ipynb`](notebooks/secondary_rq_comprehensive_transit_rf.ipynb) · [`memos/comprehensive_predictors_transit.md`](memos/comprehensive_predictors_transit.md)
 
 ## Suggested Project Structure + Contents
 
