@@ -52,6 +52,7 @@ def score_participants(
         how=join_how,
         low_max=low_max,
         high_min=high_min,
+        clean=True,
     )
 
 

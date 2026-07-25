@@ -12,9 +12,9 @@ Does survey geographical location (latitude and longitude) predict whether an in
 
 ## Answer, Response, + Summary of Results
 
-Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to File C on Prolific ID / `Q0`; **252** matched rows; analytic **n = 241** with complete PRCA items and non-missing Qualtrics `LocationLatitude` / `LocationLongitude`), we asked whether approximate survey **geolocation** predicts **regular** public-transit use. Regular transit is defined as `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more). A balanced **Random Forest** (stratified 5-fold CV) used latitude and longitude as the sole features, compared against chance (ROC-AUC = 0.50) and a country-of-residence-only Random Forest baseline.
+Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to File C on Prolific ID / `Q0`; **252** matched rows; analytic **n ≈ 241** with complete PRCA items and non-missing Qualtrics `LocationLatitude` / `LocationLongitude`), we asked whether approximate survey **geolocation** predicts **regular** public-transit use. Regular transit is defined as `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more). A balanced **Random Forest** (stratified 5-fold CV, `random_state=42`) used latitude and longitude as the sole features, compared against chance (ROC-AUC = 0.50) and a country-of-residence-only Random Forest baseline. Re-run with `ca-personas geo-transit-rf --join inner --seed 42` and cite `outputs/geo_transit_rf/` for exact N.
 
-**Short answer:** Only modestly. Lat/long recover **above-chance** but weak discrimination (CV ROC-AUC = **0.551**), essentially matching a country-only model (AUC = **0.549**). Geography alone is not a strong predictor of regular transit in this sample.
+**Short answer:** Only modestly. Lat/long recover **above-chance** but weak discrimination (CV ROC-AUC ≈ **0.55**), essentially matching a country-only model. Geography alone is not a strong predictor of regular transit in this sample. The companion CA→transit RF yields a similar modest AUC (**0.572**; see `docs/secondary_rq_ca_predicts_transit.md`).
 
 ![Survey geolocation by transit use and ROC curve for the lat/lon Random Forest](figures/geo_predicts_transit_memo.png)
 

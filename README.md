@@ -22,9 +22,19 @@ When an LLM is given a dynamically-constructed, first-person “embodiment” pr
 
 ## Research Focus (primary — persona tiers)
 
+Cumulative information tiers map onto the research focus:
+
+| Tier | Adds | Research focus |
+|---|---|---|
+| `demos` | Age, Sex, Country, Student status (+ optional ethnicity/language when present) | Baseline |
+| `employment` | Employment status | RQ1 — does employment improve accuracy / change bias? |
+| `geo` | Survey lat/long context | Intermediate place cue |
+| `transit` | Public transit / ride-share / license / car access | RQ2 — does transportation-use help, and is it used sensibly? |
+| `full` | Open-text attitudes (Q18.1 / Q19) | RQ3 — richest personification / combined signal vs redundancy |
+
 1. Does employment status improve prediction accuracy over demographics alone, and does it change the bias pattern (e.g., does the model now stereotype “unemployed” respondents as higher-CA, correctly or not)?
 2. Does transportation-use data improve prediction accuracy, and does the model use it sensibly (e.g., inferring low transit use → higher avoidance → higher CA) or does it ignore it/misuse it?
-3. Does combining both help beyond either alone, or do they carry redundant signal (e.g., employment and transit use may correlate with each other in your sample, so Tier 3 may not beat Tier 1 or 2 individually)?
+3. Does combining employment, geography, transit, and open-text attitudes help beyond earlier tiers, or do the cues carry redundant signal?
 
 ## Secondary research questions (observational — matched cohort)
 
@@ -65,10 +75,17 @@ Supporting code:
 | Path | What it is |
 |---|---|
 | `index.qmd` | The primary manuscript. Start here. |
-| `contributions.md` | Who owned what. |
-| `memos/` | Individual research memos, one per member. |
+| `Contributions.md` | Who owned what. |
+| `Getstarted.md` | Local setup (venv, sibling data, CLI, Quarto). |
+| `memos/` | Individual research memos. |
 | `references.bib` | Shared BibTeX file for the manuscript and memos. |
-| `data/` | Data used in this project. |
+| `src/ca_personas/` | Analysis package + `ca-personas` CLI. |
+| `src/inference/` | vLLM digital-twin export / batch / ingest. |
+| `notebooks/` | Executable analyses (ML, FA, secondary RQs). |
+| `docs/` | Framework, merge audit, secondary RQ write-ups, bugfix audit. |
+| `config/default.yaml` | Default paths, tiers, LLM + cleaning settings. |
+| `data/excerpts/` | Public fixtures (sibling-data fallback). |
+| `prompts/system_prompt.md` | Documented system prompt (synced with code). |
 
 ## Data layout (private full cohort)
 
@@ -107,10 +124,11 @@ See [`docs/framework.qmd`](docs/framework.qmd) for architecture details.
 ```bash
 python -m venv .venv
 source .venv/bin/activate
+pip install -r requirements.txt
 pip install -e ".[dev]"
-cp .env.example .env   # set Ollama or OpenRouter credentials
+cp .env.example .env   # set Ollama, OpenRouter, or CA_LLM_PROVIDER=mock
 
-# Clean File A/B/C + EDA only (no LLM)
+# Clean File A/B/C + EDA only (no LLM); falls back to excerpts if sibling data absent
 ca-personas prepare --join inner
 
 # Score + aggregate participant ground truth (shared ML/LLM evaluation targets)
@@ -182,14 +200,17 @@ For local GPU batch runs, export persona prompts into the `caseid` / `prompt` sc
 
 ```bash
 pip install -e ".[vllm]"
-python -m inference.export_prompts --output-dir outputs/vllm_prompts
+# Defaults prefer ../sibling_data File A/B/C (else excerpts). Pass paths to override.
+python -m inference.export_prompts \
+    --tiers demos employment geo transit full \
+    --output-dir outputs/vllm_prompts
 ./scripts/run_vllm.sh
 python -m inference.ingest_results \
     --result_csv outputs/vllm_results/results.csv \
     --predictions_csv outputs/predictions/vllm_predictions.csv
 ```
 
-See [`src/inference/README.md`](src/inference/README.md) for checkpoint-resume, GPU flags, and HF token setup.
+See [`src/inference/README.md`](src/inference/README.md) for checkpoint-resume, GPU flags, and HF token setup. Bug-fix notes from the 2026-07-25 audit live in [`docs/bugfix_audit.md`](docs/bugfix_audit.md).
 
 ## Quarto manuscript website
 

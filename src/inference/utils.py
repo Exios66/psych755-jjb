@@ -143,7 +143,8 @@ def resolve_hf_token(token_file: str | None = None) -> str | None:
                 token = path.read_text(encoding="utf-8").strip()
                 if token:
                     return token
-        except OSError:
+        except OSError as exc:
+            print(f"[vLLM] Could not read HF token file {path}: {exc}")
             continue
 
     for env_key in ("HF_TOKEN", "HUGGINGFACE_HUB_TOKEN", "HUGGING_FACE_HUB_TOKEN"):

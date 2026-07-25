@@ -44,7 +44,15 @@ class OllamaClient(LLMClient):
         response = requests.post(url, json=payload, timeout=self.timeout_seconds)
         response.raise_for_status()
         data = response.json()
-        content = data.get("message", {}).get("content", "")
-        if not content:
+        try:
+            content = data["message"]["content"]
+        except (KeyError, TypeError) as exc:
+            raise RuntimeError(f"Malformed Ollama response (missing message.content): {data}") from exc
+        if not str(content).strip():
             raise RuntimeError(f"Empty Ollama response: {data}")
-        return LLMResponse(content=content, provider=self.provider, model=self.model, raw=data)
+        return LLMResponse(
+            content=str(content),
+            provider=self.provider,
+            model=self.model,
+            raw=data,
+        )

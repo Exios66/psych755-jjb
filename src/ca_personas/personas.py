@@ -252,15 +252,29 @@ def build_persona_prompts(
     require_demographics: bool = True,
 ) -> list[PersonaPrompt]:
     """Build persona prompts for each participant × tier."""
+    import warnings
+
     prompts: list[PersonaPrompt] = []
+    n_skipped_missing_id = 0
+    n_skipped_no_demos = 0
     for _, row in df.iterrows():
         pid = row.get("participant_id")
         if not _present(pid):
+            n_skipped_missing_id += 1
             continue
         if require_demographics and not demos_block(row):
+            n_skipped_no_demos += 1
             continue
         for tier in tiers:
             prompts.append(build_persona_prompt(row, tier))
+    n_skipped = n_skipped_missing_id + n_skipped_no_demos
+    if n_skipped:
+        warnings.warn(
+            f"Skipped {n_skipped} participant rows while building personas "
+            f"({n_skipped_missing_id} missing participant_id, "
+            f"{n_skipped_no_demos} empty demographics).",
+            stacklevel=2,
+        )
     return prompts
 
 

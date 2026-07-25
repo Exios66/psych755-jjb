@@ -302,7 +302,12 @@ def run_stage_one_baselines(
     random_state: int = 42,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Load data and evaluate RF/KNN baselines across research tiers."""
-    participants = load_and_prepare(prolific_path, qualtrics_path, how=join_how)
+    participants = load_and_prepare(
+        prolific_path,
+        qualtrics_path,
+        how=join_how,
+        clean=True,
+    )
     all_preds: list[pd.DataFrame] = []
     all_metrics: list[pd.DataFrame] = []
 

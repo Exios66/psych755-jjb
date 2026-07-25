@@ -28,16 +28,22 @@ def main(argv: list[str] | None = None) -> int:
     args.predictions_csv.parent.mkdir(parents=True, exist_ok=True)
     preds.to_csv(args.predictions_csv, index=False)
     n_ok = int(preds["error"].isna().sum()) if "error" in preds.columns else len(preds)
+    n_rows = int(len(preds))
     print(
         json.dumps(
             {
                 "predictions": str(args.predictions_csv),
-                "n_rows": int(len(preds)),
+                "n_rows": n_rows,
                 "n_parsed": n_ok,
             },
             indent=2,
         )
     )
+    if n_rows and n_ok == 0:
+        raise SystemExit(
+            f"Failed to parse any of {n_rows} vLLM result rows into CA predictions. "
+            "Check generated_text JSON format against the system prompt schema."
+        )
     return 0
 
 

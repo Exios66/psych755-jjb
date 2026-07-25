@@ -44,14 +44,22 @@ scripts/
 ```bash
 pip install -e ".[vllm]"
 
-# 1) Export digital-twin prompts in the vLLM schema
+# 1) Export digital-twin prompts in the vLLM schema.
+# Defaults prefer ../sibling_data File A/B/C (cleaned analytic sample);
+# falls back to data/excerpts/ when sibling data is absent.
 python -m inference.export_prompts \
     --tiers demos employment geo transit full \
     --output-dir outputs/vllm_prompts
+# Or pin paths explicitly:
+# python -m inference.export_prompts \
+#     --prolific ../sibling_data/PRCAProlificExport_FileA.csv \
+#               ../sibling_data/PRCAProlificExport_FileB.csv \
+#     --qualtrics ../sibling_data/PRCAQualtricsExport_FileC.csv \
+#     --output-dir outputs/vllm_prompts
 
 # 2) Run vLLM (needs CUDA + gated-model token for Llama)
 echo "hf_YOUR_TOKEN" > hf_access_token.txt
-./scripts/run_vllm.sh
+./scripts/run_vllm.sh          # VLLM_TP_SIZE defaults to 1 in the launcher
 # or:
 python -m inference.predict_vllm \
     --prompt_csv outputs/vllm_prompts/prompts.csv \
@@ -60,10 +68,14 @@ python -m inference.predict_vllm \
     --gpu 0 --tensor_parallel_size 1 --quantization fp8
 
 # 3) Ingest generations into the CA evaluation table
+# Fails loudly if zero rows parse into CA JSON.
 python -m inference.ingest_results \
     --result_csv outputs/vllm_results/results.csv \
     --predictions_csv outputs/predictions/vllm_predictions.csv
 ```
+
+`--ground_truth_csv` coalesces / fills missing `answer` values even when the
+prompt CSV already has a partial `answer` column, and validates completeness.
 
 ## Checkpoint-resume
 
@@ -75,7 +87,7 @@ If the result CSV already exists, rows whose `caseid` is present are skipped. Co
 |---|---|---|
 | `--model` | `meta-llama/Llama-3.1-8B-Instruct` | HuggingFace model id or local path |
 | `--gpu` | `0` | First GPU id |
-| `--tensor_parallel_size` | `2` | Tensor-parallel GPU count |
+| `--tensor_parallel_size` | `2` (CLI) / `1` (`run_vllm.sh` via `VLLM_TP_SIZE`) | Tensor-parallel GPU count |
 | `--quantization` | `fp8` | `fp8`, `bitsandbytes`, `awq`, `gptq`, or `none` |
 | `--max_output_tokens` | `256` | Headroom for CA JSON |
 | `--batch_size` | `16` | Sub-batch size for `llm.generate` |
