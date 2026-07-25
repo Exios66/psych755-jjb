@@ -41,3 +41,10 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+pythonVersion = "3.11"
+extraPaths = ["src"]
+include = ["src", "notebooks", "scripts", "tests"]
