@@ -1180,106 +1180,302 @@ def save_followup_experiment_bundle(
     return paths
 
 
+def _assoc_for_feature(assoc: pd.DataFrame, feature: str) -> pd.DataFrame:
+    sub = assoc.loc[assoc["feature"] == feature].copy()
+    return sub.sort_values("pct_regular", ascending=True)
+
+
 def plot_experiment_memo_figure(
     analysis: dict[str, Any],
     *,
     output_path: str | Path,
 ) -> Path:
-    """Standard two-panel or comparison-bar memo figure depending on experiment type."""
+    """Publication-quality, experiment-specific memo figure."""
     import matplotlib.pyplot as plt
 
+    from ca_personas.viz_style import (
+        PRIMARY,
+        SUCCESS,
+        WARN,
+        add_title_block,
+        apply_memo_style,
+        family_color,
+        plot_auc_bars,
+        plot_forest_diffs,
+        plot_prevalence_bars,
+        plot_roc_curve,
+        save_figure,
+        short_level,
+        style_axes,
+    )
+
+    apply_memo_style()
     out = Path(output_path)
-    out.parent.mkdir(parents=True, exist_ok=True)
     key = analysis["spec_key"]
     label = analysis.get("label", key)
-
-    if "comparison" in analysis and isinstance(analysis["comparison"], pd.DataFrame):
-        frame = analysis["comparison"].copy()
-        if "roc_auc" in frame.columns and len(frame):
-            fig, ax = plt.subplots(figsize=(9.2, 4.8))
-            plot_df = frame.dropna(subset=["roc_auc"]).sort_values("roc_auc", ascending=True)
-            colors = [
-                "#A67C52" if k in {"chance", "geo_benchmark", "ca_benchmark"} else "#2F6F7E"
-                for k in plot_df["spec_key"]
-            ]
-            ax.barh(plot_df["label"], plot_df["roc_auc"], color=colors, edgecolor="white")
-            ax.axvline(0.5, color="#999999", ls="--", lw=1, label="Chance")
-            ax.axvline(0.551, color="#B35C2E", ls=":", lw=1.1, label="Geo ≈ 0.551")
-            ax.axvline(0.590, color="#6B3E26", ls="-.", lw=1.1, label="CA ≈ 0.590")
-            ax.set_xlabel("CV ROC-AUC")
-            ax.set_title(f"{label}")
-            ax.set_xlim(0.45, max(0.85, float(plot_df["roc_auc"].max()) + 0.05))
-            ax.legend(loc="lower right", fontsize=8, frameon=False)
-            for y_i, auc in enumerate(plot_df["roc_auc"]):
-                ax.text(float(auc) + 0.004, y_i, f"{float(auc):.3f}", va="center", fontsize=8)
-            fig.tight_layout()
-            fig.savefig(out, dpi=160, bbox_inches="tight")
-            plt.close(fig)
-            return out
-
-    # Default: prevalence (if associations) + ROC.
-    fig, axes = plt.subplots(1, 2, figsize=(11.2, 4.4))
+    n = int(len(analysis["frame"])) if "frame" in analysis else 0
+    auc = float(analysis.get("metrics", {}).get("roc_auc", float("nan")))
     assoc = analysis.get("associations")
     roc = analysis.get("roc")
-    auc = float(analysis.get("metrics", {}).get("roc_auc", float("nan")))
-    n = int(len(analysis["frame"])) if "frame" in analysis else 0
 
+    # ---- Specialized layouts -------------------------------------------------
+    if key == "demographics":
+        fig = plt.figure(figsize=(12.2, 5.6))
+        gs = fig.add_gridspec(1, 3, width_ratios=[1.15, 1.0, 1.05], wspace=0.32)
+        ax0, ax1, ax2 = fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[0, 1]), fig.add_subplot(gs[0, 2])
+        age = _assoc_for_feature(assoc, "Age (tertile)") if isinstance(assoc, pd.DataFrame) else pd.DataFrame()
+        if not age.empty:
+            plot_prevalence_bars(
+                ax0,
+                [short_level(x, max_len=16) for x in age["level"]],
+                age["pct_regular"],
+                ns=age["n"].astype(int).tolist(),
+                sample_prevalence=float(analysis["frame"]["y"].mean()),
+                title="Age tertile → weekly+ transit",
+            )
+        sex = _assoc_for_feature(assoc, "Sex") if isinstance(assoc, pd.DataFrame) else pd.DataFrame()
+        stu = _assoc_for_feature(assoc, "Student status") if isinstance(assoc, pd.DataFrame) else pd.DataFrame()
+        combo = pd.concat([sex.assign(feature="Sex"), stu.assign(feature="Student")], ignore_index=True)
+        if not combo.empty:
+            labels = [f"{r.feature}: {r.level}" for r in combo.itertuples()]
+            plot_prevalence_bars(
+                ax1,
+                labels,
+                combo["pct_regular"],
+                ns=combo["n"].astype(int).tolist(),
+                sample_prevalence=float(analysis["frame"]["y"].mean()),
+                title="Sex & student status",
+                cmap_mode="flat",
+            )
+        if isinstance(roc, pd.DataFrame) and not roc.empty:
+            plot_roc_curve(ax2, roc, auc=auc, title="Mixed RF discrimination")
+        add_title_block(
+            fig,
+            "Demographics as predictors of regular transit",
+            f"Age + Sex + Student status  ·  n={n}  ·  CV ROC-AUC={auc:.3f}  ·  Age dominates permutation importance",
+        )
+        fig.subplots_adjust(top=0.82, left=0.08, right=0.98, bottom=0.12)
+        return save_figure(fig, out)
+
+    if key == "country":
+        fig, axes = plt.subplots(1, 2, figsize=(11.8, 5.2), gridspec_kw={"width_ratios": [1.15, 1.0]})
+        sub = _assoc_for_feature(assoc, "Country of residence") if isinstance(assoc, pd.DataFrame) else pd.DataFrame()
+        if not sub.empty:
+            keep = sub.loc[sub["n"] >= 5].copy()
+            plot_prevalence_bars(
+                axes[0],
+                [short_level(x, max_len=20) for x in keep["level"]],
+                keep["pct_regular"],
+                ns=keep["n"].astype(int).tolist(),
+                sample_prevalence=float(analysis["frame"]["y"].mean()),
+                title="Countries with n ≥ 5",
+            )
+        if isinstance(roc, pd.DataFrame) and not roc.empty:
+            plot_roc_curve(axes[1], roc, auc=auc, title="Country-only Random Forest")
+        add_title_block(
+            fig,
+            "Country of residence vs regular transit",
+            f"Dedicated country RF  ·  n={n}  ·  AUC={auc:.3f}  ·  essentially ties lat/long geo (≈0.551)",
+        )
+        fig.subplots_adjust(top=0.80, left=0.10, right=0.98, bottom=0.12, wspace=0.28)
+        return save_figure(fig, out)
+
+    if key == "residual_ca_q28":
+        fig, axes = plt.subplots(1, 2, figsize=(12.4, 5.4), gridspec_kw={"width_ratios": [1.05, 1.15]})
+        comp = analysis.get("comparison")
+        if isinstance(comp, pd.DataFrame) and not comp.empty:
+            plot_df = comp.dropna(subset=["roc_auc"]).copy()
+            plot_auc_bars(
+                axes[0],
+                plot_df["label"].tolist(),
+                plot_df["roc_auc"].tolist(),
+                colors=[family_color(k) for k in plot_df["spec_key"]],
+                ns=plot_df["n"].tolist() if "n" in plot_df else None,
+                benchmarks=("chance", "geo", "ca"),
+                xlim=(0.45, 0.88),
+            )
+            axes[0].set_title("Nested predictive models", loc="left", fontsize=11, pad=8)
+        strata = analysis.get("strata")
+        if isinstance(strata, pd.DataFrame):
+            plot_forest_diffs(axes[1], strata, outcome="gt_group_ca")
+        delta = analysis.get("summary_delta") or {}
+        add_title_block(
+            fig,
+            "Does CA still separate riders after accounting for Q28?",
+            (
+                f"n={n}  ·  CA-only AUC={delta.get('ca_only_auc', auc):.3f}  ·  "
+                f"Q28-only={delta.get('q28_only_auc', float('nan')):.3f}  ·  "
+                f"CA+Q28={delta.get('ca_q28_auc', float('nan')):.3f}  ·  "
+                f"CA incremental ≈ {delta.get('ca_incremental_over_q28', float('nan')):+.3f}"
+            ),
+        )
+        fig.subplots_adjust(top=0.80, left=0.10, right=0.98, bottom=0.12, wspace=0.30)
+        return save_figure(fig, out)
+
+    if key == "q27_among_regular":
+        fig, axes = plt.subplots(1, 2, figsize=(11.8, 5.3), gridspec_kw={"width_ratios": [1.0, 1.15]})
+        counts = analysis.get("intensity_counts")
+        if isinstance(counts, pd.DataFrame) and not counts.empty:
+            c = counts.sort_values("n", ascending=True)
+            axes[0].barh(
+                [short_level(x, max_len=26) for x in c["Q27"]],
+                c["n"],
+                color=PRIMARY,
+                edgecolor="white",
+                height=0.72,
+            )
+            for i, (n_i, _) in enumerate(zip(c["n"], c["Q27"])):
+                axes[0].text(n_i + 0.4, i, str(int(n_i)), va="center", fontsize=9, color="#1B1F24")
+            axes[0].set_xlabel("Regular riders (n)")
+            axes[0].set_title("Q27 among weekly+ riders", loc="left", fontsize=11, pad=8)
+            style_axes(axes[0], grid="x")
+        comp = analysis.get("comparison")
+        if isinstance(comp, pd.DataFrame) and not comp.empty:
+            plot_auc_bars(
+                axes[1],
+                comp["label"].tolist(),
+                comp["roc_auc"].tolist(),
+                colors=[family_color(k) for k in comp["spec_key"]],
+                ns=comp["n"].tolist() if "n" in comp else None,
+                xlabel="CV ROC-AUC for high intensity",
+                benchmarks=("chance",),
+                xlim=(0.40, 0.70),
+            )
+            axes[1].set_title("Predictors of high intensity (≥3–4 rides)", loc="left", fontsize=11, pad=8)
+        summary = analysis.get("sample_summary") or {}
+        add_title_block(
+            fig,
+            "Transit-day intensity among regular riders",
+            (
+                f"n_riders={summary.get('n_regular_riders', n)}  ·  "
+                f"high intensity={summary.get('n_high_intensity', '—')} "
+                f"({summary.get('pct_high_intensity', float('nan')):.0%})  ·  "
+                f"best AUC={auc:.3f} (near chance)"
+            ),
+        )
+        fig.subplots_adjust(top=0.80, left=0.12, right=0.98, bottom=0.12, wspace=0.30)
+        return save_figure(fig, out)
+
+    # Nested / comparison experiments: rich AUC ranking
+    if "comparison" in analysis and isinstance(analysis["comparison"], pd.DataFrame):
+        frame = analysis["comparison"].dropna(subset=["roc_auc"]).copy()
+        if len(frame):
+            fig, ax = plt.subplots(figsize=(10.2, max(4.6, 0.55 * len(frame) + 2.2)))
+            colors = [family_color(k) for k in frame["spec_key"]]
+            # Soften chance bars
+            colors = [
+                WARN if k in {"chance", "geo_benchmark", "ca_benchmark"} else c
+                for k, c in zip(frame["spec_key"], colors)
+            ]
+            plot_auc_bars(
+                ax,
+                frame["label"].tolist(),
+                frame["roc_auc"].tolist(),
+                colors=colors,
+                ns=frame["n"].tolist() if "n" in frame.columns else None,
+                benchmarks=("chance", "geo", "ca"),
+                xlim=(0.45, min(0.90, float(frame["roc_auc"].max()) + 0.10)),
+            )
+            subtitle_bits = [f"n={n}", f"primary AUC={auc:.3f}"]
+            if analysis.get("summary_delta"):
+                d = analysis["summary_delta"]
+                if "delta_q28_to_q28_q21" in d:
+                    subtitle_bits.append(f"Δ(Q28→Q28+Q21)={d['delta_q28_to_q28_q21']:+.3f}")
+                if "ca_incremental_over_q28" in d:
+                    subtitle_bits.append(f"CA incremental={d['ca_incremental_over_q28']:+.3f}")
+            if key == "common_n":
+                subtitle_bits.append("equal complete-case frame")
+            add_title_block(fig, label, "  ·  ".join(subtitle_bits))
+            fig.subplots_adjust(top=0.82, left=0.28, right=0.96, bottom=0.14)
+            return save_figure(fig, out)
+
+    # Default two-panel: prevalence + ROC
+    fig, axes = plt.subplots(1, 2, figsize=(11.8, 5.2), gridspec_kw={"width_ratios": [1.1, 1.0]})
     if isinstance(assoc, pd.DataFrame) and not assoc.empty and "pct_regular" in assoc.columns:
         primary = assoc["feature"].iloc[0]
-        sub = assoc.loc[assoc["feature"] == primary].sort_values("pct_regular")
-        axes[0].barh(sub["level"].astype(str), sub["pct_regular"], color="#2F6F7E", edgecolor="white")
-        axes[0].set_xlabel("Share regular transit (weekly+)")
-        axes[0].set_title(f"{primary}: prevalence (n={n})")
-    elif key == "q27_among_regular" and "intensity_counts" in analysis:
-        counts = analysis["intensity_counts"]
-        axes[0].barh(counts["Q27"].astype(str), counts["n"], color="#2F6F7E", edgecolor="white")
-        axes[0].set_xlabel("n regular riders")
-        axes[0].set_title("Q27 distribution among weekly+ riders")
+        sub = _assoc_for_feature(assoc, primary)
+        plot_prevalence_bars(
+            axes[0],
+            [short_level(x) for x in sub["level"]],
+            sub["pct_regular"],
+            ns=sub["n"].astype(int).tolist(),
+            sample_prevalence=float(analysis["frame"]["y"].mean()) if "frame" in analysis else None,
+            title=f"{primary} prevalence",
+        )
     else:
         axes[0].axis("off")
-        axes[0].text(0.1, 0.5, f"{label}\nn = {n}", fontsize=11)
-
     if isinstance(roc, pd.DataFrame) and not roc.empty:
-        axes[1].plot(roc["fpr"], roc["tpr"], color="#2F6F7E", lw=2.2, label=f"RF AUC = {auc:.3f}")
-        axes[1].plot([0, 1], [0, 1], color="#999999", ls="--", lw=1, label="Chance = 0.500")
-        axes[1].set_xlabel("False positive rate")
-        axes[1].set_ylabel("True positive rate")
-        axes[1].set_title("Stratified CV ROC")
-        axes[1].legend(loc="lower right", fontsize=8, frameon=False)
-        axes[1].set_xlim(0, 1)
-        axes[1].set_ylim(0, 1)
+        plot_roc_curve(axes[1], roc, auc=auc, color=SUCCESS if auc >= 0.70 else PRIMARY)
     else:
         axes[1].axis("off")
-
-    fig.suptitle(f"Follow-up experiment: {label}", fontsize=12, y=1.02)
-    fig.tight_layout()
-    fig.savefig(out, dpi=160, bbox_inches="tight")
-    plt.close(fig)
-    return out
+    add_title_block(fig, label, f"Follow-up experiment  ·  n={n}  ·  CV ROC-AUC={auc:.3f}")
+    fig.subplots_adjust(top=0.80, left=0.10, right=0.98, bottom=0.12, wspace=0.28)
+    return save_figure(fig, out)
 
 
 def plot_overview_figure(overview: pd.DataFrame, *, output_path: str | Path) -> Path:
+    """Flagship overview figure for the wave-2 memo agenda."""
     import matplotlib.pyplot as plt
 
+    from ca_personas.viz_style import (
+        SUCCESS,
+        WARN,
+        add_title_block,
+        apply_memo_style,
+        color_by_auc,
+        family_color,
+        plot_auc_bars,
+        save_figure,
+    )
+
+    apply_memo_style()
     out = Path(output_path)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    frame = overview.dropna(subset=["roc_auc"]).sort_values("roc_auc", ascending=True)
-    fig, ax = plt.subplots(figsize=(9.5, 5.2))
-    ax.barh(frame["label"], frame["roc_auc"], color="#2F6F7E", edgecolor="white")
-    ax.axvline(0.5, color="#999999", ls="--", lw=1, label="Chance")
-    ax.axvline(0.551, color="#B35C2E", ls=":", lw=1.1, label="Geo ≈ 0.551")
-    ax.axvline(0.590, color="#6B3E26", ls="-.", lw=1.1, label="CA ≈ 0.590")
-    ax.axvline(0.762, color="#1F4E5F", ls="-", lw=1.0, label="Q28 ≈ 0.762")
-    ax.set_xlabel("Primary reported CV ROC-AUC")
-    ax.set_title("Extended follow-up experiments — overview")
-    ax.set_xlim(0.45, max(0.85, float(frame["roc_auc"].max()) + 0.05))
-    ax.legend(loc="lower right", fontsize=8, frameon=False)
-    for y_i, auc in enumerate(frame["roc_auc"]):
-        ax.text(float(auc) + 0.004, y_i, f"{float(auc):.3f}", va="center", fontsize=8)
-    fig.tight_layout()
-    fig.savefig(out, dpi=160, bbox_inches="tight")
-    plt.close(fig)
-    return out
+    frame = overview.dropna(subset=["roc_auc"]).copy()
+    fig, ax = plt.subplots(figsize=(10.8, 6.2))
+    # Recolor by strength for overview readability
+    colors = [color_by_auc(a) for a in frame["roc_auc"]]
+    plot_auc_bars(
+        ax,
+        frame["label"].tolist(),
+        frame["roc_auc"].tolist(),
+        colors=colors,
+        ns=frame["n"].tolist() if "n" in frame.columns else None,
+        xlabel="Primary reported stratified CV ROC-AUC",
+        benchmarks=("chance", "geo", "ca", "q28"),
+        xlim=(0.48, 0.86),
+        highlight_best=True,
+    )
+    best = frame.sort_values("roc_auc", ascending=False).iloc[0]
+    add_title_block(
+        fig,
+        "Wave-2 follow-up experiments — discrimination overview",
+        (
+            f"Best: {best['label']} (AUC={best['roc_auc']:.3f}, n={int(best['n'])})  ·  "
+            "Green ≥0.70  ·  Teal ≥0.60  ·  Slate ≥0.55  ·  Tan <0.55  ·  "
+            "Reference lines: chance / geo / CA / full-cohort Q28"
+        ),
+    )
+    # Dual legends: benchmarks stay on-axes; AUC bands sit below the figure
+    from matplotlib.patches import Patch
+
+    band_handles = [
+        Patch(facecolor=SUCCESS, edgecolor="none", label="Strong (≥0.70)"),
+        Patch(facecolor="#1F4E5F", edgecolor="none", label="Useful (≥0.60)"),
+        Patch(facecolor="#2F6F7E", edgecolor="none", label="Modest (≥0.55)"),
+        Patch(facecolor=WARN, edgecolor="none", label="Weak (<0.55)"),
+    ]
+    fig.legend(
+        handles=band_handles,
+        loc="lower center",
+        ncol=4,
+        fontsize=8,
+        frameon=False,
+        bbox_to_anchor=(0.63, 0.01),
+        title="AUC band",
+        title_fontsize=8.5,
+    )
+    fig.subplots_adjust(top=0.82, left=0.30, right=0.96, bottom=0.16)
+    return save_figure(fig, out)
 
 
 def run_followup_experiments_pipeline(

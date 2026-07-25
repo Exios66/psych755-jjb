@@ -766,15 +766,20 @@ def run_shap_feature_eval(
     Returns a dict with dataframes, figure paths, and a results card.
     """
     require_shap()
-    plt.rcParams.update(
-        {
-            "axes.spines.top": False,
-            "axes.spines.right": False,
-            "axes.grid": True,
-            "grid.alpha": 0.25,
-            "font.size": 10,
-        }
-    )
+    try:
+        from ca_personas.viz_style import apply_memo_style
+
+        apply_memo_style()
+    except Exception:
+        plt.rcParams.update(
+            {
+                "axes.spines.top": False,
+                "axes.spines.right": False,
+                "axes.grid": True,
+                "grid.alpha": 0.25,
+                "font.size": 10,
+            }
+        )
 
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
