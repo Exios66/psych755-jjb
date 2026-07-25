@@ -57,6 +57,7 @@ Observational contrast on the matched analytic sample (no LLM):
 | Model | Balanced Random Forest + stratified CV |
 | Baselines | Chance / majority; country-only RF |
 | CLI / notebook | `ca-personas geo-transit-rf` · `notebooks/secondary_rq_geo_transit_rf.ipynb` |
+| Memo | [`memos/geo_predicts_transit.md`](../memos/geo_predicts_transit.md) |
 | Artifacts | `outputs/geo_transit_rf/` |
 
 ### Secondary RQ — CA scores predict regular transit?
@@ -68,6 +69,7 @@ Observational contrast on the matched analytic sample (no LLM):
 | Model | Balanced Random Forest + stratified CV; group-only / interpersonal-only ablations |
 | CLI / notebook | `ca-personas ca-transit-rf` · `notebooks/secondary_rq_ca_transit_rf.ipynb` |
 | Write-up | [`docs/secondary_rq_ca_predicts_transit.md`](secondary_rq_ca_predicts_transit.md) |
+| Memo | [`memos/ca_scores_predict_transit.md`](../memos/ca_scores_predict_transit.md) |
 | Artifacts | `outputs/ca_transit_rf/` |
 
 ## Ground-truth scoring

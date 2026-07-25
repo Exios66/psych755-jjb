@@ -5,11 +5,13 @@ project:
     - index.qmd
     - docs/framework.qmd
     - docs/secondary_rq_ca_predicts_transit.md
+    - memos/ca_scores_predict_transit.md
+    - memos/geo_predicts_transit.md
 
 website:
   title: "LLM Prediction of Communication Apprehension"
   description: "PSYCH 755 manuscript — tiered persona prompts, PRCA ground truth, and LLM prediction error"
-  site-url: https://connect.posit.cloud
+  site-url: https://connect.posit.cloud/jjb-morningstar/content/019f97f7-a53e-c545-c9b7-9152d4984838
   repo-url: https://github.com/Exios66/psych755-jjb
   repo-actions: [source, issue]
   page-navigation: true
@@ -21,13 +23,31 @@ website:
         text: Manuscript
       - href: docs/framework.qmd
         text: Framework
-      - href: docs/secondary_rq_ca_predicts_transit.md
-        text: CA → Transit RQ
+      - text: Secondary RQs
+        menu:
+          - href: docs/secondary_rq_ca_predicts_transit.md
+            text: CA → Transit (write-up)
+          - href: memos/ca_scores_predict_transit.md
+            text: CA → Transit (memo)
+          - href: memos/geo_predicts_transit.md
+            text: Geo → Transit (memo)
       - href: https://github.com/Exios66/psych755-jjb
         text: GitHub
   page-footer:
     left: "PSYCH 755 · UW–Madison · Summer 2026"
     right: "Built with Quarto"
+  sidebar:
+    style: "floating"
+    contents:
+      - section: "Manuscript"
+        contents:
+          - index.qmd
+          - docs/framework.qmd
+      - section: "Secondary research questions"
+        contents:
+          - docs/secondary_rq_ca_predicts_transit.md
+          - memos/ca_scores_predict_transit.md
+          - memos/geo_predicts_transit.md
 
 format:
   html:

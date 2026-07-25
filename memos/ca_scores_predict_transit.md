@@ -1,12 +1,13 @@
-# Reproducible Science
+---
+title: "Memo: Do CA scores predict regular transit?"
+subtitle: "Research memorandum — group & interpersonal PRCA"
+author: Jack J. Burleson
+date: 2026-07-25
+---
 
-## A Research Memorandum
+**Research question:** Do group and interpersonal communication-apprehension (PRCA) scores predict whether an individual takes public transportation regularly?
 
-**Researcher:** Jack J. Burleson  
-**Date:** July 25, 2026  
-
-**Research Or Analytical Question:**  
-Do group and interpersonal communication-apprehension (PRCA) scores predict whether an individual takes public transportation regularly?
+**Formal write-up:** [`docs/secondary_rq_ca_predicts_transit.md`](../docs/secondary_rq_ca_predicts_transit.md)
 
 ---
 

@@ -1,12 +1,13 @@
-# Reproducible Science
+---
+title: "Memo: Does geography predict regular transit?"
+subtitle: "Research memorandum — survey latitude & longitude"
+author: Jack J. Burleson
+date: 2026-07-25
+---
 
-## A Research Memorandum
+**Research question:** Does survey geographical location (latitude and longitude) predict whether an individual takes public transportation regularly?
 
-**Researcher:** Jack J. Burleson  
-**Date:** July 25, 2026  
-
-**Research Or Analytical Question:**  
-Does survey geographical location (latitude and longitude) predict whether an individual takes public transportation regularly?
+**Companion CA write-up:** [`docs/secondary_rq_ca_predicts_transit.md`](../docs/secondary_rq_ca_predicts_transit.md)
 
 ---
 

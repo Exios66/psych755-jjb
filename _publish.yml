@@ -1,0 +1,4 @@
+- source: project
+  posit-connect-cloud:
+    - id: 019f97f7-a53e-c545-c9b7-9152d4984838
+      url: https://connect.posit.cloud/jjb-morningstar/content/019f97f7-a53e-c545-c9b7-9152d4984838

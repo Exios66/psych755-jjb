@@ -1,10 +1,14 @@
-# Secondary research question: Do CA scores predict regular public transit use?
+---
+title: "Do CA scores predict regular public transit use?"
+subtitle: "Secondary research question — Random Forest write-up"
+---
 
 **Project:** PSYCH 755 — CA persona / PRCA framework  
 **Analysis code:** [`src/ca_personas/ca_transit_rf.py`](../src/ca_personas/ca_transit_rf.py)  
 **Notebook:** [`notebooks/secondary_rq_ca_transit_rf.ipynb`](../notebooks/secondary_rq_ca_transit_rf.ipynb)  
 **CLI:** `ca-personas ca-transit-rf --join inner`  
-**Artifacts:** `outputs/ca_transit_rf/`
+**Artifacts:** `outputs/ca_transit_rf/`  
+**Companion memo:** [`memos/ca_scores_predict_transit.md`](../memos/ca_scores_predict_transit.md)
 
 ---
 
