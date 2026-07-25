@@ -328,53 +328,70 @@ gt
 
 ## Persona tiers
 
-Persona prompts are cumulative and follow the **AI Terrarium / ICA 2026** digital-twin framing: the *user* message is a fluent second-person narrative (“You are a …”) that *conveys* the persona, not a bullet-list profile or a meta-instruction to “adopt” / “fully personify” an identity. The system message only sets inhabitance and the CA JSON response contract (group and interpersonal integers 6–30 plus low/moderate/high bands) [@quarto]. Full Prolific waves omit ethnicity / nationality / language; the `demos` tier therefore uses Age, Sex, Country of residence, and Student status. Illustrative samples for every tier live under [`prompts/examples/`](prompts/examples/).
+Persona prompts are cumulative and follow the **AI Terrarium / ICA 2026** digital-twin framing: what the LLM receives as the *user* message is a fluent second-person narrative (“You are a …”) plus a short CA self-report ask — not a bullet-list profile, and not the system prompt. The system message (omitted below) only sets inhabitance and the JSON response contract [@quarto]. Full Prolific waves omit ethnicity / nationality / language; the `demos` tier therefore uses Age, Sex, Country of residence, and Student status. Additional curated samples live under [`prompts/examples/`](prompts/examples/).
 
-| Tier | Information woven into the narrative |
-|---|---|
-| `demos` | Age, sex, country of residence, student status |
-| `employment` | `demos` + employment status |
-| `geo` | `employment` + latitude/longitude |
-| `transit` | `geo` + public transit / ride-share / license / car access |
-| `full` | `transit` + Qualtrics free-response attitudes (Q18.1 / Q19) |
+| # | Tier | Context added relative to the previous tier |
+|:--:|---|---|
+| 1 | `demos` | Age, sex, country of residence, student status |
+| 2 | `employment` | + employment status |
+| 3 | `geo` | + survey latitude / longitude |
+| 4 | `transit` | + public transit / ride-share / license / car access |
+| 5 | `full` | + Qualtrics free-response attitudes (Q18.1 / Q19) |
 
-```{python}
-#| label: lst-persona-example
-#| echo: false
-#| lst-cap: "AI Terrarium Geo-Tier User Prompt (First Analytic Participant)"
-
-# Always show the live build_persona_prompt narrative — never a checklist /
-# "Adopt the following identity" stub from older freeze caches.
-example = next(p for p in prompts if p.tier == "geo")
-if not example.user_prompt.lstrip().startswith("You are"):
-    raise AssertionError("Expected Terrarium second-person narrative user prompt")
-if any(bad in example.user_prompt for bad in ("Adopt the following", "Fully personify", "Demographics:")):
-    raise AssertionError("Stale checklist-style persona prompt leaked into listing")
-print(example.user_prompt)
-```
+The five listings below are **user prompts only** for the **same** analytic participant, so each step visibly accumulates context.
 
 ```{python}
-#| label: lst-persona-example-demos
+#| label: persona-tier-progression
 #| echo: false
-#| lst-cap: "AI Terrarium Demos-Tier User Prompt (Same Participant; Base Layer Only)"
+#| output: asis
 
-example_demos = next(p for p in prompts if p.tier == "demos")
-if not example_demos.user_prompt.lstrip().startswith("You are"):
-    raise AssertionError("Expected Terrarium demos narrative")
-print(example_demos.user_prompt)
-```
+from ca_personas.personas import TIERS, build_persona_prompt, voice_sentences
 
-```{python}
-#| label: lst-persona-example-transit
-#| echo: false
-#| lst-cap: "AI Terrarium Transit-Tier User Prompt (Same Participant; Richest Research Tier)"
+# Prefer a participant whose five user prompts strictly grow in length and
+# whose `full` tier includes free-response voice — so viewers can see the
+# progressive context stack (demos → employment → geo → transit → full).
+tier_labels = {
+    "demos": "1. demos — base demographics",
+    "employment": "2. employment — demos + work status",
+    "geo": "3. geo — employment + place coordinates",
+    "transit": "4. transit — geo + mobility self-reports",
+    "full": "5. full — transit + free-response attitudes",
+}
 
-example_transit = next(p for p in prompts if p.tier == "transit")
-if not example_transit.user_prompt.lstrip().startswith("You are"):
-    raise AssertionError("Expected Terrarium transit narrative")
-if "Demographics:" in example_transit.user_prompt:
-    raise AssertionError("Stale checklist-style transit prompt leaked into listing")
-print(example_transit.user_prompt)
+example_row = None
+example_prompts = None
+for _, row in participants.iterrows():
+    if not voice_sentences(row):
+        continue
+    built = {t: build_persona_prompt(row, t) for t in TIERS}
+    lengths = [len(built[t].user_prompt) for t in TIERS]
+    if all(lengths[i] < lengths[i + 1] for i in range(len(lengths) - 1)):
+        if all(built[t].user_prompt.lstrip().startswith("You are") for t in TIERS):
+            example_row = row
+            example_prompts = built
+            break
+
+if example_row is None or example_prompts is None:
+    example_row = participants.iloc[0]
+    example_prompts = {t: build_persona_prompt(example_row, t) for t in TIERS}
+
+pid_short = str(example_row["participant_id"])[:12] + "…"
+print(
+    f"*Same participant throughout (`{pid_short}`); user message only — "
+    "second-person persona narrative + CA ask (system prompt omitted).*\n"
+)
+
+for tier in TIERS:
+    user = example_prompts[tier].user_prompt.strip()
+    if not user.startswith("You are"):
+        raise AssertionError(f"Expected Terrarium narrative for tier={tier}")
+    stale_markers = ("Demographics:", "Adopt the following", "Fully personify")
+    if any(marker in user for marker in stale_markers):
+        raise AssertionError(f"Stale checklist-style prompt leaked for tier={tier}")
+    print(f"### {tier_labels[tier]}\n")
+    print("```text")
+    print(user)
+    print("```\n")
 ```
 
 ## Model calling and classical baselines
