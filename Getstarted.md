@@ -87,6 +87,20 @@ quarto preview
 
 Primary manuscript: [`index.qmd`](index.qmd). Site config: [`_quarto.yml`](_quarto.yml).
 
+### Publish to JackJBurleson Posit Connect Cloud
+
+Full-cohort File A/B/C must be present (`../sibling_data/` or `/tmp/sibling_data/`). Agent workflow is documented in [`.cursor/skills/posit-connect-publish/SKILL.md`](.cursor/skills/posit-connect-publish/SKILL.md).
+
+```bash
+# Re-run full-cohort analyses, render, device-auth (or env tokens), publish, verify
+python scripts/publish_posit_jackjburleson.py
+
+# Or if analyses/render already done:
+python scripts/publish_posit_jackjburleson.py --skip-analysis
+```
+
+Public share URL: https://019f9a10-ebb9-d1d5-839f-97e794bfd0ca.share.connect.posit.cloud/
+
 ## 6. Project layout
 
 | Path | Role |

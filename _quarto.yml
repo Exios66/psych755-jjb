@@ -36,7 +36,7 @@ project:
 website:
   title: "LLM Prediction of Communication Apprehension"
   description: "PSYCH 755 manuscript — tiered persona prompts, PRCA ground truth, and LLM prediction error"
-  site-url: https://connect.posit.cloud/jjb-morningstar/content/019f97f7-a53e-c545-c9b7-9152d4984838
+  site-url: https://connect.posit.cloud/jackjburleson/content/019f9a10-ebb9-d1d5-839f-97e794bfd0ca
   repo-url: https://github.com/Exios66/psych755-jjb
   repo-actions: [source, issue]
   page-navigation: true
@@ -96,11 +96,25 @@ website:
             text: Common-N ranking
           - href: memos/residual_ca_after_rideshare.md
             text: Residual CA after Q28
-      - href: https://github.com/Exios66/psych755-jjb
-        text: GitHub
+    right:
+      - icon: github
+        href: https://github.com/Exios66/psych755-jjb
+        aria-label: GitHub repository Exios66/psych755-jjb
+      - icon: github
+        href: https://github.com/Exios66
+        text: Exios66
+        aria-label: GitHub profile Exios66
   page-footer:
     left: "PSYCH 755 · UW–Madison · Summer 2026"
-    right: "Built with Quarto"
+    right:
+      - text: "Built with Quarto"
+      - icon: github
+        href: https://github.com/Exios66/psych755-jjb
+        aria-label: GitHub repository
+      - icon: github
+        href: https://github.com/Exios66
+        text: Exios66
+        aria-label: GitHub profile Exios66
   sidebar:
     style: "floating"
     contents:
