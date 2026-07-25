@@ -1,4 +1,5 @@
 # Analysis package + Quarto / Posit Connect Cloud runtime
+# Keep in sync with [project.dependencies] in pyproject.toml.
 pandas>=2.2
 numpy>=1.26
 requests>=2.31
@@ -7,17 +8,25 @@ pyyaml>=6.0
 matplotlib>=3.8
 scipy>=1.11
 scikit-learn>=1.4
+shap>=0.44
 jupyter>=1.0
 nbclient>=0.10
 nbformat>=5.10
 ipykernel>=6.29
 
-# Local development
+# Install the local package so `ca-personas` and imports resolve on Connect:
+#   pip install -r requirements.txt
+#   pip install -e .
+# Or in one step for local development:
+#   pip install -e ".[dev]"
+
+# Local development / CI (also: pip install -e ".[dev]")
 pytest>=8.0
 
 # Optional: local vLLM digital-twin inference (heavy CUDA stack)
 # pip install -e ".[vllm]"
-# vllm>=0.6
-# transformers>=4.44
-# tqdm>=4.66
-# huggingface_hub>=0.24
+# See [project.optional-dependencies].vllm in pyproject.toml:
+#   vllm>=0.6
+#   transformers>=4.44
+#   tqdm>=4.66
+#   huggingface_hub>=0.24

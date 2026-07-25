@@ -287,7 +287,7 @@ def predictor_pca(
 
 
 def run_factor_and_importance_bundle(
-    prolific_path: str | Path,
+    prolific_path: str | Path | list[Path],
     qualtrics_path: str | Path,
     output_dir: str | Path,
     *,
@@ -298,11 +298,22 @@ def run_factor_and_importance_bundle(
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
 
+    participants = load_and_prepare(
+        prolific_path,
+        qualtrics_path,
+        how=join_how,
+        clean=True,
+    )
+    # Restrict item FA to the analytic sample so FA and predictive analyses share N.
+    analytic_ids = set(participants["participant_id"].astype(str))
     qualtrics = load_qualtrics(qualtrics_path)
+    if "participant_id" in qualtrics.columns:
+        qualtrics = qualtrics.loc[
+            qualtrics["participant_id"].astype(str).isin(analytic_ids)
+        ].copy()
     items = likert_item_matrix(qualtrics, scored_direction=True)
     item_fa = run_item_factor_analysis(items)
 
-    participants = load_and_prepare(prolific_path, qualtrics_path, how=join_how)
     importances = predictor_feature_importance(participants, tier=tier)
     pred_pca = predictor_pca(participants, tier=tier)
 

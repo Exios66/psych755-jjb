@@ -1,3 +1,8 @@
+---
+title: "Merge coverage sanity check"
+subtitle: "File A/B ↔ File C matching totals"
+---
+
 # Merge coverage sanity check (File A/B ↔ File C)
 
 ## Expected totals (data owners)

@@ -16,6 +16,14 @@ from ca_personas.ca_transit_rf import run_ca_transit_rf_pipeline
 from ca_personas.comprehensive_transit_rf import run_comprehensive_transit_rf_pipeline
 from ca_personas.geo_transit_rf import run_geo_transit_rf_pipeline
 from ca_personas.transit_ca import run_transit_ca_pipeline
+from ca_personas.transit_covariate_rf import (
+    FEATURE_SPECS,
+    run_transit_covariate_pipeline,
+)
+from ca_personas.followup_experiments import (
+    EXPERIMENT_RUNNERS,
+    run_followup_experiments_pipeline,
+)
 
 
 def _add_shared_data_args(parser: argparse.ArgumentParser) -> None:
@@ -223,39 +231,123 @@ def build_parser() -> argparse.ArgumentParser:
     )
     ca_rf.add_argument("--seed", type=int, default=42, help="RNG seed")
 
-    comp_rf = sub.add_parser(
-        "comprehensive-transit-rf",
+    cov_rf = sub.add_parser(
+        "covariate-transit-rf",
         help=(
-            "Secondary RQ: feature-importance + tuned Random Forest over "
-            "demographics, employment, geo, car access, ride-share, and CA "
-            "scores to maximize ROC-AUC for regular transit"
+            "Follow-up RQs from the geo memo: Random Forests for car access "
+            "(Q20/Q21), employment, ride-share (Q28/Q29), and a joint bundle"
         ),
     )
-    _add_shared_data_args(comp_rf)
-    comp_rf.add_argument(
+    _add_shared_data_args(cov_rf)
+    cov_rf.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("outputs/comprehensive_transit_rf"),
-        help="Directory for metrics, ablations, importances, and results card",
+        default=Path("outputs/transit_covariate_rf"),
+        help="Directory for per-family RF artifacts and comparison table",
     )
-    comp_rf.add_argument("--splits", type=int, default=5, help="Stratified CV folds")
-    comp_rf.add_argument(
+    cov_rf.add_argument(
+        "--specs",
+        nargs="+",
+        choices=sorted(FEATURE_SPECS),
+        default=None,
+        help="Feature families to run (default: all)",
+    )
+    cov_rf.add_argument("--splits", type=int, default=5, help="Stratified CV folds")
+    cov_rf.add_argument(
         "--perm-repeats",
         type=int,
         default=30,
         help="Permutation-importance repeats",
     )
-    comp_rf.add_argument(
-        "--tune-iter",
-        type=int,
-        default=24,
-        help="RandomizedSearchCV iterations for ROC-AUC tuning",
+    cov_rf.add_argument("--seed", type=int, default=42, help="RNG seed")
+    cov_rf.add_argument(
+        "--figures-dir",
+        type=Path,
+        default=Path("memos/figures"),
+        help="Directory for memo figures (default: memos/figures)",
     )
-    comp_rf.add_argument("--seed", type=int, default=42, help="RNG seed")
-    comp_rf.add_argument(
-        "--no-upper-bound",
-        action="store_true",
-        help="Skip the Q27 upper-bound model",
+
+    followups = sub.add_parser(
+        "followup-experiments",
+        help=(
+            "Extended secondary RQs: demographics/country/nested Q28|car/"
+            "CA+mobility/common-N/residual CA/Q27-among-riders"
+        ),
+    )
+    _add_shared_data_args(followups)
+    followups.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/followup_experiments"),
+        help="Directory for extended follow-up experiment artifacts",
+    )
+    followups.add_argument(
+        "--experiments",
+        nargs="+",
+        choices=sorted(EXPERIMENT_RUNNERS),
+        default=None,
+        help="Subset of experiments to run (default: all)",
+    )
+    followups.add_argument("--splits", type=int, default=5, help="Stratified CV folds")
+    followups.add_argument(
+        "--perm-repeats",
+        type=int,
+        default=30,
+        help="Permutation-importance repeats",
+    )
+    followups.add_argument(
+        "--n-boot",
+        type=int,
+        default=2000,
+        help="Bootstrap resamples for residual-CA Welch CIs",
+    )
+    followups.add_argument("--seed", type=int, default=42, help="RNG seed")
+    followups.add_argument(
+        "--figures-dir",
+        type=Path,
+        default=Path("memos/figures"),
+        help="Directory for memo figures (default: memos/figures)",
+    )
+
+    shap_cmd = sub.add_parser(
+        "shap-eval",
+        help=(
+            "SHAP values, band F1, and ML-vs-LLM feature predictive-power "
+            "evaluation across persona tiers"
+        ),
+    )
+    _add_shared_data_args(shap_cmd)
+    shap_cmd.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/shap_eval"),
+        help="Directory for SHAP tables, metrics, and figures",
+    )
+    shap_cmd.add_argument(
+        "--figures-dir",
+        type=Path,
+        default=None,
+        help="Optional figure directory (default: <output-dir>/figures)",
+    )
+    shap_cmd.add_argument(
+        "--provider",
+        choices=["ollama", "openrouter", "mock"],
+        default="mock",
+        help="LLM provider for the persona-agent arm (default: mock)",
+    )
+    shap_cmd.add_argument("--model", default=None, help="LLM model override")
+    shap_cmd.add_argument(
+        "--shap-tier",
+        choices=list(RESEARCH_TIERS),
+        default="transit",
+        help="Tier used for detailed SHAP explanations (default: transit)",
+    )
+    shap_cmd.add_argument("--seed", type=int, default=42, help="RNG seed")
+    shap_cmd.add_argument(
+        "--max-shap-samples",
+        type=int,
+        default=200,
+        help="Max rows for TreeExplainer sampling",
     )
 
     # Flat args retained so `ca-personas --provider mock` still works.
@@ -432,6 +524,9 @@ def main(argv: list[str] | None = None) -> int:
     if command == "comprehensive-transit-rf":
         prolific, qualtrics = _paths_or_defaults(args)
         artifacts = run_comprehensive_transit_rf_pipeline(
+    if command == "covariate-transit-rf":
+        prolific, qualtrics = _paths_or_defaults(args)
+        artifacts = run_transit_covariate_pipeline(
             prolific_paths=prolific,
             qualtrics_path=qualtrics,
             join_how=args.join,
@@ -441,8 +536,58 @@ def main(argv: list[str] | None = None) -> int:
             n_tune_iter=args.tune_iter,
             random_state=args.seed,
             include_upper_bound=not args.no_upper_bound,
+            random_state=args.seed,
+            spec_keys=args.specs,
+            figures_dir=args.figures_dir,
         )
         print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
+        return 0
+
+    if command == "followup-experiments":
+        prolific, qualtrics = _paths_or_defaults(args)
+        artifacts = run_followup_experiments_pipeline(
+            prolific_paths=prolific,
+            qualtrics_path=qualtrics,
+            join_how=args.join,
+            output_dir=args.output_dir,
+            figures_dir=args.figures_dir,
+            experiment_keys=args.experiments,
+            n_splits=args.splits,
+            n_perm_repeats=args.perm_repeats,
+            n_boot=args.n_boot,
+            random_state=args.seed,
+        )
+        print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
+        return 0
+
+    if command == "shap-eval":
+        from ca_personas.shap_eval import run_shap_feature_eval
+
+        prolific, qualtrics = _paths_or_defaults(args)
+        result = run_shap_feature_eval(
+            prolific_paths=prolific,
+            qualtrics_path=qualtrics,
+            join_how=args.join,
+            llm_provider=args.provider,
+            llm_model=args.model,
+            shap_tier=args.shap_tier,
+            output_dir=args.output_dir,
+            figures_dir=args.figures_dir,
+            random_state=args.seed,
+            max_shap_samples=args.max_shap_samples,
+        )
+        print(
+            json.dumps(
+                {
+                    "output_dir": str(result["output_dir"]),
+                    "figures_dir": str(result["figures_dir"]),
+                    "results_card": str(result["paths"]["results_card"]),
+                    "n_figures": len(result["figure_paths"]),
+                    "n_analytic": int(len(result["participants"])),
+                },
+                indent=2,
+            )
+        )
         return 0
 
     # Full pipeline

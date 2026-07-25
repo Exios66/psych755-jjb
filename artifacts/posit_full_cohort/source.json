@@ -1,0 +1,18 @@
+{
+  "data_source": "full_cohort File A/B/C",
+  "resolved_source_label": "/tmp/sibling_data File A/B/C",
+  "n_analytic": 241,
+  "provider": "mock",
+  "join_how": "inner",
+  "tiers": [
+    "demos",
+    "employment",
+    "geo",
+    "transit",
+    "full"
+  ],
+  "n_prolific_files": 2,
+  "note": "Mock predictions regenerated from committed participants so persona system-prompt / demos-layer updates (incl. Student status) stay aligned without private File A/B/C.",
+  "base_demos_includes_student_status": true,
+  "rerun_from": "artifacts/posit_full_cohort/participants.csv"
+}

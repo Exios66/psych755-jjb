@@ -229,7 +229,7 @@ def null_baselines(frame: pd.DataFrame) -> pd.DataFrame:
     y = frame["y"].to_numpy()
     prev = majority_baseline_probs(y)
     # Majority hard prediction: always predict mode.
-    mode = int(np.round(y.mean()))  # 1 if prevalence >= .5 else 0
+    mode = 1 if float(y.mean()) >= 0.5 else 0
     hard = np.full(len(y), mode, dtype=int)
     hard_prob = hard.astype(float)  # degenerate scores
     rows = [

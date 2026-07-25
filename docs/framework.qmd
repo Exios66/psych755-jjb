@@ -8,7 +8,7 @@ Estimate whether LLM-predicted communication apprehension (CA) from demographic 
 
 ## Pipeline
 
-Private full-cohort inputs live in `../sibling_data/` (File A + File B stacked Prolific waves; File C Qualtrics; merge on `Q0`). Excerpt fixtures under `data/excerpts/` are the CI / Posit Cloud fallback.
+Private full-cohort inputs live in `../sibling_data/` (File A + File B stacked Prolific waves; File C Qualtrics; merge on `Q0`). Path resolution also accepts staged cloud copies (`/tmp/sibling_data` or `CA_SIBLING_DATA`). Excerpt fixtures under `data/excerpts/` are for unit tests only — Posit Connect pages never display excerpt statistics (they use full-cohort runs or committed `artifacts/posit_full_cohort/`).
 
 ```{mermaid}
 flowchart LR
@@ -29,11 +29,12 @@ flowchart LR
 
 | Tier / artifact | Research question |
 |---|---|
-| `demos` | Baseline demographics for stereotyping checks |
+| `demos` | Baseline demographics for stereotyping checks (Age, Sex, Country, Student; optional ethnicity/language) |
 | `employment` | RQ1 — does employment improve accuracy / change bias? |
+| `geo` | Intermediate place cue (country + survey lat/long) |
 | `transit` | RQ2 — does transportation-use help, and is it used sensibly? |
-| `employment` + `transit` (+ `full`) | RQ3 — combined signal vs redundancy |
-| `outputs/eda/ca_by_group.csv` | Empirical CA means by sex / employment / transit for bias interpretation |
+| `full` | RQ3 — combined signal vs redundancy (+ open-text attitudes) |
+| `outputs/eda/ca_by_group.csv` | Empirical CA means by sex / student status / employment / transit for bias interpretation |
 
 ### Secondary RQ — regular transit vs cohort CA
 
@@ -45,6 +46,8 @@ Observational contrast on the matched analytic sample (no LLM):
 | Outcomes | Ground-truth group + interpersonal PRCA (6–30) |
 | Tests | Welch *t*, Mann–Whitney, Cohen's *d*, bootstrap CI |
 | CLI / notebook | `ca-personas transit-ca` · `notebooks/secondary_rq_transit_ca.ipynb` |
+| Write-up | [`docs/secondary_rq_transit_ca.md`](secondary_rq_transit_ca.md) |
+| Memo | [`memos/transit_riders_ca.md`](../memos/transit_riders_ca.md) |
 | Artifacts | `outputs/transit_ca/` (descriptives, comparisons, distributions, results card) |
 
 ### Secondary RQ — geography predicts regular transit?
@@ -56,6 +59,8 @@ Observational contrast on the matched analytic sample (no LLM):
 | Model | Balanced Random Forest + stratified CV |
 | Baselines | Chance / majority; country-only RF |
 | CLI / notebook | `ca-personas geo-transit-rf` · `notebooks/secondary_rq_geo_transit_rf.ipynb` |
+| Write-up | [`docs/secondary_rq_geo_predicts_transit.md`](secondary_rq_geo_predicts_transit.md) |
+| Memo | [`memos/geo_predicts_transit.md`](../memos/geo_predicts_transit.md) |
 | Artifacts | `outputs/geo_transit_rf/` |
 
 ### Secondary RQ — CA scores predict regular transit?
@@ -67,7 +72,20 @@ Observational contrast on the matched analytic sample (no LLM):
 | Model | Balanced Random Forest + stratified CV; group-only / interpersonal-only ablations |
 | CLI / notebook | `ca-personas ca-transit-rf` · `notebooks/secondary_rq_ca_transit_rf.ipynb` |
 | Write-up | [`docs/secondary_rq_ca_predicts_transit.md`](secondary_rq_ca_predicts_transit.md) |
+| Memo | [`memos/ca_scores_predict_transit.md`](../memos/ca_scores_predict_transit.md) |
 | Artifacts | `outputs/ca_transit_rf/` |
+
+### Secondary RQ — wave-2 extended follow-ups
+
+| Piece | Detail |
+|---|---|
+| Experiments | Demographics · country · nested Q28\|car · CA+Q28+car · country×car · Q27-among-riders · common-*N* · residual CA |
+| Outcome | Same `regular_transit` (except Q27-among-riders high-intensity target) |
+| Model | Mixed / categorical balanced RFs + Welch strata where noted |
+| CLI / notebook | `ca-personas followup-experiments` · `notebooks/secondary_rq_followup_experiments.ipynb` |
+| Agenda | [`docs/research_memo_agenda.md`](research_memo_agenda.md) |
+| Write-up | [`docs/secondary_rq_followup_experiments.md`](secondary_rq_followup_experiments.md) |
+| Artifacts | `outputs/followup_experiments/` |
 
 ## Ground-truth scoring
 

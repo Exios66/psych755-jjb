@@ -4,12 +4,39 @@ project:
   render:
     - index.qmd
     - docs/framework.qmd
+    - docs/cohort_eda.md
+    - docs/merge_coverage_sanity.md
+    - docs/ml_baselines.md
+    - docs/ml_vs_llm.md
+    - docs/factor_feature_importance.md
+    - docs/secondary_rq_transit_ca.md
+    - docs/secondary_rq_geo_predicts_transit.md
     - docs/secondary_rq_ca_predicts_transit.md
+    - docs/secondary_rq_q27_q28_predict_transit.md
+    - docs/secondary_rq_transit_covariate_followups.md
+    - docs/secondary_rq_followup_experiments.md
+    - docs/research_memo_agenda.md
+    - memos/transit_riders_ca.md
+    - memos/ca_scores_predict_transit.md
+    - memos/geo_predicts_transit.md
+    - memos/q27_q28_predict_transit.md
+    - memos/rideshare_predicts_transit.md
+    - memos/transit_covariate_followups.md
+    - memos/car_access_predicts_transit.md
+    - memos/employment_predicts_transit.md
+    - memos/demographics_predict_transit.md
+    - memos/country_predicts_transit.md
+    - memos/q28_conditioned_on_car.md
+    - memos/ca_mobility_joint_predicts_transit.md
+    - memos/country_car_predicts_transit.md
+    - memos/q27_intensity_among_riders.md
+    - memos/common_n_head_to_head.md
+    - memos/residual_ca_after_rideshare.md
 
 website:
   title: "LLM Prediction of Communication Apprehension"
   description: "PSYCH 755 manuscript — tiered persona prompts, PRCA ground truth, and LLM prediction error"
-  site-url: https://connect.posit.cloud
+  site-url: https://connect.posit.cloud/jackjburleson/content/019f9a10-ebb9-d1d5-839f-97e794bfd0ca
   repo-url: https://github.com/Exios66/psych755-jjb
   repo-actions: [source, issue]
   page-navigation: true
@@ -21,13 +48,119 @@ website:
         text: Manuscript
       - href: docs/framework.qmd
         text: Framework
-      - href: docs/secondary_rq_ca_predicts_transit.md
-        text: CA → Transit RQ
-      - href: https://github.com/Exios66/psych755-jjb
-        text: GitHub
+      - text: Methods
+        menu:
+          - href: docs/cohort_eda.md
+            text: Cohort cleaning & EDA
+          - href: docs/merge_coverage_sanity.md
+            text: Merge coverage
+          - href: docs/ml_baselines.md
+            text: ML baselines (RF + KNN)
+          - href: docs/ml_vs_llm.md
+            text: ML vs LLM comparison
+          - href: docs/factor_feature_importance.md
+            text: Factor & feature importance
+      - text: Secondary RQs
+        menu:
+          - href: docs/research_memo_agenda.md
+            text: Memo agenda (wave 2)
+          - href: docs/secondary_rq_followup_experiments.md
+            text: Extended follow-ups (write-up)
+          - href: docs/secondary_rq_transit_ca.md
+            text: Transit → CA (write-up)
+          - href: memos/transit_riders_ca.md
+            text: Transit → CA (memo)
+          - href: docs/secondary_rq_geo_predicts_transit.md
+            text: Geo → Transit (write-up)
+          - href: memos/geo_predicts_transit.md
+            text: Geo → Transit (memo)
+          - href: docs/secondary_rq_ca_predicts_transit.md
+            text: CA → Transit (write-up)
+          - href: memos/ca_scores_predict_transit.md
+            text: CA → Transit (memo)
+          - href: docs/secondary_rq_q27_q28_predict_transit.md
+            text: Q27/Q28 → Transit (write-up)
+          - href: memos/q27_q28_predict_transit.md
+            text: Q27/Q28 → Transit (memo)
+          - href: memos/transit_covariate_followups.md
+            text: Mobility follow-ups (memo)
+          - href: memos/demographics_predict_transit.md
+            text: Demographics → Transit
+          - href: memos/country_predicts_transit.md
+            text: Country → Transit
+          - href: memos/q28_conditioned_on_car.md
+            text: Q28 | car (nested)
+          - href: memos/ca_mobility_joint_predicts_transit.md
+            text: CA + mobility joint
+          - href: memos/common_n_head_to_head.md
+            text: Common-N ranking
+          - href: memos/residual_ca_after_rideshare.md
+            text: Residual CA after Q28
+    right:
+      - icon: github
+        href: https://github.com/Exios66/psych755-jjb
+        aria-label: GitHub repository Exios66/psych755-jjb
+      - icon: github
+        href: https://github.com/Exios66
+        text: Exios66
+        aria-label: GitHub profile Exios66
   page-footer:
     left: "PSYCH 755 · UW–Madison · Summer 2026"
-    right: "Built with Quarto"
+    right:
+      - text: "Built with Quarto"
+      - icon: github
+        href: https://github.com/Exios66/psych755-jjb
+        aria-label: GitHub repository
+      - icon: github
+        href: https://github.com/Exios66
+        text: Exios66
+        aria-label: GitHub profile Exios66
+  sidebar:
+    style: "floating"
+    contents:
+      - section: "Manuscript"
+        contents:
+          - index.qmd
+          - docs/framework.qmd
+      - section: "Methods & diagnostics"
+        contents:
+          - docs/cohort_eda.md
+          - docs/merge_coverage_sanity.md
+          - docs/ml_baselines.md
+          - docs/ml_vs_llm.md
+          - docs/factor_feature_importance.md
+      - section: "Secondary research questions"
+        contents:
+          - docs/research_memo_agenda.md
+          - docs/secondary_rq_followup_experiments.md
+          - docs/secondary_rq_transit_ca.md
+          - memos/transit_riders_ca.md
+          - docs/secondary_rq_geo_predicts_transit.md
+          - memos/geo_predicts_transit.md
+          - docs/secondary_rq_ca_predicts_transit.md
+          - memos/ca_scores_predict_transit.md
+          - docs/secondary_rq_q27_q28_predict_transit.md
+          - memos/q27_q28_predict_transit.md
+          - docs/secondary_rq_transit_covariate_followups.md
+          - memos/transit_covariate_followups.md
+          - memos/rideshare_predicts_transit.md
+          - memos/car_access_predicts_transit.md
+          - memos/employment_predicts_transit.md
+      - section: "Wave-2 follow-up memos"
+        contents:
+          - memos/demographics_predict_transit.md
+          - memos/country_predicts_transit.md
+          - memos/q28_conditioned_on_car.md
+          - memos/ca_mobility_joint_predicts_transit.md
+          - memos/country_car_predicts_transit.md
+          - memos/q27_intensity_among_riders.md
+          - memos/common_n_head_to_head.md
+          - memos/residual_ca_after_rideshare.md
+
+crossref:
+  fig-title: "Figure"
+  tbl-title: "Table"
+  title-delim: "."
 
 format:
   html:
@@ -46,6 +179,8 @@ format:
     smooth-scroll: true
     citations-hover: true
     footnotes-hover: true
+    fig-cap-location: bottom
+    tbl-cap-location: top
 
 execute:
   echo: true

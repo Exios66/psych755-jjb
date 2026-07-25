@@ -22,7 +22,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 from ca_personas.load import load_and_prepare
-from ca_personas.personas import RESEARCH_TIERS
+from ca_personas.personas import BASE_DEMO_FIELDS, RESEARCH_TIERS
 from ca_personas.scoring import (
     band_distance,
     ca_band,
@@ -32,6 +32,9 @@ from ca_personas.scoring import (
 
 TARGETS = ("gt_group_ca", "gt_interpersonal_ca")
 
+# Mirror personas.demos_block / BASE_DEMO_FIELDS. Core File A/B demos are
+# Age, Sex, Country of residence, and Student status; optional Prolific
+# ethnicity / nationality / language / birth-country columns are used when present.
 DEMO_FEATURES = [
     "Age",
     "Sex",
@@ -42,6 +45,7 @@ DEMO_FEATURES = [
     "Language",
     "Student status",
 ]
+assert set(BASE_DEMO_FIELDS).issubset(DEMO_FEATURES)
 EMPLOYMENT_FEATURES = ["Employment status"]
 GEO_FEATURES = ["LocationLatitude", "LocationLongitude"]
 TRANSIT_FEATURES = ["Q26", "Q27", "Q28", "Q29", "Q20", "Q21"]
@@ -200,7 +204,12 @@ def run_baselines_for_tier(
                 ("model", spec.estimator),
             ]
         )
-        X = model_df[feature_cols]
+        X = model_df[feature_cols].copy()
+        # SimpleImputer on pandas object columns with NA can fail on some
+        # sklearn builds; stringify categoricals so imputation is stable.
+        _, categorical = split_feature_types(feature_cols)
+        for col in categorical:
+            X[col] = X[col].astype("string").fillna("<NA>").astype(str)
         for target in targets:
             y = model_df[target].astype(float)
             y_hat = cross_val_predict(pipe, X, y, cv=cv)
@@ -293,7 +302,7 @@ def run_baselines_for_tier(
 
 
 def run_stage_one_baselines(
-    prolific_path: str | Path,
+    prolific_path: str | Path | list[Path],
     qualtrics_path: str | Path,
     *,
     tiers: Iterable[str] = RESEARCH_TIERS,
@@ -302,7 +311,12 @@ def run_stage_one_baselines(
     random_state: int = 42,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Load data and evaluate RF/KNN baselines across research tiers."""
-    participants = load_and_prepare(prolific_path, qualtrics_path, how=join_how)
+    participants = load_and_prepare(
+        prolific_path,
+        qualtrics_path,
+        how=join_how,
+        clean=True,
+    )
     all_preds: list[pd.DataFrame] = []
     all_metrics: list[pd.DataFrame] = []
 

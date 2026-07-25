@@ -42,8 +42,36 @@ def extract_json_object(text: str) -> dict[str, Any]:
     return json.loads(cleaned)
 
 
+VALID_BANDS = frozenset({"low", "moderate", "high"})
+
+
+def _as_int_score(value: Any, name: str) -> int:
+    """Coerce a JSON score to int; reject bools and non-integral floats."""
+    if isinstance(value, bool) or value is None:
+        raise ValueError(f"{name} must be an integer 6–30, got {value!r}")
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{name} must be an integer 6–30, got {value!r}") from exc
+    if not numeric.is_integer():
+        raise ValueError(f"{name} must be an integer 6–30, got {value!r}")
+    return int(numeric)
+
+
+def _as_band(value: Any, name: str) -> str | None:
+    """Normalize an optional band label; reject unknown strings."""
+    if value is None:
+        return None
+    text = str(value).strip().lower()
+    if not text or text in {"nan", "none", "null"}:
+        return None
+    if text not in VALID_BANDS:
+        raise ValueError(f"{name} must be one of {sorted(VALID_BANDS)}, got {value!r}")
+    return text
+
+
 def validate_prediction(payload: dict[str, Any]) -> dict[str, Any]:
-    """Validate and normalize predicted CA scores."""
+    """Validate and normalize predicted CA scores and optional bands."""
     required = (
         "self_reported_group_ca",
         "self_reported_interpersonal_ca",
@@ -52,8 +80,11 @@ def validate_prediction(payload: dict[str, Any]) -> dict[str, Any]:
     if missing:
         raise ValueError(f"Prediction JSON missing keys: {missing}")
 
-    group = int(payload["self_reported_group_ca"])
-    interpersonal = int(payload["self_reported_interpersonal_ca"])
+    group = _as_int_score(payload["self_reported_group_ca"], "self_reported_group_ca")
+    interpersonal = _as_int_score(
+        payload["self_reported_interpersonal_ca"],
+        "self_reported_interpersonal_ca",
+    )
     if not 6 <= group <= 30:
         raise ValueError(f"group CA out of range: {group}")
     if not 6 <= interpersonal <= 30:
@@ -62,8 +93,14 @@ def validate_prediction(payload: dict[str, Any]) -> dict[str, Any]:
     return {
         "pred_group_ca": group,
         "pred_interpersonal_ca": interpersonal,
-        "pred_group_band": payload.get("self_reported_band_group"),
-        "pred_interpersonal_band": payload.get("self_reported_band_interpersonal"),
+        "pred_group_band": _as_band(
+            payload.get("self_reported_band_group"),
+            "self_reported_band_group",
+        ),
+        "pred_interpersonal_band": _as_band(
+            payload.get("self_reported_band_interpersonal"),
+            "self_reported_band_interpersonal",
+        ),
     }
 
 

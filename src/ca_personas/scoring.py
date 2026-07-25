@@ -103,10 +103,14 @@ def band_distance(pred_band: object, gt_band: object) -> int | None:
 
 
 def normalized_score_distance(abs_error: float | None) -> float | None:
-    """Scale absolute 6–30 error into [0, 1] (1 = maximum possible miss)."""
+    """Scale absolute 6–30 error into [0, 1] (1 = maximum possible miss).
+
+    Values are clipped to ``[0, 1]`` so out-of-range predictions cannot produce
+    distances greater than 1.
+    """
     if abs_error is None or (isinstance(abs_error, float) and pd.isna(abs_error)):
         return None
-    return float(abs_error) / float(PRCA_SCORE_RANGE)
+    return min(1.0, max(0.0, float(abs_error) / float(PRCA_SCORE_RANGE)))
 
 
 def normalized_band_distance(distance: int | None) -> float | None:

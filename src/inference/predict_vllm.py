@@ -106,7 +106,12 @@ def _build_prompts(df: pd.DataFrame, system_msg: str, tokenizer) -> list[str]:
 
 
 def _attach_ground_truth(df: pd.DataFrame, ground_truth_csv: str | None) -> pd.DataFrame:
-    """Attach answer labels generated beside prompt batches, when provided."""
+    """Attach or coalesce answer labels from a ground-truth CSV when provided.
+
+    Unlike the previous behavior, an existing ``answer`` column does **not**
+    cause ``--ground_truth_csv`` to be ignored: missing answers are filled from
+    the CSV, and completeness is always validated when a GT path is supplied.
+    """
     if not ground_truth_csv:
         return df
 
@@ -120,7 +125,9 @@ def _attach_ground_truth(df: pd.DataFrame, ground_truth_csv: str | None) -> pd.D
     required = {"caseid", "answer"}
     missing = required - set(truth_df.columns)
     if missing:
-        raise SystemExit(f"Ground-truth CSV must have columns {sorted(required)}; missing {sorted(missing)}")
+        raise SystemExit(
+            f"Ground-truth CSV must have columns {sorted(required)}; missing {sorted(missing)}"
+        )
 
     dupes = find_duplicate_caseids(truth_df["caseid"])
     if dupes:
@@ -132,16 +139,38 @@ def _attach_ground_truth(df: pd.DataFrame, ground_truth_csv: str | None) -> pd.D
             "Remove or consolidate duplicates before merging."
         )
 
-    if "answer" in df.columns:
-        return df
-
     truth_cols = ["caseid", "answer"]
     if "raw_answer" in truth_df.columns:
         truth_cols.append("raw_answer")
-    out = df.merge(truth_df[truth_cols], on="caseid", how="left")
-    if out["answer"].isna().any():
-        missing_count = int(out["answer"].isna().sum())
-        raise SystemExit(f"Ground-truth CSV missing answers for {missing_count} prompt rows.")
+    truth_slim = truth_df[truth_cols].drop_duplicates("caseid", keep="first")
+
+    out = df.copy()
+    out["caseid"] = out["caseid"].map(normalize_caseid)
+    if "answer" not in out.columns:
+        out = out.merge(truth_slim, on="caseid", how="left")
+    else:
+        merged = out.merge(truth_slim, on="caseid", how="left", suffixes=("", "_gt"))
+        # Fill blanks / NaN from the ground-truth CSV; keep existing non-null answers.
+        answer = merged["answer"]
+        gt_answer = merged["answer_gt"]
+        blank = answer.isna() | answer.astype(str).str.strip().eq("")
+        merged.loc[blank, "answer"] = gt_answer.loc[blank]
+        if "raw_answer_gt" in merged.columns:
+            if "raw_answer" not in merged.columns:
+                merged["raw_answer"] = merged["raw_answer_gt"]
+            else:
+                raw_blank = merged["raw_answer"].isna()
+                merged.loc[raw_blank, "raw_answer"] = merged.loc[raw_blank, "raw_answer_gt"]
+            merged = merged.drop(columns=["raw_answer_gt"])
+        out = merged.drop(columns=["answer_gt"])
+
+    if out["answer"].isna().any() or out["answer"].astype(str).str.strip().eq("").any():
+        missing_count = int(
+            (out["answer"].isna() | out["answer"].astype(str).str.strip().eq("")).sum()
+        )
+        raise SystemExit(
+            f"Ground-truth CSV missing answers for {missing_count} prompt rows."
+        )
     return out
 
 

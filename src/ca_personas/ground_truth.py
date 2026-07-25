@@ -52,6 +52,7 @@ def score_participants(
         how=join_how,
         low_max=low_max,
         high_min=high_min,
+        clean=True,
     )
 
 
@@ -69,7 +70,8 @@ def aggregate_ground_truth(participants: pd.DataFrame) -> pd.DataFrame:
     Cohort-level aggregates for reporting and agent benchmarking.
 
     Includes overall means and band prevalence for both subscales, plus
-    breakdowns by sex and employment when those columns exist.
+    breakdowns by sex, student status, employment, and country when those
+    columns exist.
     """
     rows: list[dict[str, Any]] = []
 
@@ -106,6 +108,9 @@ def aggregate_ground_truth(participants: pd.DataFrame) -> pd.DataFrame:
     if "Sex" in participants.columns:
         for sex, frame in participants.groupby("Sex", dropna=False):
             _append("sex", str(sex), frame)
+    if "Student status" in participants.columns:
+        for student, frame in participants.groupby("Student status", dropna=False):
+            _append("student_status", str(student), frame)
     if "Employment status" in participants.columns:
         for emp, frame in participants.groupby("Employment status", dropna=False):
             _append("employment", str(emp), frame)
