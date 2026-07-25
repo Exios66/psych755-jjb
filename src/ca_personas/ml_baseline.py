@@ -200,7 +200,12 @@ def run_baselines_for_tier(
                 ("model", spec.estimator),
             ]
         )
-        X = model_df[feature_cols]
+        X = model_df[feature_cols].copy()
+        # SimpleImputer on pandas object columns with NA can fail on some
+        # sklearn builds; stringify categoricals so imputation is stable.
+        _, categorical = split_feature_types(feature_cols)
+        for col in categorical:
+            X[col] = X[col].astype("string").fillna("<NA>").astype(str)
         for target in targets:
             y = model_df[target].astype(float)
             y_hat = cross_val_predict(pipe, X, y, cv=cv)

@@ -4,7 +4,15 @@ project:
   render:
     - index.qmd
     - docs/framework.qmd
+    - docs/cohort_eda.md
+    - docs/merge_coverage_sanity.md
+    - docs/ml_baselines.md
+    - docs/ml_vs_llm.md
+    - docs/factor_feature_importance.md
+    - docs/secondary_rq_transit_ca.md
+    - docs/secondary_rq_geo_predicts_transit.md
     - docs/secondary_rq_ca_predicts_transit.md
+    - memos/transit_riders_ca.md
     - memos/ca_scores_predict_transit.md
     - memos/geo_predicts_transit.md
 
@@ -23,14 +31,32 @@ website:
         text: Manuscript
       - href: docs/framework.qmd
         text: Framework
+      - text: Methods
+        menu:
+          - href: docs/cohort_eda.md
+            text: Cohort cleaning & EDA
+          - href: docs/merge_coverage_sanity.md
+            text: Merge coverage
+          - href: docs/ml_baselines.md
+            text: ML baselines (RF + KNN)
+          - href: docs/ml_vs_llm.md
+            text: ML vs LLM comparison
+          - href: docs/factor_feature_importance.md
+            text: Factor & feature importance
       - text: Secondary RQs
         menu:
+          - href: docs/secondary_rq_transit_ca.md
+            text: Transit → CA (write-up)
+          - href: memos/transit_riders_ca.md
+            text: Transit → CA (memo)
+          - href: docs/secondary_rq_geo_predicts_transit.md
+            text: Geo → Transit (write-up)
+          - href: memos/geo_predicts_transit.md
+            text: Geo → Transit (memo)
           - href: docs/secondary_rq_ca_predicts_transit.md
             text: CA → Transit (write-up)
           - href: memos/ca_scores_predict_transit.md
             text: CA → Transit (memo)
-          - href: memos/geo_predicts_transit.md
-            text: Geo → Transit (memo)
       - href: https://github.com/Exios66/psych755-jjb
         text: GitHub
   page-footer:
@@ -43,11 +69,21 @@ website:
         contents:
           - index.qmd
           - docs/framework.qmd
+      - section: "Methods & diagnostics"
+        contents:
+          - docs/cohort_eda.md
+          - docs/merge_coverage_sanity.md
+          - docs/ml_baselines.md
+          - docs/ml_vs_llm.md
+          - docs/factor_feature_importance.md
       - section: "Secondary research questions"
         contents:
+          - docs/secondary_rq_transit_ca.md
+          - memos/transit_riders_ca.md
+          - docs/secondary_rq_geo_predicts_transit.md
+          - memos/geo_predicts_transit.md
           - docs/secondary_rq_ca_predicts_transit.md
           - memos/ca_scores_predict_transit.md
-          - memos/geo_predicts_transit.md
 
 format:
   html:

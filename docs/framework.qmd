@@ -46,6 +46,8 @@ Observational contrast on the matched analytic sample (no LLM):
 | Outcomes | Ground-truth group + interpersonal PRCA (6–30) |
 | Tests | Welch *t*, Mann–Whitney, Cohen's *d*, bootstrap CI |
 | CLI / notebook | `ca-personas transit-ca` · `notebooks/secondary_rq_transit_ca.ipynb` |
+| Write-up | [`docs/secondary_rq_transit_ca.md`](secondary_rq_transit_ca.md) |
+| Memo | [`memos/transit_riders_ca.md`](../memos/transit_riders_ca.md) |
 | Artifacts | `outputs/transit_ca/` (descriptives, comparisons, distributions, results card) |
 
 ### Secondary RQ — geography predicts regular transit?
@@ -57,6 +59,7 @@ Observational contrast on the matched analytic sample (no LLM):
 | Model | Balanced Random Forest + stratified CV |
 | Baselines | Chance / majority; country-only RF |
 | CLI / notebook | `ca-personas geo-transit-rf` · `notebooks/secondary_rq_geo_transit_rf.ipynb` |
+| Write-up | [`docs/secondary_rq_geo_predicts_transit.md`](secondary_rq_geo_predicts_transit.md) |
 | Memo | [`memos/geo_predicts_transit.md`](../memos/geo_predicts_transit.md) |
 | Artifacts | `outputs/geo_transit_rf/` |
 

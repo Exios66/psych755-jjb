@@ -94,7 +94,7 @@ This project compares **information tiers** rather than a single prompt:
 
 ### Secondary questions (matched cohort, observational)
 
-Independently of LLM personification, secondary analyses on the Prolific↔Qualtrics matched sample ask: (1) whether **regular public-transit riders** differ in PRCA scores from the larger cohort (`notebooks/secondary_rq_transit_ca.ipynb`); (2) whether **survey latitude/longitude** predict regular transit use (`notebooks/secondary_rq_geo_transit_rf.ipynb`); and (3) whether **group and interpersonal CA** themselves predict regular transit use via a Random Forest (`notebooks/secondary_rq_ca_transit_rf.ipynb`; write-up in `docs/secondary_rq_ca_predicts_transit.md`).
+Independently of LLM personification, secondary analyses on the Prolific↔Qualtrics matched sample ask: (1) whether **regular public-transit riders** differ in PRCA scores from the larger cohort ([write-up](docs/secondary_rq_transit_ca.md); [memo](memos/transit_riders_ca.md)); (2) whether **survey latitude/longitude** predict regular transit use ([write-up](docs/secondary_rq_geo_predicts_transit.md); [memo](memos/geo_predicts_transit.md)); and (3) whether **group and interpersonal CA** themselves predict regular transit use via a Random Forest ([write-up](docs/secondary_rq_ca_predicts_transit.md); [memo](memos/ca_scores_predict_transit.md)). Supporting methods pages cover [cohort EDA](docs/cohort_eda.md), [ML baselines](docs/ml_baselines.md), [ML vs LLM metrics](docs/ml_vs_llm.md), and [feature importance](docs/factor_feature_importance.md).
 
 # Methods
 
