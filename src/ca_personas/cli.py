@@ -263,6 +263,41 @@ def build_parser() -> argparse.ArgumentParser:
     )
     ca_rf.add_argument("--seed", type=int, default=42, help="RNG seed")
 
+    comp_rf = sub.add_parser(
+        "comprehensive-transit-rf",
+        help=(
+            "Secondary RQ: feature-importance + tuned Random Forest over "
+            "demographics, employment, geo, car access, ride-share, and CA "
+            "scores to maximize ROC-AUC for regular transit"
+        ),
+    )
+    _add_shared_data_args(comp_rf)
+    comp_rf.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/comprehensive_transit_rf"),
+        help="Directory for metrics, ablations, importances, and results card",
+    )
+    comp_rf.add_argument("--splits", type=int, default=5, help="Stratified CV folds")
+    comp_rf.add_argument(
+        "--perm-repeats",
+        type=int,
+        default=30,
+        help="Permutation-importance repeats",
+    )
+    comp_rf.add_argument(
+        "--tune-iter",
+        type=int,
+        default=24,
+        help="RandomizedSearchCV iterations for ROC-AUC tuning",
+    )
+    comp_rf.add_argument("--seed", type=int, default=42, help="RNG seed")
+    comp_rf.add_argument(
+        "--no-upper-bound",
+        action="store_true",
+        help="Skip the Q27 upper-bound model",
+    )
+
     cov_rf = sub.add_parser(
         "covariate-transit-rf",
         help=(
@@ -589,9 +624,6 @@ def main(argv: list[str] | None = None) -> int:
     if command == "comprehensive-transit-rf":
         prolific, qualtrics = _paths_or_defaults(args)
         artifacts = run_comprehensive_transit_rf_pipeline(
-    if command == "covariate-transit-rf":
-        prolific, qualtrics = _paths_or_defaults(args)
-        artifacts = run_transit_covariate_pipeline(
             prolific_paths=prolific,
             qualtrics_path=qualtrics,
             join_how=args.join,
@@ -601,6 +633,19 @@ def main(argv: list[str] | None = None) -> int:
             n_tune_iter=args.tune_iter,
             random_state=args.seed,
             include_upper_bound=not args.no_upper_bound,
+        )
+        print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
+        return 0
+
+    if command == "covariate-transit-rf":
+        prolific, qualtrics = _paths_or_defaults(args)
+        artifacts = run_transit_covariate_pipeline(
+            prolific_paths=prolific,
+            qualtrics_path=qualtrics,
+            join_how=args.join,
+            output_dir=args.output_dir,
+            n_splits=args.splits,
+            n_perm_repeats=args.perm_repeats,
             random_state=args.seed,
             spec_keys=args.specs,
             figures_dir=args.figures_dir,
