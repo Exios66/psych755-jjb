@@ -55,7 +55,7 @@ website:
           - href: docs/merge_coverage_sanity.md
             text: Merge coverage
           - href: docs/ml_baselines.md
-            text: ML baselines (RF + KNN)
+            text: ML baselines (full suite)
           - href: docs/ml_vs_llm.md
             text: ML vs LLM comparison
           - href: docs/factor_feature_importance.md

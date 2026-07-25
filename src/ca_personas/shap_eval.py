@@ -26,6 +26,7 @@ from sklearn.pipeline import Pipeline
 from ca_personas.compare_agents import run_ml_vs_llm_comparison
 from ca_personas.load import load_and_prepare, load_full_cohort
 from ca_personas.ml_baseline import (
+    CLASSIC_MODEL_SUITE,
     TARGETS,
     TIER_FEATURES,
     available_feature_columns,
@@ -231,7 +232,10 @@ def ml_metrics_with_f1(
     selected = [t for t in tiers if t in TIER_FEATURES]
     for tier in selected:
         preds, metrics = run_baselines_for_tier(
-            participants, tier=tier, random_state=random_state
+            participants,
+            tier=tier,
+            random_state=random_state,
+            models=CLASSIC_MODEL_SUITE,
         )
         pred_frames.append(preds)
         for _, row in metrics.iterrows():

@@ -164,13 +164,15 @@ pytest
 
 Artifacts land in `data/processed/`, `outputs/eda/`, `outputs/ground_truth/`, `outputs/personas/`, `outputs/predictions/`, and `outputs/evaluation/` (includes `band_acc_*` + `exact_acc_*` in `summary_by_tier.csv`).
 
-## Stage one: ML baselines (RF + KNN)
+## Stage one: ML baselines (full suite)
 
-Before comparing LLMs, establish tabular baselines on the **same** tiered prediction task (predict group / interpersonal CA from demographics → employment → geo → transit):
+Before comparing LLMs, establish tabular baselines on the **same** tiered prediction task (predict group / interpersonal CA from demographics → employment → geo → transit). The suite includes **Ridge, Elastic Net, k-NN, Random Forest, HistGradientBoosting, XGBoost, and MLP**:
 
 ```bash
 pip install -r requirements.txt
 pip install -e .
+ca-personas ml-baseline --join inner --seed 42
+# or
 jupyter nbconvert --to notebook --execute notebooks/stage_one_ml_baseline.ipynb --output stage_one_ml_baseline.executed.ipynb
 ```
 
@@ -185,11 +187,11 @@ participants, preds, metrics = run_stage_one_baselines(
 save_baseline_artifacts(preds, metrics, "outputs/ml_baseline")
 ```
 
-Metrics land in `outputs/ml_baseline/` (MAE, exact-score accuracy, band accuracy, and distance-from-correct) for later comparison to LLM summaries by tier.
+Metrics land in `outputs/ml_baseline/` (MAE pivots, leaderboard, exact-score / band accuracy) for later comparison to LLM summaries by tier. Write-up: [`docs/ml_baselines.md`](docs/ml_baselines.md).
 
 ## ML vs LLM comparison
 
-Evaluate Random Forest / KNN against LLM persona agents on the **same** tiers and shared metrics:
+Evaluate the ML suite against LLM persona agents on the **same** tiers and shared metrics:
 
 ```bash
 ca-personas compare --provider mock --join inner

@@ -191,8 +191,8 @@ def run_ml_vs_llm_comparison(
     output_dir: str | Path | None = None,
 ) -> dict[str, Any]:
     """
-    Run RF/KNN baselines and an LLM persona agent, evaluate on shared metrics,
-    and optionally write comparison artifacts.
+    Run the stage-one ML suite and an LLM persona agent, evaluate on shared
+    metrics, and optionally write comparison artifacts.
     """
     selected = [t for t in tiers if t != "full"]
     participants, ml_long, _ml_metrics = run_stage_one_baselines(

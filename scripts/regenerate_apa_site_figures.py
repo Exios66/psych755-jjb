@@ -63,23 +63,57 @@ def _family_auc(family: str) -> float:
 
 
 def fig_ml_baseline_mae() -> None:
+    from ca_personas.ml_baseline import DEFAULT_MODEL_SUITE, MODEL_LABELS
+
     metrics = pd.read_csv(ROOT / "outputs" / "ml_baseline" / "ml_baseline_metrics.csv")
-    rf = metrics[
-        (metrics["model"] == "random_forest") & (metrics["target"] == "gt_group_ca")
-    ].copy()
     order = ["demos", "employment", "geo", "transit"]
-    rf["tier"] = pd.Categorical(rf["tier"], categories=order, ordered=True)
-    rf = rf.sort_values("tier")
-    fig, ax = plt.subplots(figsize=(6.4, 3.8))
-    grouped_bars(
-        ax,
-        rf["tier"].tolist(),
-        {"RF group CA": rf["mae"].tolist()},
-        ylabel="Mean absolute error",
-        xlabel="Persona information tier",
-        ylim=(0, 7),
-    )
-    _save(fig, DOCS_FIG / "ml_baseline_mae_group.png")
+    models = [m for m in DEFAULT_MODEL_SUITE if m in set(metrics["model"])]
+    colors = {
+        "ridge": "#222222",
+        "elastic_net": "#555555",
+        "knn": "#888888",
+        "random_forest": "#C5050C",
+        "hist_gradient_boosting": "#444444",
+        "xgboost": "#666666",
+        "mlp": "#000000",
+    }
+    markers = {
+        "ridge": "o",
+        "elastic_net": "s",
+        "knn": "D",
+        "random_forest": "^",
+        "hist_gradient_boosting": "v",
+        "xgboost": "P",
+        "mlp": "X",
+    }
+
+    for target, fname in (
+        ("gt_group_ca", "ml_baseline_mae_group.png"),
+        ("gt_interpersonal_ca", "ml_baseline_mae_interpersonal.png"),
+    ):
+        fig, ax = plt.subplots(figsize=(7.2, 4.2))
+        for model in models:
+            sub = metrics[
+                (metrics["model"] == model) & (metrics["target"] == target)
+            ].copy()
+            sub["tier"] = pd.Categorical(sub["tier"], categories=order, ordered=True)
+            sub = sub.sort_values("tier")
+            ax.plot(
+                range(len(order)),
+                sub["mae"].tolist(),
+                marker=markers.get(model, "o"),
+                color=colors.get(model, "#444444"),
+                linewidth=1.8 if model == "random_forest" else 1.25,
+                label=MODEL_LABELS.get(model, model),
+            )
+        ax.set_xticks(range(len(order)))
+        ax.set_xticklabels(order)
+        ax.set_ylabel("Mean absolute error")
+        ax.set_xlabel("Persona information tier")
+        ax.set_ylim(3.8, 6.4)
+        apa_axes(ax)
+        ax.legend(frameon=False, fontsize=8, ncol=2, loc="upper right")
+        _save(fig, DOCS_FIG / fname)
 
 
 def fig_feature_importance() -> None:
