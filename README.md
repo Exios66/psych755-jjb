@@ -100,6 +100,7 @@ Supporting code:
 | `data/excerpts/` | Public fixtures for **unit tests only** (never displayed on Posit). |
 | `artifacts/posit_full_cohort/` | Committed full-cohort mock tables for Connect Cloud renders. |
 | `prompts/system_prompt.md` | Documented system prompt (synced with code). |
+| `prompts/examples/<tier>/` | Two sample persona prompts per cumulative tier. |
 
 ## Data layout (private full cohort)
 
