@@ -237,6 +237,17 @@ python -m inference.ingest_results \
 
 See [`src/inference/README.md`](src/inference/README.md) for checkpoint-resume, GPU flags, and HF token setup. Bug-fix notes from the 2026-07-25 audit live in [`docs/bugfix_audit.md`](docs/bugfix_audit.md).
 
+## Regenerating memo figures
+
+Publication-styled figures (Liberation Sans, shared palette, annotated AUC/prevalence panels) are produced by:
+
+```bash
+ca-personas followup-experiments --join inner --seed 42
+python scripts/regenerate_memo_figures.py
+```
+
+Shared styling lives in [`src/ca_personas/viz_style.py`](src/ca_personas/viz_style.py).
+
 ## Quarto manuscript website
 
 The project is a Quarto **website** configured by [`_quarto.yml`](_quarto.yml). The primary manuscript is [`index.qmd`](index.qmd); it re-runs the excerpt analysis at render time so the site builds on Posit Connect Cloud without live LLM credentials.
