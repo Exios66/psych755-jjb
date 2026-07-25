@@ -86,17 +86,17 @@ At a 0.5 probability threshold, the primary model’s out-of-fold confusion coun
 
 ## 4. Interpretation
 
-**Yes — CA scores carry modest, above-chance predictive information about regular public-transit use in this matched cohort.**
+**Yes — CA scores carry above-chance predictive information about regular public-transit use in this matched cohort (CV ROC-AUC = 0.590).**
 
 1. **Direction.** Higher communication apprehension is associated with *lower* probability of weekly+ public transit. Regular riders sit roughly 1.7–2.7 PRCA points lower than non-regular riders, with the larger gap on the **group** subscale.
 
-2. **Magnitude of predictive power.** A CV ROC-AUC of **0.590** beats chance (0.50) but remains in the “weak–modest” discrimination band. CA alone is **not** a strong classifier of transit habits.
+2. **Magnitude of predictive power.** A CV ROC-AUC of **0.590** beats chance (0.50) but remains in a low-discrimination band relative to Q28 (0.762). CA alone is **not** a strong classifier of transit habits.
 
 3. **Group vs interpersonal.** Group CA is the stronger of the two predictors. Adding interpersonal CA helps only slightly.
 
 4. **Link to other secondary RQs.**
    - RQ1–3 ([`transit_ca`](secondary_rq_transit_ca.md)): established that regular riders differ in mean CA; this RQ shows that difference translates into **weak out-of-sample classification signal**.
-   - RQ4 ([`geo_transit_rf`](secondary_rq_geo_predicts_transit.md)): lat/long alone yielded ROC-AUC ≈ 0.551. CA subscales here yield a similar (slightly higher) AUC ≈ 0.590.
+   - RQ4 ([`geo_transit_rf`](secondary_rq_geo_predicts_transit.md)): lat/long alone yielded ROC-AUC = 0.5511. CA subscales here yield a similar (slightly higher) AUC = 0.5900.
 
 5. **Implication for the primary persona project.** When LLM persona tiers include transit information, the model is being given a cue that is empirically (if weakly) related to true CA.
 

@@ -15,9 +15,9 @@ date: 2026-07-25
 
 ## Answer, Response, + Summary of Results
 
-Using the matched analytic cohort with complete `Q28`/`Q29` (**n = 233**; 99 regular / 134 not regular; prevalence ≈ 42.5%), we fit a balanced Random Forest (stratified 5-fold CV, `seed=42`) predicting weekly+ transit from ride-share **days in the last three months** (`Q28`) and **rides on a typical ride-share day** (`Q29`).
+Using the matched analytic cohort with complete `Q28`/`Q29` (**n = 233**; 99 regular / 134 not regular; prevalence = 42.5%), we fit a balanced Random Forest (stratified 5-fold CV, `seed=42`) predicting weekly+ transit from ride-share **days in the last three months** (`Q28`) and **rides on a typical ride-share day** (`Q29`).
 
-**Short answer:** Yes — clearly, and much more strongly than geography or CA. Ride-share frequency recovers CV ROC-AUC ≈ **0.745**, well above chance (0.500), geo (≈ **0.551**), and CA (≈ **0.590**). Signal is driven almost entirely by **`Q28`**.
+**Short answer:** Yes — ride-share frequency exceeds geography and CA on CV ROC-AUC. Ride-share frequency recovers CV ROC-AUC = **0.745**, well above chance (0.500), geo (**0.551**), and CA (**0.590**). Signal is driven almost entirely by **`Q28`**.
 
 ![Ride-share prevalence by level and ROC curve](figures/rideshare_predicts_transit_memo.png)
 
@@ -42,7 +42,7 @@ Using the matched analytic cohort with complete `Q28`/`Q29` (**n = 233**; 99 reg
 | Geo RF benchmark | 241 | 0.551 | — | — |
 | Chance | — | 0.500 | 0.500 | — |
 
-Permutation importance: **Q28** mean AUC drop ≈ 0.29 vs much smaller contribution from **Q29**. Average precision ≈ 0.655 and Brier ≈ 0.197 indicate useful ranking and calibration relative to the weaker geo/CA forests.
+Permutation importance: **Q28** mean AUC drop ≈ 0.29 vs much smaller contribution from **Q29**. Average precision = 0.655 and Brier = 0.197 indicate useful ranking and calibration relative to the weaker geo/CA forests.
 
 **Conclusion.** Among the geo-memo follow-up candidates, ride-share frequency is the **strongest** stand-alone predictor of regular public-transit use. The association is theoretically expected (shared mobility habits / multimodal travelers) but is still same-wave and non-causal; `Q28` and `Q26` may also share response styles or urban lifestyle confounds.
 

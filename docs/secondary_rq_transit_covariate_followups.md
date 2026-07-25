@@ -18,7 +18,7 @@ subtitle: "Secondary research questions — geo-memo follow-up Random Forests"
 
 ## 1. Research questions
 
-The geography → transit memo ([`memos/geo_predicts_transit.md`](../memos/geo_predicts_transit.md)) asked which other features might predict regular public-transit use after finding only modest lat/long discrimination (AUC ≈ 0.551). Communication-apprehension scores were already tested (AUC ≈ 0.590). This write-up evaluates the remaining named candidates:
+The geography → transit memo ([`memos/geo_predicts_transit.md`](../memos/geo_predicts_transit.md)) asked which other features might predict regular public-transit use after finding only modest lat/long discrimination (AUC = 0.5511). Communication-apprehension scores were already tested (AUC = 0.5900). This write-up evaluates the remaining named candidates:
 
 1. Driver's license & car access (`Q20`, `Q21`)
 2. Employment status
@@ -52,7 +52,7 @@ Benchmarks pasted from companion seeded runs: geo AUC = 0.551; CA AUC = 0.590; c
 | Employment | 241 | 0.528 | 0.424 | 0.560 | 0.586 |
 | Chance | — | 0.500 | — | 0.500 | — |
 
-**Ride-share days (`Q28`)** dominate: regular-transit prevalence rises from ≈15% (Never) to ≈94% (8+ days/month). **Car access (`Q21`)** is the main car-family driver (No access ≈76% regular vs Yes ≈31%). **Employment** differences are small.
+**Ride-share days (`Q28`)** dominate: regular-transit prevalence rises from 15.7% (Never) to 94.1% (8+ days/month). **Car access (`Q21`)** is the main car-family driver (No access = 75.9% regular vs Yes = 30.8%). **Employment** differences are small.
 
 ## 4. Interpretation
 

@@ -101,6 +101,11 @@ website:
           - memos/transit_covariate_followups.md
           - memos/rideshare_predicts_transit.md
 
+crossref:
+  fig-title: "Figure"
+  tbl-title: "Table"
+  title-delim: "."
+
 format:
   html:
     theme:
@@ -118,6 +123,8 @@ format:
     smooth-scroll: true
     citations-hover: true
     footnotes-hover: true
+    fig-cap-location: bottom
+    tbl-cap-location: top
 
 execute:
   echo: true

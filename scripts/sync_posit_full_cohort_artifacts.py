@@ -84,6 +84,9 @@ def main() -> int:
     (out / "source.json").write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(meta, indent=2))
     print(f"Wrote artifacts under {out}")
+    secondary = out / "secondary_results.json"
+    if not secondary.is_file():
+        print("WARNING: secondary_results.json missing; manuscript secondary figures require it.")
     return 0
 
 

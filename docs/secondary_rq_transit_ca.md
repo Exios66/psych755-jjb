@@ -85,7 +85,7 @@ Alternate definitions of “regular” (e.g., 8+ only vs weekly+) preserve the *
 
 1. **Direction.** Higher CA ↔ less weekly+ transit, on both subscales, with a clearer signal for **group** discussion anxiety.
 2. **Magnitude.** Effects are small-to-medium, not categorical: many high-CA respondents still ride, and many low-CA respondents do not.
-3. **Link to other secondary RQs.** Mean differences here become the weak out-of-sample classification signal in the CA→transit Random Forest (ROC-AUC ≈ 0.59) and sit beside a similarly modest geo→transit AUC (≈ 0.55).
+3. **Link to other secondary RQs.** Mean differences here become the weak out-of-sample classification signal in the CA→transit Random Forest (ROC-AUC = 0.590) and sit beside a similarly modest geo→transit AUC (≈ 0.55).
 4. **Implication for persona tiers.** When LLM prompts include transit frequency, they receive a cue that is empirically associated with true CA — so transit is a legitimate (if weak) contextual feature, not an arbitrary demographic tag.
 
 ## 5. Limitations

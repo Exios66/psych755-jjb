@@ -16,7 +16,7 @@ date: 2026-07-25
 
 Using the full matched analytic cohort (**n = 241**; 101 regular / 140 not regular), we evaluated **Employment status** (Full-Time / Part-Time / Other) as a single-feature Random Forest predicting weekly+ public transit (`Q26` threshold as in the geo and CA memos). Stratified 5-fold CV, `random_state=42`.
 
-**Short answer:** Barely. Employment status yields CV ROC-AUC ≈ **0.528** — only slightly above chance and **below** both the geo (≈ 0.551) and CA (≈ 0.590) benchmarks. It is not a competitive stand-alone predictor in this sample.
+**Short answer:** Barely. Employment status yields CV ROC-AUC = **0.528** — only slightly above chance and **below** both the geo (≈ 0.551) and CA (≈ 0.590) benchmarks. It is not a competitive stand-alone predictor in this sample.
 
 ![Employment prevalence by level and ROC curve](figures/employment_predicts_transit_memo.png)
 
@@ -39,7 +39,7 @@ Part-time and full-time rates are close; the “Other” category is less often 
 | CA RF benchmark | 241 | 0.590 |
 | Chance | — | 0.500 |
 
-Balanced accuracy ≈ 0.56 and Brier ≈ 0.25 confirm weak ranking quality. Permutation importance is small (mean AUC drop ≈ 0.06).
+Balanced accuracy = 0.560 and Brier = 0.247 confirm weak ranking quality. Permutation importance is small (mean AUC drop ≈ 0.06).
 
 **Conclusion.** Employment status, as coded in the Prolific export, is a **weak** correlate of regular transit here. It remains useful as a control/covariate in multi-feature models, but it does not outperform geography or CA on its own.
 

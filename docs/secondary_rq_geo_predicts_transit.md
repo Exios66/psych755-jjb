@@ -63,9 +63,9 @@ Permutation importance ranks **longitude** above **latitude**. Continuous coordi
 
 **Geography, as captured by Qualtrics lat/long, is a weak predictor of regular transit in this sample.**
 
-1. Discrimination is **above chance** but stays in the weak band (AUC ≈ 0.55).
+1. Discrimination is **above chance** but stays in the weak band (AUC = 0.551).
 2. Nearly all of that signal is redundant with **country of residence**.
-3. Compared with the CA→transit RF (AUC ≈ 0.59), place alone is a slightly weaker classifier of weekly+ transit.
+3. Compared with the CA→transit RF (AUC = 0.590), place alone is a slightly weaker classifier of weekly+ transit.
 4. For the primary persona project, the `geo` tier supplies a coarse place cue that may help CA prediction indirectly (via country / urbanicity correlates) but should not be treated as a precise transit-accessibility measure.
 
 ## 5. Limitations

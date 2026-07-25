@@ -49,4 +49,4 @@ Is the CA–transit link causal (e.g., anxiety reducing use of shared vehicles),
 
 ## What other features may also well-predict regular public transit use?
 
-Survey geolocation (latitude/longitude) was examined in a companion Random Forest (`secondary_rq_geo_transit_rf.ipynb`) and showed similarly modest AUC (≈ 0.55). Geo-memo follow-ups are now written up: ride-share (`Q28`/`Q29`) is substantially stronger (AUC ≈ **0.745**), car access (`Q20`/`Q21`) mid-tier (≈ **0.607**), and employment alone weak (≈ **0.528**) — see [`transit_covariate_followups.md`](transit_covariate_followups.md).
+Survey geolocation (latitude/longitude) was examined in a companion Random Forest (`secondary_rq_geo_transit_rf.ipynb`) and showed similarly modest AUC (≈ 0.55). Geo-memo follow-ups are now written up: ride-share (`Q28`/`Q29`) is substantially stronger (AUC = **0.745**), car access (`Q20`/`Q21`) mid-tier (= **0.607**), and employment alone weak (= **0.528**) — see [`transit_covariate_followups.md`](transit_covariate_followups.md).

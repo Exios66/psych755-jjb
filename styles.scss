@@ -17,7 +17,53 @@ div.callout-note {
   border-left-color: #C5050C;
 }
 
+/* APA-ish figure/table captions: number + italic title */
 .figure-caption,
+.quarto-float-fig > figcaption,
+.quarto-float-tbl > figcaption,
 .table-caption {
-  color: #444;
+  color: #222;
+  font-size: 0.95rem;
+  text-align: left;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.figure-caption .figure-caption-prefix,
+.quarto-float-fig > figcaption > span.figure-caption-prefix,
+figcaption.quarto-float-caption-bottom > span:first-child {
+  font-weight: 700;
+  font-style: normal;
+}
+
+.figure-caption,
+.quarto-float-fig > figcaption {
+  font-style: italic;
+}
+
+.table-caption,
+.quarto-float-tbl > figcaption {
+  font-style: italic;
+}
+
+.table-caption .table-caption-prefix,
+.quarto-float-tbl > figcaption > span:first-child {
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Notes under figures (APA Note.) */
+.figure-note,
+main p:has(+ .quarto-figure) {
+  font-size: 0.9rem;
+}
+
+.quarto-figure {
+  margin-top: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.quarto-figure img {
+  background: #fff;
+  border: 0;
 }
