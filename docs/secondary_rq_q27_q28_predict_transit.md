@@ -39,7 +39,7 @@ Regular-transit prevalence rises from 15.7% (Q28 Never) to 94.1% (Q28 8+ days/mo
 
 ## 4. Interpretation
 
-Q28 is a practically meaningful traditional-ML predictor of weekly+ transit in this cohort. Q27 is weaker (AUC = 0.589) and redundant once Q28 is included. See the research memo for full prose interpretation and caveats.
+Q28 recovers CV ROC-AUC = **0.762** (+0.211 vs geo, +0.172 vs CA). Q27 recovers AUC = **0.589** and is redundant once Q28 is included (joint AUC = 0.761). Full prose: [`memos/q27_q28_predict_transit.md`](../memos/q27_q28_predict_transit.md).
 
 ## 5. Reproducibility
 

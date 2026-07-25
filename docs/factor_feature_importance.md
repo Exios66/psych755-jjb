@@ -47,10 +47,10 @@ Full File A/B waves omit ethnicity / nationality / language, so those fields are
 
 | Finding | Implication for persona prompts |
 |---|---|
-| Transit + geo dominate tabular importance | `transit` and `geo` tiers are the most justified contextual additions |
-| Employment ranks mid-pack | RQ1 (employment lift) should show modest, not dramatic, gains |
-| Sex ≈ 0 importance here | Large LLM error gaps by sex would look more like stereotyping than “using the sample’s real signal” |
-| Ride-share (Q28) > public transit (Q26) for predicting CA | Models (and prompts) that only mention bus/train may miss a stronger mobility cue |
+| Q28 (1.518), Age (1.326), lat/long, and employment dominate tabular importance | `transit` and `geo` tiers are the most justified contextual additions |
+| Employment ranks 4th (1.075) | RQ1 (employment lift) should show incremental, not dramatic, gains — matching RF MAE 5.72→5.59 ([`ml_baselines.md`](ml_baselines.md)) |
+| Sex importance = 0.258 (rank 7) | Large LLM error gaps by sex would look more like stereotyping than “using the sample’s real signal” |
+| Ride-share Q28 (1.518) > public transit Q26 (0.731) for predicting CA | Models (and prompts) that only mention bus/train may miss the higher-ranked mobility cue; reverse-prediction also favors Q28 (AUC = 0.762; [memo](../memos/q27_q28_predict_transit.md)) |
 
 ## 5. Reproducibility
 

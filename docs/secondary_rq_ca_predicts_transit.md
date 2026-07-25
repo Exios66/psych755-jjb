@@ -90,15 +90,15 @@ At a 0.5 probability threshold, the primary model’s out-of-fold confusion coun
 
 1. **Direction.** Higher communication apprehension is associated with *lower* probability of weekly+ public transit. Regular riders sit roughly 1.7–2.7 PRCA points lower than non-regular riders, with the larger gap on the **group** subscale.
 
-2. **Magnitude of predictive power.** A CV ROC-AUC of **0.590** beats chance (0.50) but remains in a low-discrimination band relative to Q28 (0.762). CA alone is **not** a strong classifier of transit habits.
+2. **Magnitude of predictive power.** A CV ROC-AUC of **0.590** beats chance by +0.090 and geo by +0.039, but trails Q28 (0.762) by −0.172 ([memo](../memos/q27_q28_predict_transit.md)). OOF confusion (TN=76, FP=64, FN=40, TP=61) shows substantial overlap.
 
-3. **Group vs interpersonal.** Group CA is the stronger of the two predictors. Adding interpersonal CA helps only slightly.
+3. **Group vs interpersonal.** Group CA is the larger contributor (single-feature AUC = 0.555 vs 0.506; permutation mean AUC drop = 0.309 vs 0.223). Adding interpersonal CA lifts AUC by +0.035 over group only.
 
 4. **Link to other secondary RQs.**
-   - RQ1–3 ([`transit_ca`](secondary_rq_transit_ca.md)): established that regular riders differ in mean CA; this RQ shows that difference translates into **weak out-of-sample classification signal**.
-   - RQ4 ([`geo_transit_rf`](secondary_rq_geo_predicts_transit.md)): lat/long alone yielded ROC-AUC = 0.5511. CA subscales here yield a similar (slightly higher) AUC = 0.5900.
+   - Transit → CA ([`transit_ca`](secondary_rq_transit_ca.md); [memo](../memos/transit_riders_ca.md)): regular riders differ in mean CA (group Δ = −2.72); this RQ shows that difference translates into AUC = 0.590 out-of-sample.
+   - Geo → transit ([`geo_transit_rf`](secondary_rq_geo_predicts_transit.md); [memo](../memos/geo_predicts_transit.md)): lat/long alone yielded ROC-AUC = 0.551. CA subscales here yield AUC = 0.590.
 
-5. **Implication for the primary persona project.** When LLM persona tiers include transit information, the model is being given a cue that is empirically (if weakly) related to true CA.
+5. **Implication for the primary persona project.** When LLM persona tiers include transit information, the model is being given a cue empirically related to true CA (group Δ = −2.72 among regular riders; [memo](../memos/transit_riders_ca.md)).
 
 ## 5. Limitations
 

@@ -18,7 +18,7 @@ subtitle: "Secondary research questions — geo-memo follow-up Random Forests"
 
 ## 1. Research questions
 
-The geography → transit memo ([`memos/geo_predicts_transit.md`](../memos/geo_predicts_transit.md)) asked which other features might predict regular public-transit use after finding only modest lat/long discrimination (AUC = 0.5511). Communication-apprehension scores were already tested (AUC = 0.5900). This write-up evaluates the remaining named candidates:
+The geography → transit memo ([`memos/geo_predicts_transit.md`](../memos/geo_predicts_transit.md)) asked which other features might predict regular public-transit use after finding lat/long discrimination of AUC = **0.551**. Communication-apprehension scores were already tested (AUC = **0.590**; [`memos/ca_scores_predict_transit.md`](../memos/ca_scores_predict_transit.md)). This write-up evaluates the remaining named candidates:
 
 1. Driver's license & car access (`Q20`, `Q21`)
 2. Employment status

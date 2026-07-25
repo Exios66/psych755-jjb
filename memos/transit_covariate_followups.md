@@ -14,9 +14,9 @@ date: 2026-07-25
 
 ## Answer, Response, + Summary of Results
 
-We re-used the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26` outcome; companion geo AUC ≈ **0.551**, CA AUC = **0.590**, chance = **0.500**) and ran balanced Random Forests with stratified 5-fold CV (`seed=42`) for each feature family, plus a joint **mobility bundle**. Complete-case *N* differs by family because `Q20`/`Q21` (and some `Q29`) are missing more often than employment or `Q28`.
+We re-used the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26` outcome; companion geo AUC = **0.551**, CA AUC = **0.590**, chance = **0.500**) and ran balanced Random Forests with stratified 5-fold CV (`seed=42`) for each feature family, plus a joint **mobility bundle**. Complete-case *N* differs by family because `Q20`/`Q21` (and some `Q29`) are missing more often than employment or `Q28`.
 
-**Short answer:** **Ride-share frequency is the clear winner** (AUC = **0.745**). Car access is a useful mid-tier predictor (= **0.607**). Employment alone is weak (= **0.528**). Bundling all mobility items (= **0.747**) does not meaningfully beat ride-share alone once *N* shrinks to respondents with complete car items.
+**Short answer:** **Q28 alone** recovers the highest AUC in the suite (**0.762**; [`q27_q28_predict_transit.md`](q27_q28_predict_transit.md)). The Q28/Q29 rideshare family reaches **0.745**; car access **0.607**; employment **0.528**. Bundling car+employment+ride-share (**0.747** on n = 143) does not meaningfully beat ride-share alone once *N* shrinks to respondents with complete car items.
 
 ![Head-to-head CV ROC-AUC for follow-up families vs benchmarks](figures/transit_covariate_followups_memo.png)
 
@@ -35,11 +35,11 @@ We re-used the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26` o
 ### What drives the ranking
 
 1. **`Q28` ride-share days** shows a steep prevalence gradient (Never = 15.7% regular → 8+ days/month = 94.1% regular) and dominates permutation importance in both the rideshare-only and bundle models.
-2. **`Q21` car access** separates groups sharply among complete cases (No access ≈ 76% regular vs Yes ≈ 31%), lifting car-only AUC above CA/geo despite smaller *N*.
-3. **Employment** (Full-Time / Part-Time / Other) barely moves the ROC curve; treat it as a control, not a primary classifier.
-4. The **bundle**’s near-tie with ride-share alone indicates limited incremental value from car/employment once ride-share is in the model—on the overlapping complete-case subset.
+2. **`Q21` car access** separates groups sharply among complete cases (No access = 76.0% regular vs Yes = 30.9%), lifting car-only AUC to **0.607** above CA/geo despite smaller *N*.
+3. **Employment** (Full-Time / Part-Time / Other) recovers AUC = **0.528**; treat it as a control, not a primary classifier.
+4. The **bundle** (AUC = 0.747) is only +0.002 above ride-share alone (0.745) on the overlapping complete-case subset, indicating limited incremental value from car/employment once ride-share is in the model.
 
-**Conclusion.** For predicting weekly+ public transit in this cohort, the geo memo’s ride-share candidates are substantially more informative than survey geolocation or CA scores; car access is a secondary mobility cue; employment status alone is not competitive. Same-wave self-reports still preclude causal claims, and AUCs should not be compared naively across unequal complete-case samples without that caveat.
+**Conclusion.** For predicting weekly+ public transit in this cohort, ride-share items (Q28 AUC = 0.762; Q28/Q29 AUC = 0.745) exceed survey geolocation (0.551) and CA scores (0.590); car access (0.607) is a secondary mobility cue; employment (0.528) is not competitive. Same-wave self-reports still preclude causal claims, and AUCs should not be compared naively across unequal complete-case samples without that caveat.
 
 *Sources:* `notebooks/secondary_rq_transit_covariate_followups.ipynb` · `src/ca_personas/transit_covariate_rf.py` · `ca-personas covariate-transit-rf` · artifacts `outputs/transit_covariate_rf/` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
 

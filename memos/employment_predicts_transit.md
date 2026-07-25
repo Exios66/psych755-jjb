@@ -16,7 +16,7 @@ date: 2026-07-25
 
 Using the full matched analytic cohort (**n = 241**; 101 regular / 140 not regular), we evaluated **Employment status** (Full-Time / Part-Time / Other) as a single-feature Random Forest predicting weekly+ public transit (`Q26` threshold as in the geo and CA memos). Stratified 5-fold CV, `random_state=42`.
 
-**Short answer:** Barely. Employment status yields CV ROC-AUC = **0.528** — only slightly above chance and **below** both the geo (≈ 0.551) and CA (≈ 0.590) benchmarks. It is not a competitive stand-alone predictor in this sample.
+**Short answer:** Barely. Employment status yields CV ROC-AUC = **0.528** — only +0.028 above chance and **below** both the geo (**0.551**) and CA (**0.590**) benchmarks. It is not a competitive stand-alone predictor in this sample.
 
 ![Employment prevalence by level and ROC curve](figures/employment_predicts_transit_memo.png)
 
@@ -39,9 +39,9 @@ Part-time and full-time rates are close; the “Other” category is less often 
 | CA RF benchmark | 241 | 0.590 |
 | Chance | — | 0.500 |
 
-Balanced accuracy = 0.560 and Brier = 0.247 confirm weak ranking quality. Permutation importance is small (mean AUC drop ≈ 0.06).
+Balanced accuracy = 0.560 and Brier = 0.247. Permutation importance mean AUC drop = 0.059.
 
-**Conclusion.** Employment status, as coded in the Prolific export, is a **weak** correlate of regular transit here. It remains useful as a control/covariate in multi-feature models, but it does not outperform geography or CA on its own.
+**Conclusion.** Employment status, as coded in the Prolific export, recovers AUC = **0.528** for weekly+ transit. It remains useful as a control/covariate in multi-feature models, but it does not outperform geography (0.551) or CA (0.590) on its own.
 
 *Sources:* `notebooks/secondary_rq_employment_transit_rf.ipynb` · `src/ca_personas/transit_covariate_rf.py` · `ca-personas covariate-transit-rf --specs employment` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
 
@@ -53,4 +53,4 @@ Would finer employment categories (student, gig work, remote vs on-site) recover
 
 ## What other features may also well-predict regular public transit use?
 
-Ride-share (`Q28`/`Q29`) and car access (`Q20`/`Q21`) are stronger candidates; see [`rideshare_predicts_transit.md`](rideshare_predicts_transit.md) and [`car_access_predicts_transit.md`](car_access_predicts_transit.md).
+Ride-share (`Q28`/`Q29`) recovers AUC = **0.745** and car access (`Q20`/`Q21`) recovers AUC = **0.607**; see [`rideshare_predicts_transit.md`](rideshare_predicts_transit.md) and [`car_access_predicts_transit.md`](car_access_predicts_transit.md).

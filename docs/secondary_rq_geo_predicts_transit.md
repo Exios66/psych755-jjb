@@ -57,15 +57,15 @@ This complements the observational CA contrast (`secondary_rq_transit_ca`) and t
 | Country-of-residence RF | 0.549 |
 | Chance / prevalence | 0.500 |
 
-Permutation importance ranks **longitude** above **latitude**. Continuous coordinates lift AUC by only ≈ **+0.002** over a country-only forest — essentially no gain beyond coarse country membership.
+Permutation importance ranks **longitude** (mean AUC drop = 0.335) above **latitude** (0.260). Continuous coordinates lift AUC by only **+0.002** over a country-only forest (0.551 − 0.549) — essentially no gain beyond coarse country membership.
 
 ## 4. Interpretation
 
-**Geography, as captured by Qualtrics lat/long, is a weak predictor of regular transit in this sample.**
+**Geography, as captured by Qualtrics lat/long, recovers CV ROC-AUC = 0.551 in this sample** ([memo](../memos/geo_predicts_transit.md)).
 
-1. Discrimination is **above chance** but stays in the weak band (AUC = 0.551).
+1. Discrimination is above chance (+0.051) but remains near the country-only baseline (0.549).
 2. Nearly all of that signal is redundant with **country of residence**.
-3. Compared with the CA→transit RF (AUC = 0.590), place alone is a slightly weaker classifier of weekly+ transit.
+3. Compared with the CA→transit RF (AUC = 0.590; [memo](../memos/ca_scores_predict_transit.md)), place alone is a weaker classifier; Q28 recovers AUC = 0.762 ([memo](../memos/q27_q28_predict_transit.md)).
 4. For the primary persona project, the `geo` tier supplies a coarse place cue that may help CA prediction indirectly (via country / urbanicity correlates) but should not be treated as a precise transit-accessibility measure.
 
 ## 5. Limitations

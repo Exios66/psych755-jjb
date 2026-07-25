@@ -178,3 +178,120 @@ def scatter_identity(
     ax.set_aspect("equal", adjustable="box")
     ax.legend(frameon=False, loc="upper left", fontsize=8)
     return apa_axes(ax)
+
+
+def scatter_by_group(
+    ax: plt.Axes,
+    x: Sequence[float],
+    y: Sequence[float],
+    group: Sequence[bool | int],
+    *,
+    xlabel: str,
+    ylabel: str,
+    positive_label: str = "Regular",
+    negative_label: str = "Not regular",
+) -> plt.Axes:
+    """Two-group scatter with marker shape (APA grayscale, print-safe)."""
+    apply_apa_style()
+    x_arr = np.asarray(x, dtype=float)
+    y_arr = np.asarray(y, dtype=float)
+    g = np.asarray(group).astype(bool)
+    ax.scatter(
+        x_arr[~g],
+        y_arr[~g],
+        s=28,
+        c="#777777",
+        marker="o",
+        edgecolors="black",
+        linewidths=0.3,
+        alpha=0.7,
+        label=f"{negative_label} (n={int((~g).sum())})",
+    )
+    ax.scatter(
+        x_arr[g],
+        y_arr[g],
+        s=36,
+        c="#111111",
+        marker="^",
+        edgecolors="black",
+        linewidths=0.3,
+        alpha=0.8,
+        label=f"{positive_label} (n={int(g.sum())})",
+    )
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.legend(frameon=False, loc="best", fontsize=8)
+    return apa_axes(ax)
+
+
+def roc_curve_apa(
+    ax: plt.Axes,
+    fpr: Sequence[float],
+    tpr: Sequence[float],
+    *,
+    auc: float,
+    label: str | None = None,
+    chance: bool = True,
+    annotate: str | None = None,
+) -> plt.Axes:
+    """APA-friendly ROC curve (black solid + dashed chance diagonal)."""
+    apply_apa_style()
+    curve_label = label or f"Model (AUC = {auc:.3f})"
+    if "AUC" not in curve_label:
+        curve_label = f"{curve_label} (AUC = {auc:.3f})"
+    ax.plot(fpr, tpr, color="#111111", lw=1.6, label=curve_label)
+    if chance:
+        ax.plot([0, 1], [0, 1], color="#666666", ls="--", lw=1.0, label="Chance (AUC = .500)")
+    ax.set_xlabel("False positive rate")
+    ax.set_ylabel("True positive rate")
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_aspect("equal", adjustable="box")
+    if annotate:
+        ax.text(
+            0.98,
+            0.02,
+            annotate,
+            transform=ax.transAxes,
+            ha="right",
+            va="bottom",
+            fontsize=8,
+        )
+    ax.legend(frameon=False, loc="lower right", fontsize=8)
+    return apa_axes(ax)
+
+
+def prevalence_bars(
+    ax: plt.Axes,
+    labels: Sequence[str],
+    prevalences: Sequence[float],
+    ns: Sequence[int],
+    *,
+    sample_prevalence: float | None = None,
+    xlabel: str = "Proportion regular transit (weekly+)",
+) -> plt.Axes:
+    """Horizontal prevalence bars with n in tick labels."""
+    apply_apa_style()
+    y = np.arange(len(labels))
+    vals = np.asarray(prevalences, dtype=float)
+    ax.barh(y, vals, color="#444444", edgecolor="black", height=0.7, linewidth=0.8)
+    ax.set_yticks(y)
+    ax.set_yticklabels(
+        [f"{lab} (n={int(n)})" for lab, n in zip(labels, ns)],
+        fontsize=8,
+    )
+    ax.set_xlabel(xlabel)
+    ax.set_xlim(0, 1.05)
+    for yi, v in zip(y, vals):
+        ax.text(min(float(v) + 0.02, 0.90), yi, f"{v:.1%}", va="center", fontsize=8)
+    if sample_prevalence is not None:
+        ax.axvline(
+            sample_prevalence,
+            color="black",
+            ls="--",
+            lw=1.0,
+            label=f"Sample prevalence = {sample_prevalence:.3f}",
+        )
+        ax.legend(frameon=False, fontsize=7, loc="lower right")
+    ax.invert_yaxis()
+    return apa_axes(ax)

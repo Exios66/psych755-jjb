@@ -21,7 +21,7 @@ Using the Prolific↔Qualtrics matched analytic cohort (File A + File B joined t
 | **Q27** | On a typical day of public transportation use, how many rides do you take? | Within-mode **intensity** |
 | **Q28** | In the last three months on how many days did you use ride-share platforms? | Cross-mode **ride-share exposure** |
 
-**Short answer:** **Q28 is a strong traditional-ML predictor** of regular transit (CV ROC-AUC = **0.762**). **Q27 is only modest** (= **0.589**)—on par with the CA-score benchmark—and adds almost nothing once Q28 is in the model (joint AUC = **0.761**). Ride-share days, not transit-day intensity, carry the usable discrimination.
+**Short answer:** **Q28** recovers CV ROC-AUC = **0.762** (AP = 0.689; balanced accuracy = 0.730). **Q27** recovers AUC = **0.589**—matching the CA benchmark (0.590)—and the joint Q27+Q28 forest reaches AUC = **0.761** (Δ = −0.001 vs Q28 alone). Ride-share days, not transit-day intensity, carry the usable discrimination.
 
 ![Q27 prevalence / ROC and Q28 prevalence / ROC](figures/q27_q28_predicts_transit_memo.png)
 
@@ -60,12 +60,12 @@ Using the Prolific↔Qualtrics matched analytic cohort (File A + File B joined t
 | Geo RF benchmark | 241 | 0.551 | — | — | — |
 | Chance | — | 0.500 | — | 0.500 | — |
 
-Permutation importance in the joint **Q27 + Q28** forest ranks **Q28** (mean AUC drop ≈ 0.24) far above **Q27** (≈ 0.04). Adding Q29 (rides on a typical ride-share day) to Q28 does not improve AUC over Q28 alone.
+Permutation importance in the joint **Q27 + Q28** forest ranks **Q28** (mean AUC drop = 0.240) far above **Q27** (0.041). Adding Q29 (rides on a typical ride-share day) to Q28 does not improve AUC over Q28 alone (rideshare family AUC = 0.745).
 
 ### Interpretation
 
-1. **Significance for traditional ML.** Among mobility self-reports tested as reverse predictors of weekly+ transit, **Q28 is the dominant signal**—substantially stronger than survey geolocation (AUC = 0.551) or group/interpersonal CA (AUC = 0.590). A single categorical ride-share-days item recovers useful ranking quality (AP = 0.689, balanced accuracy = 0.730).
-2. **Q27’s limited role.** Intensity-on-use-days is associated with regular ridership but is sparse above 1–2 rides and yields only CA-like discrimination. It is also *conceptually adjacent* to the `Q26` outcome (both describe public-transit behavior), so even the modest AUC should not be over-interpreted as an independent lifestyle cue.
+1. **Significance for traditional ML.** Among mobility self-reports tested as reverse predictors of weekly+ transit, **Q28 is the dominant signal**—exceeding survey geolocation by +0.211 AUC (0.762 vs 0.551) and group/interpersonal CA by +0.172 (0.762 vs 0.590). A single categorical ride-share-days item recovers AP = 0.689 and balanced accuracy = 0.730.
+2. **Q27’s limited role.** Intensity-on-use-days is associated with regular ridership but is sparse above 1–2 rides (n = 3 and n = 1 in the top bins) and yields AUC = 0.589. It is also *conceptually adjacent* to the `Q26` outcome (both describe public-transit behavior), so that AUC should not be over-interpreted as an independent lifestyle cue.
 3. **Joint model.** Q27 does not meaningfully lift Q28; the joint forest is essentially a ride-share-days classifier. For persona-tier design, this reinforces treating **ride-share exposure** as the high-value transit cue in tabular learners ([`docs/factor_feature_importance.md`](../docs/factor_feature_importance.md) likewise ranks Q28 first when predicting CA).
 4. **Non-causal caveat.** Same-wave self-reports cannot separate multimodality, urbanicity, income, or common method variance between `Q26` and `Q28`.
 
