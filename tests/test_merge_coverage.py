@@ -13,10 +13,8 @@ from ca_personas.load import (
     merge_coverage_audit,
 )
 from ca_personas.paths import (
-    DEFAULT_PROLIFIC_A,
-    DEFAULT_PROLIFIC_B,
-    DEFAULT_QUALTRICS_C,
     EXCERPT_QUALTRICS,
+    full_cohort_paths,
     sibling_data_available,
 )
 
@@ -27,11 +25,12 @@ def test_excerpt_still_detected_as_three_row_header():
 
 
 def test_flat_file_c_not_misread_as_three_row_when_present():
-    if not DEFAULT_QUALTRICS_C.is_file():
+    if not sibling_data_available():
         return
-    raw = pd.read_csv(DEFAULT_QUALTRICS_C, header=None, dtype=str, keep_default_na=False)
+    _prolific, qualtrics_path = full_cohort_paths()
+    raw = pd.read_csv(qualtrics_path, header=None, dtype=str, keep_default_na=False)
     assert _looks_like_qualtrics_three_row_header(raw) is False
-    qual = load_qualtrics(DEFAULT_QUALTRICS_C)
+    qual = load_qualtrics(qualtrics_path)
     # Flat File C has 273 response rows (single header).
     assert len(qual) == 273
 
@@ -46,11 +45,9 @@ def test_full_cohort_merge_coverage_252_21_10():
     """
     if not sibling_data_available():
         return
-    prolific = load_prolific(
-        [DEFAULT_PROLIFIC_A, DEFAULT_PROLIFIC_B],
-        wave_labels=("A", "B"),
-    )
-    qualtrics = load_qualtrics(DEFAULT_QUALTRICS_C)
+    prolific_paths, qualtrics_path = full_cohort_paths()
+    prolific = load_prolific(prolific_paths, wave_labels=("A", "B"))
+    qualtrics = load_qualtrics(qualtrics_path)
     audit = merge_coverage_audit(prolific, qualtrics)
     assert audit["n_prolific"] == 262
     assert audit["n_qualtrics"] == 273

@@ -287,7 +287,7 @@ def predictor_pca(
 
 
 def run_factor_and_importance_bundle(
-    prolific_path: str | Path,
+    prolific_path: str | Path | list[Path],
     qualtrics_path: str | Path,
     output_dir: str | Path,
     *,

@@ -21,7 +21,7 @@ Among matched Prolific↔Qualtrics respondents, do **Q27** (public-transit rides
 - **Sample:** File A + File B inner-joined to File C; analytic base n = 241 with complete PRCA and usable `Q26`. Complete-case n = 239 (Q27), 241 (Q28), 239 (joint).
 - **Outcome:** `regular_transit` = `Q26` ∈ {`4-8 days a month`, `8 or more days a month`}.
 - **Models:** One-hot categorical features → balanced `RandomForestClassifier` (500 trees, `min_samples_leaf=3`), stratified 5-fold `cross_val_predict`, seed 42; Gini + permutation importance (`scoring="roc_auc"`).
-- **Benchmarks:** chance AUC = 0.500; geo RF ≈ 0.551; CA RF ≈ 0.590; rideshare family Q28+Q29 ≈ 0.745.
+- **Benchmarks:** chance AUC = 0.500; geo RF = 0.551; CA RF = 0.590; rideshare family Q28+Q29 = 0.745.
 
 ## 3. Results
 
@@ -39,7 +39,7 @@ Regular-transit prevalence rises from 15.7% (Q28 Never) to 94.1% (Q28 8+ days/mo
 
 ## 4. Interpretation
 
-Q28 is a **strong**, practically meaningful traditional-ML predictor of weekly+ transit in this cohort. Q27 is **weak–modest** and redundant once Q28 is included. See the research memo for full prose interpretation and caveats.
+Q28 recovers CV ROC-AUC = **0.762** (+0.211 vs geo, +0.172 vs CA). Q27 recovers AUC = **0.589** and is redundant once Q28 is included (joint AUC = 0.761). Full prose: [`memos/q27_q28_predict_transit.md`](../memos/q27_q28_predict_transit.md).
 
 ## 5. Reproducibility
 

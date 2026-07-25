@@ -15,7 +15,7 @@ date: 2026-07-25
 
 Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to File C; **252** matched rows; analytic **n = 241** with complete PRCA items), we compared ground-truth **group** and **interpersonal** CA (range 6–30) for **regular** public-transit riders vs everyone else. Regular transit = `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more). Primary test: Welch *t*; effect sizes Cohen's *d* / Hedges' *g*; bootstrap 95% CIs (`ca-personas transit-ca --join inner --seed 42`).
 
-**Short answer:** Yes. Regular riders report **lower** CA on both subscales. Group CA shows the clearer gap (Δ ≈ **−2.72**, *d* ≈ −0.46, *p* ≈ .0003); interpersonal CA is smaller but still significant (Δ ≈ **−1.73**, *d* ≈ −0.30, *p* ≈ .02).
+**Short answer:** Yes. Regular riders report **lower** CA on both subscales. Group CA shows the clearer gap (Δ = **−2.72**, *d* = −0.46, *p* = .0003); interpersonal CA is smaller but still significant (Δ = **−1.73**, *d* = −0.30, *p* = .020).
 
 ![Mean CA by Q26 ridership and regular vs not-regular](figures/transit_riders_ca_memo.png)
 
@@ -26,9 +26,9 @@ Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to
 | Group CA | 13.04 | 15.76 | **−2.72** | 0.0003 | −0.46 |
 | Interpersonal CA | 13.31 | 15.04 | **−1.73** | 0.020 | −0.30 |
 
-Mean CA also falls as `Q26` intensity rises (“Never” group CA M ≈ 17.4; “8+ days/month” M ≈ 12.8).
+Mean CA also falls as `Q26` intensity rises (“Never” group CA M = 17.38; “8 or more days/month” M = 12.84).
 
-**Conclusion.** Weekly+ public-transit use is associated with lower PRCA scores in this sample — especially **group** CA. The association is real but modest; it motivates (and is consistent with) the companion CA→transit Random Forest (AUC ≈ 0.59).
+**Conclusion.** Weekly+ public-transit use is associated with lower PRCA scores in this sample — especially **group** CA (Δ = −2.72, *d* = −0.46). That group difference is consistent with the companion CA→transit Random Forest (AUC = **0.590**; [`ca_scores_predict_transit.md`](ca_scores_predict_transit.md)).
 
 *Sources:* `notebooks/secondary_rq_transit_ca.ipynb` · `src/ca_personas/transit_ca.py` · write-up `docs/secondary_rq_transit_ca.md` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
 
@@ -40,4 +40,4 @@ Is lower CA a cause of transit use, a consequence of routine shared-vehicle expo
 
 ## What other features may also well-predict regular public transit use?
 
-Geography (lat/long RF AUC ≈ 0.55) and CA scores jointly (AUC ≈ 0.59) each carry modest signal. Car access / license (`Q20`/`Q21`), employment, and ride-share frequency (`Q28`) are natural next covariates.
+Geography recovers AUC = **0.551** ([`geo_predicts_transit.md`](geo_predicts_transit.md)); CA scores jointly recover AUC = **0.590** ([`ca_scores_predict_transit.md`](ca_scores_predict_transit.md)). Head-to-head mobility follow-ups report car access AUC = **0.607**, employment AUC = **0.528**, and Q28 AUC = **0.762** ([`transit_covariate_followups.md`](transit_covariate_followups.md); [`q27_q28_predict_transit.md`](q27_q28_predict_transit.md)).

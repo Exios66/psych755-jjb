@@ -9,17 +9,17 @@ author:
 date: last-modified
 abstract: |
   Large language models (LLMs) are increasingly asked to stand in for human respondents.
-  This manuscript asks whether an LLM asked to personify Prolific participants can recover
-  their self-reported communication apprehension (CA), and whether prediction error
-  tracks demographic or contextual cues in a stereotypic way. Using McCroskey’s PRCA
-  group and interpersonal subscales (range 6–30), we join Prolific demographics to
-  Qualtrics survey responses, build cumulative persona prompts (demographics → employment →
-  geography → transportation), and collect LLM self-reports via Ollama or OpenRouter.
-  On a small excerpt sample we illustrate the reproducible pipeline and report mean absolute
-  error by information tier. On the full matched cohort we also evaluate traditional
-  Random Forest classifiers of regular public-transit use: ride-share days (Q28) show
-  strong discrimination (CV ROC-AUC ≈ 0.76), whereas transit-day intensity (Q27) is only
-  modest (≈ 0.59)—findings detailed in the companion research memo.
+  This manuscript asks whether an LLM prompted to personify Prolific participants recovers
+  their self-reported communication apprehension (CA), and whether prediction error tracks
+  demographic or contextual cues systematically. Using McCroskey’s PRCA group and
+  interpersonal subscales (range 6–30), we join Prolific demographics to Qualtrics responses,
+  build cumulative persona prompts (demographics → employment → geography → transportation),
+  and score predictions against ground-truth PRCA. All displayed statistics use the full
+  Prolific↔Qualtrics matched analytic cohort (N = 241). On a deterministic mock LLM, mean
+  absolute error (MAE) for group CA ranges from 8.31 (demos) to 7.42 (transit). On the same
+  cohort, traditional Random Forests show that ride-share days (Q28) predict regular public
+  transit at CV ROC-AUC = 0.762, whereas transit-day intensity (Q27) yields AUC = 0.589
+  ([memo](memos/q27_q28_predict_transit.md)).
 keywords:
   - communication apprehension
   - large language models
@@ -34,10 +34,12 @@ keywords:
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 ROOT = Path.cwd()
@@ -45,38 +47,103 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
+from ca_personas.apa_plotting import (
+    apa_axes,
+    apply_apa_style,
+    grouped_bars,
+    horizontal_bars,
+    scatter_identity,
+)
+from ca_personas.paths import (
+    cohort_source_label,
+    full_cohort_paths,
+    sibling_data_available,
+)
 from ca_personas.personas import RESEARCH_TIERS, TIERS, build_persona_prompts
 from ca_personas.pipeline import run_pipeline
 
-PROLIFIC = ROOT / "data" / "excerpts" / "prolific_excerpt.csv"
-QUALTRICS = ROOT / "data" / "excerpts" / "qualtrics_excerpt.csv"
+apply_apa_style()
+
 RENDER_OUT = ROOT / "outputs" / "quarto_render"
+COMMITTED_FULL = ROOT / "artifacts" / "posit_full_cohort"
+SECONDARY_PATH = COMMITTED_FULL / "secondary_results.json"
 
-# Re-run the offline mock pipeline at render time so Posit Connect Cloud
-# does not depend on gitignored local artifacts or live API keys.
-# All five tiers (research + full) are rendered; MAE bars focus on RESEARCH_TIERS.
-artifacts = run_pipeline(
-    prolific_path=PROLIFIC,
-    qualtrics_path=QUALTRICS,
-    tiers=list(TIERS),
-    provider="mock",
-    output_dir=RENDER_OUT,
-    join_how="inner",
-)
+if sibling_data_available():
+    PROLIFIC, QUALTRICS = full_cohort_paths()
+    DATA_SOURCE = cohort_source_label()
+    artifacts = run_pipeline(
+        prolific_path=PROLIFIC,
+        qualtrics_path=QUALTRICS,
+        tiers=list(TIERS),
+        provider="mock",
+        output_dir=RENDER_OUT,
+        join_how="inner",
+    )
+    participants = pd.read_csv(artifacts["participants"])
+    evaluation = pd.read_csv(artifacts["evaluation"])
+    summary = pd.read_csv(artifacts["summary"])
+else:
+    required = [
+        COMMITTED_FULL / "participants.csv",
+        COMMITTED_FULL / "evaluation.csv",
+        COMMITTED_FULL / "summary.csv",
+        COMMITTED_FULL / "source.json",
+        SECONDARY_PATH,
+    ]
+    missing = [p for p in required if not p.is_file()]
+    if missing:
+        raise FileNotFoundError(
+            "Full-cohort File A/B/C not staged and committed Posit artifacts "
+            f"are missing: {missing}"
+        )
+    meta = json.loads((COMMITTED_FULL / "source.json").read_text(encoding="utf-8"))
+    if meta.get("data_source") == "excerpts" or int(meta.get("n_analytic", 0)) < 100:
+        raise RuntimeError(f"Refusing excerpt-scale Posit artifacts: {meta}")
+    DATA_SOURCE = meta.get("data_source", "artifacts/posit_full_cohort")
+    participants = pd.read_csv(COMMITTED_FULL / "participants.csv")
+    evaluation = pd.read_csv(COMMITTED_FULL / "evaluation.csv")
+    summary = pd.read_csv(COMMITTED_FULL / "summary.csv")
+    artifacts = {
+        "participants": COMMITTED_FULL / "participants.csv",
+        "evaluation": COMMITTED_FULL / "evaluation.csv",
+        "summary": COMMITTED_FULL / "summary.csv",
+        "source": COMMITTED_FULL / "source.json",
+        "secondary": SECONDARY_PATH,
+    }
 
-participants = pd.read_csv(artifacts["participants"])
-evaluation = pd.read_csv(artifacts["evaluation"])
-summary = pd.read_csv(artifacts["summary"])
+if len(participants) < 100:
+    raise RuntimeError(
+        f"Analytic N={len(participants)} looks like an excerpt demo; "
+        "Posit pages must use the full matched cohort."
+    )
+
+if not SECONDARY_PATH.is_file():
+    raise FileNotFoundError(
+        f"Missing {SECONDARY_PATH}. Run scripts that sync full-cohort secondary results."
+    )
+secondary = json.loads(SECONDARY_PATH.read_text(encoding="utf-8"))
+
 prompts = build_persona_prompts(participants, tiers=list(TIERS))
 
-plt.rcParams.update(
-    {
-        "axes.spines.top": False,
-        "axes.spines.right": False,
-        "axes.grid": True,
-        "grid.alpha": 0.25,
-    }
+# Research-tier MAE table (exclude aggregate "all" and free-text "full" for primary bars)
+mae_tiers = (
+    summary[summary["tier"].isin(RESEARCH_TIERS)]
+    .copy()
+    .set_index("tier")
+    .reindex(list(RESEARCH_TIERS))
+    .reset_index()
 )
+N = int(len(participants))
+
+# Precompute employment MAE at transit tier for prose claims
+_emp_mae = (
+    evaluation.loc[evaluation["tier"] == "transit"]
+    .groupby("Employment status", dropna=False)["abs_error_group"]
+    .mean()
+)
+EMP_MAE_FULL = float(_emp_mae.get("Full-Time", float("nan")))
+EMP_MAE_PART = float(_emp_mae.get("Part-Time", float("nan")))
+EMP_MAE_OTHER = float(_emp_mae.get("Other", float("nan")))
 ```
 
 # Introduction
@@ -97,44 +164,63 @@ This project compares **information tiers** rather than a single prompt:
 
 ### Secondary questions (matched cohort, observational)
 
-Independently of LLM personification, secondary analyses on the Prolific↔Qualtrics matched sample ask: (1) whether **regular public-transit riders** differ in PRCA scores from the larger cohort ([write-up](docs/secondary_rq_transit_ca.md); [memo](memos/transit_riders_ca.md)); (2) whether **survey latitude/longitude** predict regular transit use ([write-up](docs/secondary_rq_geo_predicts_transit.md); [memo](memos/geo_predicts_transit.md)); (3) whether **group and interpersonal CA** themselves predict regular transit use via a Random Forest ([write-up](docs/secondary_rq_ca_predicts_transit.md); [memo](memos/ca_scores_predict_transit.md)); and (4) whether mobility items **Q27** (rides on a typical public-transit day) and **Q28** (ride-share days) predict regular transit in traditional ML classifiers ([write-up](docs/secondary_rq_q27_q28_predict_transit.md); [memo](memos/q27_q28_predict_transit.md); head-to-head [follow-ups](memos/transit_covariate_followups.md)). Supporting methods pages cover [cohort EDA](docs/cohort_eda.md), [ML baselines](docs/ml_baselines.md), [ML vs LLM metrics](docs/ml_vs_llm.md), and [feature importance](docs/factor_feature_importance.md).
+Independently of LLM personification, secondary analyses on the Prolific↔Qualtrics matched sample ask:
+
+1. Whether **regular public-transit riders** differ in PRCA scores from non-regular riders ([memo](memos/transit_riders_ca.md); [write-up](docs/secondary_rq_transit_ca.md)).
+2. Whether **survey latitude/longitude** predict regular transit use ([memo](memos/geo_predicts_transit.md); [write-up](docs/secondary_rq_geo_predicts_transit.md)).
+3. Whether **group and interpersonal CA** predict regular transit use ([memo](memos/ca_scores_predict_transit.md); [write-up](docs/secondary_rq_ca_predicts_transit.md)).
+4. Whether mobility items **Q27** and **Q28** predict regular transit in traditional ML classifiers ([memo](memos/q27_q28_predict_transit.md); [write-up](docs/secondary_rq_q27_q28_predict_transit.md); head-to-head [follow-ups](memos/transit_covariate_followups.md)).
+
+Supporting methods pages: [cohort EDA](docs/cohort_eda.md), [ML baselines](docs/ml_baselines.md), [ML vs LLM metrics](docs/ml_vs_llm.md), and [feature importance](docs/factor_feature_importance.md).
 
 # Methods
 
 ## Data sources
 
-Participants were recruited via Prolific in two waves (File A + File B; stacked) and completed a Qualtrics instrument (File C) for PSYCH 755 coursework activities. Private full-cohort exports live in `../sibling_data/` and are **not** committed to git; this manuscript render uses the public excerpt fixtures. The analytic join key is Prolific `Participant id` ↔ Qualtrics `Q0` (or `PROLIFIC_PID` when present). Cleaning keeps inner-join respondents with complete PRCA group and interpersonal items so every information tier shares the same ground-truth targets.
+Participants were recruited via Prolific in two waves (File A + File B; stacked) and completed a Qualtrics instrument (File C). Private full-cohort exports are not committed to git. **All statistics on this site use the full matched analytic cohort**: 252 Prolific∩Qualtrics matches → **N = 241** with complete scorable PRCA. The join key is Prolific `Participant id` ↔ Qualtrics `Q0`. Cleaning retains inner-join respondents with complete PRCA group and interpersonal items so every information tier shares the same ground-truth targets.
 
 ```{python}
 #| label: tbl-sample
-#| tbl-cap: "Excerpt analysis sample after inner join (demographics + scored CA)."
+#| tbl-cap: "Analytic Sample Composition for the Full Matched Cohort"
+#| tbl-colwidths: [40, 60]
 
-sample_cols = [
-    "participant_id",
-    "Age",
-    "Sex",
-    "Ethnicity simplified",
-    "Country of residence",
-    "Employment status",
-    "gt_group_ca",
-    "gt_interpersonal_ca",
-]
-sample = participants[sample_cols].copy()
-sample = sample.rename(
-    columns={
-        "Ethnicity simplified": "Ethnicity",
-        "Country of residence": "Country",
-        "Employment status": "Employment",
-        "gt_group_ca": "Group CA",
-        "gt_interpersonal_ca": "Interpersonal CA",
-    }
+sex_counts = participants["Sex"].astype(str).value_counts()
+emp_counts = participants["Employment status"].astype(str).value_counts()
+cty_counts = participants["Country of residence"].astype(str).value_counts().head(5)
+pd.DataFrame(
+    [
+        {"Metric": "Analytic N (complete PRCA)", "Value": f"{N}"},
+        {
+            "Metric": "Group CA M (SD)",
+            "Value": f"{participants['gt_group_ca'].mean():.2f} ({participants['gt_group_ca'].std():.2f})",
+        },
+        {
+            "Metric": "Interpersonal CA M (SD)",
+            "Value": f"{participants['gt_interpersonal_ca'].mean():.2f} ({participants['gt_interpersonal_ca'].std():.2f})",
+        },
+        {
+            "Metric": "Sex",
+            "Value": "; ".join(f"{k} = {v}" for k, v in sex_counts.items()),
+        },
+        {
+            "Metric": "Employment status",
+            "Value": "; ".join(f"{k} = {v}" for k, v in emp_counts.items()),
+        },
+        {
+            "Metric": "Top countries of residence",
+            "Value": "; ".join(f"{k} = {v}" for k, v in cty_counts.items()),
+        },
+        {
+            "Metric": "Regular transit prevalence (Q26 weekly+)",
+            "Value": f"{secondary['n_regular']}/{N} = {secondary['prevalence']:.3f}",
+        },
+    ]
 )
-sample
 ```
 
 ::: {.callout-note}
-## Excerpt vs. full cohort
-Figures below are regenerated at Quarto render time from the public excerpt fixtures in `data/excerpts/` using the deterministic **mock** LLM provider. They demonstrate the manuscript pipeline on Posit Connect Cloud without requiring Ollama or OpenRouter credentials. Substitute `--provider ollama` or `--provider openrouter` locally for live model runs on the full sample.
+## Full cohort only
+Every table and figure uses the File A/B/C matched analytic sample (**N = 241**). Posit Connect Cloud loads committed artifacts under `artifacts/posit_full_cohort/` when private exports are absent. Excerpt fixtures are reserved for unit tests and are never displayed here.
 :::
 
 ## Ground-truth PRCA scoring
@@ -143,210 +229,407 @@ Group items (`Q1`–`Q6`) and interpersonal items (`Q13`–`Q18`) use five-point
 
 ```{python}
 #| label: tbl-gt-summary
-#| tbl-cap: "Ground-truth PRCA subscale summary on the joined excerpt."
+#| tbl-cap: "Descriptive Statistics for Ground-Truth PRCA Subscales (N = 241)"
 
-gt = participants[["gt_group_ca", "gt_interpersonal_ca"]].describe().T
-gt[["count", "mean", "std", "min", "max"]]
+gt = (
+    participants[["gt_group_ca", "gt_interpersonal_ca"]]
+    .rename(
+        columns={
+            "gt_group_ca": "Group CA",
+            "gt_interpersonal_ca": "Interpersonal CA",
+        }
+    )
+    .describe()
+    .T[["count", "mean", "std", "min", "25%", "50%", "75%", "max"]]
+    .round(2)
+)
+gt
 ```
 
 ## Persona tiers
 
-Persona prompts are cumulative. The system prompt asks the model to stay in first person and return JSON with group and interpersonal CA integers plus qualitative bands [@quarto]. Full Prolific waves (File A/B) omit ethnicity / nationality / language; those fields appear only when the export provides them (e.g. excerpt fixtures).
+Persona prompts are cumulative. The system prompt asks the model to stay in first person and return JSON with group and interpersonal CA integers plus qualitative bands [@quarto]. Full Prolific waves omit ethnicity / nationality / language; the `demos` tier therefore uses Age, Sex, Country of residence, and Student status.
 
 | Tier | Information revealed to the model |
 |---|---|
-| `demos` | Age, sex, country of residence, student status (+ ethnicity / nationality / language when present) |
+| `demos` | Age, sex, country of residence, student status |
 | `employment` | `demos` + employment status |
-| `geo` | `employment` + country of residence + latitude/longitude |
+| `geo` | `employment` + latitude/longitude |
 | `transit` | `geo` + public transit / ride-share / license / car access |
-| `full` | `transit` + Qualtrics free-response attitudes (advice + mobility ideal) |
+| `full` | `transit` + Qualtrics free-response attitudes (Q18.1 / Q19) |
 
 ```{python}
 #| label: lst-persona-example
 #| echo: false
-#| lst-cap: "Example user prompt fragment for the geo tier (first joined participant)."
+#| lst-cap: "Example Geo-Tier User Prompt Fragment for the First Analytic Participant"
 
 example = next(p for p in prompts if p.tier == "geo")
 print(example.user_prompt)
 ```
 
-## Model calling
+## Model calling and classical baselines
 
-The Python package `ca_personas` supports:
+The Python package `ca_personas` supports Ollama, OpenRouter, and a deterministic **mock** provider for credential-free Posit renders [@ollama; @openrouter]. Predicted JSON fields are validated to the legal 6–30 range, then joined to ground truth for signed and absolute errors.
 
-- **Ollama** for local inference [@ollama]
-- **OpenRouter** for hosted models [@openrouter]
-- **mock** for offline CI / Posit Cloud rendering
-
-Predicted JSON fields are validated to the legal 6–30 range, then joined back to ground truth for signed and absolute errors.
+Classical Random Forest and KNN baselines on the same tiers and targets are reported in [`docs/ml_baselines.md`](docs/ml_baselines.md): RF group-CA MAE falls from **5.72** (`demos`) to **4.68** (`transit`); RF interpersonal MAE falls from **5.22** to **4.27**. Feature attributions and ML-vs-LLM comparisons are documented in [`docs/factor_feature_importance.md`](docs/factor_feature_importance.md), [`docs/ml_vs_llm.md`](docs/ml_vs_llm.md), and [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md).
 
 # Results
 
-## Prediction error by information tier
+## Mock LLM prediction error by information tier
+
+On the full analytic cohort (**N = 241**), the offline mock LLM yields the MAE values in @tbl-mae. Group-CA MAE decreases from **8.31** at `demos` to **7.42** at `transit` (Δ = −0.89). Interpersonal-CA MAE is **8.30** at `demos` and **8.56** at `transit` (no monotonic improvement). Band accuracy for group CA rises from **0.311** (`demos`) to **0.386** (`transit`). These mock figures establish the measurement pipeline; they are not claims about a production LLM. Live-provider comparisons should be read against the RF ceiling in [`docs/ml_baselines.md`](docs/ml_baselines.md) (best RF group MAE = 4.68 at `transit`).
 
 ```{python}
 #| label: tbl-mae
-#| tbl-cap: "Mean absolute error (MAE) by persona tier on the excerpt mock run."
+#| tbl-cap: "Mock LLM Mean Absolute Error and Band Accuracy by Persona Tier (N = 241)"
 
-mae = summary.copy()
-mae
+disp = mae_tiers[
+    [
+        "tier",
+        "n_with_ground_truth",
+        "mae_group",
+        "mae_interpersonal",
+        "band_acc_group",
+        "band_acc_interpersonal",
+    ]
+].copy()
+disp.columns = [
+    "Tier",
+    "n",
+    "MAE group",
+    "MAE interpersonal",
+    "Band acc. group",
+    "Band acc. interpersonal",
+]
+disp = disp.round({"MAE group": 2, "MAE interpersonal": 2, "Band acc. group": 3, "Band acc. interpersonal": 3})
+disp
 ```
 
 ```{python}
 #| label: fig-mae
-#| fig-cap: "Mean absolute error for group and interpersonal CA by persona information tier (mock LLM, excerpt sample)."
-#| fig-alt: "Grouped bar chart of MAE for group and interpersonal subscales across demos, employment, geo, and transit tiers."
+#| fig-cap: "Mean Absolute Error for Group and Interpersonal Communication Apprehension by Persona Information Tier"
+#| fig-alt: "Grouped grayscale bar chart of mock-LLM MAE for group and interpersonal CA across demos, employment, geo, and transit tiers on N=241."
+#| out-width: "90%"
 
-plot_df = summary[summary["tier"].isin(RESEARCH_TIERS)].copy()
-x = range(len(plot_df))
-width = 0.38
-
-fig, ax = plt.subplots(figsize=(8.5, 4.5))
-ax.bar([i - width / 2 for i in x], plot_df["mae_group"], width=width, label="Group CA", color="#C5050C")
-ax.bar([i + width / 2 for i in x], plot_df["mae_interpersonal"], width=width, label="Interpersonal CA", color="#333333")
-ax.set_xticks(list(x))
-ax.set_xticklabels(plot_df["tier"])
-ax.set_ylabel("Mean absolute error")
-ax.set_xlabel("Persona information tier")
-ax.set_ylim(0, max(plot_df[["mae_group", "mae_interpersonal"]].max()) + 2)
-ax.legend(frameon=False)
-ax.set_title("LLM CA prediction error by tier")
+fig, ax = plt.subplots(figsize=(7.2, 4.2))
+grouped_bars(
+    ax,
+    list(mae_tiers["tier"]),
+    {
+        "Group CA": mae_tiers["mae_group"].tolist(),
+        "Interpersonal CA": mae_tiers["mae_interpersonal"].tolist(),
+    },
+    ylabel="Mean absolute error",
+    xlabel="Persona information tier",
+    ylim=(0, 11),
+)
 fig.tight_layout()
 plt.show()
 ```
 
-## Error dispersion
+*Note.* Mock LLM provider; full matched analytic cohort (N = 241). Lower MAE indicates closer recovery of ground-truth PRCA scores (range 6–30). See [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md) for SHAP/F1 attributions on the same cohort.
+
+## Predicted versus observed group CA
+
+@fig-error-scatter shows predicted versus ground-truth group CA for each research tier. Points cluster away from the identity line, consistent with MAE values near 7–8 points on a 24-point scale. The `geo` and `transit` panels show slightly tighter vertical spread for mid-range ground-truth scores than `demos`, matching the MAE reduction from 8.31 to 7.42.
 
 ```{python}
 #| label: fig-error-scatter
-#| fig-cap: "Predicted versus ground-truth group CA scores, faceted conceptually by tier via marker shape."
-#| fig-alt: "Scatterplot of predicted group CA against ground-truth group CA for each tier."
+#| fig-cap: "Predicted Versus Ground-Truth Group Communication Apprehension Scores by Persona Tier"
+#| fig-alt: "Four-panel grayscale scatterplots of predicted versus observed group CA for demos, employment, geo, and transit tiers with identity lines."
+#| out-width: "100%"
 
-fig, ax = plt.subplots(figsize=(6.5, 6))
-markers = {"demos": "o", "employment": "s", "geo": "D", "transit": "^", "full": "P"}
-for tier, frame in evaluation.groupby("tier"):
-    ax.scatter(
+tiers_plot = list(RESEARCH_TIERS)
+fig, axes = plt.subplots(2, 2, figsize=(7.8, 7.4), sharex=True, sharey=True)
+axes = axes.ravel()
+for ax, tier in zip(axes, tiers_plot):
+    frame = evaluation[evaluation["tier"] == tier]
+    scatter_identity(
+        ax,
         frame["gt_group_ca"],
         frame["pred_group_ca"],
-        label=tier,
-        marker=markers.get(tier, "o"),
-        s=60,
-        alpha=0.85,
+        xlabel="Ground-truth group CA",
+        ylabel="Predicted group CA",
+        lims=(6, 30),
     )
-lims = [6, 30]
-ax.plot(lims, lims, linestyle="--", color="gray", linewidth=1, label="Perfect prediction")
-ax.set_xlim(lims)
-ax.set_ylim(lims)
-ax.set_xlabel("Ground-truth group CA")
-ax.set_ylabel("Predicted group CA")
-ax.set_title("Group CA: predicted vs. observed")
-ax.legend(frameon=False, loc="upper left")
+    ax.text(
+        0.04,
+        0.96,
+        f"{tier}\nMAE = {mae_tiers.loc[mae_tiers['tier']==tier, 'mae_group'].iloc[0]:.2f}",
+        transform=ax.transAxes,
+        va="top",
+        ha="left",
+        fontsize=9,
+        bbox=dict(boxstyle="round,pad=0.2", facecolor="white", edgecolor="none", alpha=0.85),
+    )
+    # keep only one legend
+    leg = ax.get_legend()
+    if leg is not None and tier != "demos":
+        leg.remove()
 fig.tight_layout()
 plt.show()
 ```
 
+*Note.* Each panel contains N = 241 participant predictions from the mock LLM. The dashed line is the identity (perfect prediction).
+
+## Absolute group-CA error by employment status
+
+@tbl-by-employment reports mock-LLM absolute group-CA error by employment status and tier. At the `transit` tier, Full-Time respondents show MAE = `{python} f"{EMP_MAE_FULL:.2f}"`, Part-Time MAE = `{python} f"{EMP_MAE_PART:.2f}"`, and Other MAE = `{python} f"{EMP_MAE_OTHER:.2f}"`. Systematic MAE gaps by employment are the stereotyping-relevant contrast named in RQ1; interpret mock gaps as pipeline diagnostics until a live provider is substituted ([`docs/ml_vs_llm.md`](docs/ml_vs_llm.md)).
+
 ```{python}
 #| label: tbl-by-employment
-#| tbl-cap: "Absolute group-CA error by employment status and tier (excerpt mock run)."
+#| tbl-cap: "Mock LLM Absolute Group-CA Error by Employment Status and Persona Tier (N = 241)"
 
 by_emp = (
     evaluation.dropna(subset=["abs_error_group"])
     .groupby(["Employment status", "tier"], dropna=False)["abs_error_group"]
-    .agg(n="count", mae="mean")
+    .agg(n="count", MAE="mean", SD="std")
     .reset_index()
-    .sort_values(["Employment status", "tier"])
 )
+by_emp = by_emp[by_emp["tier"].isin(RESEARCH_TIERS)].copy()
+by_emp["tier"] = pd.Categorical(by_emp["tier"], categories=list(RESEARCH_TIERS), ordered=True)
+by_emp = by_emp.sort_values(["Employment status", "tier"])
+by_emp = by_emp.round({"MAE": 2, "SD": 2})
+by_emp.columns = ["Employment status", "Tier", "n", "MAE", "SD"]
 by_emp
 ```
 
-## Secondary results: Q27 and Q28 as traditional ML predictors of regular transit
+## Secondary results: regular transit and mobility predictors
 
-The persona pipeline treats transportation items as *inputs* when predicting CA. The reverse question—how well those same items predict **regular public-transit use**—matters for interpreting the `transit` tier and for ranking which mobility cues carry real tabular signal. Full-cohort results below come from seeded Random Forests on the matched File A/B/C sample (`ca-personas covariate-transit-rf --seed 42`); they are reported statically here because Quarto Cloud renders use excerpt fixtures only. The complete research memorandum is [`memos/q27_q28_predict_transit.md`](memos/q27_q28_predict_transit.md), with methods detail in [`docs/secondary_rq_q27_q28_predict_transit.md`](docs/secondary_rq_q27_q28_predict_transit.md) and the broader mobility head-to-head in [`memos/transit_covariate_followups.md`](memos/transit_covariate_followups.md).
+**Regular transit** is defined as `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more), yielding **101 regular / 140 not regular** riders (prevalence = **0.419**) in the analytic cohort. The analyses below use stratified 5-fold Random Forests (`random_state=42`) unless noted. Full write-ups: [`memos/transit_riders_ca.md`](memos/transit_riders_ca.md), [`memos/geo_predicts_transit.md`](memos/geo_predicts_transit.md), [`memos/ca_scores_predict_transit.md`](memos/ca_scores_predict_transit.md), [`memos/q27_q28_predict_transit.md`](memos/q27_q28_predict_transit.md), [`memos/transit_covariate_followups.md`](memos/transit_covariate_followups.md).
 
-### Outcome, items, and estimators
+### Regular riders differ in CA scores
 
-**Regular transit** is the project’s primary binary label: `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more public transit; 101/241 = 41.9% in the analytic PRCA cohort). Predictors are:
+Welch tests on the matched cohort show lower CA among regular riders ([memo](memos/transit_riders_ca.md)):
 
-| Item | Survey stem (abridged) | Construct |
-|---|---|---|
-| **Q27** | On a typical day of public transportation use, how many rides do you take? | Within-mode **intensity** on use days |
-| **Q28** | In the last three months on how many days did you use ride-share platforms (Lyft, Uber, DiDi, etc.)? | Cross-mode **ride-share exposure** |
+| Subscale | M regular (n=101) | M not regular (n=140) | Δ | Cohen's d | Welch p | 95% bootstrap CI for Δ |
+|---|---:|---:|---:|---:|---:|---|
+| Group CA | 13.04 | 15.76 | −2.72 | −0.46 | .0003 | [−4.15, −1.28] |
+| Interpersonal CA | 13.31 | 15.04 | −1.73 | −0.30 | .020 | [−3.12, −0.25] |
 
-Each model is a balanced `RandomForestClassifier` (500 trees, `min_samples_leaf=3`) over one-hot category levels, evaluated with stratified 5-fold out-of-fold probabilities (`random_state=42`). Chance ROC-AUC = 0.50; companion benchmarks from the same cohort definition are geo lat/long AUC ≈ **0.551** and group+interpersonal CA AUC ≈ **0.590** ([geo memo](memos/geo_predicts_transit.md); [CA memo](memos/ca_scores_predict_transit.md)).
+```{python}
+#| label: fig-transit-ca-means
+#| fig-cap: "Mean Ground-Truth PRCA Scores for Regular Versus Non-Regular Public-Transit Riders"
+#| fig-alt: "Grouped grayscale bar chart of mean group and interpersonal CA for regular and non-regular transit riders."
+#| out-width: "75%"
 
-### Descriptive associations
+g = secondary["transit_ca"]["group"]
+i = secondary["transit_ca"]["interpersonal"]
+fig, ax = plt.subplots(figsize=(6.4, 4.0))
+grouped_bars(
+    ax,
+    ["Group CA", "Interpersonal CA"],
+    {
+        f"Regular (n={g['n_regular']})": [g["mean_regular"], i["mean_regular"]],
+        f"Not regular (n={g['n_not_regular']})": [g["mean_not_regular"], i["mean_not_regular"]],
+    },
+    ylabel="Mean PRCA score (6–30)",
+    ylim=(0, 22),
+)
+fig.tight_layout()
+plt.show()
+```
 
-![Regular-transit prevalence by Q27/Q28 levels and joint-model ROC](memos/figures/q27_q28_predicts_transit_memo.png){fig-alt="Two-panel figure: bar chart of regular-transit share by Q27 intensity level and ROC curve for the Q27+Q28 Random Forest."}
+*Note.* Full matched analytic cohort. Means correspond to the Welch contrasts reported above and in [`memos/transit_riders_ca.md`](memos/transit_riders_ca.md).
 
-**Q27 (n = 239 complete cases).** Most respondents report 1–2 rides on a typical transit day (n = 190; 34.7% regular). Higher intensity bins are smaller but much more often weekly+ riders (3–4 rides: 68.9% regular; 5+ rides: all regular in this sample). The gradient is real but sparse.
+### Geography and CA as classifiers of regular transit
 
-**Q28 (n = 241).** Ride-share days show a steep, monotonic association with regular transit: Never ≈ 15.7% regular → 0–1 days/month ≈ 23.4% → 2–4 ≈ 52.3% → 4–8 ≈ 69.0% → 8+ days/month ≈ **94.1%** regular. This is the clearest single-item mobility gradient among the geo-memo follow-up candidates ([rideshare memo](memos/rideshare_predicts_transit.md)).
+On the same outcome, a lat/long Random Forest yields CV ROC-AUC = **0.551** (country-only AUC = **0.549**; chance = **0.500**) ([memo](memos/geo_predicts_transit.md)). A Random Forest on group + interpersonal CA yields CV ROC-AUC = **0.590** (group-only = **0.555**; interpersonal-only = **0.506**; OOF confusion TN=76, FP=64, FN=40, TP=61) ([memo](memos/ca_scores_predict_transit.md)).
 
-### Cross-validated Random Forest performance
+```{python}
+#| label: fig-geo-ca-auc
+#| fig-cap: "Cross-Validated ROC-AUC for Geography and Communication-Apprehension Random Forests Predicting Regular Transit"
+#| fig-alt: "Horizontal grayscale bar chart comparing ROC-AUC for lat/long, country-only, CA joint, CA ablations, and chance."
+#| out-width: "85%"
 
-![Head-to-head CV ROC-AUC for Q27, Q28, and benchmarks](memos/figures/q27_q28_predicts_transit_comparison.png){fig-alt="Horizontal bar chart comparing ROC-AUC for Q28, Q27+Q28, Q28+Q29, CA, Q27, geo, and chance baselines."}
+labels = [
+    "CA: group + interpersonal",
+    "CA: group only",
+    "Geo: lat/long",
+    "Geo: country only",
+    "CA: interpersonal only",
+    "Chance",
+]
+vals = [
+    secondary["ca_rf"]["roc_auc"],
+    secondary["ca_rf"]["group_only"],
+    secondary["geo_rf"]["roc_auc"],
+    secondary["geo_rf"]["country_only_roc_auc"],
+    secondary["ca_rf"]["interpersonal_only"],
+    0.5,
+]
+fig, ax = plt.subplots(figsize=(7.0, 3.8))
+horizontal_bars(
+    ax,
+    labels,
+    vals,
+    xlabel="Cross-validated ROC-AUC",
+    highlight_index=0,
+    vlines={"Chance = .500": 0.5},
+    xlim=(0.45, 0.68),
+)
+fig.tight_layout()
+plt.show()
+```
 
-| Model | Analytic n | ROC-AUC | Average precision | Balanced accuracy | F1 |
-|---|---:|---:|---:|---:|---:|
-| **Q28 only** | 241 | **0.762** | 0.689 | 0.730 | 0.702 |
-| **Q27 + Q28** | 239 | **0.761** | 0.690 | 0.696 | 0.667 |
-| Q28 + Q29 (ride-share family) | 233 | 0.745 | 0.655 | 0.731 | 0.709 |
-| Group + interpersonal CA (benchmark) | 241 | 0.590 | — | — | — |
-| **Q27 only** | 239 | **0.589** | 0.513 | 0.623 | 0.467 |
-| Lat/long geo (benchmark) | 241 | 0.551 | — | — | — |
-| Chance / prevalence | — | 0.500 | — | 0.500 | — |
+*Note.* Stratified 5-fold CV, `random_state=42`, N = 241. Detailed results: [`memos/geo_predicts_transit.md`](memos/geo_predicts_transit.md); [`memos/ca_scores_predict_transit.md`](memos/ca_scores_predict_transit.md).
 
-**Q28 alone** is the strongest of these traditional-ML specifications: roughly +0.21 AUC over chance, +0.21 over geography, and +0.17 over CA scores. **Q27 alone** lands essentially on the CA benchmark (AUC ≈ 0.589)—detectable but weak. The **joint Q27+Q28** forest does not improve on Q28 (Δ AUC ≈ −0.001); permutation importance attributes almost all joint-model signal to Q28 (mean AUC drop ≈ 0.24 vs ≈ 0.04 for Q27). Adding Q29 (rides on a typical ride-share day) likewise fails to beat Q28 alone, confirming that **ride-share days**, not intensity-on-use items, drive discrimination ([follow-up comparison memo](memos/transit_covariate_followups.md)).
+### Q27 and Q28 as traditional ML predictors of regular transit
 
-### Full results interpretation
+@fig-q27-q28-prev and @tbl-q27-q28-auc summarize the Q27/Q28 reverse-prediction results ([memo](memos/q27_q28_predict_transit.md)). **Q28** (ride-share days) shows a monotonic prevalence gradient from **15.7%** regular (Never) to **94.1%** regular (8+ days/month) and CV ROC-AUC = **0.762** (AP = 0.689; balanced accuracy = 0.730; F1 = 0.702). **Q27** (rides on a typical transit day) yields CV ROC-AUC = **0.589**. The joint Q27+Q28 forest reaches AUC = **0.761** (Δ = −0.001 vs Q28 alone).
 
-1. **Predictive significance of Q28.** In this matched cohort, a single categorical ride-share-days item recovers ranking quality that is *practically* as well as *statistically* above chance (balanced accuracy ≈ 0.73; F1 ≈ 0.70; average precision ≈ 0.69). For traditional ML approaches to weekly+ transit, Q28 is the standout mobility predictor among items named in the geography memo’s follow-up paragraph—stronger than car access (AUC ≈ 0.607), employment (≈ 0.528), survey coordinates, or CA subscales.
+```{python}
+#| label: fig-q27-q28-prev
+#| fig-cap: "Proportion of Regular Transit Riders by Q27 Intensity and Q28 Ride-Share Days"
+#| fig-alt: "Two-panel grayscale horizontal bar charts of regular-transit prevalence by Q27 and Q28 response levels."
+#| out-width: "100%"
 
-2. **Limited significance of Q27.** Transit-day intensity is associated with regular ridership in the expected direction, but category imbalance (most people in 1–2 rides) caps out-of-sample AUC near 0.59. Q27 is also conceptually adjacent to the `Q26` outcome (both describe public-transit behavior), so even that modest lift should not be read as an independent “lifestyle” feature on the same footing as ride-share exposure or demographics.
+order27 = [
+    "1-2 rides in a typical day",
+    "3-4 rides in a typical day",
+    "5-6 rides in a typical day",
+    "7 or more rides in a typical day",
+]
+order28 = [
+    "Never",
+    "0-1 days a month",
+    "2-4 days a month",
+    "4-8 days a month",
+    "8 or more days a month",
+]
+q27 = pd.DataFrame(secondary["q27_prevalence"])
+q27["level"] = pd.Categorical(q27["level"], categories=order27, ordered=True)
+q27 = q27.sort_values("level")
+q28 = pd.DataFrame(secondary["q28_prevalence"])
+q28["level"] = pd.Categorical(q28["level"], categories=order28, ordered=True)
+q28 = q28.sort_values("level")
 
-3. **Joint redundancy.** Because Q27 adds almost no ROC lift once Q28 is present, multi-item transit bundles that include both are, in practice, ride-share classifiers. Persona prompts that emphasize bus/train intensity without ride-share may therefore under-specify the mobility cue that tabular learners actually use—consistent with permutation-importance rankings when predicting CA itself, where Q28 also ranks first ([feature-importance write-up](docs/factor_feature_importance.md)).
+fig, axes = plt.subplots(1, 2, figsize=(9.6, 4.0))
+for ax, frame, title in [
+    (axes[0], q27, "Q27 (n = 239)"),
+    (axes[1], q28, "Q28 (n = 241)"),
+]:
+    y = np.arange(len(frame))
+    ax.barh(y, frame["prevalence"], color="#444444", edgecolor="black", height=0.7)
+    ax.axvline(
+        secondary["prevalence"],
+        color="black",
+        ls="--",
+        lw=1.0,
+        label=f"Sample prevalence = {secondary['prevalence']:.3f}",
+    )
+    ax.set_yticks(y)
+    ax.set_yticklabels(
+        [f"{lv} (n={int(n)})" for lv, n in zip(frame["level"], frame["n"])],
+        fontsize=8,
+    )
+    ax.set_xlabel("Proportion regular transit (weekly+)")
+    ax.set_xlim(0, 1.05)
+    for yi, v in zip(y, frame["prevalence"]):
+        ax.text(min(float(v) + 0.02, 0.90), yi, f"{v:.1%}", va="center", fontsize=8)
+    ax.invert_yaxis()
+    apa_axes(ax)
+    ax.text(0.98, 0.98, title, transform=ax.transAxes, ha="right", va="top", fontsize=9)
+    ax.legend(frameon=False, fontsize=7, loc="lower right")
+fig.tight_layout()
+plt.show()
+```
 
-4. **Tie-back to the research memo and primary LLM RQs.** The research memo ([`memos/q27_q28_predict_transit.md`](memos/q27_q28_predict_transit.md)) concludes that **Q28 is a strong traditional-ML predictor and Q27 is not competitive**. For this manuscript’s primary questions: (a) the `transit` information tier is justified partly because ride-share days carry real sample signal for both CA prediction and transit-habit prediction; (b) if an LLM ignores Q28 while overweighting weaker cues, that pattern looks less like “using the data” and more like stereotype or prompt bias; (c) reverse-prediction AUCs remain associative—same-wave self-reports cannot establish that ride-share *causes* weekly+ transit (or vice versa), and shared urbanicity/method variance remains plausible.
+*Note.* Dashed line marks cohort prevalence (0.419). Cell sizes for Q27 levels above 3–4 rides are sparse (n = 3 and n = 1). Source memo: [`memos/q27_q28_predict_transit.md`](memos/q27_q28_predict_transit.md).
 
-5. **Reporting caveats.** Complete-case *N* is nearly full-cohort for Q27/Q28 (239–241), unlike car-access items (~149). AUCs are not calibrated decision thresholds for operations; they summarize ranking quality under stratified CV with a fixed seed for reproducibility.
+```{python}
+#| label: tbl-q27-q28-auc
+#| tbl-cap: "Cross-Validated Random Forest Performance for Q27, Q28, and Benchmarks"
+
+cmp = pd.DataFrame(secondary["covariate_comparison"])
+keep = [
+    "q28_days",
+    "q27_q28",
+    "rideshare",
+    "ca_benchmark",
+    "q27_intensity",
+    "geo_benchmark",
+    "chance",
+]
+labels = {
+    "q28_days": "Q28 only",
+    "q27_q28": "Q27 + Q28",
+    "rideshare": "Q28 + Q29 (ride-share family)",
+    "ca_benchmark": "Group + interpersonal CA",
+    "q27_intensity": "Q27 only",
+    "geo_benchmark": "Lat/long geo",
+    "chance": "Chance / prevalence",
+}
+tab = cmp[cmp["spec_key"].isin(keep)].copy()
+tab["spec_key"] = pd.Categorical(tab["spec_key"], categories=keep, ordered=True)
+tab = tab.sort_values("spec_key")
+out = pd.DataFrame(
+    {
+        "Model": tab["spec_key"].map(labels),
+        "n": tab["n"],
+        "ROC-AUC": tab["roc_auc"],
+        "Average precision": tab["average_precision"],
+        "Balanced accuracy": tab["balanced_accuracy"],
+        "F1": tab["f1"],
+    }
+)
+out = out.round(
+    {
+        "ROC-AUC": 3,
+        "Average precision": 3,
+        "Balanced accuracy": 3,
+        "F1": 3,
+    }
+)
+out
+```
+
+```{python}
+#| label: fig-q27-q28-auc
+#| fig-cap: "Cross-Validated ROC-AUC for Q27, Q28, Joint, and Benchmark Models Predicting Regular Transit"
+#| fig-alt: "Horizontal grayscale bar chart of ROC-AUC for Q28, Q27+Q28, rideshare family, CA, Q27, geo, and chance."
+#| out-width: "90%"
+
+plot_rows = out.dropna(subset=["ROC-AUC"]).copy()
+fig, ax = plt.subplots(figsize=(7.2, 4.2))
+horizontal_bars(
+    ax,
+    plot_rows["Model"].tolist(),
+    plot_rows["ROC-AUC"].tolist(),
+    xlabel="Cross-validated ROC-AUC",
+    highlight_index=0,
+    vlines={"Chance = .500": 0.5, "Geo = .551": 0.551, "CA = .590": 0.590},
+    xlim=(0.45, 0.84),
+)
+fig.tight_layout()
+plt.show()
+```
+
+*Note.* Stratified 5-fold CV, `random_state=42`. Q28 alone exceeds chance by +0.262 AUC, geography by +0.211, and CA scores by +0.172. Head-to-head mobility follow-ups (car access AUC = 0.607; employment AUC = 0.528; rideshare family AUC = 0.745) are in [`memos/transit_covariate_followups.md`](memos/transit_covariate_followups.md), [`memos/car_access_predicts_transit.md`](memos/car_access_predicts_transit.md), [`memos/employment_predicts_transit.md`](memos/employment_predicts_transit.md), and [`memos/rideshare_predicts_transit.md`](memos/rideshare_predicts_transit.md).
 
 # Discussion
 
-Even on a tiny excerpt, the framework makes the research contrasts concrete: each participant yields five persona prompts (`demos` → `employment` → `geo` → `transit` → `full`) that differ only in how much context the model sees, while ground-truth PRCA scores stay fixed. Live Ollama / OpenRouter runs on the full cohort can then test whether MAE shrinks as tiers accumulate information, and whether residual error still clusters by sex, ethnicity, employment, or geography—the stereotyping pattern named in the research question [@cheng2023; @santurkar2023].
+On the full matched analytic cohort (**N = 241**), the framework makes the research contrasts concrete: each participant yields five persona prompts (`demos` → `employment` → `geo` → `transit` → `full`) with fixed ground-truth PRCA scores. Under the deterministic mock provider, group-CA MAE improves from **8.31** (`demos`) to **7.42** (`transit`), while remaining well above the classical RF floor of **4.68** at the same tier ([`docs/ml_baselines.md`](docs/ml_baselines.md); [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md)). Residual MAE differences by employment status are the RQ1 stereotyping diagnostic once a live LLM provider replaces the mock.
 
-Full-cohort secondary analyses sharpen what the `transit` tier is *for*. Traditional Random Forests show that **Q28 (ride-share days)** strongly predicts regular public-transit use (CV ROC-AUC ≈ 0.76), whereas **Q27 (transit-day intensity)** is only modest (≈ 0.59) and redundant beside Q28—see [`memos/q27_q28_predict_transit.md`](memos/q27_q28_predict_transit.md). That asymmetry argues for treating ride-share exposure as a first-class mobility cue in both tabular baselines and persona prompts, rather than assuming all Q26–Q29 items are interchangeable.
+Secondary analyses quantify what the `transit` tier contributes. Regular riders have lower group CA (Δ = −2.72, d = −0.46, p = .0003) and interpersonal CA (Δ = −1.73, d = −0.30, p = .020) ([`memos/transit_riders_ca.md`](memos/transit_riders_ca.md)). As reverse classifiers of weekly+ transit, survey coordinates (AUC = 0.551) and CA scores (AUC = 0.590) remain near chance, whereas **Q28 ride-share days** reach AUC = **0.762** and dominate Q27 (AUC = 0.589) in joint models ([`memos/q27_q28_predict_transit.md`](memos/q27_q28_predict_transit.md)). That asymmetry supports treating ride-share exposure—not transit-day intensity alone—as the high-value mobility cue in both tabular baselines and persona prompts ([`docs/factor_feature_importance.md`](docs/factor_feature_importance.md) likewise ranks Q28 first for predicting CA).
 
-Limitations of the present render include (a) excerpt $N$ for the live LLM mock figures, (b) use of a deterministic mock predictor rather than a production LLM for tier MAE, (c) incomplete transit fields for some Prolific-linked rows in excerpts, and (d) same-wave observational designs for the Q27/Q28 reverse-prediction results. Those constraints are intentional for a credential-free Posit Cloud build of the LLM pipeline; they do not change the measurement design or the seeded full-cohort ML findings reported above.
+Limitations include (a) mock rather than production LLM predictions for the Posit MAE figures and (b) same-wave observational designs for reverse-prediction AUCs, which cannot establish that ride-share causes weekly+ transit (or vice versa). Those constraints keep Cloud builds keyless; they do not change the measurement design or the seeded full-cohort ML findings cited above.
 
-# Reproducibility and publishing
-
-The analysis package lives in `src/ca_personas/`. Locally:
+# Reproducibility
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 pip install -e .
-ca-personas --provider mock --join inner
+# Stage File A/B/C under ../sibling_data or CA_SIBLING_DATA=/tmp/sibling_data
+ca-personas run --provider mock --join inner
+ca-personas covariate-transit-rf --join inner --seed 42
+python scripts/sync_posit_full_cohort_artifacts.py
 quarto render
 ```
 
-For **Posit Connect Cloud** [@quarto]:
-
-1. Push this repository to GitHub (public).
-2. In Connect Cloud, choose **Publish → Quarto**.
-3. Select this repository and branch.
-4. Set the primary file to `_quarto.yml` (website) or `index.qmd` (single document).
-5. Confirm `requirements.txt` is present so Python dependencies (including Jupyter) install at build time.
-
-```{python}
-#| label: tbl-artifacts
-#| tbl-cap: "Artifacts written during this Quarto render."
-
-pd.DataFrame(
-    {"artifact": list(artifacts.keys()), "path": [str(p) for p in artifacts.values()]}
-)
-```
+For **Posit Connect Cloud** [@quarto]: publish this repository with `_quarto.yml` as the primary file and `requirements.txt` present so Python dependencies install at build time. When private exports are absent, the manuscript loads `artifacts/posit_full_cohort/` (N = 241 mock evaluation + secondary metrics).
 
 # References
 

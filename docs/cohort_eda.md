@@ -29,7 +29,7 @@ Every persona tier, ML baseline, and secondary RQ rests on the same cleaned anal
 
 Waves: File A = 99, File B = 153 (of the matched/analytic pipeline). Full Prolific waves omit Ethnicity / Nationality / Language; the `demos` tier therefore uses Age, Sex, Country of residence, and Student status.
 
-**Covariate coverage in the analytic sample:** employment 100%, transit (`Q26–Q29`) 100%, core demos ≈ 93% (Student status has some `DATA_EXPIRED` → missing).
+**Covariate coverage in the analytic sample:** employment 100%, transit (`Q26–Q29`) 100%, Student status 93.0% non-missing (17/241 `DATA_EXPIRED` → missing).
 
 ## 3. Ground-truth CA
 
@@ -38,7 +38,7 @@ Waves: File A = 99, File B = 153 (of the matched/analytic pipeline). Full Prolif
 | Group CA | 241 | 14.62 | 6.03 | 13 | 6–30 |
 | Interpersonal CA | 241 | 14.31 | 5.82 | 13 | 6–30 |
 
-Band prevalence (low ≤13 / moderate 14–19 / high ≥20): group ≈ 54% / 25% / 21%; interpersonal ≈ 53% / 29% / 18%.
+Band prevalence (low ≤13 / moderate 14–19 / high ≥20): group **53.9% / 25.3% / 20.7%**; interpersonal **53.1% / 28.6% / 18.3%**.
 
 ## 4. RQ1 lens — employment
 
@@ -62,7 +62,7 @@ Full-time respondents report lower CA. If an LLM stereotypes “unemployed / oth
 | 4–8 days/month | 46 | 13.28 | 13.48 |
 | 8+ days/month | 55 | 12.84 | 13.16 |
 
-Higher ridership ↔ lower mean CA. This is the descriptive foundation for [Transit → CA](secondary_rq_transit_ca.md) and [CA → Transit](secondary_rq_ca_predicts_transit.md).
+Higher ridership ↔ lower mean CA (Never group M = 17.38 → 8+ days M = 12.84). This is the descriptive foundation for [Transit → CA](secondary_rq_transit_ca.md) ([memo](../memos/transit_riders_ca.md)) and [CA → Transit](secondary_rq_ca_predicts_transit.md) ([memo](../memos/ca_scores_predict_transit.md)).
 
 ## 6. Stereotyping lens — sex & country
 

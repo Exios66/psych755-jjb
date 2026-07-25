@@ -7,7 +7,7 @@ subtitle: "Head-to-head evaluation across persona information tiers"
 **Code:** [`src/ca_personas/compare_agents.py`](../src/ca_personas/compare_agents.py)  
 **CLI:** `ca-personas compare --provider mock|ollama|openrouter`  
 **ML reference:** [`ml_baselines.md`](ml_baselines.md)  
-**Manuscript demo:** [`index.qmd`](../index.qmd) (mock pipeline on excerpt fixtures)
+**Manuscript demo:** [`index.qmd`](../index.qmd) (mock pipeline on the full matched cohort; Posit uses committed `artifacts/posit_full_cohort/`)
 
 ---
 
@@ -67,7 +67,7 @@ When a live comparison is in hand, ask:
 1. **Does any LLM tier beat RF MAE?** If not, persona prompting is not recovering CA better than a shallow tabular learner.
 2. **Does error shrink with richer tiers?** Parallel improvement with ML would suggest both families use employment/geo/transit signal; flat LLM curves with falling ML MAE would suggest the LLM ignores those cues.
 3. **Does residual error track demographics?** That is the stereotyping RQ in the manuscript — compare absolute error by sex / employment / country / student status.
-4. **Mock ≠ science.** Treat `provider=mock` outputs as pipeline smoke tests only.
+4. **Mock ≠ science.** Treat `provider=mock` outputs as deterministic pipeline diagnostics, not production-LLM claims.
 
 ## 5. Reproducibility
 

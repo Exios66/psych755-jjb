@@ -1,0 +1,260 @@
+{
+  "n_analytic": 241,
+  "n_regular": 101,
+  "n_not_regular": 140,
+  "prevalence": 0.4190871369294606,
+  "transit_ca": {
+    "group": {
+      "score": "gt_group_ca",
+      "n_regular": 101,
+      "n_not_regular": 140,
+      "n_overall": 241,
+      "mean_regular": 13.03960396039604,
+      "mean_not_regular": 15.764285714285714,
+      "mean_overall": 14.622406639004149,
+      "diff_regular_minus_not_regular": -2.7246817538896746,
+      "diff_regular_minus_overall": -1.5828026786081093,
+      "pct_diff_vs_overall": -10.824501859947627,
+      "welch_t": -3.676531638712411,
+      "welch_df": 236.9131613823941,
+      "welch_p": 0.00029250822800505247,
+      "mannwhitney_u": 5374.5,
+      "mannwhitney_p": 0.0014555822517995248,
+      "cohens_d": -0.46238123740548615,
+      "hedges_g": -0.4609287309005474,
+      "boot_diff_vs_not_regular": -2.7246817538896746,
+      "boot_ci_low": -4.14541548797737,
+      "boot_ci_high": -1.2844236209335258,
+      "significant_at_05": true
+    },
+    "interpersonal": {
+      "score": "gt_interpersonal_ca",
+      "n_regular": 101,
+      "n_not_regular": 140,
+      "n_overall": 241,
+      "mean_regular": 13.306930693069306,
+      "mean_not_regular": 15.035714285714286,
+      "mean_overall": 14.311203319502075,
+      "diff_regular_minus_not_regular": -1.7287835926449802,
+      "diff_regular_minus_overall": -1.004272626432769,
+      "pct_diff_vs_overall": -7.017387734714332,
+      "welch_t": -2.3405333419995706,
+      "welch_df": 228.7997232360521,
+      "welch_p": 0.020116568031051666,
+      "mannwhitney_u": 5875.0,
+      "mannwhitney_p": 0.024928892975388507,
+      "cohens_d": -0.2997797392856572,
+      "hedges_g": -0.2988380228271682,
+      "boot_diff_vs_not_regular": -1.7287835926449802,
+      "boot_ci_low": -3.1220526874115992,
+      "boot_ci_high": -0.2536386138613856,
+      "significant_at_05": true
+    },
+    "memo": "memos/transit_riders_ca.md"
+  },
+  "geo_rf": {
+    "roc_auc": 0.5512729844413012,
+    "country_only_roc_auc": 0.5492220650636492,
+    "chance": 0.5,
+    "memo": "memos/geo_predicts_transit.md"
+  },
+  "ca_rf": {
+    "roc_auc": 0.5896746817538897,
+    "group_only": 0.5547736916548798,
+    "interpersonal_only": 0.5064710042432814,
+    "confusion": {
+      "tn": 76,
+      "fp": 64,
+      "fn": 40,
+      "tp": 61
+    },
+    "memo": "memos/ca_scores_predict_transit.md"
+  },
+  "covariate_comparison": [
+    {
+      "spec_key": "q28_days",
+      "label": "Ride-share days (Q28)",
+      "n": 241.0,
+      "n_regular": 101.0,
+      "prevalence": 0.4190871369294606,
+      "roc_auc": 0.7620933521923621,
+      "average_precision": 0.688872869993286,
+      "balanced_accuracy": 0.7303748231966054,
+      "f1": 0.7022222222222222,
+      "brier": 0.1894062656618444
+    },
+    {
+      "spec_key": "q27_q28",
+      "label": "Transit intensity + ride-share days (Q27/Q28)",
+      "n": 239.0,
+      "n_regular": 101.0,
+      "prevalence": 0.4225941422594142,
+      "roc_auc": 0.7612641698952504,
+      "average_precision": 0.689606135030495,
+      "balanced_accuracy": 0.6960467785909026,
+      "f1": 0.6666666666666666,
+      "brier": 0.1925951643823189
+    },
+    {
+      "spec_key": "mobility_bundle",
+      "label": "Car + ride-share + employment bundle",
+      "n": 143.0,
+      "n_regular": 56.0,
+      "prevalence": 0.3916083916083916,
+      "roc_auc": 0.7467159277504106,
+      "average_precision": 0.6052583001385728,
+      "balanced_accuracy": 0.7166461412151067,
+      "f1": 0.6666666666666666,
+      "brier": 0.1975936141216755
+    },
+    {
+      "spec_key": "rideshare",
+      "label": "Ride-share frequency (Q28/Q29)",
+      "n": 233.0,
+      "n_regular": 99.0,
+      "prevalence": 0.4248927038626609,
+      "roc_auc": 0.7451379466304839,
+      "average_precision": 0.6548216401037097,
+      "balanced_accuracy": 0.731079451228705,
+      "f1": 0.7085201793721974,
+      "brier": 0.1971843756206003
+    },
+    {
+      "spec_key": "car_access",
+      "label": "Car license & access (Q20/Q21)",
+      "n": 149.0,
+      "n_regular": 58.0,
+      "prevalence": 0.3892617449664429,
+      "roc_auc": 0.6073323228495642,
+      "average_precision": 0.5150205538870885,
+      "balanced_accuracy": 0.6394467601364153,
+      "f1": 0.4761904761904761,
+      "brier": 0.2266754065572617
+    },
+    {
+      "spec_key": "ca_benchmark",
+      "label": "Group + interpersonal CA (CA memo benchmark)",
+      "n": 241.0,
+      "n_regular": 101.0,
+      "prevalence": 0.4190871369294606,
+      "roc_auc": 0.59,
+      "average_precision": null,
+      "balanced_accuracy": null,
+      "f1": null,
+      "brier": null
+    },
+    {
+      "spec_key": "q27_intensity",
+      "label": "Transit intensity on use days (Q27)",
+      "n": 239.0,
+      "n_regular": 101.0,
+      "prevalence": 0.4225941422594142,
+      "roc_auc": 0.5885708136030994,
+      "average_precision": 0.513399352861135,
+      "balanced_accuracy": 0.6225426890515138,
+      "f1": 0.4666666666666667,
+      "brier": 0.230955256494286
+    },
+    {
+      "spec_key": "geo_benchmark",
+      "label": "Lat/long (geo memo benchmark)",
+      "n": 241.0,
+      "n_regular": 101.0,
+      "prevalence": 0.4190871369294606,
+      "roc_auc": 0.551,
+      "average_precision": null,
+      "balanced_accuracy": null,
+      "f1": null,
+      "brier": null
+    },
+    {
+      "spec_key": "employment",
+      "label": "Employment status",
+      "n": 241.0,
+      "n_regular": 101.0,
+      "prevalence": 0.4190871369294606,
+      "roc_auc": 0.5280763790664781,
+      "average_precision": 0.4244485046490305,
+      "balanced_accuracy": 0.5595120226308345,
+      "f1": 0.5857142857142857,
+      "brier": 0.24724032068607
+    },
+    {
+      "spec_key": "chance",
+      "label": "Chance / prevalence",
+      "n": null,
+      "n_regular": null,
+      "prevalence": null,
+      "roc_auc": 0.5,
+      "average_precision": null,
+      "balanced_accuracy": 0.5,
+      "f1": null,
+      "brier": null
+    }
+  ],
+  "q27_prevalence": [
+    {
+      "level": "1-2 rides in a typical day",
+      "n": 190,
+      "n_regular": 66,
+      "prevalence": 0.3473684210526316
+    },
+    {
+      "level": "3-4 rides in a typical day",
+      "n": 45,
+      "n_regular": 31,
+      "prevalence": 0.6888888888888889
+    },
+    {
+      "level": "5-6 rides in a typical day",
+      "n": 3,
+      "n_regular": 3,
+      "prevalence": 1.0
+    },
+    {
+      "level": "7 or more rides in a typical day",
+      "n": 1,
+      "n_regular": 1,
+      "prevalence": 1.0
+    }
+  ],
+  "q28_prevalence": [
+    {
+      "level": "0-1 days a month",
+      "n": 47,
+      "n_regular": 11,
+      "prevalence": 0.23404255319148937
+    },
+    {
+      "level": "2-4 days a month",
+      "n": 65,
+      "n_regular": 34,
+      "prevalence": 0.5230769230769231
+    },
+    {
+      "level": "4-8 days a month",
+      "n": 42,
+      "n_regular": 29,
+      "prevalence": 0.6904761904761905
+    },
+    {
+      "level": "8 or more days a month",
+      "n": 17,
+      "n_regular": 16,
+      "prevalence": 0.9411764705882353
+    },
+    {
+      "level": "Never",
+      "n": 70,
+      "n_regular": 11,
+      "prevalence": 0.15714285714285714
+    }
+  ],
+  "memos": {
+    "q27_q28": "memos/q27_q28_predict_transit.md",
+    "rideshare": "memos/rideshare_predicts_transit.md",
+    "followups": "memos/transit_covariate_followups.md",
+    "feature_power": "memos/feature_predictive_power_ml_llm.md",
+    "ml_baselines": "docs/ml_baselines.md"
+  }
+}

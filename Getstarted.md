@@ -32,9 +32,10 @@ Do **not** commit Prolific/Qualtrics exports. Place them beside the repo:
 ../sibling_data/PRCAQualtricsExport_FileC.csv
 ```
 
-When those files are present, CLI commands prefer them. When absent,
-`ca_personas.paths` (and config path resolution) fall back to public fixtures in
-`data/excerpts/` so tests and Posit Connect Cloud renders still work.
+When those files are present, CLI commands prefer them. Cloud sandboxes may
+stage the same filenames under `/tmp/sibling_data` or `CA_SIBLING_DATA`.
+Excerpt fixtures in `data/excerpts/` are for unit tests only; the Posit site
+loads committed full-cohort mock artifacts when private exports are absent.
 
 ## 3. Environment variables
 

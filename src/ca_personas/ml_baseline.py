@@ -298,7 +298,7 @@ def run_baselines_for_tier(
 
 
 def run_stage_one_baselines(
-    prolific_path: str | Path,
+    prolific_path: str | Path | list[Path],
     qualtrics_path: str | Path,
     *,
     tiers: Iterable[str] = RESEARCH_TIERS,
