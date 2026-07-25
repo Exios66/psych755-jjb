@@ -44,4 +44,13 @@ How much of the lat/long signal is simply country or urban/rural composition rat
 
 ## What other features may also well-predict regular public transit use?
 
-Communication-apprehension scores (group and interpersonal PRCA) were examined in a companion Random Forest (`notebooks/secondary_rq_ca_transit_rf.ipynb`) and showed slightly stronger discrimination (AUC ≈ **0.590**). Other candidates include car access / license (`Q20`/`Q21`), employment status, and ride-share frequency (`Q28`/`Q29`).
+Communication-apprehension scores (group and interpersonal PRCA) were examined in a companion Random Forest (`notebooks/secondary_rq_ca_transit_rf.ipynb`) and showed slightly stronger discrimination (AUC ≈ **0.590**). The remaining candidates named here have now been tested head-to-head:
+
+| Candidate | Memo | Notebook | CV ROC-AUC |
+|---|---|---|---:|
+| Ride-share frequency (`Q28`/`Q29`) | [`rideshare_predicts_transit.md`](rideshare_predicts_transit.md) | `secondary_rq_rideshare_transit_rf.ipynb` | **0.745** |
+| Car license & access (`Q20`/`Q21`) | [`car_access_predicts_transit.md`](car_access_predicts_transit.md) | `secondary_rq_car_access_transit_rf.ipynb` | **0.607** |
+| Employment status | [`employment_predicts_transit.md`](employment_predicts_transit.md) | `secondary_rq_employment_transit_rf.ipynb` | **0.528** |
+| Joint mobility bundle | [`transit_covariate_followups.md`](transit_covariate_followups.md) | `secondary_rq_transit_covariate_followups.ipynb` | **0.747** |
+
+CLI: `ca-personas covariate-transit-rf --join inner --seed 42`.
