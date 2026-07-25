@@ -55,26 +55,17 @@ def _log(msg: str) -> None:
 
 def resolve_full_data(*, allow_excerpt: bool) -> tuple[list[Path], Path]:
     from ca_personas.paths import (
-        DEFAULT_PROLIFIC_A,
-        DEFAULT_PROLIFIC_B,
-        DEFAULT_QUALTRICS_C,
         EXCERPT_PROLIFIC,
         EXCERPT_QUALTRICS,
+        cohort_source_label,
+        full_cohort_paths,
         sibling_data_available,
     )
 
     if sibling_data_available():
-        return [DEFAULT_PROLIFIC_A, DEFAULT_PROLIFIC_B], DEFAULT_QUALTRICS_C
-
-    tmp_a, tmp_b, tmp_c = TMP_SIBLING / FILE_A, TMP_SIBLING / FILE_B, TMP_SIBLING / FILE_C
-    if tmp_a.is_file() and tmp_b.is_file() and tmp_c.is_file():
-        SIBLING.mkdir(parents=True, exist_ok=True)
-        for src, name in ((tmp_a, FILE_A), (tmp_b, FILE_B), (tmp_c, FILE_C)):
-            dest = SIBLING / name
-            if not dest.is_file() or dest.stat().st_mtime < src.stat().st_mtime:
-                shutil.copy2(src, dest)
-                _log(f"Staged {src} → {dest}")
-        return [SIBLING / FILE_A, SIBLING / FILE_B], SIBLING / FILE_C
+        prolific, qualtrics = full_cohort_paths()
+        _log(f"Full cohort source: {cohort_source_label()}")
+        return prolific, qualtrics
 
     if allow_excerpt:
         _log("WARNING: --allow-excerpt in use; results are NOT full-cohort.")
