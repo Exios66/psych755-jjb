@@ -189,9 +189,9 @@ website:
           - docs/persona_prompt_efficiency.md
           - docs/llm_baseline_llama31_v1.md
           - docs/llm_baseline_llama32_instruct_v1.md
-    - docs/llm_baseline_deepseek_r1_distill_v1.md
-    - docs/llm_baseline_llama33_70b_v1.md
-    - docs/llm_vllm_memo_agenda.md
+          - docs/llm_baseline_deepseek_r1_distill_v1.md
+          - docs/llm_baseline_llama33_70b_v1.md
+          - docs/llm_vllm_memo_agenda.md
       - section: "Secondary RQ write-ups"
         contents:
           - docs/research_memo_agenda.md
@@ -269,4 +269,4 @@ execute:
   freeze: auto
 
 bibliography: references.bib
-csl: https://www.zotero.org/styles/apa
+csl: apa.csl

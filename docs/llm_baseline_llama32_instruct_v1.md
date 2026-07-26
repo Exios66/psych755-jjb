@@ -4,7 +4,7 @@ subtitle: "vLLM digital-twin results on the original 5-tier Terrarium prompts"
 ---
 
 **Model:** `meta-llama/Llama-3.2-3B-Instruct` · **Prompt generation:** pre–v3.1 packaging (version 1 core ladder)  
-**Companion:** [Llama-3.1-8B baseline](llm_baseline_llama31_v1.md) · [Prompt version map](persona_prompt_versions.md) · [ML baselines](ml_baselines.md)
+**Companion:** [Cross-model memo](../memos/vllm_v1_cross_model_comparison.md) · [Llama-3.1-8B](llm_baseline_llama31_v1.md) · [DeepSeek](llm_baseline_deepseek_r1_distill_v1.md) · [Llama-3.3-70B](llm_baseline_llama33_70b_v1.md) · [Prompt version map](persona_prompt_versions.md)
 
 > Same **prompt v1** ladder and N=241 cohort as the 8B baseline. A `Llama-3.2-3B` (base) run only parsed ~7% of outputs; this page is the **Instruct** counterpart used for evaluation.
 
