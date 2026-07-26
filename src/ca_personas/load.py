@@ -336,6 +336,7 @@ def load_full_cohort(
     join_how: str = "inner",
     low_max: int = 13,
     high_min: int = 20,
+    allow_excerpt_fallback: bool = True,
 ) -> tuple[pd.DataFrame, dict]:
     """
     Load File A + File B + File C from ``../sibling_data/``, clean, and score.
@@ -344,11 +345,22 @@ def load_full_cohort(
 
     Merge coverage (before complete-CA filters) should be 252 matched, 21
     Qualtrics-only (disregard), and 10 Prolific-only (disregard).
+
+    Set ``allow_excerpt_fallback=False`` for manuscript / memo figure paths so
+    missing sibling data raises instead of silently using unit-test excerpts.
     """
     from ca_personas.paths import default_prolific_paths, default_qualtrics_path
 
-    prolific_list = list(prolific_paths) if prolific_paths is not None else default_prolific_paths()
-    qualtrics = Path(qualtrics_path) if qualtrics_path is not None else default_qualtrics_path()
+    prolific_list = (
+        list(prolific_paths)
+        if prolific_paths is not None
+        else default_prolific_paths(allow_excerpt_fallback=allow_excerpt_fallback)
+    )
+    qualtrics = (
+        Path(qualtrics_path)
+        if qualtrics_path is not None
+        else default_qualtrics_path(allow_excerpt_fallback=allow_excerpt_fallback)
+    )
 
     prolific = load_prolific(
         prolific_list,

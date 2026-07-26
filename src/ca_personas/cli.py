@@ -7,8 +7,7 @@ import json
 from pathlib import Path
 
 from ca_personas.compare_agents import run_ml_vs_llm_comparison
-from ca_personas.ground_truth import export_ground_truth_bundle
-from ca_personas.load import load_and_prepare, load_full_cohort
+from ca_personas.load import load_full_cohort
 from ca_personas.ml_baseline import DEFAULT_MODEL_SUITE
 from ca_personas.paths import default_prolific_paths, default_qualtrics_path
 from ca_personas.personas import RESEARCH_TIERS, TIERS, build_persona_prompts, write_persona_bundle
@@ -35,8 +34,8 @@ def _add_shared_data_args(parser: argparse.ArgumentParser) -> None:
         default=None,
         help=(
             "One or more Prolific export CSVs (File A + File B). "
-            "Default: ../sibling_data/PRCAProlificExport_FileA.csv + FileB, "
-            "else data/excerpts/prolific_excerpt.csv"
+            "Default: staged ../sibling_data (or CA_SIBLING_DATA /tmp) File A+B. "
+            "Analysis commands refuse silent excerpt fallback."
         ),
     )
     parser.add_argument(
@@ -45,8 +44,8 @@ def _add_shared_data_args(parser: argparse.ArgumentParser) -> None:
         default=None,
         help=(
             "Qualtrics export CSV (File C). "
-            "Default: ../sibling_data/PRCAQualtricsExport_FileC.csv, "
-            "else data/excerpts/qualtrics_excerpt.csv"
+            "Default: staged sibling-data File C. "
+            "Analysis commands refuse silent excerpt fallback."
         ),
     )
     parser.add_argument(
@@ -81,8 +80,8 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument(
         "--provider",
         choices=["ollama", "openrouter", "mock"],
-        default=None,
-        help="LLM provider (use mock for offline runs)",
+        default="mock",
+        help="LLM provider (default: mock for reproducible offline runs)",
     )
     run.add_argument("--model", default=None, help="Model name override")
     run.add_argument("--config", type=Path, default=Path("config/default.yaml"))
@@ -450,9 +449,10 @@ def main(argv: list[str] | None = None) -> int:
     command = args.command or "run"
 
     if command == "prepare":
+        prolific, qualtrics = _paths_or_defaults(args)
         artifacts = prepare_analytic_sample(
-            prolific_path=args.prolific,
-            qualtrics_path=args.qualtrics,
+            prolific_path=prolific,
+            qualtrics_path=qualtrics,
             config_path=args.config,
             join_how=args.join,
             output_dir=args.output_dir,
@@ -462,54 +462,36 @@ def main(argv: list[str] | None = None) -> int:
 
     if command == "score-gt":
         prolific, qualtrics = _paths_or_defaults(args)
-        # When multiple Prolific waves are provided, stack via load_full_cohort.
-        if len(prolific) > 1:
-            participants, report = load_full_cohort(
-                prolific_paths=prolific,
-                qualtrics_path=qualtrics,
-                join_how=args.join,
-            )
-            out = Path(args.output_dir)
-            out.mkdir(parents=True, exist_ok=True)
-            from ca_personas.ground_truth import aggregate_ground_truth, ground_truth_table
-
-            paths = {
-                "participants_scored": out / "participants_scored.csv",
-                "ground_truth": out / "ground_truth.csv",
-                "aggregates": out / "ground_truth_aggregates.csv",
-                "cleaning_report": out / "cleaning_report.json",
-            }
-            participants.to_csv(paths["participants_scored"], index=False)
-            ground_truth_table(participants).to_csv(paths["ground_truth"], index=False)
-            aggregate_ground_truth(participants).to_csv(paths["aggregates"], index=False)
-            paths["cleaning_report"].write_text(json.dumps(report, indent=2), encoding="utf-8")
-            print(json.dumps({k: str(v) for k, v in paths.items()}, indent=2))
-            return 0
-
-        paths = export_ground_truth_bundle(
-            prolific[0],
-            qualtrics,
-            args.output_dir,
+        # Always use load_full_cohort so cleaning_report.json is emitted.
+        participants, report = load_full_cohort(
+            prolific_paths=prolific,
+            qualtrics_path=qualtrics,
             join_how=args.join,
         )
+        out = Path(args.output_dir)
+        out.mkdir(parents=True, exist_ok=True)
+        from ca_personas.ground_truth import aggregate_ground_truth, ground_truth_table
+
+        paths = {
+            "participants_scored": out / "participants_scored.csv",
+            "ground_truth": out / "ground_truth.csv",
+            "aggregates": out / "ground_truth_aggregates.csv",
+            "cleaning_report": out / "cleaning_report.json",
+        }
+        participants.to_csv(paths["participants_scored"], index=False)
+        ground_truth_table(participants).to_csv(paths["ground_truth"], index=False)
+        aggregate_ground_truth(participants).to_csv(paths["aggregates"], index=False)
+        paths["cleaning_report"].write_text(json.dumps(report, indent=2), encoding="utf-8")
         print(json.dumps({k: str(v) for k, v in paths.items()}, indent=2))
         return 0
 
     if command == "build-personas":
         prolific, qualtrics = _paths_or_defaults(args)
-        if len(prolific) > 1:
-            participants, _report = load_full_cohort(
-                prolific_paths=prolific,
-                qualtrics_path=qualtrics,
-                join_how=args.join,
-            )
-        else:
-            participants = load_and_prepare(
-                prolific[0],
-                qualtrics,
-                how=args.join,
-                clean=True,
-            )
+        participants, _report = load_full_cohort(
+            prolific_paths=prolific,
+            qualtrics_path=qualtrics,
+            join_how=args.join,
+        )
         prompts = build_persona_prompts(participants, tiers=args.tiers)
         bundle = write_persona_bundle(prompts, args.output_dir)
         print(
@@ -710,10 +692,11 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0
 
-    # Full pipeline
+    # Full pipeline — resolve paths with no excerpt fallback (same as other commands).
+    prolific, qualtrics = _paths_or_defaults(args)
     artifacts = run_pipeline(
-        prolific_path=args.prolific,
-        qualtrics_path=args.qualtrics,
+        prolific_path=prolific,
+        qualtrics_path=qualtrics,
         tiers=args.tiers,
         provider=args.provider,
         model=args.model,

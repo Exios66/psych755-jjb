@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
-"""Regenerate publication-quality memo / docs figures from the matched cohort."""
+"""Re-fit models and regenerate *color* memo exploratory figures.
+
+Canonical Posit-site PNGs (APA grayscale) are owned by
+``scripts/regenerate_apa_site_figures.py``, which redraws from committed
+``artifacts/posit_full_cohort/secondary_results.json`` and ``outputs/``
+without re-fitting. Prefer that script after secondary sync; use this
+script only when you intentionally want color memo-style re-fits on the
+full sibling cohort.
+"""
 
 from __future__ import annotations
 
@@ -242,7 +250,8 @@ def plot_transit_ca_memo(analysis: dict, path: Path) -> Path:
 def main() -> None:
     MEMO_FIG.mkdir(parents=True, exist_ok=True)
     DOCS_FIG.mkdir(parents=True, exist_ok=True)
-    participants, _ = load_full_cohort(join_how="inner")
+    # Refuse excerpt fallback — color memo figures must use File A/B/C.
+    participants, _ = load_full_cohort(join_how="inner", allow_excerpt_fallback=False)
 
     print("Wave-2 follow-ups...")
     bundle = run_all_followup_experiments(

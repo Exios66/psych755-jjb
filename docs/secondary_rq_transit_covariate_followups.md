@@ -44,15 +44,17 @@ Benchmarks pasted from companion seeded runs: geo AUC = 0.551; CA AUC = 0.590; c
 
 | Spec | n | ROC-AUC | AP | Bal. acc. | F1 |
 |---|---:|---:|---:|---:|---:|
+| **Q28 only** | 241 | **0.762** | 0.689 | 0.730 | 0.702 |
 | Mobility bundle | 143 | 0.747 | 0.605 | 0.717 | 0.667 |
 | Ride-share (Q28/Q29) | 233 | 0.745 | 0.655 | 0.731 | 0.709 |
 | Car access (Q20/Q21) | 149 | 0.607 | 0.515 | 0.639 | 0.476 |
 | CA benchmark | 241 | 0.590 | — | — | — |
+| Q27 only | 239 | 0.589 | 0.513 | 0.623 | 0.467 |
 | Geo benchmark | 241 | 0.551 | — | — | — |
 | Employment | 241 | 0.528 | 0.424 | 0.560 | 0.586 |
 | Chance | — | 0.500 | — | 0.500 | — |
 
-**Ride-share days (`Q28`)** dominate: regular-transit prevalence rises from 15.7% (Never) to 94.1% (8+ days/month). **Car access (`Q21`)** is the main car-family driver (No access = 75.9% regular vs Yes = 30.8%). **Employment** differences are small.
+**Ride-share days (`Q28`)** dominate: regular-transit prevalence rises from 15.7% (Never) to 94.1% (8+ days/month). **Car access (`Q21`)** is the main car-family driver (No access = 76.0% regular vs Yes = 30.9%). **Employment** differences are small.
 
 ## Interpretation
 

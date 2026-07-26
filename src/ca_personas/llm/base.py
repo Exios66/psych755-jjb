@@ -113,7 +113,7 @@ def get_client(
     timeout_seconds: int = 120,
 ) -> LLMClient:
     """Construct an LLM client from explicit args or environment variables."""
-    chosen = (provider or os.getenv("CA_LLM_PROVIDER", "ollama")).strip().lower()
+    chosen = (provider or os.getenv("CA_LLM_PROVIDER", "mock")).strip().lower()
     if chosen == "mock":
         from ca_personas.llm.mock import MockLLMClient
 
