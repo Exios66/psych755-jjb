@@ -1,0 +1,30 @@
+name: Documentation
+description: Fix or improve README, Getstarted, AGENTS, docs, or memos
+title: "[Docs]: "
+labels: ["documentation"]
+body:
+  - type: dropdown
+    id: doc_area
+    attributes:
+      label: Which docs?
+      options:
+        - README / Getstarted / AGENTS
+        - Framework / methods (`docs/`)
+        - Research memos (`memos/`)
+        - Quarto site content (`index.qmd`, `_quarto.yml`)
+        - Inline / CLI help
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: What's wrong or missing?
+      description: Stale numbers, broken paths, unclear setup, etc.
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested fix
+      description: Optional — wording, links, or structure
