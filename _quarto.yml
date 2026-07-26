@@ -14,6 +14,7 @@ project:
     - docs/llm_baseline_llama31_v1.md
     - docs/llm_baseline_llama32_instruct_v1.md
     - docs/llm_baseline_deepseek_r1_distill_v1.md
+    - docs/llm_baseline_llama33_70b_v1.md
     - docs/llm_vllm_memo_agenda.md
     - docs/research_memo_agenda.md
     - docs/secondary_rq_transit_ca.md
@@ -44,6 +45,7 @@ project:
     - memos/vllm_v1_llama31_8b.md
     - memos/vllm_v1_llama32_3b.md
     - memos/vllm_v1_deepseek_r1_distill.md
+    - memos/vllm_v1_llama33_70b.md
 
 website:
   title: "LLM Prediction of Communication Apprehension"
@@ -82,6 +84,8 @@ website:
             text: Llama-3.2-3B Instruct (prompt v1)
           - href: docs/llm_baseline_deepseek_r1_distill_v1.md
             text: DeepSeek-R1-Distill (prompt v1)
+          - href: docs/llm_baseline_llama33_70b_v1.md
+            text: Llama-3.3-70B (prompt v1)
           - href: docs/llm_vllm_memo_agenda.md
             text: vLLM memo agenda (v1)
       - text: Secondary RQs
@@ -146,6 +150,8 @@ website:
             text: "vLLM · Llama-3.2-3B"
           - href: memos/vllm_v1_deepseek_r1_distill.md
             text: "vLLM · DeepSeek-R1-Distill"
+          - href: memos/vllm_v1_llama33_70b.md
+            text: "vLLM · Llama-3.3-70B"
     right:
       - icon: github
         href: https://github.com/Exios66/psych755-jjb
@@ -183,8 +189,9 @@ website:
           - docs/persona_prompt_efficiency.md
           - docs/llm_baseline_llama31_v1.md
           - docs/llm_baseline_llama32_instruct_v1.md
-          - docs/llm_baseline_deepseek_r1_distill_v1.md
-          - docs/llm_vllm_memo_agenda.md
+    - docs/llm_baseline_deepseek_r1_distill_v1.md
+    - docs/llm_baseline_llama33_70b_v1.md
+    - docs/llm_vllm_memo_agenda.md
       - section: "Secondary RQ write-ups"
         contents:
           - docs/research_memo_agenda.md
@@ -228,6 +235,7 @@ website:
               - memos/vllm_v1_llama31_8b.md
               - memos/vllm_v1_llama32_3b.md
               - memos/vllm_v1_deepseek_r1_distill.md
+              - memos/vllm_v1_llama33_70b.md
 
 crossref:
   fig-title: "Figure"

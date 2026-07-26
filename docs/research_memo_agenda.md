@@ -50,10 +50,11 @@ Live GPU baselines are documented separately in [`docs/llm_vllm_memo_agenda.md`]
 
 | Memo | Headline |
 |---|---|
-| [`memos/vllm_v1_cross_model_comparison.md`](../memos/vllm_v1_cross_model_comparison.md) | DeepSeek best group MAE; 3B best group bands; 8B IP collapses at transit |
+| [`memos/vllm_v1_cross_model_comparison.md`](../memos/vllm_v1_cross_model_comparison.md) | DeepSeek best group MAE; 3B best group bands; 8B IP collapses at transit; 70B collapsed |
 | [`memos/vllm_v1_llama31_8b.md`](../memos/vllm_v1_llama31_8b.md) | Llama-3.1-8B cautionary baseline |
 | [`memos/vllm_v1_llama32_3b.md`](../memos/vllm_v1_llama32_3b.md) | Llama-3.2-3B Instruct lower MAE than 8B |
 | [`memos/vllm_v1_deepseek_r1_distill.md`](../memos/vllm_v1_deepseek_r1_distill.md) | DeepSeek-R1-Distill tier-stable; best group MAE |
+| [`memos/vllm_v1_llama33_70b.md`](../memos/vllm_v1_llama33_70b.md) | Llama-3.3-70B mode-collapse cautionary case |
 
 ## Intentionally deferred (need further live LLM or new data)
 

@@ -26,6 +26,7 @@ Individual research memoranda for PSYCH 755, following the course template
 | [`vllm_v1_llama31_8b.md`](vllm_v1_llama31_8b.md) | Jack J. Burleson | Does Llama-3.1-8B recover PRCA on prompt v1? |
 | [`vllm_v1_llama32_3b.md`](vllm_v1_llama32_3b.md) | Jack J. Burleson | Does Llama-3.2-3B-Instruct recover PRCA on prompt v1? |
 | [`vllm_v1_deepseek_r1_distill.md`](vllm_v1_deepseek_r1_distill.md) | Jack J. Burleson | Does DeepSeek-R1-Distill-Llama-8B recover PRCA on prompt v1? |
+| [`vllm_v1_llama33_70b.md`](vllm_v1_llama33_70b.md) | Jack J. Burleson | Does Llama-3.3-70B recover PRCA on prompt v1? (mode collapse) |
 
 Agenda / hub write-up: [`docs/research_memo_agenda.md`](../docs/research_memo_agenda.md) · [`docs/secondary_rq_followup_experiments.md`](../docs/secondary_rq_followup_experiments.md) · LLM wave: [`docs/llm_vllm_memo_agenda.md`](../docs/llm_vllm_memo_agenda.md)
 

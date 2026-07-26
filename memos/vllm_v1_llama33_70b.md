@@ -1,0 +1,58 @@
+---
+title: "Memo: Does Llama-3.3-70B recover PRCA on prompt v1?"
+subtitle: "Research memorandum — full-cohort vLLM baseline (mode-collapse case)"
+author: Jack J. Burleson
+date: 2026-07-26
+---
+
+**Research question:** Does `meta-llama/Llama-3.3-70B-Instruct`, when personified via prompt-v1 cumulative Terrarium narratives, recover participants’ group and interpersonal PRCA scores — and do employment (RQ1), transit (RQ2), or full cumulative context (RQ3) reduce absolute error?
+
+**Formal write-up:** [`docs/llm_baseline_llama33_70b_v1.md`](../docs/llm_baseline_llama33_70b_v1.md)  
+**Cross-model memo:** [`vllm_v1_cross_model_comparison.md`](vllm_v1_cross_model_comparison.md)
+
+---
+
+## Answer, Response, + Summary of Results
+
+Full-cohort vLLM export on the matched Prolific↔Qualtrics sample (**n = 241**; **1,205** prompts; parse **100%**). Result file: `data/vllm/llama-3-70b/llama_70b.csv`.
+
+**Short answer:** Engineering success (valid CA JSON) but a **failed digital twin via mode collapse**. Across 1,205 prompts there are only **8** unique `generated_text` strings; **≈93%** of rows emit the constant prior **group = 18 / interpersonal = 12** (moderate / low bands). Pooled MAE is **6.02** (group) / **4.65** (IP). Group bands (**26.3%**) are below chance; IP bands (**52.0%**) look strong only because the constant low-IP prior matches cohort base rates — not because the model tracks individuals. Tier ladders are flat: RQ1–RQ3 are null.
+
+### Collapse diagnostics
+
+| Signal | Value |
+|---|---:|
+| Unique generated texts | **8** |
+| Share pred_group = 18 | **92.8%** |
+| Share pred_IP = 12 | **93.2%** |
+| Mean signed error (G / IP) | **+3.51** / **−2.10** |
+
+### Metrics by tier
+
+| Tier | MAE G | MAE IP | Band G | Band IP | Mean err G | Mean err IP |
+|---|---:|---:|---:|---:|---:|---:|
+| demos | 6.05 | 4.71 | 26.6% | 51.0% | +3.58 | −2.01 |
+| employment | 6.07 | 4.66 | 25.7% | 51.9% | +3.53 | −2.09 |
+| geo | 6.07 | 4.66 | 26.1% | 51.9% | +3.53 | −2.09 |
+| transit | 6.08 | 4.69 | 26.1% | 51.9% | +3.58 | −2.01 |
+| full | **5.83** | **4.51** | 27.0% | **53.5%** | +3.32 | −2.28 |
+
+### RQ verdicts
+
+- **RQ1 (employment):** No — Δ MAE ≈ 0.
+- **RQ2 (transit):** No — flat (unlike Llama-3.1’s IP collapse; here *nothing* changes).
+- **RQ3 (full):** Negligible MAE dips still inside collapse.
+
+**Conclusion.** Scaling to Llama-3.3-70B on prompt v1 does **not** improve digital-twin recovery on this cohort. The model behaves as a **near-constant stereotype prior**, not a person-conditioned estimator. Prefer smaller models that still vary predictions (DeepSeek group MAE **5.22**; Llama-3.2 group bands **52.7%**) for v1 comparisons, and treat 70B as a cautionary case for decoding / prompting / constrained-output follow-ups before claiming scale helps.
+
+*Sources:* `data/vllm/llama-3-70b/llama_70b.md` · `docs/llm_baseline_llama33_70b_v1.md` · evaluator `ca_personas.evaluate` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
+
+---
+
+## What questions or uncertainties remain?
+
+Was temperature / sampling configured too greedily (or with too-strong JSON schema forcing)? Does constrained decoding or higher temperature restore score variance without tanking parse rate? Does the same collapse appear under prompt packaging v2/v3?
+
+## What other analyses pair with this memo?
+
+Cross-model ranking: [`vllm_v1_cross_model_comparison.md`](vllm_v1_cross_model_comparison.md). Non-collapsed siblings: [`vllm_v1_llama31_8b.md`](vllm_v1_llama31_8b.md), [`vllm_v1_llama32_3b.md`](vllm_v1_llama32_3b.md), [`vllm_v1_deepseek_r1_distill.md`](vllm_v1_deepseek_r1_distill.md).
