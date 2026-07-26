@@ -33,14 +33,50 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+# Defaults: JackJBurleson canonical. Override with --account / --content-id
+# (e.g. jjb-morningstar / 019f97f7-a53e-c545-c9b7-9152d4984838).
 CONTENT_ID = "019f9a10-ebb9-d1d5-839f-97e794bfd0ca"
 ACCOUNT_NAME = "jackjburleson"
-SHARE_URL = f"https://{CONTENT_ID}.share.connect.posit.cloud/"
-UI_URL = f"https://connect.posit.cloud/{ACCOUNT_NAME}/content/{CONTENT_ID}"
 API = "https://api.connect.posit.cloud/v1"
 AUTH_HOST = "login.posit.cloud"
 CLIENT_ID = "quarto-cli"
 SCOPE = "vivid"
+
+KNOWN_TARGETS = {
+    "jackjburleson": "019f9a10-ebb9-d1d5-839f-97e794bfd0ca",
+    "jjb-morningstar": "019f97f7-a53e-c545-c9b7-9152d4984838",
+}
+
+
+def share_url(content_id: str | None = None) -> str:
+    return f"https://{(content_id or CONTENT_ID)}.share.connect.posit.cloud/"
+
+
+def ui_url(account: str | None = None, content_id: str | None = None) -> str:
+    return (
+        f"https://connect.posit.cloud/{account or ACCOUNT_NAME}"
+        f"/content/{content_id or CONTENT_ID}"
+    )
+
+
+SHARE_URL = share_url()
+UI_URL = ui_url()
+
+
+def configure_target(*, account: str | None = None, content_id: str | None = None) -> None:
+    """Set module-level publish target (account name + content id)."""
+    global CONTENT_ID, ACCOUNT_NAME, SHARE_URL, UI_URL
+    if account:
+        ACCOUNT_NAME = account
+        if not content_id and account in KNOWN_TARGETS:
+            content_id = KNOWN_TARGETS[account]
+    if content_id:
+        CONTENT_ID = content_id
+    SHARE_URL = share_url()
+    UI_URL = ui_url()
+    _log(f"Publish target: account={ACCOUNT_NAME} content={CONTENT_ID}")
+    _log(f"  UI    {UI_URL}")
+    _log(f"  Share {SHARE_URL}")
 
 SIBLING = (ROOT / ".." / "sibling_data").resolve()
 TMP_SIBLING = Path("/tmp/sibling_data")
@@ -299,7 +335,7 @@ def api(
 
 
 def assert_writable_account(access: str) -> str:
-    """Require the jackjburleson account — never fall back to jjb-morningstar."""
+    """Require the configured ACCOUNT_NAME (no silent fallback to another account)."""
     accounts = api("GET", "accounts?has_user_role=true", access) or {}
     rows = accounts.get("data") or []
     names = [a.get("name") for a in rows]
@@ -309,8 +345,8 @@ def assert_writable_account(access: str) -> str:
             return a["id"]
     raise SystemExit(
         f"Login has no '{ACCOUNT_NAME}' account (got {names}). "
-        "Log into Posit as jackjburleson (not jjb-morningstar), then re-run with "
-        "--force-reauth."
+        f"Re-run with --force-reauth while logged into the '{ACCOUNT_NAME}' Posit account, "
+        "or pass --account matching a name in the authorized list."
     )
 
 
@@ -387,7 +423,11 @@ def publish_bundle(access: str, site: Path) -> dict:
         url = rev.get("url")
         _log(f"poll[{i}] status={status} result={result} url={url}")
         if result == "success" or status == "published":
-            return {"content": content, "share_url": url or SHARE_URL, "ui_url": UI_URL}
+            return {
+                "content": content,
+                "share_url": url or share_url(),
+                "ui_url": ui_url(),
+            }
         if result and result not in {"success", "running", None}:
             raise SystemExit(f"Publish failed: {rev.get('publish_error_code')} {rev.get('publish_error_args')}")
         time.sleep(3)
@@ -429,7 +469,17 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument(
         "--force-reauth",
         action="store_true",
-        help="Clear cached/env Posit tokens and run device OAuth as jackjburleson",
+        help="Clear cached/env Posit tokens and run device OAuth",
+    )
+    p.add_argument(
+        "--account",
+        default=None,
+        help="Posit Connect Cloud account name (jackjburleson | jjb-morningstar)",
+    )
+    p.add_argument(
+        "--content-id",
+        default=None,
+        help="Connect Cloud content UUID (defaults from --account when known)",
     )
     p.add_argument("--seed", type=int, default=42)
     p.add_argument(
@@ -439,6 +489,8 @@ def main(argv: list[str] | None = None) -> int:
         help="Substring that must appear on the live share page (repeatable)",
     )
     args = p.parse_args(argv)
+
+    configure_target(account=args.account, content_id=args.content_id)
 
     prolific, qualtrics = resolve_full_data(allow_excerpt=args.allow_excerpt)
     _log(f"Data: prolific={[str(x) for x in prolific]} qualtrics={qualtrics}")

@@ -418,13 +418,16 @@ The Python package `ca_personas` supports Ollama, OpenRouter, and a deterministi
 
 A seven-model tabular suite (Ridge, Elastic Net, k-NN, Random Forest, HistGradientBoosting, XGBoost, MLP) on the same tiers and targets is reported in [`docs/ml_baselines.md`](docs/ml_baselines.md). On the full cohort, the **best** group-CA MAE reaches **4.49** at `transit` (Ridge; RF = 4.68); the best interpersonal MAE reaches **4.25** (Elastic Net; MLP = 4.31). Feature attributions and ML-vs-LLM comparisons are documented in [`docs/factor_feature_importance.md`](docs/factor_feature_importance.md), [`docs/ml_vs_llm.md`](docs/ml_vs_llm.md), and [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md).
 
-The first full-cohort **live** LLM baseline (Llama-3.1-8B-Instruct on prompt **v1**, five tiers) is published in [`docs/llm_baseline_llama31_v1.md`](docs/llm_baseline_llama31_v1.md). Prompt packaging (v2) and ablation tiers (v3) are summarized in [`docs/persona_prompt_versions.md`](docs/persona_prompt_versions.md).
+Full-cohort **live** LLM baselines on prompt **v1** (five tiers): [Llama-3.1-8B-Instruct](docs/llm_baseline_llama31_v1.md) and [Llama-3.2-3B-Instruct](docs/llm_baseline_llama32_instruct_v1.md). Prompt packaging (v2) and ablation tiers (v3) are summarized in [`docs/persona_prompt_versions.md`](docs/persona_prompt_versions.md).
 
 # Results
 
-## Live LLM baseline (Llama-3.1, prompt v1)
+## Live LLM baselines (prompt v1)
 
-On the matched analytic cohort (**N = 241**; 1,205 prompts; 100% JSON parse), Llama-3.1-8B-Instruct recovers interpersonal **bands** above chance at demos/employment/geo (~52%), but is not a high-fidelity digital twin of PRCA scores (exact match ~6–13%; group MAE best **5.68** at `transit`, still above the tabular floor). Employment barely helps; transit **hurts** interpersonal MAE (4.67 → **8.17**) via systematic over-prediction. Full tables and RQ verdicts: [`docs/llm_baseline_llama31_v1.md`](docs/llm_baseline_llama31_v1.md).
+On the matched analytic cohort (**N = 241**; 1,205 prompts; 100% JSON parse):
+
+- **Llama-3.1-8B-Instruct** — interpersonal bands above chance at demos/employment/geo (~52%); not a high-fidelity twin (exact ~6–13%; group MAE best **5.68** at `transit`). Transit **hurts** interpersonal MAE (4.67 → **8.17**) via over-prediction. Details: [`docs/llm_baseline_llama31_v1.md`](docs/llm_baseline_llama31_v1.md).
+- **Llama-3.2-3B-Instruct** — lower overall MAE than 8B (group **5.51** / IP **5.35**) and higher group band accuracy (**52.7%** vs 28.8%); IP band still near chance (**30%**). Details: [`docs/llm_baseline_llama32_instruct_v1.md`](docs/llm_baseline_llama32_instruct_v1.md).
 
 ## Mock LLM prediction error by information tier
 
