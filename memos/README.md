@@ -22,7 +22,11 @@ Individual research memoranda for PSYCH 755, following the course template
 | [`q27_intensity_among_riders.md`](q27_intensity_among_riders.md) | Jack J. Burleson | What predicts Q27 intensity among already-regular riders? |
 | [`common_n_head_to_head.md`](common_n_head_to_head.md) | Jack J. Burleson | Equal complete-case ranking of major transit predictors |
 | [`residual_ca_after_rideshare.md`](residual_ca_after_rideshare.md) | Jack J. Burleson | Does CA still separate riders after accounting for Q28? |
+| [`vllm_v1_cross_model_comparison.md`](vllm_v1_cross_model_comparison.md) | Jack J. Burleson | Do v1 vLLM models recover PRCA as digital twins (cross-model)? |
+| [`vllm_v1_llama31_8b.md`](vllm_v1_llama31_8b.md) | Jack J. Burleson | Does Llama-3.1-8B recover PRCA on prompt v1? |
+| [`vllm_v1_llama32_3b.md`](vllm_v1_llama32_3b.md) | Jack J. Burleson | Does Llama-3.2-3B-Instruct recover PRCA on prompt v1? |
+| [`vllm_v1_deepseek_r1_distill.md`](vllm_v1_deepseek_r1_distill.md) | Jack J. Burleson | Does DeepSeek-R1-Distill-Llama-8B recover PRCA on prompt v1? |
 
-Agenda / hub write-up: [`docs/research_memo_agenda.md`](../docs/research_memo_agenda.md) · [`docs/secondary_rq_followup_experiments.md`](../docs/secondary_rq_followup_experiments.md)
+Agenda / hub write-up: [`docs/research_memo_agenda.md`](../docs/research_memo_agenda.md) · [`docs/secondary_rq_followup_experiments.md`](../docs/secondary_rq_followup_experiments.md) · LLM wave: [`docs/llm_vllm_memo_agenda.md`](../docs/llm_vllm_memo_agenda.md)
 
 Supporting figure(s) live under [`figures/`](figures/).

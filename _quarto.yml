@@ -13,6 +13,8 @@ project:
     - docs/persona_prompt_versions.md
     - docs/llm_baseline_llama31_v1.md
     - docs/llm_baseline_llama32_instruct_v1.md
+    - docs/llm_baseline_deepseek_r1_distill_v1.md
+    - docs/llm_vllm_memo_agenda.md
     - docs/research_memo_agenda.md
     - docs/secondary_rq_transit_ca.md
     - docs/secondary_rq_geo_predicts_transit.md
@@ -38,6 +40,10 @@ project:
     - memos/residual_ca_after_rideshare.md
     - memos/feature_predictive_power_ml_llm.md
     - memos/comprehensive_predictors_transit.md
+    - memos/vllm_v1_cross_model_comparison.md
+    - memos/vllm_v1_llama31_8b.md
+    - memos/vllm_v1_llama32_3b.md
+    - memos/vllm_v1_deepseek_r1_distill.md
 
 website:
   title: "LLM Prediction of Communication Apprehension"
@@ -74,6 +80,10 @@ website:
             text: Llama-3.1 baseline (prompt v1)
           - href: docs/llm_baseline_llama32_instruct_v1.md
             text: Llama-3.2-3B Instruct (prompt v1)
+          - href: docs/llm_baseline_deepseek_r1_distill_v1.md
+            text: DeepSeek-R1-Distill (prompt v1)
+          - href: docs/llm_vllm_memo_agenda.md
+            text: vLLM memo agenda (v1)
       - text: Secondary RQs
         menu:
           - href: docs/research_memo_agenda.md
@@ -128,6 +138,14 @@ website:
             text: Comprehensive predictors
           - href: memos/feature_predictive_power_ml_llm.md
             text: Feature power (SHAP / F1)
+          - href: memos/vllm_v1_cross_model_comparison.md
+            text: "vLLM · Cross-model (v1)"
+          - href: memos/vllm_v1_llama31_8b.md
+            text: "vLLM · Llama-3.1-8B"
+          - href: memos/vllm_v1_llama32_3b.md
+            text: "vLLM · Llama-3.2-3B"
+          - href: memos/vllm_v1_deepseek_r1_distill.md
+            text: "vLLM · DeepSeek-R1-Distill"
     right:
       - icon: github
         href: https://github.com/Exios66/psych755-jjb
@@ -165,6 +183,8 @@ website:
           - docs/persona_prompt_efficiency.md
           - docs/llm_baseline_llama31_v1.md
           - docs/llm_baseline_llama32_instruct_v1.md
+          - docs/llm_baseline_deepseek_r1_distill_v1.md
+          - docs/llm_vllm_memo_agenda.md
       - section: "Secondary RQ write-ups"
         contents:
           - docs/research_memo_agenda.md
@@ -202,6 +222,12 @@ website:
           - section: "Feature attributions"
             contents:
               - memos/feature_predictive_power_ml_llm.md
+          - section: "v1 vLLM digital-twin memos"
+            contents:
+              - memos/vllm_v1_cross_model_comparison.md
+              - memos/vllm_v1_llama31_8b.md
+              - memos/vllm_v1_llama32_3b.md
+              - memos/vllm_v1_deepseek_r1_distill.md
 
 crossref:
   fig-title: "Figure"

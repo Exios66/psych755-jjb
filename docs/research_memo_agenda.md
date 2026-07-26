@@ -44,8 +44,20 @@ After the primary persona-tier LLM pipeline and the first wave of secondary Rand
 - **Figures:** `memos/figures/*_followup_memo.png` + overview
 - **Write-up hub:** [`docs/secondary_rq_followup_experiments.md`](secondary_rq_followup_experiments.md)
 
-## Intentionally deferred (need live LLM or new data)
+## vLLM digital-twin memos (wave 1 — prompt v1)
 
+Live GPU baselines are documented separately in [`docs/llm_vllm_memo_agenda.md`](llm_vllm_memo_agenda.md):
+
+| Memo | Headline |
+|---|---|
+| [`memos/vllm_v1_cross_model_comparison.md`](../memos/vllm_v1_cross_model_comparison.md) | DeepSeek best group MAE; 3B best group bands; 8B IP collapses at transit |
+| [`memos/vllm_v1_llama31_8b.md`](../memos/vllm_v1_llama31_8b.md) | Llama-3.1-8B cautionary baseline |
+| [`memos/vllm_v1_llama32_3b.md`](../memos/vllm_v1_llama32_3b.md) | Llama-3.2-3B Instruct lower MAE than 8B |
+| [`memos/vllm_v1_deepseek_r1_distill.md`](../memos/vllm_v1_deepseek_r1_distill.md) | DeepSeek-R1-Distill tier-stable; best group MAE |
+
+## Intentionally deferred (need further live LLM or new data)
+
+- v2 / v3 prompt re-runs on the same GPU models
 - Live-LLM TreeSHAP / surrogate SHAP (mock already covered)
 - Multiply-imputed car items (would change missingness story)
 - City/density GIS layers beyond Qualtrics lat/long
