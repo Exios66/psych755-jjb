@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-"""Regenerate all Posit-site memo/docs PNGs in APA grayscale format.
+"""Canonical regenerator for Posit-site memo/docs PNGs (APA grayscale).
 
 Reads seeded full-cohort artifacts under ``outputs/`` and
 ``artifacts/posit_full_cohort/secondary_results.json``. Does not re-fit models.
+
+This script owns the committed site PNGs under ``docs/figures/`` and
+``memos/figures/``. For color exploratory re-fits on sibling File A/B/C, see
+``scripts/regenerate_memo_figures.py`` (do not mix the two without intent).
 """
 
 from __future__ import annotations

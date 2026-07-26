@@ -24,10 +24,12 @@ We re-used the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26` o
 
 | Feature family | Analytic n | Regular | ROC-AUC | vs geo | vs CA |
 |---|---:|---:|---:|:---:|:---:|
+| **Q28 only** | 241 | 101 | **0.762** | ✓ | ✓ |
 | Mobility bundle (Q20/Q21 + Q28/Q29 + employment) | 143 | 56 | **0.747** | ✓ | ✓ |
 | Ride-share (Q28/Q29) | 233 | 99 | **0.745** | ✓ | ✓ |
 | Car license & access (Q20/Q21) | 149 | 58 | **0.607** | ✓ | ✓ |
 | Group + interpersonal CA *(benchmark)* | 241 | 101 | 0.590 | ✓ | — |
+| Q27 only | 239 | 101 | **0.589** | ✓ | ≈ |
 | Lat/long *(benchmark)* | 241 | 101 | 0.551 | — | — |
 | Employment status | 241 | 101 | **0.528** | ✗ | ✗ |
 | Chance / prevalence | — | — | 0.500 | — | — |

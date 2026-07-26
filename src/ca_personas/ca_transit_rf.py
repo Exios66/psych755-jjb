@@ -434,6 +434,7 @@ def run_ca_transit_rf_pipeline(
         prolific_paths=prolific_paths,
         qualtrics_path=qualtrics_path,
         join_how=join_how,
+        allow_excerpt_fallback=False,
     )
     analysis = run_ca_transit_rf_analysis(
         participants,

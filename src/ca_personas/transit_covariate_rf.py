@@ -395,8 +395,18 @@ def run_all_followup_analyses(
     n_perm_repeats: int = 30,
     random_state: int = 42,
     spec_keys: Sequence[str] | None = None,
+    geo_benchmark_auc: float | None = None,
+    ca_benchmark_auc: float | None = None,
+    benchmark_n: int | None = None,
+    benchmark_n_regular: int | None = None,
 ) -> dict[str, Any]:
-    """Run every follow-up feature family and build a comparison table."""
+    """Run every follow-up feature family and build a comparison table.
+
+    When ``geo_benchmark_auc`` / ``ca_benchmark_auc`` are provided (from live
+    companion RF runs on the same cohort), those values are used in the
+    comparison table. Otherwise the published seed=42 full-cohort benchmarks
+    (0.551 / 0.590) are retained for offline/excerpt smoke tests.
+    """
     keys = list(spec_keys) if spec_keys is not None else list(FEATURE_SPECS)
     analyses: dict[str, Any] = {}
     rows: list[dict[str, Any]] = []
@@ -424,16 +434,22 @@ def run_all_followup_analyses(
                 "brier": m["brier"],
             }
         )
-    # Reference benchmarks (from seeded companion runs on the same cohort definition).
+    geo_auc = 0.551 if geo_benchmark_auc is None else float(geo_benchmark_auc)
+    ca_auc = 0.590 if ca_benchmark_auc is None else float(ca_benchmark_auc)
+    # Round published-style benchmarks to 3 decimals for table display stability.
+    geo_auc_display = round(geo_auc, 3)
+    ca_auc_display = round(ca_auc, 3)
+    n_bench = 241 if benchmark_n is None else int(benchmark_n)
+    n_reg_bench = 101 if benchmark_n_regular is None else int(benchmark_n_regular)
     rows.extend(
         [
             {
                 "spec_key": "geo_benchmark",
                 "label": "Lat/long (geo memo benchmark)",
-                "n": 241,
-                "n_regular": 101,
-                "prevalence": 101 / 241,
-                "roc_auc": 0.551,
+                "n": n_bench,
+                "n_regular": n_reg_bench,
+                "prevalence": n_reg_bench / n_bench if n_bench else None,
+                "roc_auc": geo_auc_display,
                 "average_precision": None,
                 "balanced_accuracy": None,
                 "f1": None,
@@ -442,10 +458,10 @@ def run_all_followup_analyses(
             {
                 "spec_key": "ca_benchmark",
                 "label": "Group + interpersonal CA (CA memo benchmark)",
-                "n": 241,
-                "n_regular": 101,
-                "prevalence": 101 / 241,
-                "roc_auc": 0.590,
+                "n": n_bench,
+                "n_regular": n_reg_bench,
+                "prevalence": n_reg_bench / n_bench if n_bench else None,
+                "roc_auc": ca_auc_display,
                 "average_precision": None,
                 "balanced_accuracy": None,
                 "f1": None,
@@ -475,7 +491,11 @@ def run_all_followup_analyses(
             "Among the geo-memo follow-up candidates (car access/license, employment, "
             "ride-share frequency), which features best predict regular public-transit use?"
         ),
-        "benchmarks": {"geo_auc": 0.551, "ca_auc": 0.590, "chance_auc": 0.500},
+        "benchmarks": {
+            "geo_auc": geo_auc_display,
+            "ca_auc": ca_auc_display,
+            "chance_auc": 0.500,
+        },
         "best_spec": best_key,
         "best_auc": analyses[best_key]["metrics"]["roc_auc"],
         "comparison": comparison.to_dict(orient="records"),
@@ -660,6 +680,7 @@ def run_transit_covariate_pipeline(
         prolific_paths=prolific_paths,
         qualtrics_path=qualtrics_path,
         join_how=join_how,
+        allow_excerpt_fallback=False,
     )
     bundle = run_all_followup_analyses(
         participants,

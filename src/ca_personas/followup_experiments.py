@@ -1496,6 +1496,8 @@ def run_followup_experiments_pipeline(
         prolific_paths=prolific_paths,
         qualtrics_path=qualtrics_path,
         join_how=join_how,
+        # Manuscript / memo pipelines must not silently use unit-test excerpts.
+        allow_excerpt_fallback=False,
     )
     bundle = run_all_followup_experiments(
         participants,

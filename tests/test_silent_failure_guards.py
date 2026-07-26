@@ -56,8 +56,9 @@ def test_run_predictions_fails_when_all_rows_error():
 
 
 def test_config_path_resolution_falls_back_to_excerpts(monkeypatch, tmp_path):
-    # When no full-cohort staging directory is present, resolution must fall
-    # back to public excerpt fixtures instead of raising FileNotFoundError.
+    # When no full-cohort staging directory is present, library resolution may
+    # fall back to public excerpt fixtures (tests / offline CI). CLI analysis
+    # commands separately refuse that fallback via allow_excerpt_fallback=False.
     import ca_personas.paths as paths_mod
 
     monkeypatch.delenv("CA_SIBLING_DATA", raising=False)
@@ -69,14 +70,29 @@ def test_config_path_resolution_falls_back_to_excerpts(monkeypatch, tmp_path):
     )
     # Config lists sibling_data paths that are absent in this sandbox.
     config = load_config(ROOT / "config" / "default.yaml")
-    prolific = _resolve_prolific_paths(None, config)
-    qualtrics = _resolve_qualtrics_path(None, config)
+    prolific = _resolve_prolific_paths(None, config, allow_excerpt_fallback=True)
+    qualtrics = _resolve_qualtrics_path(None, config, allow_excerpt_fallback=True)
     assert all(p.is_file() for p in prolific)
     assert qualtrics.is_file()
     assert EXCERPT_PROLIFIC in prolific or any(
         p.name == "prolific_excerpt.csv" for p in prolific
     )
     assert qualtrics == EXCERPT_QUALTRICS or qualtrics.name == "qualtrics_excerpt.csv"
+
+
+def test_config_path_resolution_can_refuse_excerpt_fallback(monkeypatch, tmp_path):
+    import ca_personas.paths as paths_mod
+
+    monkeypatch.delenv("CA_SIBLING_DATA", raising=False)
+    monkeypatch.setattr(paths_mod, "SIBLING_DATA_DIR", tmp_path / "missing_sibling")
+    monkeypatch.setattr(
+        paths_mod,
+        "_staging_dirs",
+        lambda: [tmp_path / "missing_sibling", tmp_path / "also_missing"],
+    )
+    config = load_config(ROOT / "config" / "default.yaml")
+    with pytest.raises(FileNotFoundError):
+        _resolve_prolific_paths(None, config, allow_excerpt_fallback=False)
 
 
 def test_load_config_missing_file_raises(tmp_path: Path):

@@ -534,6 +534,7 @@ def run_transit_ca_pipeline(
         prolific_paths=prolific_paths,
         qualtrics_path=qualtrics_path,
         join_how=join_how,
+        allow_excerpt_fallback=False,
     )
     analysis = run_transit_ca_analysis(
         participants,

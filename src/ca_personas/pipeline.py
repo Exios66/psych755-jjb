@@ -60,8 +60,14 @@ def _existing_files(paths: Sequence[Path]) -> list[Path]:
 def _resolve_prolific_paths(
     prolific_path: str | Path | Sequence[str | Path] | None,
     config: dict[str, Any],
+    *,
+    allow_excerpt_fallback: bool = True,
 ) -> list[Path]:
-    """Prefer explicit CLI paths, then existing config paths, then sibling/excerpt defaults."""
+    """Prefer explicit CLI paths, then complete config paths, then sibling/excerpt defaults.
+
+    Partial ``prolific_files`` lists (e.g. File A present, File B missing) raise
+    ``FileNotFoundError`` so analyses never silently run on a truncated wave.
+    """
     if prolific_path is not None:
         if isinstance(prolific_path, (str, Path)):
             return [Path(prolific_path)]
@@ -74,22 +80,24 @@ def _resolve_prolific_paths(
         if existing:
             if len(existing) != len(candidates):
                 missing = [str(p) for p in candidates if not p.is_file()]
-                warnings.warn(
-                    "Some config prolific_files are missing and were skipped: "
-                    + ", ".join(missing),
-                    stacklevel=2,
+                raise FileNotFoundError(
+                    "Incomplete config prolific_files; refusing truncated cohort. "
+                    f"Missing: {', '.join(missing)}. Stage the full File A+B pair "
+                    "or remove partial exports."
                 )
             return existing
     if "prolific" in paths_cfg:
         candidate = Path(paths_cfg["prolific"])
         if candidate.is_file():
             return [candidate]
-    return default_prolific_paths()
+    return default_prolific_paths(allow_excerpt_fallback=allow_excerpt_fallback)
 
 
 def _resolve_qualtrics_path(
     qualtrics_path: str | Path | None,
     config: dict[str, Any],
+    *,
+    allow_excerpt_fallback: bool = True,
 ) -> Path:
     """Prefer explicit CLI path, then existing config path, then sibling/excerpt default."""
     if qualtrics_path is not None:
@@ -99,7 +107,7 @@ def _resolve_qualtrics_path(
         candidate = Path(paths_cfg["qualtrics"])
         if candidate.is_file():
             return candidate
-    return default_qualtrics_path()
+    return default_qualtrics_path(allow_excerpt_fallback=allow_excerpt_fallback)
 
 
 def run_pipeline(
@@ -121,7 +129,7 @@ def run_pipeline(
 
     When ``../sibling_data/`` contains File A/B/C, those exports are preferred
     (stacked Prolific waves + Qualtrics File C). Excerpt fixtures remain the
-    fallback for CI / Posit Connect Cloud.
+    fallback for unit tests / offline CI only — never for Posit manuscript renders.
 
     Returns a dict of artifact paths.
     """

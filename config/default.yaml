@@ -2,8 +2,10 @@
 #   ../sibling_data/PRCAProlificExport_FileA.csv
 #   ../sibling_data/PRCAProlificExport_FileB.csv
 #   ../sibling_data/PRCAQualtricsExport_FileC.csv
-# When those files are absent, ca_personas.pipeline / paths fall back to
-# data/excerpts/ fixtures (CI / Posit Connect Cloud).
+# When those files are absent, library helpers may fall back to
+# data/excerpts/ fixtures for unit tests / offline CI only.
+# Posit Connect Cloud renders use sibling File A/B/C when staged, otherwise
+# committed artifacts under artifacts/posit_full_cohort/ (never excerpts).
 
 paths:
   prolific_files:
@@ -27,7 +29,8 @@ tiers:
   - full
 
 llm:
-  provider: ollama
+  # Prefer mock for reproducible dry-runs; pass --provider ollama|openrouter for live LLM.
+  provider: mock
   temperature: 0.2
   max_tokens: 256
   timeout_seconds: 120
