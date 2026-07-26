@@ -349,7 +349,7 @@ Persona prompts are cumulative and follow the **AI Terrarium / ICA 2026** digita
 |:--:|---|---|
 | 1 | `demos` | Age, sex, country of residence, student status |
 | 2 | `employment` | + employment status |
-| 3 | `geo` | + survey latitude / longitude |
+| 3 | `geo` | + approximate survey lat/long (1 decimal) |
 | 4 | `transit` | + public transit / ride-share / license / car access |
 | 5 | `full` | + Qualtrics free-response attitudes (Q18.1 / Q19) |
 

@@ -104,10 +104,11 @@ structured questionnaire checklists:
 
 1. `demos`
 2. `employment`
-3. `geo` (country + lat/long)
-4. `transit`
+3. `geo` (approximate survey lat/long at 1 decimal; country not repeated)
+4. `transit` (Q26/Q28 signal-first; skip rides-per-day when frequency is Never)
 5. `full` — all tabular fields plus Qualtrics free-response attitudes (foolproof personification bundle)
 
+Packaging rationale (Llama-3.1 failure modes → v3.1 efficiency): [`persona_prompt_efficiency.md`](persona_prompt_efficiency.md).  
 See [`prompts/system_prompt.md`](../prompts/system_prompt.md) and
 [`prompts/examples/`](../prompts/examples/) for the system contract and sample prompts.
 

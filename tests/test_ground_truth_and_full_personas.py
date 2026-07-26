@@ -40,7 +40,8 @@ def test_full_persona_includes_qualtrics_voice_when_present():
 
     prompt = build_persona_prompt(row, "full")
     assert prompt.user_prompt.startswith("You ")
-    assert "How anxious or apprehensive" in prompt.user_prompt
+    assert "Rate your communication apprehension" in prompt.user_prompt
+    assert "independently" in prompt.user_prompt
     assert "band" in prompt.user_prompt.lower()
     assert "Fully personify" not in prompt.user_prompt
     assert "Demographics:" not in prompt.user_prompt

@@ -44,6 +44,11 @@ situation, place, travel habits, and any self-described attitudes conveyed in
 the profile). Do not invent biography that contradicts the profile; you may
 only elaborate lightly in ways consistent with what was told to you.
 
+Use the profile as context, but do not treat any single life circumstance as
+deterministically fixing your apprehension. Rate the two communication contexts
+independently — group discussion anxiety and one-on-one conversation anxiety
+can differ.
+
 Rate your own communication apprehension using McCroskey's PRCA scale logic:
 for each of two contexts (group discussions, and one-on-one conversations with
 new people), report how anxious/apprehensive YOU feel, as an integer from 6
@@ -109,6 +114,20 @@ def _fmt(value: Any) -> str:
         return f"{value:.4f}".rstrip("0").rstrip(".")
     text = str(value).strip()
     return text if text else "unknown"
+
+
+def _coord_1dp(value: Any) -> str | None:
+    """Format a coordinate to one decimal place (approx. place cue, less noise)."""
+    if not _present(value):
+        return None
+    try:
+        return f"{float(value):.1f}"
+    except (TypeError, ValueError):
+        return None
+
+
+def _is_never(value: Any) -> bool:
+    return _present(value) and str(value).strip().lower() == "never"
 
 
 def _sex_noun(sex: Any) -> str | None:
@@ -266,48 +285,50 @@ def employment_block(row: pd.Series) -> list[str]:
 
 
 def geo_sentences(row: pd.Series) -> list[str]:
-    sentences: list[str] = []
-    has_lat = _present(row.get("LocationLatitude"))
-    has_lon = _present(row.get("LocationLongitude"))
-    residence = _present(row.get("Country of residence"))
+    """Approximate place cue; avoid repeating country already stated in demos.
 
-    if residence and has_lat and has_lon:
-        sentences.append(
-            f"You live in {_place(row.get('Country of residence'))} near latitude "
-            f"{_fmt(row.get('LocationLatitude'))} and longitude "
-            f"{_fmt(row.get('LocationLongitude'))}."
-        )
-    elif has_lat and has_lon:
-        sentences.append(
-            f"Your approximate location is latitude "
-            f"{_fmt(row.get('LocationLatitude'))} and longitude "
-            f"{_fmt(row.get('LocationLongitude'))}."
-        )
-    elif residence:
-        # Avoid repeating residence if demos already covered it; still useful
-        # when geo is the first place cue available.
-        sentences.append(f"You live in {_place(row.get('Country of residence'))}.")
-
-    if _present(row.get("UserLanguage")):
-        lang = _fmt(row.get("UserLanguage"))
-        if lang.upper() == "EN":
-            sentences.append("You completed the survey in English.")
-        else:
-            sentences.append(f"You completed the survey in {lang}.")
-    return sentences
+    Cumulative tiers always include the demos paragraph first, so country of
+    residence is not restated here. When coordinates are missing, this layer
+    contributes nothing (country remains in demos).
+    """
+    lat = _coord_1dp(row.get("LocationLatitude"))
+    lon = _coord_1dp(row.get("LocationLongitude"))
+    if lat is None or lon is None:
+        return []
+    # Rounded coords keep geographic signal without false-precision noise.
+    return [
+        f"Your approximate survey location is near latitude {lat} "
+        f"and longitude {lon}."
+    ]
 
 
 def geo_block(row: pd.Series) -> list[str]:
     return geo_sentences(row)
 
 
+def _rides_intensity_sentence(value: Any, *, mode: str) -> str | None:
+    """Build a rides-per-day sentence; *mode* is 'public transportation' or 'ride share'."""
+    if not _present(value):
+        return None
+    rides = _rides_phrase(value)
+    if "ride" in rides.lower():
+        return f"On a typical day of {mode} use, you take {rides}."
+    return f"On a typical day of {mode} use, you take {rides} rides."
+
+
 def transit_sentences(row: pd.Series) -> list[str]:
-    """Paraphrase Q26–Q29 / Q20–Q21 into second-person narrative statements."""
+    """Paraphrase transit items signal-first: Q26 → Q28 → intensity → car access.
+
+    Skips rides-per-day (Q27/Q29) when the matching frequency is Never — those
+    intensity items are nonsensical without use and add token noise.
+    """
     sentences: list[str] = []
 
+    # 1) Public-transit frequency (Q26) — primary mobility cue for CA.
+    q26_never = _is_never(row.get("Q26"))
     if _present(row.get("Q26")):
         freq = _fmt(row.get("Q26"))
-        if freq.lower() == "never":
+        if q26_never:
             sentences.append(
                 "In the last three months, you never used public transportation "
                 "(bus, train, tram, etc.)."
@@ -317,22 +338,15 @@ def transit_sentences(row: pd.Series) -> list[str]:
                 "In the last three months, you used public transportation "
                 f"(bus, train, tram, etc.) {freq}."
             )
+            intensity = _rides_intensity_sentence(row.get("Q27"), mode="public transportation")
+            if intensity:
+                sentences.append(intensity)
 
-    if _present(row.get("Q27")):
-        rides = _rides_phrase(row.get("Q27"))
-        if "ride" in rides.lower():
-            sentences.append(
-                f"On a typical day of public transportation use, you take {rides}."
-            )
-        else:
-            sentences.append(
-                "On a typical day of public transportation use, you take "
-                f"{rides} rides."
-            )
-
+    # 2) Ride-share frequency (Q28) — strongest tabular CA covariate in this cohort.
+    q28_never = _is_never(row.get("Q28"))
     if _present(row.get("Q28")):
         freq = _fmt(row.get("Q28"))
-        if freq.lower() == "never":
+        if q28_never:
             sentences.append(
                 "In the last three months, you never used ride share platforms "
                 "(Lyft, Uber, DiDi, etc.)."
@@ -342,18 +356,11 @@ def transit_sentences(row: pd.Series) -> list[str]:
                 "In the last three months, you used ride share platforms "
                 f"(Lyft, Uber, DiDi, etc.) {freq}."
             )
+            intensity = _rides_intensity_sentence(row.get("Q29"), mode="ride share")
+            if intensity:
+                sentences.append(intensity)
 
-    if _present(row.get("Q29")):
-        rides = _rides_phrase(row.get("Q29"))
-        if "ride" in rides.lower():
-            sentences.append(
-                f"On a typical day of ride share use, you take {rides}."
-            )
-        else:
-            sentences.append(
-                f"On a typical day of ride share use, you take {rides} rides."
-            )
-
+    # 3) License / car access after frequency (weaker CA signal; RQ2 “used sensibly”).
     license_yn = _yes_no(row.get("Q20"))
     if license_yn is True:
         sentences.append("You have a license to drive a car.")
@@ -475,13 +482,15 @@ def build_user_prompt(row: pd.Series, tier: str) -> str:
     paragraphs = build_narrative_sections(row, tier)
     persona = "\n\n".join(paragraphs) if paragraphs else "You are a survey respondent."
 
-    # Held-out-style self-report ask (mirrors Terrarium: persona first, then question).
+    # Calibrated ask: independent subscales + mid-scale anchor (reduces bleed from
+    # mobility cues into interpersonal over-prediction). No demographic
+    # anti-stereotype rails — stereotyping RQs must remain valid.
     ask = (
-        "How anxious or apprehensive do you feel about communicating in group "
-        "discussions, and in one-on-one conversations with new people?\n\n"
-        "Report your group discussion apprehension as an integer from 6 (very low) "
-        "to 30 (very high) and its band (low / moderate / high), and the same for "
-        "interpersonal / one-on-one conversation apprehension.\n\n"
+        "Rate your communication apprehension in two contexts independently:\n"
+        "(1) group discussions, and (2) one-on-one conversations with new people.\n\n"
+        "For each context, report an integer from 6 (very low) to 30 (very high) "
+        "and its band (low / moderate / high). Mid-scale scores are common; no "
+        "single life circumstance determines your apprehension.\n\n"
         "Return ONLY the JSON object specified in the system instructions."
     )
     return f"{persona}\n\n{ask}"

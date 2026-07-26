@@ -1,8 +1,10 @@
-# System Prompt Template v3.0
+# System Prompt Template v3.1
 
 Used by [`src/ca_personas/personas.py`](../src/ca_personas/personas.py) when asking an LLM to inhabit a participant’s digital twin and predict PRCA subscale scores (6–30) **and** classroom bands (low / moderate / high).
 
 Prompt framing follows the **AI Terrarium / ICA 2026** digital-twin practice: the user message is a **natural-language, second-person persona narrative** (“You are a …”), not a structured questionnaire checklist or a meta-instruction to “adopt” a profile. The system message only sets inhabitance + the CA JSON response contract.
+
+Packaging notes (v3.1): independent subscale ratings; non-deterministic use of context; geo uses 1-decimal approximate coordinates; transit is signal-first (Q26→Q28) and skips rides-per-day when frequency is Never. See [`docs/persona_prompt_efficiency.md`](../docs/persona_prompt_efficiency.md).
 
 This fenced block must stay identical to `SYSTEM_PROMPT` in `personas.py`.
 
@@ -12,6 +14,11 @@ person, in first person, from their lived context (age, student status, work
 situation, place, travel habits, and any self-described attitudes conveyed in
 the profile). Do not invent biography that contradicts the profile; you may
 only elaborate lightly in ways consistent with what was told to you.
+
+Use the profile as context, but do not treat any single life circumstance as
+deterministically fixing your apprehension. Rate the two communication contexts
+independently — group discussion anxiety and one-on-one conversation anxiety
+can differ.
 
 Rate your own communication apprehension using McCroskey's PRCA scale logic:
 for each of two contexts (group discussions, and one-on-one conversations with
@@ -47,8 +54,8 @@ fields are woven into the narrative when present.
 |---|---|
 | `demos` | Base demographics layer (Age, sex, country of residence, student status) + optional ethnicity / nationality / language |
 | `employment` | `demos` + employment status |
-| `geo` | `employment` + country + latitude/longitude |
-| `transit` | `geo` + public transit / ride-share / license / car access |
+| `geo` | `employment` + approximate survey lat/long (1 decimal; country not repeated) |
+| `transit` | `geo` + public transit / ride-share (Q26/Q28 first; Q27/Q29 only when used) + license / car access |
 | `full` | All of the above + Qualtrics free-response attitudes (advice + mobility ideal) |
 
 Full Prolific waves (File A/B) omit ethnicity / nationality / language; the demos

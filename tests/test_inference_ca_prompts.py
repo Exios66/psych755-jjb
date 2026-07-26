@@ -48,7 +48,8 @@ def test_personas_to_prompt_frame_includes_user_prompt():
     prompts = build_persona_prompts(participants, tiers=["demos"])
     frame = personas_to_prompt_frame(prompts, participants)
     assert frame.iloc[0]["prompt"].startswith("You ")
-    assert "How anxious or apprehensive" in frame.iloc[0]["prompt"]
+    assert "Rate your communication apprehension" in frame.iloc[0]["prompt"]
+    assert "independently" in frame.iloc[0]["prompt"]
     assert "answer" in frame.columns
 
 
