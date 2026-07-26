@@ -5,6 +5,8 @@ import pandas as pd
 from ca_personas.load import load_and_prepare, load_prolific, load_qualtrics
 from ca_personas.personas import (
     BASE_DEMO_FIELDS,
+    TIERS,
+    V3_TIERS,
     build_persona_prompt,
     build_persona_prompts,
     demos_block,
@@ -156,3 +158,58 @@ def test_transit_skips_intensity_when_frequency_is_never():
     assert "4-8 days a month" in used_text
     assert "typical day of public transportation" in used_text
     assert "typical day of ride share" in used_text
+
+
+def test_v3_tiers_disaggregate_mobility_and_voice():
+    row = pd.Series(
+        {
+            "participant_id": "v3_test_01",
+            "Age": 30,
+            "Sex": "Female",
+            "Country of residence": "United States",
+            "Student status": "No",
+            "Employment status": "Full-Time",
+            "LocationLatitude": 40.7128,
+            "LocationLongitude": -74.0060,
+            "Q26": "8 or more days a month",
+            "Q27": "3-4 rides in a typical day",
+            "Q28": "2-4 days a month",
+            "Q29": "1-2 rides in a typical day",
+            "Q20": "Yes",
+            "Q21": "No",
+            "Q18_advice": "Take a breath and ask one question.",
+            "Q19": "Bus when I can.",
+        }
+    )
+    assert set(V3_TIERS) <= set(TIERS)
+    assert len(TIERS) == 8
+
+    rideshare = build_persona_prompt(row, "v3_rideshare").user_prompt
+    public = build_persona_prompt(row, "v3_public_transit").user_prompt
+    voice = build_persona_prompt(row, "v3_voice").user_prompt
+
+    assert rideshare.startswith("You are")
+    assert "ride share" in rideshare.lower()
+    assert "public transportation" not in rideshare.lower()
+    assert "license to drive" not in rideshare.lower()
+
+    assert "public transportation" in public.lower()
+    assert "ride share" not in public.lower()
+    assert "license to drive" not in public.lower()
+
+    assert "you would advise" in voice.lower()
+    assert "ideal way to get around" in voice.lower()
+    assert "public transportation" not in voice.lower()
+    assert "ride share" not in voice.lower()
+
+    # Shared base layers still present.
+    for text in (rideshare, public, voice):
+        assert "full-time" in text.lower() or "You work full-time" in text
+        assert "approximate survey location" in text.lower()
+
+
+def test_build_persona_prompts_all_eight_tiers():
+    df = load_and_prepare(PROLIFIC, QUALTRICS, how="inner")
+    prompts = build_persona_prompts(df, tiers=TIERS)
+    assert len(prompts) == len(df) * len(TIERS)
+    assert {p.tier for p in prompts} == set(TIERS)

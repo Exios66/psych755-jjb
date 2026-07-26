@@ -61,11 +61,17 @@ EMPLOYMENT_FEATURES = ["Employment status"]
 GEO_FEATURES = ["LocationLatitude", "LocationLongitude"]
 TRANSIT_FEATURES = ["Q26", "Q27", "Q28", "Q29", "Q20", "Q21"]
 
+_GEO_BASE = DEMO_FEATURES + EMPLOYMENT_FEATURES + GEO_FEATURES
+
 TIER_FEATURES: dict[str, list[str]] = {
     "demos": DEMO_FEATURES,
     "employment": DEMO_FEATURES + EMPLOYMENT_FEATURES,
-    "geo": DEMO_FEATURES + EMPLOYMENT_FEATURES + GEO_FEATURES,
-    "transit": DEMO_FEATURES + EMPLOYMENT_FEATURES + GEO_FEATURES + TRANSIT_FEATURES,
+    "geo": _GEO_BASE,
+    "transit": _GEO_BASE + TRANSIT_FEATURES,
+    # v3 ablations (tabular). Voice open-text is LLM-only — ML uses geo-base features.
+    "v3_rideshare": _GEO_BASE + ["Q28", "Q29"],
+    "v3_public_transit": _GEO_BASE + ["Q26", "Q27"],
+    "v3_voice": list(_GEO_BASE),
 }
 
 NUMERIC_CANDIDATES = {"Age", "LocationLatitude", "LocationLongitude"}

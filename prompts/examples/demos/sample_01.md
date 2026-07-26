@@ -2,8 +2,8 @@
 
 - **Context combination tier:** `demos`
 - **Illustrative participant id:** `example_student_us_01`
-- **Tier design:** Base demographics layer only — natural-language second-person narrative.
-- **Framing:** AI Terrarium natural-language digital twin (`build_persona_prompt` — second-person persona narrative + CA ask)
+- **Tier design:** Base demographics layer only.
+- **Framing:** AI Terrarium natural-language digital twin (`build_persona_prompt`)
 
 ## System prompt
 

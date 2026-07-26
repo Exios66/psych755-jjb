@@ -15,8 +15,11 @@ framing vs contextual depth.
 | [`geo/`](geo/) | `geo` | `employment` + approximate survey lat/long (1 decimal; country not repeated) |
 | [`transit/`](transit/) | `transit` | `geo` + Q26/Q28 first; Q27/Q29 only when used; license / car access |
 | [`full/`](full/) | `full` | All of the above + Qualtrics free-response attitudes (Q18 advice + Q19 mobility ideal) |
+| [`v3_rideshare/`](v3_rideshare/) | `v3_rideshare` | `geo` base + Q28 only (+ Q29 if used) |
+| [`v3_public_transit/`](v3_public_transit/) | `v3_public_transit` | `geo` base + Q26 only (+ Q27 if used) |
+| [`v3_voice/`](v3_voice/) | `v3_voice` | `geo` base + open-text attitudes only |
 
-See [`docs/persona_prompt_efficiency.md`](../../docs/persona_prompt_efficiency.md) for the v3.1 packaging rationale (Llama-3.1 failure modes → clearer signal).
+See [`docs/persona_prompt_efficiency.md`](../../docs/persona_prompt_efficiency.md) for the v3.1 packaging rationale and v3 ablation design.
 
 Each folder contains `sample_01.md` and `sample_02.md` (contrasting student /
 regular-transit vs full-time / car-oriented profiles). Participant ids are

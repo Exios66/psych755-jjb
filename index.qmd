@@ -93,7 +93,7 @@ from ca_personas.paths import (
     full_cohort_paths,
     sibling_data_available,
 )
-from ca_personas.personas import RESEARCH_TIERS, TIERS, build_persona_prompts
+from ca_personas.personas import CORE_TIERS, RESEARCH_TIERS, build_persona_prompts
 from ca_personas.pipeline import run_pipeline
 
 apply_apa_style()
@@ -108,7 +108,7 @@ if sibling_data_available():
     artifacts = run_pipeline(
         prolific_path=PROLIFIC,
         qualtrics_path=QUALTRICS,
-        tiers=list(TIERS),
+        tiers=list(CORE_TIERS),
         provider="mock",
         output_dir=RENDER_OUT,
         join_how="inner",
@@ -163,7 +163,7 @@ if _secondary_n and _secondary_n != len(participants):
         f"participants N={len(participants)}; re-sync artifacts before render."
     )
 
-prompts = build_persona_prompts(participants, tiers=list(TIERS))
+prompts = build_persona_prompts(participants, tiers=list(CORE_TIERS))
 
 # Research-tier MAE table (exclude aggregate "all" and free-text "full" for primary bars)
 mae_tiers = (
@@ -343,28 +343,31 @@ gt
 
 ## Persona tiers
 
-Persona prompts are cumulative and follow the **AI Terrarium / ICA 2026** digital-twin framing: what the LLM receives as the *user* message is a fluent second-person narrative (“You are a …”) plus a short CA self-report ask — not a bullet-list profile, and not the system prompt. The system message (omitted below) only sets inhabitance and the JSON response contract [@quarto]. Full Prolific waves omit ethnicity / nationality / language; the `demos` tier therefore uses Age, Sex, Country of residence, and Student status. Additional curated samples live under [`prompts/examples/`](prompts/examples/).
+Persona prompts follow the **AI Terrarium / ICA 2026** digital-twin framing: the *user* message is a fluent second-person narrative (“You are a …”) plus a short CA self-report ask — not a bullet-list profile [@quarto]. Prompt **versions** are documented in [`docs/persona_prompt_versions.md`](docs/persona_prompt_versions.md): **v1** (original 5-tier ladder; Llama-3.1 baseline), **v2** (same five fields with signal-first packaging), and **v3** (adds three ablations → eight tiers total). Full Prolific waves omit ethnicity / nationality / language; the `demos` tier uses Age, Sex, Country of residence, and Student status. Samples: [`prompts/examples/`](prompts/examples/).
 
-| # | Tier | Context added relative to the previous tier |
+| # | Tier | Role |
 |:--:|---|---|
-| 1 | `demos` | Age, sex, country of residence, student status |
-| 2 | `employment` | + employment status |
+| 1 | `demos` | Base demographics |
+| 2 | `employment` | + employment status (RQ1) |
 | 3 | `geo` | + approximate survey lat/long (1 decimal) |
-| 4 | `transit` | + public transit / ride-share / license / car access |
-| 5 | `full` | + Qualtrics free-response attitudes (Q18.1 / Q19) |
+| 4 | `transit` | + full mobility bundle (RQ2) |
+| 5 | `full` | + free-response attitudes (RQ3) |
+| 6 | `v3_rideshare` | `geo` base + Q28 only (v3 ablation) |
+| 7 | `v3_public_transit` | `geo` base + Q26 only (v3 ablation) |
+| 8 | `v3_voice` | `geo` base + Q18.1/Q19 only (v3 ablation) |
 
-The five listings below are **user prompts only** for the **same** analytic participant, so each step visibly accumulates context.
+The listings below show the **core ladder** (`CORE_TIERS`) for the **same** analytic participant so each step visibly accumulates context. Parallel v3 ablations are illustrated in [`docs/persona_prompt_efficiency.md`](docs/persona_prompt_efficiency.md).
 
 ```{python}
 #| label: persona-tier-progression
 #| echo: false
 #| output: asis
 
-from ca_personas.personas import TIERS, build_persona_prompt, voice_sentences
+from ca_personas.personas import CORE_TIERS, build_persona_prompt, voice_sentences
 
-# Prefer a participant whose five user prompts strictly grow in length and
-# whose `full` tier includes free-response voice — so viewers can see the
-# progressive context stack (demos → employment → geo → transit → full).
+# Prefer a participant whose core user prompts strictly grow in length and
+# whose `full` tier includes free-response voice — progressive stack only
+# (v3 ablations are parallel tips, not cumulative steps after geo).
 tier_labels = {
     "demos": "1. demos — base demographics",
     "employment": "2. employment — demos + work status",
@@ -378,25 +381,25 @@ example_prompts = None
 for _, row in participants.iterrows():
     if not voice_sentences(row):
         continue
-    built = {t: build_persona_prompt(row, t) for t in TIERS}
-    lengths = [len(built[t].user_prompt) for t in TIERS]
+    built = {t: build_persona_prompt(row, t) for t in CORE_TIERS}
+    lengths = [len(built[t].user_prompt) for t in CORE_TIERS]
     if all(lengths[i] < lengths[i + 1] for i in range(len(lengths) - 1)):
-        if all(built[t].user_prompt.lstrip().startswith("You are") for t in TIERS):
+        if all(built[t].user_prompt.lstrip().startswith("You are") for t in CORE_TIERS):
             example_row = row
             example_prompts = built
             break
 
 if example_row is None or example_prompts is None:
     example_row = participants.iloc[0]
-    example_prompts = {t: build_persona_prompt(example_row, t) for t in TIERS}
+    example_prompts = {t: build_persona_prompt(example_row, t) for t in CORE_TIERS}
 
 pid_short = str(example_row["participant_id"])[:12] + "…"
 print(
-    f"*Same participant throughout (`{pid_short}`); user message only — "
+    f"*Same participant throughout (`{pid_short}`); core ladder user messages only — "
     "second-person persona narrative + CA ask (system prompt omitted).*\n"
 )
 
-for tier in TIERS:
+for tier in CORE_TIERS:
     user = example_prompts[tier].user_prompt.strip()
     if not user.startswith("You are"):
         raise AssertionError(f"Expected Terrarium narrative for tier={tier}")
@@ -415,7 +418,13 @@ The Python package `ca_personas` supports Ollama, OpenRouter, and a deterministi
 
 A seven-model tabular suite (Ridge, Elastic Net, k-NN, Random Forest, HistGradientBoosting, XGBoost, MLP) on the same tiers and targets is reported in [`docs/ml_baselines.md`](docs/ml_baselines.md). On the full cohort, the **best** group-CA MAE reaches **4.49** at `transit` (Ridge; RF = 4.68); the best interpersonal MAE reaches **4.25** (Elastic Net; MLP = 4.31). Feature attributions and ML-vs-LLM comparisons are documented in [`docs/factor_feature_importance.md`](docs/factor_feature_importance.md), [`docs/ml_vs_llm.md`](docs/ml_vs_llm.md), and [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md).
 
+The first full-cohort **live** LLM baseline (Llama-3.1-8B-Instruct on prompt **v1**, five tiers) is published in [`docs/llm_baseline_llama31_v1.md`](docs/llm_baseline_llama31_v1.md). Prompt packaging (v2) and ablation tiers (v3) are summarized in [`docs/persona_prompt_versions.md`](docs/persona_prompt_versions.md).
+
 # Results
+
+## Live LLM baseline (Llama-3.1, prompt v1)
+
+On the matched analytic cohort (**N = 241**; 1,205 prompts; 100% JSON parse), Llama-3.1-8B-Instruct recovers interpersonal **bands** above chance at demos/employment/geo (~52%), but is not a high-fidelity digital twin of PRCA scores (exact match ~6–13%; group MAE best **5.68** at `transit`, still above the tabular floor). Employment barely helps; transit **hurts** interpersonal MAE (4.67 → **8.17**) via systematic over-prediction. Full tables and RQ verdicts: [`docs/llm_baseline_llama31_v1.md`](docs/llm_baseline_llama31_v1.md).
 
 ## Mock LLM prediction error by information tier
 

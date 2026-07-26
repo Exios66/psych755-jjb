@@ -10,6 +10,8 @@ project:
     - docs/ml_vs_llm.md
     - docs/factor_feature_importance.md
     - docs/persona_prompt_efficiency.md
+    - docs/persona_prompt_versions.md
+    - docs/llm_baseline_llama31_v1.md
     - docs/research_memo_agenda.md
     - docs/secondary_rq_transit_ca.md
     - docs/secondary_rq_geo_predicts_transit.md
@@ -63,8 +65,12 @@ website:
             text: ML vs LLM comparison
           - href: docs/factor_feature_importance.md
             text: Factor & feature importance
+          - href: docs/persona_prompt_versions.md
+            text: Prompt versions (v1–v3)
           - href: docs/persona_prompt_efficiency.md
-            text: Persona prompt packaging
+            text: Persona prompt packaging (v2/v3)
+          - href: docs/llm_baseline_llama31_v1.md
+            text: Llama-3.1 baseline (prompt v1)
       - text: Secondary RQs
         menu:
           - href: docs/research_memo_agenda.md
@@ -152,7 +158,9 @@ website:
           - docs/ml_baselines.md
           - docs/ml_vs_llm.md
           - docs/factor_feature_importance.md
+          - docs/persona_prompt_versions.md
           - docs/persona_prompt_efficiency.md
+          - docs/llm_baseline_llama31_v1.md
       - section: "Secondary RQ write-ups"
         contents:
           - docs/research_memo_agenda.md

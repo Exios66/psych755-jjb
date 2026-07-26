@@ -75,7 +75,7 @@ def build_parser() -> argparse.ArgumentParser:
         nargs="+",
         choices=list(TIERS),
         default=None,
-        help="Persona tiers (default: research tiers + full)",
+        help="Persona tiers (default: all 8 from config / TIERS)",
     )
     run.add_argument(
         "--provider",
@@ -127,8 +127,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--tiers",
         nargs="+",
         choices=list(TIERS),
-        default=list(RESEARCH_TIERS) + ["full"],
-        help="Which persona tiers to emit",
+        default=list(TIERS),
+        help="Which persona tiers to emit (default: all 8 core + v3)",
     )
     personas.add_argument(
         "--output-dir",

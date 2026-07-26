@@ -2,8 +2,8 @@
 
 - **Context combination tier:** `full`
 - **Illustrative participant id:** `example_student_us_01`
-- **Tier design:** All prior layers + Qualtrics free-response attitudes (RQ3 / richest personification).
-- **Framing:** AI Terrarium natural-language digital twin (`build_persona_prompt` — second-person persona narrative + CA ask)
+- **Tier design:** All structured layers + open-text attitudes.
+- **Framing:** AI Terrarium natural-language digital twin (`build_persona_prompt`)
 
 ## System prompt
 

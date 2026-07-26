@@ -102,13 +102,23 @@ Cumulative information revealed to the model as **natural-language, second-perso
 digital-twin narratives** (AI Terrarium / ICA 2026 framing — “You are a …”), not
 structured questionnaire checklists:
 
+**Core ladder (RQ1–RQ3):**
+
 1. `demos`
 2. `employment`
 3. `geo` (approximate survey lat/long at 1 decimal; country not repeated)
 4. `transit` (Q26/Q28 signal-first; skip rides-per-day when frequency is Never)
-5. `full` — all tabular fields plus Qualtrics free-response attitudes (foolproof personification bundle)
+5. `full` — all tabular fields plus Qualtrics free-response attitudes
 
-Packaging rationale (Llama-3.1 failure modes → v3.1 efficiency): [`persona_prompt_efficiency.md`](persona_prompt_efficiency.md).  
+**v3 ablations** (same demos→employment→geo base, focused tip):
+
+6. `v3_rideshare` — Q28 only (+ Q29 if used)
+7. `v3_public_transit` — Q26 only (+ Q27 if used)
+8. `v3_voice` — Q18.1 / Q19 open-text only (no structured transit)
+
+Version map (v1 baseline → v2 packaging → v3 ablations): [`persona_prompt_versions.md`](persona_prompt_versions.md).  
+Llama-3.1 full-cohort baseline (prompt v1): [`llm_baseline_llama31_v1.md`](llm_baseline_llama31_v1.md).  
+Packaging details: [`persona_prompt_efficiency.md`](persona_prompt_efficiency.md).  
 See [`prompts/system_prompt.md`](../prompts/system_prompt.md) and
 [`prompts/examples/`](../prompts/examples/) for the system contract and sample prompts.
 

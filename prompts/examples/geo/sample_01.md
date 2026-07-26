@@ -2,8 +2,8 @@
 
 - **Context combination tier:** `geo`
 - **Illustrative participant id:** `example_student_us_01`
-- **Tier design:** `employment` + approximate survey lat/long (1 decimal; country not repeated).
-- **Framing:** AI Terrarium natural-language digital twin (`build_persona_prompt` — second-person persona narrative + CA ask)
+- **Tier design:** `employment` + approximate survey lat/long (1 decimal).
+- **Framing:** AI Terrarium natural-language digital twin (`build_persona_prompt`)
 
 ## System prompt
 

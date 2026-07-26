@@ -6,7 +6,7 @@ subtitle: "Signal-first Terrarium narratives for RQ1–RQ3 predictive efficiency
 **Code:** [`src/ca_personas/personas.py`](../src/ca_personas/personas.py)  
 **System contract:** [`prompts/system_prompt.md`](../prompts/system_prompt.md)  
 **Examples:** [`prompts/examples/`](../prompts/examples/)  
-**Evidence:** [`data/vllm/llama3_1.md`](../data/vllm/llama3_1.md) · [`docs/factor_feature_importance.md`](factor_feature_importance.md)
+**Evidence:** [`llm_baseline_llama31_v1.md`](llm_baseline_llama31_v1.md) (prompt **v1** Llama-3.1) · [`persona_prompt_versions.md`](persona_prompt_versions.md) · [`factor_feature_importance.md`](factor_feature_importance.md)
 
 ---
 
@@ -36,29 +36,38 @@ Keep the **same cumulative tier fields** so RQ1–RQ3 and stereotyping contrasts
 | CA ask | Rate group vs interpersonal **independently**; note that mid-scale scores are common; no single circumstance determines CA |
 | System prompt | Same inhabitance + JSON contract; add independent-subscale / non-deterministic-context sentences |
 
-Tier topology is unchanged: `demos → employment → geo → transit → full`.
+Core ladder topology is unchanged: `demos → employment → geo → transit → full`.
 
-## 4. Regenerating the prompt DB
+## 4. v3 ablation tiers (8 total)
+
+Kitchen-sink `transit` / `full` confound the strongest CA cues. Three parallel tiers share the demos→employment→geo base, then tip with one focused signal:
+
+| Tier | Tip | Role |
+|---|---|---|
+| `v3_rideshare` | Q28 (+ Q29 if used) | Isolate #1 tabular CA covariate |
+| `v3_public_transit` | Q26 (+ Q27 if used) | Isolate public-transit CA association without rideshare/car |
+| `v3_voice` | Q18.1 advice + Q19 mobility ideal | Isolate open-text attitude lift without transit dump |
+
+`RESEARCH_TIERS` remains the original four for primary RQ tables; `TIERS` / default exports include all eight.
+
+## 5. Regenerating the prompt DB
 
 ```bash
 source .venv/bin/activate
-ca-personas build-personas --join inner \
-  --tiers demos employment geo transit full \
-  --output-dir outputs/personas
-python -m inference.export_prompts --join inner \
-  --tiers demos employment geo transit full \
-  --output-dir outputs/vllm_prompts
+ca-personas build-personas --join inner --output-dir outputs/personas
+python -m inference.export_prompts --join inner --output-dir outputs/vllm_prompts
 ```
 
-Expected: **1,205** prompts (241 × 5). Artifacts (gitignored):
+Expected: **1,928** prompts (241 × 8). Artifacts (gitignored):
 
 - `outputs/personas/persona_prompts.csv` / `.db`
 - `outputs/vllm_prompts/prompts.csv` + `ground_truth.csv`
 
-## 5. How to read a re-run
+## 6. How to read a re-run
 
-Compare a new LLM/vLLM export against [`data/vllm/llama3_1.md`](../data/vllm/llama3_1.md):
+Compare a new LLM/vLLM export against [`llm_baseline_llama31_v1.md`](llm_baseline_llama31_v1.md):
 
-1. Does interpersonal MAE at `transit`/`full` stop exploding?
-2. Do RQ1/RQ2 still show only modest employment/geo lifts (as the tabular floor predicts)?
-3. Do stereotyping MAE gaps by Sex / Employment / Student remain measurable (packaging should not erase them)?
+1. Does interpersonal MAE at `transit`/`full` stop exploding under v3.1 packaging?
+2. Does `v3_rideshare` beat `v3_public_transit` (and approach or beat full `transit`) on group MAE?
+3. Does `v3_voice` help without the transit interpersonal penalty?
+4. Do stereotyping MAE gaps by Sex / Employment / Student remain measurable?

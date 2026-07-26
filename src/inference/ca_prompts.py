@@ -113,9 +113,9 @@ def export_vllm_prompt_bundle(
     ground_truth.csv
         ``caseid``, ``answer`` (JSON with gt CA scores) when scores are available.
     """
-    from ca_personas.personas import RESEARCH_TIERS
+    from ca_personas.personas import TIERS
 
-    selected = list(tiers) if tiers is not None else list(RESEARCH_TIERS) + ["full"]
+    selected = list(tiers) if tiers is not None else list(TIERS)
     prompts = build_persona_prompts(participants, tiers=selected)
     frame = personas_to_prompt_frame(prompts, participants)
 

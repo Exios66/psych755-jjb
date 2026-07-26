@@ -145,7 +145,7 @@ def run_pipeline(
 
     prolific_paths = _resolve_prolific_paths(prolific_path, config)
     qualtrics = _resolve_qualtrics_path(qualtrics_path, config)
-    selected_tiers = tiers or config.get("tiers", list(RESEARCH_TIERS) + ["full"])
+    selected_tiers = tiers or config.get("tiers", list(TIERS))
     # Validate tier names early.
     unknown = [t for t in selected_tiers if t not in TIERS]
     if unknown:

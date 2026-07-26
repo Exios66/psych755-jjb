@@ -8,7 +8,7 @@ from pathlib import Path
 
 from ca_personas.load import load_and_prepare, load_full_cohort
 from ca_personas.paths import default_prolific_paths, default_qualtrics_path
-from ca_personas.personas import RESEARCH_TIERS, TIERS
+from ca_personas.personas import TIERS
 from inference.ca_prompts import export_vllm_prompt_bundle
 
 
@@ -48,7 +48,8 @@ def main(argv: list[str] | None = None) -> int:
         "--tiers",
         nargs="+",
         choices=list(TIERS),
-        default=list(RESEARCH_TIERS) + ["full"],
+        default=list(TIERS),
+        help="Persona tiers to export (default: all 8 core + v3)",
     )
     ap.add_argument(
         "--output-dir",

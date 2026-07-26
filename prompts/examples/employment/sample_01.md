@@ -3,7 +3,7 @@
 - **Context combination tier:** `employment`
 - **Illustrative participant id:** `example_student_us_01`
 - **Tier design:** `demos` + employment status.
-- **Framing:** AI Terrarium natural-language digital twin (`build_persona_prompt` — second-person persona narrative + CA ask)
+- **Framing:** AI Terrarium natural-language digital twin (`build_persona_prompt`)
 
 ## System prompt
 

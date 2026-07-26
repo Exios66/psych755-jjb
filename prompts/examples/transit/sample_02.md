@@ -2,8 +2,8 @@
 
 - **Context combination tier:** `transit`
 - **Illustrative participant id:** `example_fulltime_uk_02`
-- **Tier design:** `geo` + transit / ride-share (signal-first) + license / car access.
-- **Framing:** AI Terrarium natural-language digital twin (`build_persona_prompt` — second-person persona narrative + CA ask)
+- **Tier design:** `geo` + full mobility bundle (Q26/Q28/car).
+- **Framing:** AI Terrarium natural-language digital twin (`build_persona_prompt`)
 
 ## System prompt
 

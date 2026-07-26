@@ -18,15 +18,19 @@ paths:
 #                optional ethnicity/nationality/language when the Prolific
 #                export includes them)
 #   employment → RQ1: does employment improve prediction / change bias?
-#   geo        → country + survey lat/long context
-#   transit    → RQ2: transportation-use signal (includes demos+employment+geo)
+#   geo        → approximate survey lat/long context
+#   transit    → RQ2: full transportation-use signal (includes demos+employment+geo)
 #   full       → all of the above + open-text attitudes (Q18.1 / Q19)  [RQ3]
+#   v3_*       → evidence-based ablations (rideshare-only, public-transit-only, voice)
 tiers:
   - demos
   - employment
   - geo
   - transit
   - full
+  - v3_rideshare
+  - v3_public_transit
+  - v3_voice
 
 llm:
   # Prefer mock for reproducible dry-runs; pass --provider ollama|openrouter for live LLM.

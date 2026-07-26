@@ -15,10 +15,14 @@ from typing import Any
 
 import pandas as pd
 
-# Cumulative research tiers, plus a foolproof "full" profile that includes
-# every available Qualtrics + Prolific characteristic used for personification.
-TIERS = ("demos", "employment", "geo", "transit", "full")
+# Core cumulative research ladder (RQ1–RQ3) plus foolproof "full" profile,
+# and v3 evidence-based ablations that isolate rideshare / public-transit /
+# open-text voice without the kitchen-sink transit dump.
 RESEARCH_TIERS = ("demos", "employment", "geo", "transit")
+CORE_TIERS = (*RESEARCH_TIERS, "full")
+V3_TIERS = ("v3_rideshare", "v3_public_transit", "v3_voice")
+TIERS = (*CORE_TIERS, *V3_TIERS)
+ALL_TIERS = TIERS
 
 # Base demographics layer shared by every tier (File A/B core set).
 # Optional Prolific fields (ethnicity / nationality / language / birth country)
@@ -316,51 +320,53 @@ def _rides_intensity_sentence(value: Any, *, mode: str) -> str | None:
     return f"On a typical day of {mode} use, you take {rides} rides."
 
 
-def transit_sentences(row: pd.Series) -> list[str]:
-    """Paraphrase transit items signal-first: Q26 → Q28 → intensity → car access.
-
-    Skips rides-per-day (Q27/Q29) when the matching frequency is Never — those
-    intensity items are nonsensical without use and add token noise.
-    """
+def public_transit_sentences(row: pd.Series) -> list[str]:
+    """Q26 (+ Q27 only when frequency is not Never)."""
     sentences: list[str] = []
+    if not _present(row.get("Q26")):
+        return sentences
+    freq = _fmt(row.get("Q26"))
+    if _is_never(row.get("Q26")):
+        sentences.append(
+            "In the last three months, you never used public transportation "
+            "(bus, train, tram, etc.)."
+        )
+        return sentences
+    sentences.append(
+        "In the last three months, you used public transportation "
+        f"(bus, train, tram, etc.) {freq}."
+    )
+    intensity = _rides_intensity_sentence(row.get("Q27"), mode="public transportation")
+    if intensity:
+        sentences.append(intensity)
+    return sentences
 
-    # 1) Public-transit frequency (Q26) — primary mobility cue for CA.
-    q26_never = _is_never(row.get("Q26"))
-    if _present(row.get("Q26")):
-        freq = _fmt(row.get("Q26"))
-        if q26_never:
-            sentences.append(
-                "In the last three months, you never used public transportation "
-                "(bus, train, tram, etc.)."
-            )
-        else:
-            sentences.append(
-                "In the last three months, you used public transportation "
-                f"(bus, train, tram, etc.) {freq}."
-            )
-            intensity = _rides_intensity_sentence(row.get("Q27"), mode="public transportation")
-            if intensity:
-                sentences.append(intensity)
 
-    # 2) Ride-share frequency (Q28) — strongest tabular CA covariate in this cohort.
-    q28_never = _is_never(row.get("Q28"))
-    if _present(row.get("Q28")):
-        freq = _fmt(row.get("Q28"))
-        if q28_never:
-            sentences.append(
-                "In the last three months, you never used ride share platforms "
-                "(Lyft, Uber, DiDi, etc.)."
-            )
-        else:
-            sentences.append(
-                "In the last three months, you used ride share platforms "
-                f"(Lyft, Uber, DiDi, etc.) {freq}."
-            )
-            intensity = _rides_intensity_sentence(row.get("Q29"), mode="ride share")
-            if intensity:
-                sentences.append(intensity)
+def rideshare_sentences(row: pd.Series) -> list[str]:
+    """Q28 (+ Q29 only when frequency is not Never) — top tabular CA covariate."""
+    sentences: list[str] = []
+    if not _present(row.get("Q28")):
+        return sentences
+    freq = _fmt(row.get("Q28"))
+    if _is_never(row.get("Q28")):
+        sentences.append(
+            "In the last three months, you never used ride share platforms "
+            "(Lyft, Uber, DiDi, etc.)."
+        )
+        return sentences
+    sentences.append(
+        "In the last three months, you used ride share platforms "
+        f"(Lyft, Uber, DiDi, etc.) {freq}."
+    )
+    intensity = _rides_intensity_sentence(row.get("Q29"), mode="ride share")
+    if intensity:
+        sentences.append(intensity)
+    return sentences
 
-    # 3) License / car access after frequency (weaker CA signal; RQ2 “used sensibly”).
+
+def car_access_sentences(row: pd.Series) -> list[str]:
+    """Q20/Q21 license + car access (weaker CA signal; kept in full transit bundle)."""
+    sentences: list[str] = []
     license_yn = _yes_no(row.get("Q20"))
     if license_yn is True:
         sentences.append("You have a license to drive a car.")
@@ -383,8 +389,16 @@ def transit_sentences(row: pd.Series) -> list[str]:
             "Regarding access to a car you can use for transportation, your "
             f"answer is {_fmt(row.get('Q21'))}."
         )
-
     return sentences
+
+
+def transit_sentences(row: pd.Series) -> list[str]:
+    """Full mobility bundle: Q26 → Q28 → intensity → car access."""
+    return (
+        public_transit_sentences(row)
+        + rideshare_sentences(row)
+        + car_access_sentences(row)
+    )
 
 
 def transit_block(row: pd.Series) -> list[str]:
@@ -412,35 +426,53 @@ def voice_block(row: pd.Series) -> list[str]:
     return voice_sentences(row)
 
 
+# Per-tier include flags for narrative assembly (core ladder + v3 ablations).
+_TIER_LAYERS: dict[str, frozenset[str]] = {
+    "demos": frozenset(),
+    "employment": frozenset({"employment"}),
+    "geo": frozenset({"employment", "geo"}),
+    "transit": frozenset({"employment", "geo", "transit"}),
+    "full": frozenset({"employment", "geo", "transit", "voice"}),
+    # v3: same demos→employment→geo base as transit, then a focused tip.
+    "v3_rideshare": frozenset({"employment", "geo", "rideshare"}),
+    "v3_public_transit": frozenset({"employment", "geo", "public_transit"}),
+    "v3_voice": frozenset({"employment", "geo", "voice"}),
+}
+
+
 def build_narrative_sections(row: pd.Series, tier: str) -> list[str]:
     """Return ordered narrative paragraphs for the requested context depth."""
     if tier not in TIERS:
         raise ValueError(f"Unknown tier {tier!r}; expected one of {TIERS}")
 
+    layers = _TIER_LAYERS[tier]
     paragraphs: list[str] = []
 
     demos = demos_sentences(row)
     if demos:
         paragraphs.append(" ".join(demos))
 
-    include_employment = tier in {"employment", "geo", "transit", "full"}
-    include_geo = tier in {"geo", "transit", "full"}
-    include_transit = tier in {"transit", "full"}
-    include_voice = tier == "full"
-
-    if include_employment:
+    if "employment" in layers:
         emp = employment_sentences(row)
         if emp:
             paragraphs.append(" ".join(emp))
-    if include_geo:
+    if "geo" in layers:
         geo = geo_sentences(row)
         if geo:
             paragraphs.append(" ".join(geo))
-    if include_transit:
+    if "transit" in layers:
         transit = transit_sentences(row)
         if transit:
             paragraphs.append(" ".join(transit))
-    if include_voice:
+    elif "rideshare" in layers:
+        rideshare = rideshare_sentences(row)
+        if rideshare:
+            paragraphs.append(" ".join(rideshare))
+    elif "public_transit" in layers:
+        public = public_transit_sentences(row)
+        if public:
+            paragraphs.append(" ".join(public))
+    if "voice" in layers:
         voice = voice_sentences(row)
         if voice:
             paragraphs.append(" ".join(voice))
@@ -453,23 +485,25 @@ def build_profile_sections(row: pd.Series, tier: str) -> list[tuple[str, list[st
     if tier not in TIERS:
         raise ValueError(f"Unknown tier {tier!r}; expected one of {TIERS}")
 
-    if tier == "full":
-        sections: list[tuple[str, list[str]]] = [
-            ("Demographics", demos_sentences(row)),
-            ("Employment", employment_sentences(row)),
-            ("Geographic location", geo_sentences(row)),
-            ("Transportation use", transit_sentences(row)),
-            ("Self-described attitudes (from survey free responses)", voice_sentences(row)),
-        ]
-        return [(title, lines) for title, lines in sections if lines]
-
-    sections = [("Demographics", demos_sentences(row))]
-    if tier in {"employment", "geo", "transit"}:
+    layers = _TIER_LAYERS[tier]
+    sections: list[tuple[str, list[str]]] = [("Demographics", demos_sentences(row))]
+    if "employment" in layers:
         sections.append(("Employment", employment_sentences(row)))
-    if tier in {"geo", "transit"}:
+    if "geo" in layers:
         sections.append(("Geographic location", geo_sentences(row)))
-    if tier == "transit":
+    if "transit" in layers:
         sections.append(("Transportation use", transit_sentences(row)))
+    elif "rideshare" in layers:
+        sections.append(("Ride-share use", rideshare_sentences(row)))
+    elif "public_transit" in layers:
+        sections.append(("Public transportation use", public_transit_sentences(row)))
+    if "voice" in layers:
+        sections.append(
+            (
+                "Self-described attitudes (from survey free responses)",
+                voice_sentences(row),
+            )
+        )
     return [(title, lines) for title, lines in sections if lines]
 
 

@@ -221,15 +221,38 @@ def refresh_access_token(refresh: str) -> dict:
     )
 
 
-def load_tokens() -> tuple[str, str | None]:
+TOKEN_PATH = Path("/tmp/posit-tokens.json")
+
+
+def clear_cached_tokens() -> None:
+    """Drop local/env tokens so the next load_tokens() runs device OAuth."""
+    for key in (
+        "POSIT_CONNECT_CLOUD_ACCESS_TOKEN",
+        "POSIT_CONNECT_CLOUD_REFRESH_TOKEN",
+        "POSIT_CONNECT_CLOUD_ACCOUNT_ID",
+    ):
+        os.environ.pop(key, None)
+    if TOKEN_PATH.is_file():
+        TOKEN_PATH.unlink()
+        _log(f"Removed {TOKEN_PATH}")
+    _log("Cleared Posit Connect Cloud tokens; will re-authorize")
+
+
+def load_tokens(*, force_reauth: bool = False) -> tuple[str, str | None]:
+    if force_reauth:
+        clear_cached_tokens()
+
     access = os.environ.get("POSIT_CONNECT_CLOUD_ACCESS_TOKEN")
     refresh = os.environ.get("POSIT_CONNECT_CLOUD_REFRESH_TOKEN")
-    token_path = Path("/tmp/posit-tokens.json")
-    if not refresh and token_path.is_file():
+    token_source = "env" if access else None
+    if TOKEN_PATH.is_file():
         try:
-            saved = json.loads(token_path.read_text(encoding="utf-8"))
-            refresh = saved.get("refresh_token") or refresh
-            access = access or saved.get("access_token")
+            saved = json.loads(TOKEN_PATH.read_text(encoding="utf-8"))
+            if not refresh:
+                refresh = saved.get("refresh_token") or refresh
+            if not access:
+                access = saved.get("access_token")
+                token_source = "cache"
         except Exception:
             pass
 
@@ -237,7 +260,7 @@ def load_tokens() -> tuple[str, str | None]:
         # Probe the API; on 401, refresh if possible instead of failing publish.
         try:
             api("GET", "accounts?has_user_role=true", access)
-            _log("Using POSIT_CONNECT_CLOUD_* environment tokens")
+            _log(f"Using Posit tokens from {token_source}")
             return access, refresh
         except SystemExit as exc:
             msg = str(exc)
@@ -245,14 +268,14 @@ def load_tokens() -> tuple[str, str | None]:
                 raise
             _log("Access token rejected (401); refreshing via refresh_token grant")
             tok = refresh_access_token(refresh)
-            token_path.write_text(json.dumps(tok, indent=2), encoding="utf-8")
+            TOKEN_PATH.write_text(json.dumps(tok, indent=2), encoding="utf-8")
             os.environ["POSIT_CONNECT_CLOUD_ACCESS_TOKEN"] = tok["access_token"]
             if tok.get("refresh_token"):
                 os.environ["POSIT_CONNECT_CLOUD_REFRESH_TOKEN"] = tok["refresh_token"]
             return tok["access_token"], tok.get("refresh_token")
 
     tok = device_auth()
-    token_path.write_text(json.dumps(tok, indent=2), encoding="utf-8")
+    TOKEN_PATH.write_text(json.dumps(tok, indent=2), encoding="utf-8")
     return tok["access_token"], tok.get("refresh_token")
 
 
@@ -276,21 +299,19 @@ def api(
 
 
 def assert_writable_account(access: str) -> str:
+    """Require the jackjburleson account — never fall back to jjb-morningstar."""
     accounts = api("GET", "accounts?has_user_role=true", access) or {}
     rows = accounts.get("data") or []
     names = [a.get("name") for a in rows]
     _log(f"Authorized accounts: {names}")
-    # Prefer exact JackJBurleson account; else first writable.
     for a in rows:
         if a.get("name") == ACCOUNT_NAME:
             return a["id"]
-    env_id = os.environ.get("POSIT_CONNECT_CLOUD_ACCOUNT_ID")
-    if env_id:
-        return env_id
-    if not rows:
-        raise SystemExit("No publishable Posit accounts for this login.")
-    _log(f"WARNING: '{ACCOUNT_NAME}' not in account list; using {rows[0].get('name')}")
-    return rows[0]["id"]
+    raise SystemExit(
+        f"Login has no '{ACCOUNT_NAME}' account (got {names}). "
+        "Log into Posit as jackjburleson (not jjb-morningstar), then re-run with "
+        "--force-reauth."
+    )
 
 
 def make_bundle(site: Path) -> bytes:
@@ -405,6 +426,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--skip-analysis", action="store_true", help="Skip full-cohort CLI re-runs")
     p.add_argument("--skip-render", action="store_true", help="Publish existing _site/")
     p.add_argument("--allow-excerpt", action="store_true", help="Allow excerpt fixtures (discouraged)")
+    p.add_argument(
+        "--force-reauth",
+        action="store_true",
+        help="Clear cached/env Posit tokens and run device OAuth as jackjburleson",
+    )
     p.add_argument("--seed", type=int, default=42)
     p.add_argument(
         "--expect",
@@ -428,7 +454,7 @@ def main(argv: list[str] | None = None) -> int:
         if not (site / "index.html").is_file():
             raise SystemExit("_site/index.html missing; refuse --skip-render")
 
-    access, _refresh = load_tokens()
+    access, _refresh = load_tokens(force_reauth=args.force_reauth)
     account_id = assert_writable_account(access)
     _log(f"Using account_id={account_id}")
     result = publish_bundle(access, site)

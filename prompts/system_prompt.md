@@ -57,6 +57,9 @@ fields are woven into the narrative when present.
 | `geo` | `employment` + approximate survey lat/long (1 decimal; country not repeated) |
 | `transit` | `geo` + public transit / ride-share (Q26/Q28 first; Q27/Q29 only when used) + license / car access |
 | `full` | All of the above + Qualtrics free-response attitudes (advice + mobility ideal) |
+| `v3_rideshare` | `geo` base + Q28 only (+ Q29 if used) |
+| `v3_public_transit` | `geo` base + Q26 only (+ Q27 if used) |
+| `v3_voice` | `geo` base + Q18.1 / Q19 open-text (no structured transit) |
 
 Full Prolific waves (File A/B) omit ethnicity / nationality / language; the demos
 tier then uses Age, Sex, Country of residence, and Student status only.
