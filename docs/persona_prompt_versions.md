@@ -85,4 +85,4 @@ Against the [v1 Llama baseline](llm_baseline_llama31_v1.md) (and ideally DeepSee
 3. Does `v3_voice` help without the transit interpersonal penalty?
 4. Do Sex / Employment / Student MAE gaps remain measurable (stereotyping RQ)?
 
-**Recipe:** `ca-personas build-personas` → `python -m inference.export_prompts` → `./scripts/run_vllm.sh` → ingest → compare to v1 tables. Details: [`persona_prompt_efficiency.md`](persona_prompt_efficiency.md).
+**Recipe:** `ca-personas build-personas` → `python -m inference.export_prompts` → `VLLM_PRESET=v2_enhanced ./scripts/run_vllm.sh` (or `v3_enhanced` for 8-tier / DeepSeek) → ingest → `ca-personas stereotype-eval` → compare to v1 tables. Specs: [`llm_v1_run_specifications.md`](llm_v1_run_specifications.md) · enhancements: [`llm_v2_v3_enhanced_variants.md`](llm_v2_v3_enhanced_variants.md).

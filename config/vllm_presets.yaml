@@ -1,0 +1,67 @@
+# vLLM generation presets for CA digital-twin runs
+#
+# v1_baseline  — matches published prompt-v1 GPU exports (inferred code defaults
+#                when write-ups omitted sampling params: greedy decode).
+# v2_enhanced  — packaging-era defaults for Llama-3.1 / 3.2 instruct on signal-
+#                first prompts (anti-collapse, reproducible seed).
+# v3_enhanced  — same decode as v2 plus longer output budget for DeepSeek-style
+#                reasoning models and ablation (8-tier) exports.
+# large_model  — anti-mode-collapse settings motivated by Llama-3.3-70B v1.
+
+presets:
+  v1_baseline:
+    description: >
+      Published prompt-v1 Terrarium ladder runs. Temperature 0 (greedy) and
+      top_p=1 were the predict_vllm.py defaults used when shell launchers
+      omitted sampling flags. Seed was not set in v1.
+    temperature: 0.0
+    top_p: 1.0
+    repetition_penalty: 1.0
+    max_output_tokens: 256
+    max_model_len: 8192
+    quantization: fp8
+    seed: null
+    guided_json: false
+
+  v2_enhanced:
+    description: >
+      Enhanced for signal-first (v2) packaging on instruct models. Mild
+      temperature + fixed seed reduce mode collapse risk (70B v1 caution)
+      while keeping outputs reproducible (Argyle et al. 2023 silicon-sampling
+      practice; Hu & Collier 2024 persona sensitivity). Mobility anti-bleed
+      lives in SYSTEM_PROMPT / user ask, not in sampling.
+    temperature: 0.3
+    top_p: 0.95
+    repetition_penalty: 1.05
+    max_output_tokens: 256
+    max_model_len: 8192
+    quantization: fp8
+    seed: 42
+    guided_json: true
+
+  v3_enhanced:
+    description: >
+      Same as v2_enhanced with larger max_output_tokens for DeepSeek-R1-Distill
+      thinking traces and 8-tier (v3 ablation) exports (241×8 = 1,928 prompts).
+    temperature: 0.3
+    top_p: 0.95
+    repetition_penalty: 1.05
+    max_output_tokens: 512
+    max_model_len: 8192
+    quantization: fp8
+    seed: 42
+    guided_json: true
+
+  large_model:
+    description: >
+      Anti-collapse preset for ≥70B instruct twins after Llama-3.3-70B ≈93%
+      constant-prior failure on v1. Higher temperature + repetition penalty;
+      always set seed; prefer guided JSON.
+    temperature: 0.5
+    top_p: 0.9
+    repetition_penalty: 1.1
+    max_output_tokens: 256
+    max_model_len: 8192
+    quantization: fp8
+    seed: 42
+    guided_json: true

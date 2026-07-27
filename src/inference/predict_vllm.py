@@ -22,6 +22,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pandas as pd
+import yaml
 
 from ca_personas.personas import SYSTEM_PROMPT
 from inference.utils import (
@@ -41,6 +42,37 @@ os.environ.setdefault("HF_HOME", str(_REPO_ROOT / "hf_cache"))
 DEFAULT_SYSTEM_MSG = SYSTEM_PROMPT.strip()
 
 DEFAULT_MODEL = "meta-llama/Llama-3.1-8B-Instruct"
+PRESETS_PATH = _REPO_ROOT / "config" / "vllm_presets.yaml"
+
+# Soft JSON schema for guided decoding (vLLM GuidedDecodingParams when available).
+CA_JSON_SCHEMA: dict = {
+    "type": "object",
+    "properties": {
+        "self_reported_group_ca": {"type": "integer", "minimum": 6, "maximum": 30},
+        "self_reported_interpersonal_ca": {"type": "integer", "minimum": 6, "maximum": 30},
+        "self_reported_band_group": {"type": "string", "enum": ["low", "moderate", "high"]},
+        "self_reported_band_interpersonal": {
+            "type": "string",
+            "enum": ["low", "moderate", "high"],
+        },
+    },
+    "required": [
+        "self_reported_group_ca",
+        "self_reported_interpersonal_ca",
+        "self_reported_band_group",
+        "self_reported_band_interpersonal",
+    ],
+}
+
+
+def load_vllm_preset(name: str, *, path: Path = PRESETS_PATH) -> dict:
+    """Load a named generation preset from ``config/vllm_presets.yaml``."""
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    presets = data.get("presets") or {}
+    if name not in presets:
+        known = ", ".join(sorted(presets)) or "(none)"
+        raise SystemExit(f"Unknown vLLM preset {name!r}; known: {known}")
+    return dict(presets[name])
 
 
 # ---------------------------------------------------------------------------
@@ -304,11 +336,33 @@ def vllm_predict(
 
     llm = LLM(**llm_kwargs)
 
-    sampling_params = SamplingParams(
-        max_tokens=model_cfg.max_output_tokens,
-        temperature=getattr(model_cfg, "temperature", 0.0),
-        top_p=getattr(model_cfg, "top_p", 1.0),
-        repetition_penalty=getattr(model_cfg, "repetition_penalty", 1.0),
+    sampling_kwargs: dict = {
+        "max_tokens": model_cfg.max_output_tokens,
+        "temperature": getattr(model_cfg, "temperature", 0.0),
+        "top_p": getattr(model_cfg, "top_p", 1.0),
+        "repetition_penalty": getattr(model_cfg, "repetition_penalty", 1.0),
+    }
+    seed = getattr(model_cfg, "seed", None)
+    if seed is not None:
+        sampling_kwargs["seed"] = int(seed)
+
+    # Optional guided JSON (vLLM version-dependent). Falls back to soft prompt
+    # contract when GuidedDecodingParams is unavailable.
+    if getattr(model_cfg, "guided_json", False):
+        try:
+            from vllm.sampling_params import GuidedDecodingParams  # type: ignore
+
+            sampling_kwargs["guided_decoding"] = GuidedDecodingParams(json=CA_JSON_SCHEMA)
+            print("[vLLM] Guided JSON decoding enabled")
+        except Exception as exc:  # noqa: BLE001
+            print(f"[vLLM] Guided JSON unavailable ({exc}); using prompt-only JSON contract")
+
+    sampling_params = SamplingParams(**sampling_kwargs)
+    print(
+        "[vLLM] sampling: "
+        f"temp={sampling_kwargs['temperature']} top_p={sampling_kwargs['top_p']} "
+        f"rep={sampling_kwargs['repetition_penalty']} seed={seed} "
+        f"max_tokens={sampling_kwargs['max_tokens']}"
     )
 
     # ---- generation -------------------------------------------------------
@@ -375,6 +429,8 @@ def _model_cfg_from_args(args: argparse.Namespace) -> SimpleNamespace:
         max_model_len=args.max_model_len,
         tensor_parallel_size=args.tensor_parallel_size,
         hf_access_token_file=args.hf_access_token_file,
+        seed=args.seed,
+        guided_json=bool(args.guided_json),
     )
 
 
@@ -407,28 +463,64 @@ def main(argv: list[str] | None = None) -> None:
                     help="Sub-batch size for llm.generate calls.")
     ap.add_argument("--save_freq", type=int, default=200,
                     help="Flush results to CSV every N rows.")
-    ap.add_argument("--max_output_tokens", type=int, default=256,
-                    help="Maximum new tokens per sample (CA JSON needs headroom).")
-    ap.add_argument("--temperature", type=float, default=0.0,
-                    help="Sampling temperature (0 = greedy).")
-    ap.add_argument("--top_p", type=float, default=1.0,
-                    help="Nucleus sampling (1.0 = disabled).")
-    ap.add_argument("--repetition_penalty", type=float, default=1.0,
-                    help=">1 penalises repeated tokens (e.g. 1.1 with 4-bit + greedy).")
+    ap.add_argument("--max_output_tokens", type=int, default=None,
+                    help="Maximum new tokens per sample (default from --preset).")
+    ap.add_argument("--temperature", type=float, default=None,
+                    help="Sampling temperature (0 = greedy). Default from --preset.")
+    ap.add_argument("--top_p", type=float, default=None,
+                    help="Nucleus sampling (1.0 = disabled). Default from --preset.")
+    ap.add_argument("--repetition_penalty", type=float, default=None,
+                    help=">1 penalises repeated tokens. Default from --preset.")
+    ap.add_argument("--seed", type=int, default=None,
+                    help="Sampling seed for reproducibility. Default from --preset.")
+    ap.add_argument(
+        "--guided_json",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Enable/disable vLLM guided JSON decoding (CA schema).",
+    )
+    ap.add_argument(
+        "--preset",
+        type=str,
+        default="v1_baseline",
+        choices=("v1_baseline", "v2_enhanced", "v3_enhanced", "large_model"),
+        help="Generation preset from config/vllm_presets.yaml (default: v1_baseline).",
+    )
     ap.add_argument("--gpu_memory_utilization", type=float, default=0.9,
                     help="vLLM GPU memory fraction.")
-    ap.add_argument("--max_model_len", type=int, default=8192,
-                    help="Maximum model context length.")
+    ap.add_argument("--max_model_len", type=int, default=None,
+                    help="Maximum model context length (default from --preset).")
     ap.add_argument("--tensor_parallel_size", type=int, default=2,
                     help="Tensor-parallel degree (number of GPUs).")
     ap.add_argument("--load_mode", type=str, default="none",
                     choices=("4bit", "8bit", "none"),
                     help="Legacy shorthand: 4bit/8bit -> bitsandbytes quantisation.")
-    ap.add_argument("--quantization", type=str, default="fp8",
+    ap.add_argument("--quantization", type=str, default=None,
                     choices=("fp8", "bitsandbytes", "awq", "gptq", "none"),
-                    help="vLLM quantisation method. 'fp8' recommended for Ada/Hopper.")
+                    help="vLLM quantisation method (default from --preset).")
 
     args = ap.parse_args(argv)
+    preset = load_vllm_preset(args.preset)
+    print(f"[vLLM] preset={args.preset}: {preset.get('description', '').strip()[:120]}")
+
+    # Apply preset defaults; explicit CLI flags win.
+    if args.temperature is None:
+        args.temperature = float(preset.get("temperature", 0.0))
+    if args.top_p is None:
+        args.top_p = float(preset.get("top_p", 1.0))
+    if args.repetition_penalty is None:
+        args.repetition_penalty = float(preset.get("repetition_penalty", 1.0))
+    if args.seed is None and preset.get("seed") is not None:
+        args.seed = int(preset["seed"])
+    if args.guided_json is None:
+        args.guided_json = bool(preset.get("guided_json", False))
+    if args.max_model_len is None:
+        args.max_model_len = int(preset.get("max_model_len", 8192))
+    if args.max_output_tokens is None:
+        args.max_output_tokens = int(preset.get("max_output_tokens", 256))
+    if args.quantization is None:
+        args.quantization = preset.get("quantization", "fp8")
+
     if args.load_mode == "none":
         args.load_mode = ""
     if args.quantization == "none":

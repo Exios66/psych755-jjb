@@ -234,6 +234,7 @@ Shared styling: `src/ca_personas/viz_style.py`, `src/ca_personas/apa_plotting.py
 | `ml-baseline` | Tabular ML suite on tiered CA prediction |
 | `compare` | ML vs LLM shared metrics |
 | `shap-eval` | SHAP / band F1 / tier ablation |
+| `stereotype-eval` | Stereotyping MAE gaps + association tests (Sex/Age/Student/Employment/transit/Q28) |
 | `transit-ca` | Secondary: regular transit vs CA |
 | `geo-transit-rf` | Secondary: lat/long → transit RF |
 | `ca-transit-rf` | Secondary: group/interpersonal CA → transit RF |

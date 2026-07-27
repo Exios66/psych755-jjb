@@ -1,10 +1,10 @@
-# System Prompt Template v3.1
+# System Prompt Template v3.1-enhanced
 
 Used by [`src/ca_personas/personas.py`](../src/ca_personas/personas.py) when asking an LLM to inhabit a participant’s digital twin and predict PRCA subscale scores (6–30) **and** classroom bands (low / moderate / high).
 
 Prompt framing follows the **AI Terrarium / ICA 2026** digital-twin practice: the user message is a **natural-language, second-person persona narrative** (“You are a …”), not a structured questionnaire checklist or a meta-instruction to “adopt” a profile. The system message only sets inhabitance + the CA JSON response contract.
 
-Packaging notes (v3.1): independent subscale ratings; non-deterministic use of context; geo uses 1-decimal approximate coordinates; transit is signal-first (Q26→Q28) and skips rides-per-day when frequency is Never. See [`docs/persona_prompt_efficiency.md`](../docs/persona_prompt_efficiency.md).
+Packaging notes (v3.1-enhanced): independent subscale ratings; non-deterministic use of context; **mobility anti-bleed** (transit/ride-share ≠ interpersonal CA); mid-scale (14–19) prior; geo uses 1-decimal approximate coordinates; transit is signal-first (Q26→Q28) and skips rides-per-day when frequency is Never. Motivated by Llama-3.1-8B prompt-v1 transit IP collapse (signed error −2.2 → +6.5). See [`docs/persona_prompt_efficiency.md`](../docs/persona_prompt_efficiency.md) and [`docs/llm_v2_v3_enhanced_variants.md`](../docs/llm_v2_v3_enhanced_variants.md).
 
 This fenced block must stay identical to `SYSTEM_PROMPT` in `personas.py`.
 
@@ -18,12 +18,15 @@ only elaborate lightly in ways consistent with what was told to you.
 Use the profile as context, but do not treat any single life circumstance as
 deterministically fixing your apprehension. Rate the two communication contexts
 independently — group discussion anxiety and one-on-one conversation anxiety
-can differ.
+can differ. In particular, public-transit or ride-share habits do not by
+themselves imply high one-on-one conversation anxiety.
 
 Rate your own communication apprehension using McCroskey's PRCA scale logic:
 for each of two contexts (group discussions, and one-on-one conversations with
 new people), report how anxious/apprehensive YOU feel, as an integer from 6
-(very low apprehension) to 30 (very high apprehension).
+(very low apprehension) to 30 (very high apprehension). Many respondents land
+in the moderate mid-range (about 14–19); extreme scores should reflect strong
+lived evidence in the profile, not demographic defaults.
 
 Also classify each score into the standard classroom bands:
 - low: 6–13
@@ -85,3 +88,4 @@ Against ground-truth PRCA subscales we report:
 3. **Distance from correct** — because CA is a complex construct, near-misses matter:
    - `norm_score_distance = |pred − gt| / 24` (0 = exact, 1 = maximum miss on 6–30; clipped to `[0, 1]`)
    - `band_distance` ∈ {0, 1, 2} ordinal steps between bands (also normalized `/ 2`)
+4. **Stereotyping / discriminatory error** — MAE and signed-error gaps by Sex / Student / Employment / Age tertile / regular transit / Q28, plus Kruskal–Wallis association tests (`ca-personas stereotype-eval`)
