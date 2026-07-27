@@ -1,0 +1,55 @@
+{
+  "repo": "Exios66/psych755-jjb",
+  "generatedAt": "2026-07-27T03:43:17Z",
+  "nodeCount": 49,
+  "edgeCount": 127,
+  "statusCounts": {
+    "merged": 42,
+    "closed": 4,
+    "draft": 3
+  },
+  "themeCounts": {
+    "docs": 4,
+    "personas": 9,
+    "site": 6,
+    "ml": 7,
+    "data": 3,
+    "vllm": 1,
+    "secondary-rq": 16,
+    "infra": 3
+  },
+  "themes": [
+    {
+      "id": "personas",
+      "label": "Personas & prompts"
+    },
+    {
+      "id": "secondary-rq",
+      "label": "Secondary RQs"
+    },
+    {
+      "id": "ml",
+      "label": "ML baselines"
+    },
+    {
+      "id": "vllm",
+      "label": "vLLM / models"
+    },
+    {
+      "id": "site",
+      "label": "Quarto / Posit site"
+    },
+    {
+      "id": "data",
+      "label": "Data & pipeline"
+    },
+    {
+      "id": "infra",
+      "label": "Infra & tooling"
+    },
+    {
+      "id": "docs",
+      "label": "Docs"
+    }
+  ]
+}
