@@ -35,15 +35,20 @@ abstract: |
   comparing car access, employment, demographics, country vs coordinates, Q28 conditioned on
   car access, joint CA+mobility models, and residual CA after ride-share.
 
-  On a deterministic mock LLM, group-CA mean absolute error (MAE) ranges from 7.84
-  (`demos`) to 8.56 (`geo`) across research tiers (transit = 8.01)—well above the
-  classical suite floor (best transit group MAE = 4.49 Ridge). On the same cohort,
-  traditional Random Forests show that ride-share days (Q28) predict regular transit at
-  CV ROC-AUC = 0.762, whereas transit-day intensity (Q27) yields AUC = 0.589; geography
-  (0.551) and CA scores (0.590) remain near chance. Extended follow-ups show Q28 retains
-  lift after car access, demographics (especially age) modestly predict ridership, and CA
-  adds little once Q28 is known. A kitchen-sink mobility+demo forest reaches AUC = 0.824
-  but remains Q28-dominated. Together, the primary and secondary results clarify which
+  Full-cohort GPU (vLLM) baselines on the original prompt-v1 five-tier ladder show that
+  none of four open-weight instruct/distill models is a high-fidelity digital twin
+  (exact match ≈6–9%). Among non-collapsed runs, DeepSeek-R1-Distill-Llama-8B achieves
+  the best pooled group-CA MAE (5.22) and the most tier-stable profile; Llama-3.2-3B-Instruct
+  leads interpersonal MAE (5.35) and group band accuracy (52.7%); Llama-3.1-8B-Instruct
+  recovers interpersonal bands above chance early but collapses when transit cues are added
+  (IP MAE 4.67 → 8.17); Llama-3.3-70B-Instruct exhibits mode collapse (≈93% constant prior).
+  All remain above the classical suite floor (best transit group MAE = 4.49 Ridge). On the
+  same cohort, traditional Random Forests show that ride-share days (Q28) predict regular
+  transit at CV ROC-AUC = 0.762, whereas transit-day intensity (Q27) yields AUC = 0.589;
+  geography (0.551) and CA scores (0.590) remain near chance. Extended follow-ups show Q28
+  retains lift after car access, demographics (especially age) modestly predict ridership,
+  and CA adds little once Q28 is known. A kitchen-sink mobility+demo forest reaches AUC =
+  0.824 but remains Q28-dominated. Together, the primary and secondary results clarify which
   mobility cues belong in persona tiers and which reverse predictors of transit habits
   carry the strongest tabular signal in this sample.
 keywords:
@@ -414,28 +419,50 @@ for tier in CORE_TIERS:
 
 ## Model calling and classical baselines
 
-The Python package `ca_personas` supports Ollama, OpenRouter, and a deterministic **mock** provider for credential-free Posit renders [@ollama; @openrouter]. Predicted JSON fields are validated to the legal 6–30 range, then joined to ground truth for signed and absolute errors.
+The Python package `ca_personas` supports Ollama, OpenRouter, and a deterministic **mock** provider for credential-free Posit renders [@ollama; @openrouter]. Predicted JSON fields are validated to the legal 6–30 range, then joined to ground truth for signed and absolute errors. Interactive MAE/scatter figures on this site use the mock provider (or committed `artifacts/posit_full_cohort/` tables) so Cloud builds remain keyless.
 
 A seven-model tabular suite (Ridge, Elastic Net, k-NN, Random Forest, HistGradientBoosting, XGBoost, MLP) on the same tiers and targets is reported in [`docs/ml_baselines.md`](docs/ml_baselines.md). On the full cohort, the **best** group-CA MAE reaches **4.49** at `transit` (Ridge; RF = 4.68); the best interpersonal MAE reaches **4.25** (Elastic Net; MLP = 4.31). Feature attributions and ML-vs-LLM comparisons are documented in [`docs/factor_feature_importance.md`](docs/factor_feature_importance.md), [`docs/ml_vs_llm.md`](docs/ml_vs_llm.md), and [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md).
 
-Full-cohort **live** LLM baselines on prompt **v1** (five tiers): [Llama-3.1-8B-Instruct](docs/llm_baseline_llama31_v1.md) and [Llama-3.2-3B-Instruct](docs/llm_baseline_llama32_instruct_v1.md). Prompt packaging (v2) and ablation tiers (v3) are summarized in [`docs/persona_prompt_versions.md`](docs/persona_prompt_versions.md).
+Full-cohort **live** LLM baselines use GPU **vLLM** exports on the original prompt-**v1** five-tier ladder (**N = 241** × 5 = **1,205** prompts per model): [Llama-3.1-8B-Instruct](docs/llm_baseline_llama31_v1.md), [Llama-3.2-3B-Instruct](docs/llm_baseline_llama32_instruct_v1.md), [DeepSeek-R1-Distill-Llama-8B](docs/llm_baseline_deepseek_r1_distill_v1.md), and [Llama-3.3-70B-Instruct](docs/llm_baseline_llama33_70b_v1.md). Cross-model ranking and RQ write-ups: [`memos/vllm_v1_cross_model_comparison.md`](memos/vllm_v1_cross_model_comparison.md). Signal-first packaging (**v2**) and ablation tiers (**v3**) are summarized in [`docs/persona_prompt_versions.md`](docs/persona_prompt_versions.md); live re-runs on v2/v3 are pending.
 
 # Results
 
 ## Live LLM baselines (prompt v1)
 
-On the matched analytic cohort (**N = 241**; 1,205 prompts; 100% JSON parse):
+Primary digital-twin claims come from full-cohort **vLLM** exports on identical prompt-**v1** Terrarium narratives (`demos` → `employment` → `geo` → `transit` → `full`). Each of four open-weight models received **N = 241** × 5 = **1,205** prompts. JSON parse rates were 100% for the three Llama instruct models and **99.8%** (1,202/1,205) for DeepSeek-R1-Distill-Llama-8B (post-`</think>` ingest). Metrics follow `ca_personas.evaluate`: MAE, exact match, and band accuracy on group and interpersonal PRCA (bands low ≤13 / moderate 14–19 / high ≥20). Classical ML floor for comparison: best transit **group MAE ≈ 4.49** (Ridge; [`docs/ml_baselines.md`](docs/ml_baselines.md)).
 
-- **Llama-3.1-8B-Instruct** — interpersonal bands above chance at demos/employment/geo (~52%); not a high-fidelity twin (exact ~6–13%; group MAE best **5.68** at `transit`). Transit **hurts** interpersonal MAE (4.67 → **8.17**) via over-prediction. Details: [`docs/llm_baseline_llama31_v1.md`](docs/llm_baseline_llama31_v1.md).
-- **Llama-3.2-3B-Instruct** — lower overall MAE than 8B (group **5.51** / IP **5.35**) and higher group band accuracy (**52.7%** vs 28.8%); IP band still near chance (**30%**). Details: [`docs/llm_baseline_llama32_instruct_v1.md`](docs/llm_baseline_llama32_instruct_v1.md).
-- **DeepSeek-R1-Distill-Llama-8B** — best pooled **group MAE (5.22)** and the most tier-stable profile (no transit IP collapse); IP MAE **5.73**; parse **99.8%**. Details: [`docs/llm_baseline_deepseek_r1_distill_v1.md`](docs/llm_baseline_deepseek_r1_distill_v1.md).
-- **Llama-3.3-70B-Instruct** — schema-valid JSON but **mode collapse** (≈93% constant group=18 / IP=12; only 8 unique texts). Group MAE **6.02** (worst); IP metrics look better only as a cohort-prior artifact. Details: [`docs/llm_baseline_llama33_70b_v1.md`](docs/llm_baseline_llama33_70b_v1.md).
+**Short answer.** None of the models is a high-fidelity twin (exact match single-digit). Among **non-collapsed** runs, **DeepSeek-R1-Distill-Llama-8B** wins pooled group MAE (**5.22**) and is the most tier-stable; **Llama-3.2-3B-Instruct** wins interpersonal MAE (**5.35**) and group band accuracy (**52.7%**); **Llama-3.1-8B-Instruct** uniquely recovers interpersonal bands above chance at demos/geo (~52%) but **collapses when transit is added** (IP MAE 4.67 → **8.17**). **Llama-3.3-70B-Instruct** is a separate failure mode: ≈93% constant prior `(18, 12)` with only **8** unique generations — do not rank it as a competitive twin despite a low IP MAE (**4.65**) that is an artifact of that prior.
 
-Research memos (RQ write-ups + cross-model ranking): [`memos/vllm_v1_cross_model_comparison.md`](memos/vllm_v1_cross_model_comparison.md) · agenda [`docs/llm_vllm_memo_agenda.md`](docs/llm_vllm_memo_agenda.md).
+| Model | MAE group ↓ | MAE IP ↓ | Exact G | Exact IP | Band G | Band IP | Notes |
+|---|---:|---:|---:|---:|---:|---:|---|
+| Llama-3.1-8B-Instruct | 5.92 | 5.82 | 6.1% | 9.0% | 28.8% | **40.2%** | Transit IP disaster |
+| Llama-3.2-3B-Instruct | 5.51 | **5.35** | **9.1%** | 7.7% | **52.7%** | 30.0% | Best group bands |
+| DeepSeek-R1-Distill-Llama-8B | **5.22** | 5.73 | 6.2% | 5.9% | 33.4% | 35.4% | Best group MAE; tier-stable |
+| Llama-3.3-70B-Instruct | 6.02 | 4.65† | 6.4% | 12.4% | 26.3% | 52.0%† | †Constant prior; not person-tracking |
+
+*Table.* Head-to-head pooled metrics across all prompt-v1 tiers (N = 241 × 5). Non-collapsed models remain **above** the tabular Ridge floor (group MAE 4.49). Band accuracy vs ~33% chance: Llama-3.2 dominates **group** bands; Llama-3.1 leads **interpersonal** bands among models that still vary outputs (driven by demos/employment/geo, not transit).
+
+![Cross-model MAE, band accuracy, and tier trajectories](memos/figures/vllm_v1_cross_model_memo.png){#fig-vllm-v1-cross}
+
+@fig-vllm-v1-cross summarizes pooled MAE/band accuracy and per-tier trajectories for the four v1 exports.
+
+### RQ1–RQ3 pattern by model
+
+| RQ | Llama-3.1-8B | Llama-3.2-3B | DeepSeek-R1-Distill-8B | Llama-3.3-70B |
+|---|---|---|---|---|
+| **RQ1 employment** | Negligible | Negligible | Negligible / slight IP help | Null (collapsed) |
+| **RQ2 transit** | Group slight help; **IP disaster** | Small group help; IP worse | Flat; no IP collapse | Null (flat collapse) |
+| **RQ3 full** | Group band up; IP worse than demos | Best group MAE (5.29); IP mixed | Best IP MAE at full (**5.42**) | Negligible dips only |
+
+**Interpretation.** Prompt-v1 transit text is a **model-dependent hazard**, not a universal aid. Llama-3.1 over-predicts interpersonal CA once mobility cues appear. Llama-3.2 and DeepSeek are more robust; DeepSeek is the most **tier-stable**, while Llama-3.2 is the best **coarse group-band** classifier among the three. Llama-3.3-70B shows that **scale alone does not fix** digital-twin recovery — without predictive variance, tier RQs are uninterpretable. Prefer DeepSeek when minimizing group MAE, Llama-3.2 when maximizing group band recovery / IP MAE, treat Llama-3.1 as the cautionary transit-IP baseline that motivated packaging v2/v3, and treat Llama-3.3-70B as a **mode-collapse** cautionary case. No model yet closes the gap to classical ML (~4.5 MAE).
+
+Formal method pages: [`docs/llm_baseline_llama31_v1.md`](docs/llm_baseline_llama31_v1.md) · [`docs/llm_baseline_llama32_instruct_v1.md`](docs/llm_baseline_llama32_instruct_v1.md) · [`docs/llm_baseline_deepseek_r1_distill_v1.md`](docs/llm_baseline_deepseek_r1_distill_v1.md) · [`docs/llm_baseline_llama33_70b_v1.md`](docs/llm_baseline_llama33_70b_v1.md). Research memos: [`memos/vllm_v1_cross_model_comparison.md`](memos/vllm_v1_cross_model_comparison.md) · agenda [`docs/llm_vllm_memo_agenda.md`](docs/llm_vllm_memo_agenda.md).
 
 ## Mock LLM prediction error by information tier
 
-On the full analytic cohort (**N = 241**), the offline mock LLM yields the MAE values in @tbl-mae. Group-CA MAE moves from **`{python} f"{MAE_GROUP_DEMOS:.2f}"`** at `demos` to **`{python} f"{MAE_GROUP_TRANSIT:.2f}"`** at `transit` (Δ = `{python} f"{MAE_GROUP_DELTA:+.2f}"`). Interpersonal-CA MAE is **`{python} f"{MAE_IP_DEMOS:.2f}"`** at `demos` and **`{python} f"{MAE_IP_TRANSIT:.2f}"`** at `transit`. Band accuracy for group CA is **`{python} f"{BAND_GROUP_DEMOS:.3f}"`** (`demos`) vs **`{python} f"{BAND_GROUP_TRANSIT:.3f}"`** (`transit`). These mock figures establish the measurement pipeline; they are not claims about a production LLM. These mock figures do **not** meet the RQ1/RQ2 success criterion of lower MAE with richer tiers (group MAE rises from demos to geo before a partial recovery at transit). Live-provider comparisons should be read against the full ML suite ceiling in [`docs/ml_baselines.md`](docs/ml_baselines.md) (best group MAE = **4.49** Ridge; best interpersonal = **4.25** Elastic Net at `transit`; RF group = 4.68).
+The subsections below are **pipeline / measurement diagnostics** for keyless Posit renders (deterministic mock LLM, or committed `artifacts/posit_full_cohort/` tables). They are **not** the primary digital-twin claims — those are the live prompt-v1 vLLM results above.
+
+On the full analytic cohort (**N = 241**), the offline mock LLM yields the MAE values in @tbl-mae. Group-CA MAE moves from **`{python} f"{MAE_GROUP_DEMOS:.2f}"`** at `demos` to **`{python} f"{MAE_GROUP_TRANSIT:.2f}"`** at `transit` (Δ = `{python} f"{MAE_GROUP_DELTA:+.2f}"`). Interpersonal-CA MAE is **`{python} f"{MAE_IP_DEMOS:.2f}"`** at `demos` and **`{python} f"{MAE_IP_TRANSIT:.2f}"`** at `transit`. Band accuracy for group CA is **`{python} f"{BAND_GROUP_DEMOS:.3f}"`** (`demos`) vs **`{python} f"{BAND_GROUP_TRANSIT:.3f}"`** (`transit`). These mock figures do **not** meet the RQ1/RQ2 success criterion of lower MAE with richer tiers (group MAE rises from demos to geo before a partial recovery at transit). Live-provider comparisons should be read against the full ML suite ceiling in [`docs/ml_baselines.md`](docs/ml_baselines.md) (best group MAE = **4.49** Ridge; best interpersonal = **4.25** Elastic Net at `transit`; RF group = 4.68).
 
 ```{python}
 #| label: tbl-mae
@@ -554,7 +581,7 @@ by_stu
 
 ## Absolute group-CA error by employment status
 
-@tbl-by-employment reports mock-LLM absolute group-CA error by employment status and tier. At the `transit` tier, Full-Time respondents show MAE = `{python} f"{EMP_MAE_FULL:.2f}"`, Part-Time MAE = `{python} f"{EMP_MAE_PART:.2f}"`, and Other MAE = `{python} f"{EMP_MAE_OTHER:.2f}"`. Systematic MAE gaps by employment are the stereotyping-relevant contrast named in RQ1; interpret mock gaps as pipeline diagnostics until a live provider is substituted ([`docs/ml_vs_llm.md`](docs/ml_vs_llm.md)).
+@tbl-by-employment reports mock-LLM absolute group-CA error by employment status and tier. At the `transit` tier, Full-Time respondents show MAE = `{python} f"{EMP_MAE_FULL:.2f}"`, Part-Time MAE = `{python} f"{EMP_MAE_PART:.2f}"`, and Other MAE = `{python} f"{EMP_MAE_OTHER:.2f}"`. Systematic MAE gaps by employment are the stereotyping-relevant contrast named in RQ1; interpret these mock gaps as pipeline diagnostics only — live prompt-v1 exports found employment (RQ1) negligible across non-collapsed models ([`memos/vllm_v1_cross_model_comparison.md`](memos/vllm_v1_cross_model_comparison.md); [`docs/ml_vs_llm.md`](docs/ml_vs_llm.md)).
 
 ```{python}
 #| label: tbl-by-employment
@@ -822,11 +849,13 @@ Wave-1 memos left concrete open questions (unused Prolific demographics; country
 
 # Discussion
 
-On the full matched analytic cohort (**N = 241**), the framework makes the research contrasts concrete: each participant yields five persona prompts (`demos` → `employment` → `geo` → `transit` → `full`) with fixed ground-truth PRCA scores. The base `demos` layer includes **student status** alongside age, sex, and country of residence. Under the deterministic mock provider, group-CA MAE moves from **`{python} f"{MAE_GROUP_DEMOS:.2f}"`** (`demos`) to **`{python} f"{MAE_GROUP_TRANSIT:.2f}"`** (`transit`), while remaining well above the classical ML suite floor of **4.49** group MAE / **4.25** interpersonal MAE at the same tier ([`docs/ml_baselines.md`](docs/ml_baselines.md); [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md)). Residual MAE differences by student status (base demos) and employment status (RQ1) are the stereotyping diagnostics once a live LLM provider replaces the mock.
+On the full matched analytic cohort (**N = 241**), each participant yields five persona prompts (`demos` → `employment` → `geo` → `transit` → `full`) with fixed ground-truth PRCA scores. Full-cohort **prompt-v1** vLLM exports for four open-weight models show that none is a high-fidelity digital twin (exact match ≈6–9%), and all remain above the classical ML suite floor of **4.49** group MAE / **4.25** interpersonal MAE at `transit` ([`docs/ml_baselines.md`](docs/ml_baselines.md)). Among non-collapsed runs, **DeepSeek-R1-Distill-Llama-8B** minimizes pooled group MAE (**5.22**) with the most tier-stable profile; **Llama-3.2-3B-Instruct** leads interpersonal MAE (**5.35**) and group band accuracy (**52.7%**); **Llama-3.1-8B-Instruct** recovers interpersonal bands early but **collapses at transit** (IP MAE 4.67 → **8.17**); **Llama-3.3-70B** is a mode-collapse cautionary case, not a scale win ([`memos/vllm_v1_cross_model_comparison.md`](memos/vllm_v1_cross_model_comparison.md)). Employment (RQ1) is negligible across models; transit text (RQ2) is a **model-dependent hazard** rather than a universal aid — the pattern that motivated signal-first packaging (v2) and ablation tiers (v3).
+
+Interactive Posit MAE bars, identity scatters, and student/employment error tables on this page remain the deterministic **mock** provider (or committed `artifacts/posit_full_cohort/` tables) so Cloud builds stay keyless; they establish the measurement pipeline and are not substitutes for the live v1 ranking above. Residual mock MAE differences by student status (base demos) and employment status remain useful stereotyping *diagnostics* for future live-provider slice audits once v2/v3 re-runs are in hand ([`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md)).
 
 Secondary analyses quantify what the `transit` tier contributes. Regular riders have lower group CA (Δ = −2.72, d = −0.46, p = .0003) and interpersonal CA (Δ = −1.73, d = −0.30, p = .020) ([`memos/transit_riders_ca.md`](memos/transit_riders_ca.md)). As reverse classifiers of weekly+ transit, survey coordinates (AUC = 0.551) and CA scores (AUC = 0.590) remain near chance, whereas **Q28 ride-share days** reach AUC = **0.762** and dominate Q27 (AUC = 0.589) in joint models ([`memos/q27_q28_predict_transit.md`](memos/q27_q28_predict_transit.md)). Wave-2 follow-ups strengthen that claim: Q28 retains lift after car access, still ranks first on a common-*N* frame, and leaves CA with only marginal incremental AUC ([`docs/secondary_rq_followup_experiments.md`](docs/secondary_rq_followup_experiments.md)). That asymmetry supports treating ride-share exposure—not transit-day intensity alone—as the high-value mobility cue in both tabular baselines and persona prompts ([`docs/factor_feature_importance.md`](docs/factor_feature_importance.md) likewise ranks Q28 first for predicting CA). Age-linked demographic structure in reverse transit prediction also flags the `demos` tier as a natural surface for stereotyping audits.
 
-Limitations include (a) mock rather than production LLM predictions for the Posit MAE figures, (b) same-wave observational designs for reverse-prediction AUCs, which cannot establish that ride-share causes weekly+ transit (or vice versa), and (c) complete-case shrinkage for car-conditioned follow-ups. Those constraints keep Cloud builds keyless; they do not change the measurement design or the seeded full-cohort ML findings cited above.
+Limitations include (a) Posit interactive MAE/scatter cells remain mock for keyless builds while primary digital-twin claims come from documented full-cohort vLLM prompt-v1 exports (v2/v3 re-runs pending), (b) same-wave observational designs for reverse-prediction AUCs, which cannot establish that ride-share causes weekly+ transit (or vice versa), and (c) complete-case shrinkage for car-conditioned follow-ups. Those constraints keep Cloud builds keyless; they do not change the measurement design or the seeded full-cohort ML findings cited above.
 
 # Reproducibility
 
