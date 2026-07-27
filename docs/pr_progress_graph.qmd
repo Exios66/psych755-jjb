@@ -1,0 +1,60 @@
+---
+title: "PR Progress Graph"
+subtitle: "Interactive map of pull requests that shaped this project over time"
+toc: false
+number-sections: false
+sidebar: false
+page-layout: full
+format:
+  html:
+    toc: false
+    css: pr_graph/pr-graph.css
+    include-after-body:
+      - text: |
+          <script src="pr_graph/pr-graph.js"></script>
+---
+
+```{python}
+#| echo: false
+#| output: asis
+from pathlib import Path
+import json
+
+# Quarto executes with the document directory (docs/) as cwd.
+candidates = [
+    Path("pr_graph/prs.json"),
+    Path("../artifacts/pr_graph/prs.json"),
+    Path("../docs/pr_graph/prs.json"),
+]
+payload = None
+for path in candidates:
+    if path.is_file():
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        break
+
+if payload is None:
+    print("> **PR graph data missing.** Run `python scripts/sync_pr_graph_data.py` and re-render.")
+else:
+    meta = payload.get("meta", {})
+    n = meta.get("nodeCount", len(payload.get("nodes", [])))
+    e = meta.get("edgeCount", len(payload.get("edges", [])))
+    print(
+        f'<p class="prg-intro">Explore <strong>{n}</strong> pull requests and '
+        f'<strong>{e}</strong> links across themes (personas, secondary RQs, ML, site, data). '
+        f'Filter by edge type or status, scrub the time slider to watch progress unfold, '
+        f'and open any node on GitHub.</p>'
+    )
+    # Inline fallback so Posit Connect never depends on a separate fetch path.
+    print('<script type="application/json" id="prg-data">')
+    print(json.dumps(payload, separators=(",", ":")))
+    print("</script>")
+```
+
+::: {#pr-progress-graph data-prs-url="pr_graph/prs.json"}
+:::
+
+::: {.prg-help}
+**Controls.** Edge pills switch Timeline vs Relates-to links. Status chips toggle node visibility.
+**Group by theme** pulls same-theme PRs into clusters (Cluster pull slider). Time range reveals PRs chronologically.
+Click a node for details; double-click / double-tap opens the GitHub PR. Pinch or scroll to zoom; drag the canvas to pan.
+:::

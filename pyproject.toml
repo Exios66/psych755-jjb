@@ -50,10 +50,3 @@ venv = ".venv"
 pythonVersion = "3.11"
 extraPaths = ["src"]
 include = ["src", "notebooks", "scripts", "tests"]
-
-[tool.pyright]
-venvPath = "."
-venv = ".venv"
-pythonVersion = "3.11"
-extraPaths = ["src"]
-include = ["src", "notebooks", "scripts", "tests"]

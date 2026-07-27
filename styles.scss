@@ -137,3 +137,38 @@ main p:has(+ .quarto-figure) {
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
+
+/* PR progress graph page — immersive layout hooks */
+body.pr-graph-page #quarto-sidebar,
+html.pr-graph-page #quarto-sidebar,
+body.pr-graph-page .sidebar.toc-left,
+body.pr-graph-page #quarto-margin-sidebar {
+  display: none !important;
+}
+
+body.pr-graph-page .page-columns .content {
+  grid-column: page-start-inset / page-end-inset;
+  max-width: none;
+}
+
+body.pr-graph-page main {
+  padding-bottom: 0.5rem;
+}
+
+.prg-intro {
+  margin: 0 0 0.75rem 0;
+  color: #444;
+  font-size: 0.95rem;
+  max-width: 58rem;
+}
+
+.prg-help {
+  margin-top: 0.85rem;
+  font-size: 0.85rem;
+  color: #5c6570;
+  max-width: 58rem;
+}
+
+.prg-help strong {
+  color: #1a1d23;
+}

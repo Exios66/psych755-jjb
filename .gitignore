@@ -59,4 +59,7 @@ notebooks/*.executed.ipynb
 !artifacts/
 !artifacts/posit_full_cohort/
 !artifacts/posit_full_cohort/**
+# Committed PR progress graph bake (offline Quarto/Posit render)
+!artifacts/pr_graph/
+!artifacts/pr_graph/**
 .sibling_data_link
