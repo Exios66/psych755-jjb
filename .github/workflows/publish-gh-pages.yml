@@ -1,0 +1,78 @@
+# Permanent portfolio mirror of the Quarto website (mock / Posit artifacts).
+# Posit Connect Cloud remains the interactive full-cohort publish path when
+# File A/B/C + credentials are available.
+#
+# One-time repo setup: Settings → Pages → Build and deployment → Source:
+# "GitHub Actions".
+
+name: Publish Quarto site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install Python package
+        run: |
+          python -m pip install -U pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Configure mock .env for Quarto dotenv-safe
+        run: |
+          cp .env.example .env
+          sed -i 's/^CA_LLM_PROVIDER=.*/CA_LLM_PROVIDER=mock/' .env
+          sed -i 's/^OPENROUTER_API_KEY=.*/OPENROUTER_API_KEY=unused-mock/' .env
+          set -a; . ./.env; set +a
+          echo "CA_LLM_PROVIDER=$CA_LLM_PROVIDER" >> "$GITHUB_ENV"
+          echo "OPENROUTER_API_KEY=$OPENROUTER_API_KEY" >> "$GITHUB_ENV"
+          echo "OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://localhost:11434}" >> "$GITHUB_ENV"
+          echo "OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.2}" >> "$GITHUB_ENV"
+          echo "OPENROUTER_BASE_URL=${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}" >> "$GITHUB_ENV"
+          echo "OPENROUTER_MODEL=${OPENROUTER_MODEL:-meta-llama/llama-3.2-3b-instruct:free}" >> "$GITHUB_ENV"
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Render site
+        run: |
+          set -a; . ./.env; set +a
+          quarto render
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
