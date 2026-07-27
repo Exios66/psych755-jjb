@@ -39,9 +39,9 @@ Document the first wave of **live GPU vLLM** evaluations on the matched analytic
 - **Metrics:** MAE, exact match, band accuracy, signed error (`ca_personas.evaluate`)  
 - **Figure:** [`memos/figures/vllm_v1_cross_model_memo.png`](../memos/figures/vllm_v1_cross_model_memo.png)
 
-## Intentionally deferred
+## Intentionally deferred (future work)
 
-- v2 / v3 prompt re-runs on the same three models  
+- **v2 / v3 prompt re-runs** on 1–2 models (priority: Llama-3.1 to test whether packaging stops the transit IP collapse; DeepSeek as the stable comparator). Packaging and ablation tiers are **already in code**; GPU evaluation is the missing piece — see [`persona_prompt_versions.md`](persona_prompt_versions.md).  
 - Live TreeSHAP / stereotyping slice memos per model  
 - Temperature / constrained-decoding ablations  
 
