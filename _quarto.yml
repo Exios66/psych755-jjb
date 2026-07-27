@@ -4,7 +4,11 @@ project:
   render:
     - index.qmd
     - docs/framework.qmd
+    - docs/pr_progress_graph.qmd
     - docs/cohort_eda.md
+  resources:
+    - docs/pr_graph/**
+    - artifacts/pr_graph/**
     - docs/merge_coverage_sanity.md
     - docs/ml_baselines.md
     - docs/ml_vs_llm.md
@@ -62,6 +66,8 @@ website:
         text: Manuscript
       - href: docs/framework.qmd
         text: Framework
+      - href: docs/pr_progress_graph.qmd
+        text: Progress
       - text: Methods
         menu:
           - href: docs/cohort_eda.md
@@ -178,6 +184,7 @@ website:
         contents:
           - index.qmd
           - docs/framework.qmd
+          - docs/pr_progress_graph.qmd
       - section: "Methods"
         contents:
           - docs/cohort_eda.md

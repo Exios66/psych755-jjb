@@ -1,0 +1,1592 @@
+{
+  "meta": {
+    "repo": "Exios66/psych755-jjb",
+    "generatedAt": "2026-07-27T03:11:15Z",
+    "nodeCount": 46,
+    "edgeCount": 119,
+    "statusCounts": {
+      "merged": 41,
+      "closed": 4,
+      "draft": 1
+    },
+    "themeCounts": {
+      "docs": 4,
+      "personas": 9,
+      "site": 4,
+      "ml": 7,
+      "data": 3,
+      "vllm": 1,
+      "secondary-rq": 15,
+      "infra": 3
+    },
+    "themes": [
+      {
+        "id": "personas",
+        "label": "Personas & prompts"
+      },
+      {
+        "id": "secondary-rq",
+        "label": "Secondary RQs"
+      },
+      {
+        "id": "ml",
+        "label": "ML baselines"
+      },
+      {
+        "id": "vllm",
+        "label": "vLLM / models"
+      },
+      {
+        "id": "site",
+        "label": "Quarto / Posit site"
+      },
+      {
+        "id": "data",
+        "label": "Data & pipeline"
+      },
+      {
+        "id": "infra",
+        "label": "Infra & tooling"
+      },
+      {
+        "id": "docs",
+        "label": "Docs"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "id": "PR-1",
+      "number": 1,
+      "title": "Update README.md",
+      "status": "merged",
+      "theme": "docs",
+      "themeLabel": "Docs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/1",
+      "createdAt": "2026-07-23T19:35:44Z",
+      "mergedAt": "2026-07-23T20:11:42Z",
+      "closedAt": "2026-07-23T20:11:42Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "# Commit Number 01 @Exios66 - Updated the project README to the template format provided by Adam."
+    },
+    {
+      "id": "PR-2",
+      "number": 2,
+      "title": "Create system_prompt.md",
+      "status": "merged",
+      "theme": "personas",
+      "themeLabel": "Personas & prompts",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/2",
+      "createdAt": "2026-07-23T20:37:58Z",
+      "mergedAt": "2026-07-23T21:02:10Z",
+      "closedAt": "2026-07-23T21:02:10Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "# System Prompt Template v1.0 You are assisting with a communication studies research project that is auditing how language models simulate individual survey respondents. You will be given a small set of demographic and/or behavioral facts about one anonymous survey respondent.\u2026"
+    },
+    {
+      "id": "PR-3",
+      "number": 3,
+      "title": "Update README.md",
+      "status": "merged",
+      "theme": "docs",
+      "themeLabel": "Docs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/3",
+      "createdAt": "2026-07-23T21:08:45Z",
+      "mergedAt": "2026-07-23T22:26:49Z",
+      "closedAt": "2026-07-23T22:26:49Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "### Updated Research Question"
+    },
+    {
+      "id": "PR-4",
+      "number": 4,
+      "title": "Add tiered CA persona extraction and LLM prediction framework",
+      "status": "merged",
+      "theme": "personas",
+      "themeLabel": "Personas & prompts",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/4",
+      "createdAt": "2026-07-23T21:55:02Z",
+      "mergedAt": "2026-07-23T21:57:37Z",
+      "closedAt": "2026-07-23T21:57:37Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds a Python framework for the PSYCH 755 CA research pipeline: - Join Prolific demographics with Qualtrics responses on participant ID - Score ground-truth PRCA **group** and **interpersonal** subscales (6\u201330) from Likert items, wi\u2026"
+    },
+    {
+      "id": "PR-5",
+      "number": 5,
+      "title": "Update Getstarted.md",
+      "status": "closed",
+      "theme": "docs",
+      "themeLabel": "Docs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/5",
+      "createdAt": "2026-07-23T22:02:38Z",
+      "mergedAt": null,
+      "closedAt": "2026-07-23T22:41:52Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": ""
+    },
+    {
+      "id": "PR-6",
+      "number": 6,
+      "title": "Add Quarto manuscript website for Posit Connect Cloud",
+      "status": "merged",
+      "theme": "site",
+      "themeLabel": "Quarto / Posit site",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/6",
+      "createdAt": "2026-07-23T22:33:50Z",
+      "mergedAt": "2026-07-23T22:39:37Z",
+      "closedAt": "2026-07-23T22:39:37Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds a publishable Quarto **website** manuscript for the PSYCH 755 CA / LLM stereotyping project. - [`index.qmd`](index.qmd) \u2014 primary manuscript with abstract, methods, executable tables/figures, discussion, and APA references - [`\u2026"
+    },
+    {
+      "id": "PR-7",
+      "number": 7,
+      "title": "Add stage-one Random Forest and KNN CA prediction baselines",
+      "status": "merged",
+      "theme": "ml",
+      "themeLabel": "ML baselines",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/7",
+      "createdAt": "2026-07-23T22:35:40Z",
+      "mergedAt": "2026-07-23T22:37:22Z",
+      "closedAt": "2026-07-23T22:37:22Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds a **stage one** classical ML baseline that performs the same prediction task later asked of LLMs: estimate PRCA **group** and **interpersonal** CA scores (6\u201330) from cumulative participant feature tiers. ### Deliverables - [`no\u2026"
+    },
+    {
+      "id": "PR-8",
+      "number": 8,
+      "title": "Added Excerpts to Root",
+      "status": "closed",
+      "theme": "data",
+      "themeLabel": "Data & pipeline",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/8",
+      "createdAt": "2026-07-23T22:42:23Z",
+      "mergedAt": null,
+      "closedAt": "2026-07-25T00:09:15Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": ""
+    },
+    {
+      "id": "PR-9",
+      "number": 9,
+      "title": "Merge main into Quarto manuscript branch and resolve conflicts",
+      "status": "merged",
+      "theme": "site",
+      "themeLabel": "Quarto / Posit site",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/9",
+      "createdAt": "2026-07-23T22:42:47Z",
+      "mergedAt": "2026-07-23T22:44:27Z",
+      "closedAt": "2026-07-23T22:44:28Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": ""
+    },
+    {
+      "id": "PR-10",
+      "number": 10,
+      "title": "Add band accuracy metrics, GT scoring script, and full persona prompts",
+      "status": "merged",
+      "theme": "personas",
+      "themeLabel": "Personas & prompts",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/10",
+      "createdAt": "2026-07-24T00:39:28Z",
+      "mergedAt": "2026-07-24T01:01:36Z",
+      "closedAt": "2026-07-24T01:01:36Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Extends the CA prediction evaluation stack so agents are judged on **both** exact 6\u201330 score precision **and** low/moderate/high band agreement, and adds tooling to score ground truth + emit foolproof persona prompts from Prolific/Q\u2026"
+    },
+    {
+      "id": "PR-11",
+      "number": 11,
+      "title": "Add distance-from-correct metrics for CA evaluation",
+      "status": "merged",
+      "theme": "personas",
+      "themeLabel": "Personas & prompts",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/11",
+      "createdAt": "2026-07-24T01:02:55Z",
+      "mergedAt": "2026-07-24T01:04:15Z",
+      "closedAt": "2026-07-24T01:04:15Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds **distance-from-correct** metrics for this complex CA construct, so near-misses are scored differently from far misses (beyond exact match and band hit/miss). ### New metrics (LLM + ML baselines) | Metric | Definition | |---|--\u2026"
+    },
+    {
+      "id": "PR-12",
+      "number": 12,
+      "title": "Add factor analysis and feature-importance notebook",
+      "status": "merged",
+      "theme": "ml",
+      "themeLabel": "ML baselines",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/12",
+      "createdAt": "2026-07-24T01:05:30Z",
+      "mergedAt": "2026-07-24T01:06:18Z",
+      "closedAt": "2026-07-24T01:06:18Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds a diagnostics notebook + module that surface **precise indicators of the most important predictive features** in the sample, plus the latent factor structure of the PRCA Likert items. ### Notebook [`notebooks/factor_feature_imp\u2026"
+    },
+    {
+      "id": "PR-13",
+      "number": 13,
+      "title": "Add ML vs LLM shared-metric comparison notebook",
+      "status": "merged",
+      "theme": "ml",
+      "themeLabel": "ML baselines",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/13",
+      "createdAt": "2026-07-24T01:07:51Z",
+      "mergedAt": "2026-07-24T04:15:01Z",
+      "closedAt": "2026-07-24T04:15:01Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds a notebook and `compare_agents` module that evaluate **Random Forest / KNN** against **LLM persona agents** on the same CA prediction task, tiers, and metrics. ### Shared metrics - MAE + exact score accuracy (6\u201330) - Band accur\u2026"
+    },
+    {
+      "id": "PR-14",
+      "number": 14,
+      "title": "Add vLLM digital-twin inference launcher for CA persona prompts",
+      "status": "merged",
+      "theme": "vllm",
+      "themeLabel": "vLLM / models",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/14",
+      "createdAt": "2026-07-24T04:24:08Z",
+      "mergedAt": "2026-07-24T17:56:25Z",
+      "closedAt": "2026-07-24T17:56:25Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Ports the `ai_terrarium_v2` vLLM batch-inference launcher into this repo for the CA digital-twin prediction task, using the `caseid` / `prompt` CSV schema with checkpoint-resume. ### What's included - **`src/inference/predict_vllm.p\u2026"
+    },
+    {
+      "id": "PR-15",
+      "number": 15,
+      "title": "Align pipeline to File A/B/C sibling data, cleaning, and RQ-focused EDA",
+      "status": "merged",
+      "theme": "data",
+      "themeLabel": "Data & pipeline",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/15",
+      "createdAt": "2026-07-24T18:41:46Z",
+      "mergedAt": "2026-07-24T18:45:43Z",
+      "closedAt": "2026-07-24T18:45:43Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Wires the CA persona framework to the **real** Prolific + Qualtrics exports while keeping private data out of git. - Loads **File A + File B** (stacked Prolific waves) and **File C** (flat Qualtrics) from `../sibling_data/` - Cleans\u2026"
+    },
+    {
+      "id": "PR-16",
+      "number": 16,
+      "title": "Secondary RQ: regular public transit vs cohort CA scores",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/16",
+      "createdAt": "2026-07-24T20:09:38Z",
+      "mergedAt": "2026-07-24T20:17:32Z",
+      "closedAt": "2026-07-24T20:17:32Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds a dedicated observational pipeline + notebook for the **secondary research question**: among Prolific\u2194Qualtrics matched respondents, do regular public-transit riders have CA scores that differ from the larger cohort \u2014 and by ho\u2026"
+    },
+    {
+      "id": "PR-17",
+      "number": 17,
+      "title": "Secondary RQ: Random Forest of lat/long \u2192 regular public transit",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/17",
+      "createdAt": "2026-07-24T20:20:28Z",
+      "mergedAt": "2026-07-24T22:08:37Z",
+      "closedAt": "2026-07-24T22:08:37Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds a presentation-ready secondary research question and notebook that trains a **Random Forest** to test whether Qualtrics survey **latitude & longitude** predict **regular public-transit use** (`Q26` weekly+). ### Deliverables -\u2026"
+    },
+    {
+      "id": "PR-18",
+      "number": 18,
+      "title": "Secondary RQ5: Random Forest of CA scores \u2192 regular public transit",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/18",
+      "createdAt": "2026-07-24T22:14:32Z",
+      "mergedAt": "2026-07-24T23:53:15Z",
+      "closedAt": "2026-07-24T23:53:15Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds **secondary research question #5**: do ground-truth **group** and **interpersonal** PRCA scores predict **regular public-transit use**? ### Deliverables - [`src/ca_personas/ca_transit_rf.py`](src/ca_personas/ca_transit_rf.py) \u2014\u2026"
+    },
+    {
+      "id": "PR-19",
+      "number": 19,
+      "title": "Fix File C merge: restore 252/21/10 coverage audit",
+      "status": "merged",
+      "theme": "data",
+      "themeLabel": "Data & pipeline",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/19",
+      "createdAt": "2026-07-24T23:57:29Z",
+      "mergedAt": "2026-07-24T23:59:03Z",
+      "closedAt": "2026-07-24T23:59:03Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Sanity-checked implementations against the Qualtrics data dictionary and the expected Prolific\u2194Qualtrics merge accounting. ### Bug fixed File C (flat single-header export) was incorrectly treated as a 3-row Qualtrics header because\u2026"
+    },
+    {
+      "id": "PR-20",
+      "number": 20,
+      "title": "Add research memo: CA scores predicting regular transit use",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/20",
+      "createdAt": "2026-07-25T00:02:25Z",
+      "mergedAt": "2026-07-25T00:04:42Z",
+      "closedAt": "2026-07-25T00:04:42Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary A concise research memorandum (template-aligned) summarizing the secondary RQ on whether **group** and **interpersonal CA** predict **regular public-transit use**. ### Files - [`memos/ca_scores_predict_transit.md`](memos/ca_scores_p\u2026"
+    },
+    {
+      "id": "PR-21",
+      "number": 21,
+      "title": "Add research memo: geolocation predicting regular transit",
+      "status": "closed",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/21",
+      "createdAt": "2026-07-25T00:04:42Z",
+      "mergedAt": null,
+      "closedAt": "2026-07-25T01:24:07Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds a concise research memorandum for the secondary RQ on whether Qualtrics survey latitude/longitude predict regular public-transit use (`Q26` weekly+), following the course research-memo template. ## Contents - `memos/geo_predict\u2026"
+    },
+    {
+      "id": "PR-22",
+      "number": 22,
+      "title": "Resolve geo transit memo merge conflict with main",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/22",
+      "createdAt": "2026-07-25T00:09:42Z",
+      "mergedAt": "2026-07-25T00:10:04Z",
+      "closedAt": "2026-07-25T00:10:04Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Resolves the merge conflict between `cursor/geo-transit-research-memo-fa90` (PR #21) and `main` after #20 landed the CA scores memo. ## Conflict classification **Simple conflict (fixed):** `memos/README.md` Both branches independent\u2026"
+    },
+    {
+      "id": "PR-23",
+      "number": 23,
+      "title": "Add comprehensive feature-importance RF + research memo for regular transit",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/23",
+      "createdAt": "2026-07-25T00:16:09Z",
+      "mergedAt": "2026-07-25T17:01:19Z",
+      "closedAt": "2026-07-25T17:01:19Z",
+      "isDraft": false,
+      "labels": [
+        "documentation",
+        "enhancement"
+      ],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds **Secondary RQ 6**: a professional feature-importance analysis and ROC-maximizing Random Forest over the full defensible predictor set for weekly+ public-transit use, plus a course-template research memo. ## What\u2019s included - `\u2026"
+    },
+    {
+      "id": "PR-24",
+      "number": 24,
+      "title": "Fix silent failures, path fallbacks, placeholders, and doc/requirements drift",
+      "status": "merged",
+      "theme": "docs",
+      "themeLabel": "Docs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/24",
+      "createdAt": "2026-07-25T00:24:22Z",
+      "mergedAt": "2026-07-25T00:38:10Z",
+      "closedAt": "2026-07-25T00:38:10Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Full-repo audit of bugs (especially silent failures), inconsistencies, and leftover course placeholders. Fixes applied across the analysis package, vLLM inference bridge, scripts, requirements, and documentation. **53 tests passing.\u2026"
+    },
+    {
+      "id": "PR-25",
+      "number": 25,
+      "title": "Sync secondary RQ docs to File A/B/C re-run (seed=42)",
+      "status": "closed",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/25",
+      "createdAt": "2026-07-25T00:40:36Z",
+      "mergedAt": null,
+      "closedAt": "2026-07-25T17:08:35Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Re-ran all three secondary research-question pipelines on the uploaded Prolific File A/B + Qualtrics File C cohort and synced the formal write-up, memos, and Qualtrics data dictionary to the seeded artifacts. ## Re-run results (`--s\u2026"
+    },
+    {
+      "id": "PR-26",
+      "number": 26,
+      "title": "SHAP/F1 feature predictive-power suite for ML and LLM agents",
+      "status": "merged",
+      "theme": "ml",
+      "themeLabel": "ML baselines",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/26",
+      "createdAt": "2026-07-25T07:18:22Z",
+      "mergedAt": "2026-07-25T07:20:33Z",
+      "closedAt": "2026-07-25T07:20:33Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds a fully dedicated feature predictive-power evaluation spanning **traditional ML** and **LLM persona agents**: TreeSHAP, band-level F1, tier ablation, a comprehensive notebook, and a new research memo with figure suite. ## What\u2019\u2026"
+    },
+    {
+      "id": "PR-27",
+      "number": 27,
+      "title": "Geo-memo follow-ups: car access, employment, and ride-share \u2192 regular transit",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/27",
+      "createdAt": "2026-07-25T07:32:51Z",
+      "mergedAt": "2026-07-25T07:34:06Z",
+      "closedAt": "2026-07-25T07:34:06Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Tests the remaining candidate predictors named in `memos/geo_predicts_transit.md` (car license/access `Q20`/`Q21`, employment status, ride-share `Q28`/`Q29`) as Random Forest classifiers of weekly+ public transit, with professional\u2026"
+    },
+    {
+      "id": "PR-28",
+      "number": 28,
+      "title": "Manuscript: Q27/Q28 traditional ML predictors of regular transit",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/28",
+      "createdAt": "2026-07-25T07:41:41Z",
+      "mergedAt": "2026-07-25T07:43:29Z",
+      "closedAt": "2026-07-25T07:43:30Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds a full manuscript results section on survey items **Q27** (public-transit intensity on use days) and **Q28** (ride-share days) as traditional Random Forest predictors of weekly+ public-transit use, tied to a dedicated research\u2026"
+    },
+    {
+      "id": "PR-29",
+      "number": 29,
+      "title": "Rerun Posit stats on full cohort and ship APA site figures",
+      "status": "merged",
+      "theme": "site",
+      "themeLabel": "Quarto / Posit site",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/29",
+      "createdAt": "2026-07-25T15:45:31Z",
+      "mergedAt": "2026-07-25T16:02:57Z",
+      "closedAt": "2026-07-25T16:02:57Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Verified and re-ran every Posit-facing evaluation on the uploaded full Prolific File A/B + Qualtrics File C cohort, then rebuilt **all Quarto site memo/docs visualizations** to APA-aligned grayscale figures with **exact, memo-linked\u2026"
+    },
+    {
+      "id": "PR-30",
+      "number": 30,
+      "title": "Add wave-2 follow-up experiments, research memos, and Quarto site pages",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/30",
+      "createdAt": "2026-07-25T15:50:49Z",
+      "mergedAt": "2026-07-25T16:27:06Z",
+      "closedAt": "2026-07-25T16:27:06Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Implements a second wave of offline secondary research experiments that answer open questions left by the geo / CA / Q27\u2013Q28 / covariate memos, then records results in professional research memoranda and integrates them into the man\u2026"
+    },
+    {
+      "id": "PR-31",
+      "number": 31,
+      "title": "Incorporate student status into base demos persona tier",
+      "status": "merged",
+      "theme": "personas",
+      "themeLabel": "Personas & prompts",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/31",
+      "createdAt": "2026-07-25T16:14:35Z",
+      "mergedAt": "2026-07-25T16:24:00Z",
+      "closedAt": "2026-07-25T16:24:00Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Enhances the persona prompt tier system so **student status** is a first-class field in the **base demographics (`demos`) layer**, and wires that through evaluation, documentation, and experimental mock runs. ### Code - Canonical `B\u2026"
+    },
+    {
+      "id": "PR-32",
+      "number": 32,
+      "title": "Add JackJBurleson Posit Connect publish skill (full-data gated)",
+      "status": "merged",
+      "theme": "site",
+      "themeLabel": "Quarto / Posit site",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/32",
+      "createdAt": "2026-07-25T16:24:05Z",
+      "mergedAt": "2026-07-25T17:02:43Z",
+      "closedAt": "2026-07-25T17:02:43Z",
+      "isDraft": false,
+      "labels": [
+        "enhancement"
+      ],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds a Cursor skill and helper script for updating, rendering, and publishing Quarto site content to the **JackJBurleson** Posit Connect Cloud deployment, with a hard gate that full-cohort File A/B/C analyses are run and verified be\u2026"
+    },
+    {
+      "id": "PR-33",
+      "number": 33,
+      "title": "Add sample persona prompts for each cumulative context tier",
+      "status": "merged",
+      "theme": "personas",
+      "themeLabel": "Personas & prompts",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/33",
+      "createdAt": "2026-07-25T16:34:18Z",
+      "mergedAt": "2026-07-25T16:39:02Z",
+      "closedAt": "2026-07-25T16:39:02Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds **two illustrative sample prompts per progressive context-combination tier** under `prompts/examples/`, matching the persona design in `prompts/system_prompt.md` and `src/ca_personas/personas.py`. ## Layout | Path | Tier | |---\u2026"
+    },
+    {
+      "id": "PR-34",
+      "number": 34,
+      "title": "Expand landing abstract, secondary RQ presentation, and GitHub access",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/34",
+      "createdAt": "2026-07-25T16:38:54Z",
+      "mergedAt": "2026-07-25T16:50:41Z",
+      "closedAt": "2026-07-25T16:50:41Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary - Expands the manuscript abstract to introduce primary RQ1\u2013RQ3 and secondary S1\u2013S5 research questions with headline full-cohort findings. - Reformats research-focus / secondary-RQ presentation into styled blocks with clearer outcome\u2026"
+    },
+    {
+      "id": "PR-35",
+      "number": 35,
+      "title": "Rework persona prompts to AI Terrarium natural-language digital twins",
+      "status": "merged",
+      "theme": "personas",
+      "themeLabel": "Personas & prompts",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/35",
+      "createdAt": "2026-07-25T16:48:26Z",
+      "mergedAt": "2026-07-25T17:06:48Z",
+      "closedAt": "2026-07-25T17:06:48Z",
+      "isDraft": false,
+      "labels": [
+        "enhancement"
+      ],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Reworks CA persona prompt generation to mirror the **AI Terrarium / ICA 2026** digital-twin practice: natural-language, second-person persona narratives (\u201cYou are a \u2026\u201d) instead of structured questionnaire checklists or \u201cadopt / pers\u2026"
+    },
+    {
+      "id": "PR-36",
+      "number": 36,
+      "title": "Expand CA ML baselines to Ridge, XGBoost, MLP, and full suite",
+      "status": "merged",
+      "theme": "ml",
+      "themeLabel": "ML baselines",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/36",
+      "createdAt": "2026-07-25T17:01:25Z",
+      "mergedAt": "2026-07-25T17:08:12Z",
+      "closedAt": "2026-07-25T17:08:12Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary - Expands stage-one CA prediction baselines beyond RF + k-NN to a **seven-model suite**: Ridge, Elastic Net, k-NN, Random Forest, HistGradientBoosting, XGBoost, and MLP. - Adds `ca-personas ml-baseline` CLI, leaderboard / MAE-pivot\u2026"
+    },
+    {
+      "id": "PR-37",
+      "number": 37,
+      "title": "Refresh ML suite baseline figures after full-cohort republish",
+      "status": "merged",
+      "theme": "ml",
+      "themeLabel": "ML baselines",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/37",
+      "createdAt": "2026-07-25T17:20:58Z",
+      "mergedAt": "2026-07-25T17:34:18Z",
+      "closedAt": "2026-07-25T17:34:18Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary - Refreshes the three `docs/figures/ml_baseline_mae_*.png` suite figures from a seeded full-cohort (`N = 241`) re-run used for the JackJBurleson Posit Connect republish. ## Live deploy Already published to: - https://019f9a10-ebb9-d\u2026"
+    },
+    {
+      "id": "PR-38",
+      "number": 38,
+      "title": "Show AI Terrarium persona examples on the landing page",
+      "status": "merged",
+      "theme": "personas",
+      "themeLabel": "Personas & prompts",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/38",
+      "createdAt": "2026-07-25T17:26:53Z",
+      "mergedAt": "2026-07-25T17:34:57Z",
+      "closedAt": "2026-07-25T17:34:57Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary - Updates \u00a7 Persona tiers to show **five numbered AI Terrarium user prompts** (1\u20135) for the same participant. - Each listing is the **user message only** (second-person narrative + CA ask); the system prompt is omitted. - Participan\u2026"
+    },
+    {
+      "id": "PR-39",
+      "number": 39,
+      "title": "Clean site navigation: separate Memos from Secondary RQs",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/39",
+      "createdAt": "2026-07-25T17:38:13Z",
+      "mergedAt": "2026-07-25T19:11:39Z",
+      "closedAt": "2026-07-25T19:11:39Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Cleans Quarto site navigation clutter by separating research memos from Secondary RQ write-ups, without deleting linked content. ## Changes - **Navbar:** `Secondary RQs` now lists write-ups only; new **Memos** dropdown groups Core S\u2026"
+    },
+    {
+      "id": "PR-40",
+      "number": 40,
+      "title": "Fix comprehensive-transit-rf CLI and republish full cohort",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/40",
+      "createdAt": "2026-07-25T17:41:51Z",
+      "mergedAt": "2026-07-25T17:43:42Z",
+      "closedAt": "2026-07-25T17:43:42Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Unblocks the Posit full-cohort publish workflow by repairing a broken `ca-personas comprehensive-transit-rf` CLI merge, then re-runs seeded File A/B/C analyses and republishes the JackJBurleson site. ## Changes - Restore `comprehens\u2026"
+    },
+    {
+      "id": "PR-41",
+      "number": 41,
+      "title": "Audit Posit site: fix stale ML claims, vague prose, and path bugs",
+      "status": "merged",
+      "theme": "ml",
+      "themeLabel": "ML baselines",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/41",
+      "createdAt": "2026-07-25T19:58:32Z",
+      "mergedAt": "2026-07-25T20:01:33Z",
+      "closedAt": "2026-07-25T20:01:33Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Desktop audit of the live JackJBurleson Posit site found stale ML-suite winners, a false CV design claim, outdated mock MAE artifacts, vague secondary-RQ wording, double section numbering, and path-resolution bugs. This PR corrects\u2026"
+    },
+    {
+      "id": "PR-42",
+      "number": 42,
+      "title": "Add AGENTS.md with Cursor Cloud dev environment setup notes",
+      "status": "merged",
+      "theme": "infra",
+      "themeLabel": "Infra & tooling",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/42",
+      "createdAt": "2026-07-25T20:03:58Z",
+      "mergedAt": "2026-07-25T20:06:27Z",
+      "closedAt": "2026-07-25T20:06:27Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Sets up and documents the development environment for this PSYCH 755 CA-personas project (Python `ca-personas` package/CLI + Quarto manuscript website). Adds `AGENTS.md` capturing the non-obvious startup/run caveats for future Curso\u2026"
+    },
+    {
+      "id": "PR-43",
+      "number": 43,
+      "title": "Add PR/issue templates and expand AGENTS.md",
+      "status": "merged",
+      "theme": "infra",
+      "themeLabel": "Infra & tooling",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/43",
+      "createdAt": "2026-07-25T23:31:57Z",
+      "mergedAt": "2026-07-26T01:01:15Z",
+      "closedAt": "2026-07-26T01:01:15Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds GitHub contribution templates and a full agent runbook so humans and coding agents share the same setup, testing, and publish expectations. ## Changes ### PR template - `.github/PULL_REQUEST_TEMPLATE.md` \u2014 short summary / type\u2026"
+    },
+    {
+      "id": "PR-44",
+      "number": 44,
+      "title": "Harden cohort loading and sync secondary Posit artifacts",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/44",
+      "createdAt": "2026-07-26T01:14:25Z",
+      "mergedAt": "2026-07-26T01:15:22Z",
+      "closedAt": "2026-07-26T01:15:22Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Deep-dive audit of the repo and live JackJBurleson Posit site found primary manuscript numbers already aligned (N=241; geo 0.551; CA 0.590; Q28 0.762; Q27 0.589), but several process/code gaps could still produce truncated cohorts o\u2026"
+    },
+    {
+      "id": "PR-45",
+      "number": 45,
+      "title": "docs: changelog for v0.2.0 (2026-07-26)",
+      "status": "draft",
+      "theme": "infra",
+      "themeLabel": "Infra & tooling",
+      "author": "app/cursor",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/45",
+      "createdAt": "2026-07-26T06:07:02Z",
+      "mergedAt": null,
+      "closedAt": null,
+      "isDraft": true,
+      "labels": [],
+      "excerpt": "## Summary Initial `CHANGELOG.md` for the first weekly maintainer run. Covers all merged work on `main` from **2026-07-19 \u2192 2026-07-26**. ## Type - [x] Docs only ## Version bump - **Previous:** none (no prior changelog; package at `0.1.0` in `pyproject.toml`) - **New:** `0.2.0`\u2026"
+    },
+    {
+      "id": "PR-46",
+      "number": 46,
+      "title": "Promote prompt-v1 multi-model LLM findings in core manuscript",
+      "status": "merged",
+      "theme": "personas",
+      "themeLabel": "Personas & prompts",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/46",
+      "createdAt": "2026-07-27T03:03:00Z",
+      "mergedAt": "2026-07-27T03:05:03Z",
+      "closedAt": "2026-07-27T03:05:03Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Promotes full-cohort prompt-v1 vLLM digital-twin findings (DeepSeek, Llama-3.2-3B, Llama-3.1 transit IP collapse, Llama-3.3-70B mode collapse) into the core manuscript Abstract, Methods, Results, and Discussion. Mock MAE figures rem\u2026"
+    }
+  ],
+  "edges": [
+    {
+      "id": "timeline-1-2",
+      "source": "PR-1",
+      "target": "PR-2",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-2-4",
+      "source": "PR-2",
+      "target": "PR-4",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-4-3",
+      "source": "PR-4",
+      "target": "PR-3",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-3-7",
+      "source": "PR-3",
+      "target": "PR-7",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-7-6",
+      "source": "PR-7",
+      "target": "PR-6",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-6-5",
+      "source": "PR-6",
+      "target": "PR-5",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-5-9",
+      "source": "PR-5",
+      "target": "PR-9",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-9-10",
+      "source": "PR-9",
+      "target": "PR-10",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-10-11",
+      "source": "PR-10",
+      "target": "PR-11",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-11-12",
+      "source": "PR-11",
+      "target": "PR-12",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-12-13",
+      "source": "PR-12",
+      "target": "PR-13",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-13-14",
+      "source": "PR-13",
+      "target": "PR-14",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-14-15",
+      "source": "PR-14",
+      "target": "PR-15",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-15-16",
+      "source": "PR-15",
+      "target": "PR-16",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-16-17",
+      "source": "PR-16",
+      "target": "PR-17",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-17-18",
+      "source": "PR-17",
+      "target": "PR-18",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-18-19",
+      "source": "PR-18",
+      "target": "PR-19",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-19-20",
+      "source": "PR-19",
+      "target": "PR-20",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-20-8",
+      "source": "PR-20",
+      "target": "PR-8",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-8-22",
+      "source": "PR-8",
+      "target": "PR-22",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-22-24",
+      "source": "PR-22",
+      "target": "PR-24",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-24-21",
+      "source": "PR-24",
+      "target": "PR-21",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-21-26",
+      "source": "PR-21",
+      "target": "PR-26",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-26-27",
+      "source": "PR-26",
+      "target": "PR-27",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-27-28",
+      "source": "PR-27",
+      "target": "PR-28",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-28-29",
+      "source": "PR-28",
+      "target": "PR-29",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-29-31",
+      "source": "PR-29",
+      "target": "PR-31",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-31-30",
+      "source": "PR-31",
+      "target": "PR-30",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-30-33",
+      "source": "PR-30",
+      "target": "PR-33",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-33-34",
+      "source": "PR-33",
+      "target": "PR-34",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-34-23",
+      "source": "PR-34",
+      "target": "PR-23",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-23-32",
+      "source": "PR-23",
+      "target": "PR-32",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-32-35",
+      "source": "PR-32",
+      "target": "PR-35",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-35-36",
+      "source": "PR-35",
+      "target": "PR-36",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-36-25",
+      "source": "PR-36",
+      "target": "PR-25",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-25-37",
+      "source": "PR-25",
+      "target": "PR-37",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-37-38",
+      "source": "PR-37",
+      "target": "PR-38",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-38-40",
+      "source": "PR-38",
+      "target": "PR-40",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-40-39",
+      "source": "PR-40",
+      "target": "PR-39",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-39-41",
+      "source": "PR-39",
+      "target": "PR-41",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-41-42",
+      "source": "PR-41",
+      "target": "PR-42",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-42-43",
+      "source": "PR-42",
+      "target": "PR-43",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-43-44",
+      "source": "PR-43",
+      "target": "PR-44",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-44-45",
+      "source": "PR-44",
+      "target": "PR-45",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-45-46",
+      "source": "PR-45",
+      "target": "PR-46",
+      "type": "timeline"
+    },
+    {
+      "id": "relates-1-3",
+      "source": "PR-1",
+      "target": "PR-3",
+      "type": "relates",
+      "theme": "docs"
+    },
+    {
+      "id": "relates-3-5",
+      "source": "PR-3",
+      "target": "PR-5",
+      "type": "relates",
+      "theme": "docs"
+    },
+    {
+      "id": "relates-5-24",
+      "source": "PR-5",
+      "target": "PR-24",
+      "type": "relates",
+      "theme": "docs"
+    },
+    {
+      "id": "relates-1-5",
+      "source": "PR-1",
+      "target": "PR-5",
+      "type": "relates",
+      "theme": "docs"
+    },
+    {
+      "id": "relates-1-24",
+      "source": "PR-1",
+      "target": "PR-24",
+      "type": "relates",
+      "theme": "docs"
+    },
+    {
+      "id": "relates-3-24",
+      "source": "PR-3",
+      "target": "PR-24",
+      "type": "relates",
+      "theme": "docs"
+    },
+    {
+      "id": "relates-2-4",
+      "source": "PR-2",
+      "target": "PR-4",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-4-10",
+      "source": "PR-4",
+      "target": "PR-10",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-10-11",
+      "source": "PR-10",
+      "target": "PR-11",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-11-31",
+      "source": "PR-11",
+      "target": "PR-31",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-31-33",
+      "source": "PR-31",
+      "target": "PR-33",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-33-35",
+      "source": "PR-33",
+      "target": "PR-35",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-35-38",
+      "source": "PR-35",
+      "target": "PR-38",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-38-46",
+      "source": "PR-38",
+      "target": "PR-46",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-2-10",
+      "source": "PR-2",
+      "target": "PR-10",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-2-11",
+      "source": "PR-2",
+      "target": "PR-11",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-4-11",
+      "source": "PR-4",
+      "target": "PR-11",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-4-31",
+      "source": "PR-4",
+      "target": "PR-31",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-10-31",
+      "source": "PR-10",
+      "target": "PR-31",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-33-38",
+      "source": "PR-33",
+      "target": "PR-38",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-33-46",
+      "source": "PR-33",
+      "target": "PR-46",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-35-46",
+      "source": "PR-35",
+      "target": "PR-46",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-6-9",
+      "source": "PR-6",
+      "target": "PR-9",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
+      "id": "relates-9-29",
+      "source": "PR-9",
+      "target": "PR-29",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
+      "id": "relates-29-32",
+      "source": "PR-29",
+      "target": "PR-32",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
+      "id": "relates-6-29",
+      "source": "PR-6",
+      "target": "PR-29",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
+      "id": "relates-6-32",
+      "source": "PR-6",
+      "target": "PR-32",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
+      "id": "relates-9-32",
+      "source": "PR-9",
+      "target": "PR-32",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
+      "id": "relates-7-12",
+      "source": "PR-7",
+      "target": "PR-12",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
+      "id": "relates-12-13",
+      "source": "PR-12",
+      "target": "PR-13",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
+      "id": "relates-13-26",
+      "source": "PR-13",
+      "target": "PR-26",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
+      "id": "relates-26-36",
+      "source": "PR-26",
+      "target": "PR-36",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
+      "id": "relates-36-37",
+      "source": "PR-36",
+      "target": "PR-37",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
+      "id": "relates-37-41",
+      "source": "PR-37",
+      "target": "PR-41",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
+      "id": "relates-7-13",
+      "source": "PR-7",
+      "target": "PR-13",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
+      "id": "relates-7-26",
+      "source": "PR-7",
+      "target": "PR-26",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
+      "id": "relates-12-26",
+      "source": "PR-12",
+      "target": "PR-26",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
+      "id": "relates-12-36",
+      "source": "PR-12",
+      "target": "PR-36",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
+      "id": "relates-13-36",
+      "source": "PR-13",
+      "target": "PR-36",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
+      "id": "relates-8-15",
+      "source": "PR-8",
+      "target": "PR-15",
+      "type": "relates",
+      "theme": "data"
+    },
+    {
+      "id": "relates-15-19",
+      "source": "PR-15",
+      "target": "PR-19",
+      "type": "relates",
+      "theme": "data"
+    },
+    {
+      "id": "relates-8-19",
+      "source": "PR-8",
+      "target": "PR-19",
+      "type": "relates",
+      "theme": "data"
+    },
+    {
+      "id": "relates-16-17",
+      "source": "PR-16",
+      "target": "PR-17",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-17-18",
+      "source": "PR-17",
+      "target": "PR-18",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-18-20",
+      "source": "PR-18",
+      "target": "PR-20",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-20-21",
+      "source": "PR-20",
+      "target": "PR-21",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-21-22",
+      "source": "PR-21",
+      "target": "PR-22",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-22-23",
+      "source": "PR-22",
+      "target": "PR-23",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-23-25",
+      "source": "PR-23",
+      "target": "PR-25",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-25-27",
+      "source": "PR-25",
+      "target": "PR-27",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-27-28",
+      "source": "PR-27",
+      "target": "PR-28",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-28-30",
+      "source": "PR-28",
+      "target": "PR-30",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-30-34",
+      "source": "PR-30",
+      "target": "PR-34",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-34-39",
+      "source": "PR-34",
+      "target": "PR-39",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-39-40",
+      "source": "PR-39",
+      "target": "PR-40",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-40-44",
+      "source": "PR-40",
+      "target": "PR-44",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-16-18",
+      "source": "PR-16",
+      "target": "PR-18",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-16-20",
+      "source": "PR-16",
+      "target": "PR-20",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-17-20",
+      "source": "PR-17",
+      "target": "PR-20",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-17-21",
+      "source": "PR-17",
+      "target": "PR-21",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-18-21",
+      "source": "PR-18",
+      "target": "PR-21",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-22-25",
+      "source": "PR-22",
+      "target": "PR-25",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-22-27",
+      "source": "PR-22",
+      "target": "PR-27",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-23-27",
+      "source": "PR-23",
+      "target": "PR-27",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-23-28",
+      "source": "PR-23",
+      "target": "PR-28",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-25-28",
+      "source": "PR-25",
+      "target": "PR-28",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-30-39",
+      "source": "PR-30",
+      "target": "PR-39",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-30-40",
+      "source": "PR-30",
+      "target": "PR-40",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-34-40",
+      "source": "PR-34",
+      "target": "PR-40",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-34-44",
+      "source": "PR-34",
+      "target": "PR-44",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-39-44",
+      "source": "PR-39",
+      "target": "PR-44",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-42-43",
+      "source": "PR-42",
+      "target": "PR-43",
+      "type": "relates",
+      "theme": "infra"
+    },
+    {
+      "id": "relates-43-45",
+      "source": "PR-43",
+      "target": "PR-45",
+      "type": "relates",
+      "theme": "infra"
+    },
+    {
+      "id": "relates-42-45",
+      "source": "PR-42",
+      "target": "PR-45",
+      "type": "relates",
+      "theme": "infra"
+    }
+  ]
+}
