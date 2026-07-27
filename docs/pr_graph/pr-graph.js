@@ -214,6 +214,15 @@
   }
 
   async function loadDataSmart() {
+    // Prefer inline embed (always available after Quarto render on Posit).
+    const inline = document.getElementById("prg-data");
+    if (inline && inline.textContent.trim()) {
+      try {
+        return JSON.parse(inline.textContent);
+      } catch (_) {
+        /* fall through to fetch */
+      }
+    }
     const preferred = resolveDataUrl();
     if (preferred) {
       try {
