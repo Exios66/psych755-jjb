@@ -6,9 +6,6 @@ project:
     - docs/framework.qmd
     - docs/pr_progress_graph.qmd
     - docs/cohort_eda.md
-  resources:
-    - docs/pr_graph/**
-    - artifacts/pr_graph/**
     - docs/merge_coverage_sanity.md
     - docs/ml_baselines.md
     - docs/ml_vs_llm.md
@@ -50,7 +47,9 @@ project:
     - memos/vllm_v1_llama32_3b.md
     - memos/vllm_v1_deepseek_r1_distill.md
     - memos/vllm_v1_llama33_70b.md
-
+  resources:
+    - docs/pr_graph/**
+    - artifacts/pr_graph/**
 website:
   title: "LLM Prediction of Communication Apprehension"
   description: "PSYCH 755 manuscript — tiered persona prompts, PRCA ground truth, and LLM prediction error"
