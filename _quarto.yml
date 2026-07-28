@@ -43,6 +43,7 @@ project:
     - memos/q27_intensity_among_riders.md
     - memos/common_n_head_to_head.md
     - memos/residual_ca_after_rideshare.md
+    - memos/mi_head_to_head.md
     - memos/feature_predictive_power_ml_llm.md
     - memos/comprehensive_predictors_transit.md
     - memos/vllm_v1_cross_model_comparison.md
@@ -152,6 +153,8 @@ website:
             text: Common-N ranking
           - href: memos/residual_ca_after_rideshare.md
             text: Residual CA after Q28
+          - href: memos/mi_head_to_head.md
+            text: MI vs complete-case
           - href: memos/comprehensive_predictors_transit.md
             text: Comprehensive predictors
           - href: memos/feature_predictive_power_ml_llm.md
@@ -244,6 +247,7 @@ website:
               - memos/q27_intensity_among_riders.md
               - memos/common_n_head_to_head.md
               - memos/residual_ca_after_rideshare.md
+              - memos/mi_head_to_head.md
           - section: "Feature attributions"
             contents:
               - memos/feature_predictive_power_ml_llm.md
