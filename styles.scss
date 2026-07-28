@@ -104,7 +104,7 @@ main p:has(+ .quarto-figure) {
   line-height: 1;
 }
 
-/* Research focus / secondary RQ presentation blocks */
+/* APA-style research question presentation blocks */
 .research-focus-block {
   margin: 1.25rem 0 1.75rem 0;
   padding: 1rem 1.15rem 1.15rem 1.15rem;
@@ -114,28 +114,26 @@ main p:has(+ .quarto-figure) {
 
 .research-focus-block > h3 {
   margin-top: 0;
-  margin-bottom: 0.65rem;
+  margin-bottom: 0.75rem;
   color: #222;
-}
-
-.research-focus-block p {
-  margin-bottom: 0.55rem;
-}
-
-.research-focus-block table {
-  margin-bottom: 0.25rem;
-  width: 100%;
-}
-
-.research-focus-block table th {
-  background: rgba(197, 5, 12, 0.08);
   font-weight: 700;
 }
 
-.research-focus-block table td:first-child,
-.research-focus-block table th:first-child {
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
+.research-focus-block > p,
+.research-focus-block > p em {
+  margin-bottom: 0.45rem;
+}
+
+.research-focus-block p strong {
+  font-weight: 700;
+}
+
+/* Numbered RQ statements: hanging indent for APA readability */
+.research-focus-block > p:has(> strong:first-child) {
+  margin: 0.85rem 0 0.85rem 0;
+  padding-left: 1.65rem;
+  text-indent: -1.65rem;
+  line-height: 1.55;
 }
 
 /* PR progress graph page — immersive layout hooks */

@@ -54,6 +54,7 @@ project:
   resources:
     - docs/pr_graph/**
     - artifacts/pr_graph/**
+
 website:
   title: "LLM Prediction of Communication Apprehension"
   description: "PSYCH 755 manuscript — tiered persona prompts, PRCA ground truth, and LLM prediction error"
