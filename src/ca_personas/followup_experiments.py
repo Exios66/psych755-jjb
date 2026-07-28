@@ -10,6 +10,7 @@ Experiments (offline; matched File A/B/C cohort; same Q26 weekly+ outcome unless
 6. ``q27_among_regular`` — Among weekly+ riders, does anything predict Q27 intensity?
 7. ``common_n`` — Head-to-head AUCs on one overlapping complete-case subset
 8. ``residual_ca_q28`` — Does group CA still separate regular riders after Q28 strata?
+9. ``mi_head_to_head`` — Complete-case vs multiply-imputed ranking (Q28 lead vs demos/CA)
 """
 
 from __future__ import annotations
@@ -23,7 +24,8 @@ import pandas as pd
 from scipy import stats
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.impute import SimpleImputer
+from sklearn.experimental import enable_iterative_imputer  # noqa: F401
+from sklearn.impute import IterativeImputer, SimpleImputer
 from sklearn.inspection import permutation_importance
 from sklearn.model_selection import StratifiedKFold, cross_val_predict
 from sklearn.pipeline import Pipeline
@@ -269,6 +271,8 @@ _LABELS = {
     "ca_scores": "Group + interpersonal CA",
     "geo": "Lat/long geo",
     "chance": "Chance / prevalence",
+    "joint_ca_q28_car": "CA + Q28 + car",
+    "joint_demos_q28": "Demos + Q28",
 }
 
 
@@ -1047,6 +1051,355 @@ def run_residual_ca_q28_experiment(
     }
 
 
+def _encode_for_imputation(
+    frame: pd.DataFrame,
+    cols: Sequence[str],
+) -> tuple[pd.DataFrame, dict[str, dict[int, str]]]:
+    """Map mixed columns to float codes for IterativeImputer; return maps for decode."""
+    encoded = pd.DataFrame(index=frame.index)
+    maps: dict[str, dict[int, str]] = {}
+    for col in cols:
+        if col not in frame.columns:
+            continue
+        s = frame[col]
+        if pd.api.types.is_numeric_dtype(s):
+            encoded[col] = pd.to_numeric(s, errors="coerce")
+            continue
+        cats = pd.Categorical(s.astype("string"))
+        codes = pd.Series(cats.codes, index=frame.index, dtype="float")
+        codes = codes.mask(codes < 0, np.nan)
+        encoded[col] = codes
+        maps[col] = {i: str(c) for i, c in enumerate(cats.categories)}
+    return encoded, maps
+
+
+def _decode_imputed(
+    encoded: pd.DataFrame,
+    maps: dict[str, dict[int, str]],
+    template: pd.DataFrame,
+) -> pd.DataFrame:
+    """Round imputed codes back to categorical levels; keep numeric as float."""
+    out = template.copy()
+    for col in encoded.columns:
+        if col in maps:
+            levels = maps[col]
+            # Clip to valid code range then map.
+            codes = encoded[col].to_numpy(dtype=float)
+            rounded = np.rint(codes)
+            max_code = max(levels) if levels else 0
+            rounded = np.clip(rounded, 0, max_code)
+            out[col] = pd.Series(
+                [levels.get(int(c), pd.NA) if np.isfinite(c) else pd.NA for c in rounded],
+                index=encoded.index,
+                dtype="string",
+            )
+        else:
+            out[col] = encoded[col].astype(float)
+    return out
+
+
+def _mi_complete_frames(
+    labeled: pd.DataFrame,
+    *,
+    impute_cols: Sequence[str],
+    n_imputations: int,
+    random_state: int,
+) -> list[pd.DataFrame]:
+    """Return M fully-observed frames after multivariate imputation of ``impute_cols``."""
+    work = labeled.copy()
+    # Always keep outcome and ids; impute only requested predictors.
+    encoded, maps = _encode_for_imputation(work, impute_cols)
+    # Auxiliary complete predictors stabilize imputation.
+    aux_num = [
+        c
+        for c in ("Age", "gt_group_ca", "gt_interpersonal_ca", "LocationLatitude", "LocationLongitude")
+        if c in work.columns
+    ]
+    aux_cat = [c for c in ("Sex", "Employment status", "Country of residence", "Q28", "Q26") if c in work.columns]
+    aux_enc, aux_maps = _encode_for_imputation(work, [*aux_num, *aux_cat])
+    design = pd.concat([encoded, aux_enc], axis=1)
+    # Drop duplicate columns if overlap.
+    design = design.loc[:, ~design.columns.duplicated()].copy()
+
+    frames: list[pd.DataFrame] = []
+    for m in range(n_imputations):
+        imputer = IterativeImputer(
+            random_state=random_state + m,
+            max_iter=25,
+            sample_posterior=True,
+            skip_complete=True,
+        )
+        arr = imputer.fit_transform(design.to_numpy(dtype=float))
+        filled = pd.DataFrame(arr, columns=design.columns, index=design.index)
+        # Decode only the originally missing-prone columns into a full row template.
+        decoded = _decode_imputed(filled[list(impute_cols)], maps, work)
+        # Restore auxiliary columns from original (complete) where not in impute set.
+        for col in work.columns:
+            if col not in impute_cols:
+                decoded[col] = work[col]
+        # Ensure imputed cols are filled.
+        for col in impute_cols:
+            if col in decoded.columns and decoded[col].isna().any():
+                # Fallback: mode/median from observed.
+                if col in maps:
+                    mode = work[col].mode(dropna=True)
+                    fill = mode.iloc[0] if len(mode) else "<NA>"
+                    decoded[col] = decoded[col].fillna(fill)
+                else:
+                    decoded[col] = decoded[col].fillna(float(work[col].median(skipna=True)))
+        frames.append(decoded)
+    return frames
+
+
+def run_mi_head_to_head_experiment(
+    df: pd.DataFrame,
+    *,
+    n_splits: int = 5,
+    n_imputations: int = 20,
+    random_state: int = 42,
+    n_perm_repeats: int = 0,
+) -> dict[str, Any]:
+    """Complete-case vs multiply-imputed ranking of demos / CA / Q28 / car / joint.
+
+    Addresses the open question from ``common_n`` / ``q28_conditioned_on_car``:
+    does MI restore demographics/CA AUCs while preserving the Q28 lead, or
+    does imputation attenuate rideshare's advantage?
+    """
+    del n_perm_repeats  # unused; kept for runner kwargs compatibility
+    labeled = prepare_labeled_cohort(df)
+    # Analytic base: outcome known (weekly+ transit).
+    base = labeled.dropna(subset=[TARGET]).copy()
+    n_full = int(len(base))
+
+    family_specs: dict[str, dict[str, list[str]]] = {
+        "q28_days": {"num": [], "cat": ["Q28"]},
+        "ca_scores": {"num": ["gt_group_ca", "gt_interpersonal_ca"], "cat": []},
+        "demographics": {"num": ["Age"], "cat": ["Sex", "Student status"]},
+        "car_access": {"num": [], "cat": ["Q20", "Q21"]},
+        "joint_ca_q28_car": {
+            "num": ["gt_group_ca", "gt_interpersonal_ca"],
+            "cat": ["Q28", "Q20", "Q21"],
+        },
+        "joint_demos_q28": {"num": ["Age"], "cat": ["Sex", "Student status", "Q28"]},
+    }
+
+    # --- Complete-case arm (listwise on each family's required columns) -----
+    cc_rows: list[dict[str, Any]] = []
+    cc_analyses: dict[str, Any] = {}
+    for key, spec in family_specs.items():
+        need = [*spec["num"], *spec["cat"], TARGET]
+        frame = base.dropna(subset=[c for c in need if c in base.columns]).copy()
+        if len(frame) < 40 or frame["y"].nunique() < 2:
+            continue
+        cv = _cv_mixed(
+            frame,
+            numeric_features=spec["num"],
+            categorical_features=spec["cat"],
+            n_splits=n_splits,
+            random_state=random_state,
+            model_name=f"cc_{key}",
+        )
+        cc_analyses[key] = {
+            "metrics": cv["metrics"],
+            "roc": cv["roc"],
+            "n": int(len(frame)),
+            "n_regular": int(frame["y"].sum()),
+        }
+        row = _metric_row(_pretty_label(key), key, cv["metrics"], frame)
+        row["arm"] = "complete_case"
+        row["n_imputations"] = 0
+        row["roc_auc_sd"] = 0.0
+        cc_rows.append(row)
+
+    # --- Multiply-imputed arm (impute Student + car items; n = full) --------
+    impute_cols = [c for c in ("Q20", "Q21", "Student status") if c in base.columns]
+    mi_frames = _mi_complete_frames(
+        base,
+        impute_cols=impute_cols,
+        n_imputations=n_imputations,
+        random_state=random_state,
+    )
+
+    mi_rows: list[dict[str, Any]] = []
+    mi_analyses: dict[str, Any] = {}
+    for key, spec in family_specs.items():
+        aucs: list[float] = []
+        last_cv: dict[str, Any] | None = None
+        for m_i, filled in enumerate(mi_frames):
+            # After MI, required predictors should be complete.
+            need = [*spec["num"], *spec["cat"]]
+            frame = filled.dropna(subset=[c for c in need if c in filled.columns] + [TARGET]).copy()
+            if len(frame) < 40:
+                continue
+            # Keep CV seed fixed across imputations so complete families (Q28/CA)
+            # are not jittered by fold reshuffles; only imputed predictors vary.
+            cv = _cv_mixed(
+                frame,
+                numeric_features=spec["num"],
+                categorical_features=spec["cat"],
+                n_splits=n_splits,
+                random_state=random_state,
+                model_name=f"mi_{key}_{m_i}",
+            )
+            aucs.append(float(cv["metrics"]["roc_auc"]))
+            last_cv = cv
+        if not aucs or last_cv is None:
+            continue
+        mean_auc = float(np.mean(aucs))
+        sd_auc = float(np.std(aucs, ddof=1)) if len(aucs) > 1 else 0.0
+        metrics = dict(last_cv["metrics"])
+        metrics["roc_auc"] = mean_auc
+        metrics["roc_auc_across_imputations"] = aucs
+        mi_analyses[key] = {
+            "metrics": metrics,
+            "roc": last_cv["roc"],
+            "n": n_full,
+            "n_regular": int(base["y"].sum()),
+            "n_imputations": int(len(aucs)),
+            "roc_auc_mean": mean_auc,
+            "roc_auc_sd": sd_auc,
+        }
+        row = _metric_row(_pretty_label(key), key, metrics, base)
+        row["arm"] = "multiple_imputation"
+        row["n"] = n_full
+        row["n_imputations"] = int(len(aucs))
+        row["roc_auc_sd"] = sd_auc
+        mi_rows.append(row)
+
+    comparison = pd.DataFrame([*cc_rows, *mi_rows])
+    # Wide pivot for memo readability.
+    pivot_rows: list[dict[str, Any]] = []
+    for key in family_specs:
+        cc = next((r for r in cc_rows if r["spec_key"] == key), None)
+        mi = next((r for r in mi_rows if r["spec_key"] == key), None)
+        if cc is None and mi is None:
+            continue
+        pivot_rows.append(
+            {
+                "spec_key": key,
+                "label": _pretty_label(key),
+                "cc_n": None if cc is None else cc["n"],
+                "cc_roc_auc": None if cc is None else cc["roc_auc"],
+                "mi_n": None if mi is None else mi["n"],
+                "mi_roc_auc": None if mi is None else mi["roc_auc"],
+                "mi_roc_auc_sd": None if mi is None else mi.get("roc_auc_sd"),
+                "delta_mi_minus_cc": (
+                    None
+                    if cc is None or mi is None
+                    else float(mi["roc_auc"]) - float(cc["roc_auc"])
+                ),
+            }
+        )
+    pivot = pd.DataFrame(pivot_rows).sort_values("mi_roc_auc", ascending=False)
+
+    # Decision metrics.
+    def _auc(arm_rows: list[dict[str, Any]], key: str) -> float | None:
+        hit = next((r for r in arm_rows if r["spec_key"] == key), None)
+        return None if hit is None else float(hit["roc_auc"])
+
+    q28_cc = _auc(cc_rows, "q28_days")
+    q28_mi = _auc(mi_rows, "q28_days")
+    demos_cc = _auc(cc_rows, "demographics")
+    demos_mi = _auc(mi_rows, "demographics")
+    ca_cc = _auc(cc_rows, "ca_scores")
+    ca_mi = _auc(mi_rows, "ca_scores")
+    car_mi = _auc(mi_rows, "car_access")
+
+    mi_ranked = sorted(
+        [r for r in mi_rows if r["spec_key"] != "chance"],
+        key=lambda r: r["roc_auc"],
+        reverse=True,
+    )
+    singleton_keys = {"q28_days", "demographics", "ca_scores", "car_access"}
+    mi_singletons = sorted(
+        [r for r in mi_rows if r["spec_key"] in singleton_keys],
+        key=lambda r: r["roc_auc"],
+        reverse=True,
+    )
+    q28_leads_mi = bool(mi_singletons and mi_singletons[0]["spec_key"] == "q28_days")
+    q28_beats_demos_mi = (
+        q28_mi is not None and demos_mi is not None and q28_mi > demos_mi
+    )
+    q28_beats_ca_mi = q28_mi is not None and ca_mi is not None and q28_mi > ca_mi
+    q28_beats_car_mi = q28_mi is not None and car_mi is not None and q28_mi > car_mi
+    # Demos "restored" if MI lifts CC demos toward the known full-cohort ~0.618 band
+    # or keeps it from collapsing (as on common-N ≈0.511).
+    demos_rebounded = (
+        demos_cc is not None and demos_mi is not None and demos_mi >= demos_cc + 0.01
+    )
+    ca_rebounded = ca_cc is not None and ca_mi is not None and ca_mi >= ca_cc + 0.01
+
+    summary_delta = {
+        "n_full": n_full,
+        "n_imputations": int(n_imputations),
+        "impute_cols": list(impute_cols),
+        "q28_cc_auc": q28_cc,
+        "q28_mi_auc": q28_mi,
+        "demos_cc_auc": demos_cc,
+        "demos_mi_auc": demos_mi,
+        "ca_cc_auc": ca_cc,
+        "ca_mi_auc": ca_mi,
+        "car_mi_auc": car_mi,
+        "q28_leads_singletons_under_mi": q28_leads_mi,
+        "q28_leads_under_mi": q28_leads_mi,  # alias: singleton lead
+        "q28_beats_demos_under_mi": q28_beats_demos_mi,
+        "q28_beats_ca_under_mi": q28_beats_ca_mi,
+        "q28_beats_car_under_mi": q28_beats_car_mi,
+        "demos_rebounded_under_mi": demos_rebounded,
+        "ca_rebounded_under_mi": ca_rebounded,
+        "mi_singleton_ranking": [r["spec_key"] for r in mi_singletons],
+        "mi_overall_ranking": [r["spec_key"] for r in mi_ranked],
+        "rideshare_advantage_attenuated": bool(
+            (not q28_leads_mi)
+            or (
+                q28_cc is not None
+                and q28_mi is not None
+                and q28_mi < q28_cc - 0.05
+                and not q28_beats_demos_mi
+            )
+        ),
+        "verdict": (
+            "q28_lead_preserved"
+            if q28_leads_mi and q28_beats_demos_mi and q28_beats_ca_mi
+            else ("q28_attenuated" if not q28_leads_mi else "mixed")
+        ),
+    }
+
+    # Primary metrics for card / overview = MI Q28 (anchor).
+    primary_metrics = mi_analyses.get("q28_days", {}).get("metrics") or cc_analyses.get(
+        "q28_days", {}
+    ).get("metrics", {})
+
+    return {
+        "spec_key": "mi_head_to_head",
+        "label": "Multiply-imputed vs complete-case head-to-head",
+        "research_question": (
+            "Would a multiply-imputed analysis restore demographics/CA while "
+            "preserving the Q28 lead, or would imputation attenuate rideshare’s advantage?"
+        ),
+        "frame": base,
+        "metrics": primary_metrics,
+        "metrics_table": comparison,
+        "comparison": pivot,
+        "analyses": {"complete_case": cc_analyses, "multiple_imputation": mi_analyses},
+        "summary_delta": summary_delta,
+        "oof": pd.DataFrame(
+            {
+                "participant_id": base["participant_id"],
+                "y": base["y"],
+                "transit_group": base["transit_group"],
+            }
+        ),
+        "roc": mi_analyses.get("q28_days", {}).get("roc", pd.DataFrame()),
+        "gini_raw": pd.DataFrame(),
+        "permutation_importance": pd.DataFrame(),
+        "associations": pd.DataFrame(),
+        "null_baselines": null_baselines(base),
+        "numeric_features": ["Age", "gt_group_ca", "gt_interpersonal_ca"],
+        "categorical_features": ["Sex", "Student status", "Q28", "Q20", "Q21"],
+    }
+
+
 EXPERIMENT_RUNNERS = {
     "demographics": run_demographics_experiment,
     "country": run_country_experiment,
@@ -1056,6 +1409,7 @@ EXPERIMENT_RUNNERS = {
     "q27_among_regular": run_q27_among_regular_experiment,
     "common_n": run_common_n_experiment,
     "residual_ca_q28": run_residual_ca_q28_experiment,
+    "mi_head_to_head": run_mi_head_to_head_experiment,
 }
 
 
@@ -1066,6 +1420,7 @@ def run_all_followup_experiments(
     n_splits: int = 5,
     n_perm_repeats: int = 30,
     n_boot: int = 2000,
+    n_imputations: int = 10,
     random_state: int = 42,
 ) -> dict[str, Any]:
     keys = list(experiment_keys) if experiment_keys is not None else list(EXPERIMENT_RUNNERS)
@@ -1081,6 +1436,9 @@ def run_all_followup_experiments(
             kwargs["n_boot"] = n_boot
         elif key == "common_n":
             kwargs["n_splits"] = n_splits
+        elif key == "mi_head_to_head":
+            kwargs["n_splits"] = n_splits
+            kwargs["n_imputations"] = n_imputations
         else:
             kwargs["n_splits"] = n_splits
             kwargs["n_perm_repeats"] = n_perm_repeats
@@ -1357,6 +1715,45 @@ def plot_experiment_memo_figure(
         return save_figure(fig, out)
 
     # Nested / comparison experiments: rich AUC ranking
+    if key == "mi_head_to_head" and isinstance(analysis.get("comparison"), pd.DataFrame):
+        pivot = analysis["comparison"].copy()
+        if not pivot.empty:
+            fig2, ax2 = plt.subplots(figsize=(10.5, max(5.2, 0.42 * len(pivot) * 2 + 2.0)))
+            labels: list[str] = []
+            aucs: list[float] = []
+            colors: list[str] = []
+            ns: list[int | None] = []
+            for r in pivot.itertuples():
+                labels.append(f"{r.label} (CC)")
+                aucs.append(float(r.cc_roc_auc) if pd.notna(r.cc_roc_auc) else float("nan"))
+                colors.append(WARN)
+                ns.append(int(r.cc_n) if pd.notna(r.cc_n) else None)
+                labels.append(f"{r.label} (MI)")
+                aucs.append(float(r.mi_roc_auc) if pd.notna(r.mi_roc_auc) else float("nan"))
+                colors.append(SUCCESS)
+                ns.append(int(r.mi_n) if pd.notna(r.mi_n) else None)
+            d = analysis.get("summary_delta") or {}
+            plot_auc_bars(
+                ax2,
+                labels,
+                aucs,
+                colors=colors,
+                ns=ns,
+                benchmarks=("chance", "geo", "ca", "q28"),
+                xlim=(0.45, min(0.92, float(np.nanmax(aucs)) + 0.08)),
+            )
+            add_title_block(
+                fig2,
+                "Complete-case vs multiply-imputed transit predictors",
+                (
+                    f"n_full={d.get('n_full', n)}  ·  M={d.get('n_imputations', '?')}  ·  "
+                    f"verdict={d.get('verdict', '?')}  ·  "
+                    f"Q28 leads MI={d.get('q28_leads_under_mi', '?')}"
+                ),
+            )
+            fig2.subplots_adjust(top=0.82, left=0.36, right=0.96, bottom=0.12)
+            return save_figure(fig2, out)
+
     if "comparison" in analysis and isinstance(analysis["comparison"], pd.DataFrame):
         frame = analysis["comparison"].dropna(subset=["roc_auc"]).copy()
         if len(frame):
@@ -1489,6 +1886,7 @@ def run_followup_experiments_pipeline(
     n_splits: int = 5,
     n_perm_repeats: int = 30,
     n_boot: int = 2000,
+    n_imputations: int = 20,
     random_state: int = 42,
 ) -> dict[str, Path]:
     """Load cohort, run extended follow-up experiments, write artifacts + figures."""
@@ -1505,6 +1903,7 @@ def run_followup_experiments_pipeline(
         n_splits=n_splits,
         n_perm_repeats=n_perm_repeats,
         n_boot=n_boot,
+        n_imputations=n_imputations,
         random_state=random_state,
     )
     paths = save_followup_experiment_bundle(bundle, output_dir)

@@ -44,4 +44,4 @@ Requiring complete Age, Sex, Student status, Country, Employment, Q20/Q21, Q28, 
 
 ## What questions or uncertainties remain?
 
-Would a multiply-imputed analysis restore demographics/CA while preserving the Q28 lead, or would imputation attenuate rideshare’s advantage?
+Would a multiply-imputed analysis restore demographics/CA while preserving the Q28 lead, or would imputation attenuate rideshare’s advantage? — **Answered** in [`mi_head_to_head.md`](mi_head_to_head.md): Q28 singleton lead preserved; demos/CA not restored to competitive levels.

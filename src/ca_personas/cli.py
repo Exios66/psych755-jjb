@@ -337,7 +337,7 @@ def build_parser() -> argparse.ArgumentParser:
         "followup-experiments",
         help=(
             "Extended secondary RQs: demographics/country/nested Q28|car/"
-            "CA+mobility/common-N/residual CA/Q27-among-riders"
+            "CA+mobility/common-N/residual CA/Q27-among-riders/MI head-to-head"
         ),
     )
     _add_shared_data_args(followups)
@@ -366,6 +366,12 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=2000,
         help="Bootstrap resamples for residual-CA Welch CIs",
+    )
+    followups.add_argument(
+        "--n-imputations",
+        type=int,
+        default=20,
+        help="Multiple-imputation count for mi_head_to_head (default: 20)",
     )
     followups.add_argument("--seed", type=int, default=42, help="RNG seed")
     followups.add_argument(
@@ -657,6 +663,7 @@ def main(argv: list[str] | None = None) -> int:
             n_splits=args.splits,
             n_perm_repeats=args.perm_repeats,
             n_boot=args.n_boot,
+            n_imputations=args.n_imputations,
             random_state=args.seed,
         )
         print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))

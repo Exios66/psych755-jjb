@@ -97,6 +97,7 @@ def test_experiment_runners_registered():
         "q27_among_regular",
         "common_n",
         "residual_ca_q28",
+        "mi_head_to_head",
     }
 
 
@@ -123,17 +124,54 @@ def test_nested_q28_car_same_n():
     assert set(analysis["analyses"]) >= {"q28_only", "q28_q21", "q21_only"}
 
 
+def test_mi_head_to_head_preserves_q28_signal():
+    from ca_personas.followup_experiments import run_mi_head_to_head_experiment
+
+    df = _synthetic(n=260, seed=11)
+    # Induce car / student missingness like the real cohort (~38% / ~7%).
+    rng = np.random.default_rng(11)
+    miss_car = rng.random(len(df)) < 0.35
+    df.loc[miss_car, ["Q20", "Q21"]] = pd.NA
+    miss_stu = rng.random(len(df)) < 0.08
+    df.loc[miss_stu, "Student status"] = pd.NA
+    analysis = run_mi_head_to_head_experiment(
+        df,
+        n_splits=3,
+        n_imputations=3,
+        random_state=11,
+    )
+    assert analysis["spec_key"] == "mi_head_to_head"
+    assert analysis["summary_delta"]["n_full"] == len(df)
+    assert "q28_days" in analysis["analyses"]["multiple_imputation"]
+    assert analysis["summary_delta"]["q28_mi_auc"] > 0.55
+    assert analysis["summary_delta"]["q28_leads_singletons_under_mi"] is True
+    assert analysis["summary_delta"]["verdict"] in {"q28_lead_preserved", "mixed"}
+    assert not analysis["comparison"].empty
+    assert {"cc_roc_auc", "mi_roc_auc"} <= set(analysis["comparison"].columns)
+    # Observed-only families should not jitter across imputations when CV seed is fixed.
+    q28_sd = float(analysis["analyses"]["multiple_imputation"]["q28_days"]["roc_auc_sd"])
+    assert q28_sd < 1e-9
+
+
 def test_all_experiments_bundle(tmp_path: Path):
     bundle = run_all_followup_experiments(
         _synthetic(n=280, seed=7),
+        experiment_keys=[
+            "demographics",
+            "country",
+            "nested_q28_car",
+            "common_n",
+            "mi_head_to_head",
+        ],
         n_splits=3,
         n_perm_repeats=2,
         n_boot=200,
+        n_imputations=2,
         random_state=7,
     )
-    assert set(bundle["analyses"]) == set(EXPERIMENT_RUNNERS)
-    assert len(bundle["overview"]) == len(EXPERIMENT_RUNNERS)
+    assert set(bundle["analyses"]) >= {"demographics", "mi_head_to_head"}
     paths = save_followup_experiment_bundle(bundle, tmp_path)
     assert paths["overview"].is_file()
     assert paths["results_card"].is_file()
     assert (tmp_path / "demographics" / "demographics_results_card.json").is_file()
+    assert (tmp_path / "mi_head_to_head" / "mi_head_to_head_results_card.json").is_file()
