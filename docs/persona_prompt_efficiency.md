@@ -63,7 +63,9 @@ Expected: **1,928** prompts (241 × 8). Artifacts (gitignored):
 - `outputs/personas/persona_prompts.csv` / `.db`
 - `outputs/vllm_prompts/prompts.csv` + `ground_truth.csv`
 
-## 6. How to read a re-run
+## 6. Status and how to read a future re-run
+
+**Status:** v3.1 packaging and the three v3 ablation tiers are **implemented in code** and covered by unit tests. Live GPU evaluation remains **deferred future work** — manuscript primary claims stay on prompt-**v1** baselines. See [`persona_prompt_versions.md`](persona_prompt_versions.md).
 
 Compare a new LLM/vLLM export against [`llm_baseline_llama31_v1.md`](llm_baseline_llama31_v1.md):
 

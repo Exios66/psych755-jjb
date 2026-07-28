@@ -7,7 +7,7 @@ subtitle: "How the Terrarium tier stack evolved for RQ efficiency and predictive
 **System contract:** [`prompts/system_prompt.md`](../prompts/system_prompt.md)  
 **Examples:** [`prompts/examples/`](../prompts/examples/)
 
-This page maps the three prompt generations used in the project. Live Llama-3.1 inference on the full cohort has been published for **version 1** only; versions 2–3 change packaging and add ablations so a re-run can test whether the v1 failure modes shrink.
+This page maps the three prompt generations used in the project. **All primary digital-twin claims in the manuscript are prompt-v1.** Versions 2–3 are **implemented in code** (signal-first packaging + three ablation tiers) but **not yet GPU-evaluated**; they are design extensions for future work, motivated by the Llama-3.1 transit interpersonal collapse on v1.
 
 ---
 
@@ -15,9 +15,9 @@ This page maps the three prompt generations used in the project. Live Llama-3.1 
 
 | Version | What changed | Tiers | Live LLM baseline |
 |---|---|---:|---|
-| **v1** | Original Terrarium core ladder; high-precision lat/lon; rides-per-day even when Never; fused CA ask | 5 (`demos`→`full`) | **Yes** — [Llama-3.1 report](llm_baseline_llama31_v1.md) |
-| **v2 (v3.1 packaging)** | Same 5 fields/topology; signal-first packaging (1-decimal geo, skip intensity when Never, independent-subscale ask, light system calibration) | 5 | Pending re-run |
-| **v3** | Keeps v2 packaging; adds three parallel ablations on the demos→employment→geo base | **8** | Pending re-run |
+| **v1** | Original Terrarium core ladder; high-precision lat/lon; rides-per-day even when Never; fused CA ask | 5 (`demos`→`full`) | **Yes** — [Llama-3.1 report](llm_baseline_llama31_v1.md) (+ three sibling models) |
+| **v2 (v3.1 packaging)** | Same 5 fields/topology; signal-first packaging (1-decimal geo, skip intensity when Never, independent-subscale ask, light system calibration) | 5 | **Designed; GPU re-run deferred (future work)** |
+| **v3** | Keeps v2 packaging; adds three parallel ablations on the demos→employment→geo base | **8** | **Designed; GPU re-run deferred (future work)** |
 
 ```mermaid
 flowchart TB
@@ -72,11 +72,17 @@ Adds focused tips that disaggregate the kitchen-sink `transit`/`full` bundles:
 
 ---
 
-## How to read future re-runs
+## Why GPU re-runs are deferred
 
-Against the [v1 Llama baseline](llm_baseline_llama31_v1.md):
+v2 packaging and v3 ablations already live in [`src/ca_personas/personas.py`](../src/ca_personas/personas.py) and [`prompts/`](../prompts/). Unit tests cover signal-first skips and the three ablation tips. A full-cohort live comparison still requires a CUDA host, File A/B/C, and ~1,928 prompts × model. Until that run exists, **do not treat packaging changes as empirically validated** — only as a motivated redesign against the published v1 failure modes.
+
+## Acceptance criteria for a future re-run
+
+Against the [v1 Llama baseline](llm_baseline_llama31_v1.md) (and ideally DeepSeek as the stable comparator):
 
 1. Does v2 packaging stop interpersonal MAE exploding at `transit`/`full`?
 2. Does `v3_rideshare` beat `v3_public_transit` (and approach full `transit`) on group MAE?
 3. Does `v3_voice` help without the transit interpersonal penalty?
 4. Do Sex / Employment / Student MAE gaps remain measurable (stereotyping RQ)?
+
+**Recipe:** `ca-personas build-personas` → `python -m inference.export_prompts` → `VLLM_PRESET=v2_enhanced ./scripts/run_vllm.sh` (or `v3_enhanced` for 8-tier / DeepSeek) → ingest → `ca-personas stereotype-eval` → compare to v1 tables. Specs: [`llm_v1_run_specifications.md`](llm_v1_run_specifications.md) · enhancements: [`llm_v2_v3_enhanced_variants.md`](llm_v2_v3_enhanced_variants.md).

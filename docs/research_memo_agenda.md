@@ -56,9 +56,9 @@ Live GPU baselines are documented separately in [`docs/llm_vllm_memo_agenda.md`]
 | [`memos/vllm_v1_deepseek_r1_distill.md`](../memos/vllm_v1_deepseek_r1_distill.md) | DeepSeek-R1-Distill tier-stable; best group MAE |
 | [`memos/vllm_v1_llama33_70b.md`](../memos/vllm_v1_llama33_70b.md) | Llama-3.3-70B mode-collapse cautionary case |
 
-## Intentionally deferred (need further live LLM or new data)
+## Intentionally deferred (future work; need further live LLM or new data)
 
-- v2 / v3 prompt re-runs on the same GPU models
+- **v2 / v3 prompt re-runs** on the same GPU models (design extensions implemented in code; not yet GPU-evaluated — [`persona_prompt_versions.md`](persona_prompt_versions.md))
 - Live-LLM TreeSHAP / surrogate SHAP (mock already covered)
 - Multiply-imputed car items (would change missingness story)
 - City/density GIS layers beyond Qualtrics lat/long

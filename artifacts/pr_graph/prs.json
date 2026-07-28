@@ -1,22 +1,22 @@
 {
   "meta": {
     "repo": "Exios66/psych755-jjb",
-    "generatedAt": "2026-07-27T03:11:15Z",
-    "nodeCount": 46,
-    "edgeCount": 119,
+    "generatedAt": "2026-07-27T03:43:17Z",
+    "nodeCount": 49,
+    "edgeCount": 127,
     "statusCounts": {
-      "merged": 41,
+      "merged": 42,
       "closed": 4,
-      "draft": 1
+      "draft": 3
     },
     "themeCounts": {
       "docs": 4,
       "personas": 9,
-      "site": 4,
+      "site": 6,
       "ml": 7,
       "data": 3,
       "vllm": 1,
-      "secondary-rq": 15,
+      "secondary-rq": 16,
       "infra": 3
     },
     "themes": [
@@ -797,6 +797,54 @@
       "isDraft": false,
       "labels": [],
       "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Promotes full-cohort prompt-v1 vLLM digital-twin findings (DeepSeek, Llama-3.2-3B, Llama-3.1 transit IP collapse, Llama-3.3-70B mode collapse) into the core manuscript Abstract, Methods, Results, and Discussion. Mock MAE figures rem\u2026"
+    },
+    {
+      "id": "PR-47",
+      "number": 47,
+      "title": "Add immersive PR progress node graph to Posit site",
+      "status": "merged",
+      "theme": "site",
+      "themeLabel": "Quarto / Posit site",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/47",
+      "createdAt": "2026-07-27T03:12:57Z",
+      "mergedAt": "2026-07-27T03:57:51Z",
+      "closedAt": "2026-07-27T03:57:51Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds an immersive, responsive **PR Progress Graph** page to the Quarto/Posit site that visualizes project development over time as a force-directed node graph of GitHub pull requests. - Offline bake via `scripts/sync_pr_graph_data.p\u2026"
+    },
+    {
+      "id": "PR-48",
+      "number": 48,
+      "title": "Fix duplicate tool.pyright block blocking pytest",
+      "status": "draft",
+      "theme": "site",
+      "themeLabel": "Quarto / Posit site",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/48",
+      "createdAt": "2026-07-27T03:17:45Z",
+      "mergedAt": null,
+      "closedAt": null,
+      "isDraft": true,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Removes a duplicate identical `[tool.pyright]` section in `pyproject.toml` that caused `tomllib` / `pytest` to fail with `Cannot declare ('tool', 'pyright') twice`. ## Type - [ ] Code / CLI / package - [ ] Analysis / notebook / arti\u2026"
+    },
+    {
+      "id": "PR-49",
+      "number": 49,
+      "title": "Format research questions in APA numbered primary/secondary groups",
+      "status": "draft",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/49",
+      "createdAt": "2026-07-27T04:02:24Z",
+      "mergedAt": null,
+      "closedAt": null,
+      "isDraft": true,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Reformats the manuscript research questions into clean APA-style numbered statements, grouped as Primary Research Questions (RQ1\u2013RQ3) and Secondary Research Questions (S1\u2013S5), and aligns the abstract with that structure. Removes inf\u2026"
     }
   ],
   "edges": [
@@ -1071,6 +1119,24 @@
       "type": "timeline"
     },
     {
+      "id": "timeline-46-48",
+      "source": "PR-46",
+      "target": "PR-48",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-48-47",
+      "source": "PR-48",
+      "target": "PR-47",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-47-49",
+      "source": "PR-47",
+      "target": "PR-49",
+      "type": "timeline"
+    },
+    {
       "id": "relates-1-3",
       "source": "PR-1",
       "target": "PR-3",
@@ -1246,6 +1312,20 @@
       "theme": "site"
     },
     {
+      "id": "relates-32-47",
+      "source": "PR-32",
+      "target": "PR-47",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
+      "id": "relates-47-48",
+      "source": "PR-47",
+      "target": "PR-48",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
       "id": "relates-6-29",
       "source": "PR-6",
       "target": "PR-29",
@@ -1263,6 +1343,20 @@
       "id": "relates-9-32",
       "source": "PR-9",
       "target": "PR-32",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
+      "id": "relates-9-47",
+      "source": "PR-9",
+      "target": "PR-47",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
+      "id": "relates-29-47",
+      "source": "PR-29",
+      "target": "PR-47",
       "type": "relates",
       "theme": "site"
     },
@@ -1459,6 +1553,13 @@
       "id": "relates-40-44",
       "source": "PR-40",
       "target": "PR-44",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-44-49",
+      "source": "PR-44",
+      "target": "PR-49",
       "type": "relates",
       "theme": "secondary-rq"
     },

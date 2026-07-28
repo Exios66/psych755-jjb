@@ -42,7 +42,9 @@ Full-cohort vLLM run on the matched Prolific↔Qualtrics sample (**n = 241**; **
 - **RQ2 (transit):** Mixed / mostly no — small group MAE gain (−0.37) offset by catastrophic IP degradation (+3.51 MAE; −36.5 pp band).
 - **RQ3 (full):** Mixed — group band rises to 37.8%; IP remains worse than demos-only.
 
-**Conclusion.** Llama-3.1-8B-Instruct on prompt v1 behaves like a **prior / stereotype engine** that recovers coarse interpersonal bands from demographics alone, then **over-weights mobility cues toward high interpersonal CA**. This failure mode is the empirical motivation for prompt packaging v2/v3 (signal-first transit text; subscale independence). Treat this memo as the canonical **v1 cautionary baseline**, not as evidence that larger Llama models are better digital twins on this task.
+**Conclusion.** Llama-3.1-8B-Instruct on prompt v1 behaves like a **prior / stereotype engine** that recovers coarse interpersonal bands from demographics alone, then **over-weights mobility cues toward high interpersonal CA**. Signed IP error flips from **−2.21** (demos) to **+6.52** (transit); DeepSeek on the same ladder stays flat. This failure mode is the empirical motivation for prompt packaging v2/v3 (signal-first transit text; subscale independence) as **future GPU work**. Treat this memo as the canonical **v1 cautionary baseline**, not as evidence that larger Llama models are better digital twins on this task.
+
+![Llama-3.1 vs DeepSeek interpersonal MAE and signed error by tier](figures/vllm_v1_llama31_ip_collapse.png)
 
 *Sources:* `data/vllm/llama3_1.md` · `docs/llm_baseline_llama31_v1.md` · evaluator `ca_personas.evaluate` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
 
@@ -50,8 +52,8 @@ Full-cohort vLLM run on the matched Prolific↔Qualtrics sample (**n = 241**; **
 
 ## What questions or uncertainties remain?
 
-Does the transit IP collapse replicate under v2 packaging without changing model weights? Which demographic slices widen MAE gaps at transit (Sex / Age / Student / Employment stereotyping CSVs in the export package)? Would constrained decoding or lower temperature reduce over-prediction?
+Does the transit IP collapse replicate under v2 packaging without changing model weights? Which demographic slices widen MAE gaps at transit (Sex / Age / Student / Employment stereotyping CSVs in the export package)? Would constrained decoding or lower temperature reduce over-prediction? Participant-level prediction histograms await staging of the gitignored raw export.
 
 ## What other analyses pair with this memo?
 
-Cross-model ranking: [`vllm_v1_cross_model_comparison.md`](vllm_v1_cross_model_comparison.md). Smaller Llama and DeepSeek distill siblings: [`vllm_v1_llama32_3b.md`](vllm_v1_llama32_3b.md), [`vllm_v1_deepseek_r1_distill.md`](vllm_v1_deepseek_r1_distill.md). Prompt redesign: [`docs/persona_prompt_efficiency.md`](../docs/persona_prompt_efficiency.md).
+Cross-model ranking: [`vllm_v1_cross_model_comparison.md`](vllm_v1_cross_model_comparison.md). Smaller Llama and DeepSeek distill siblings: [`vllm_v1_llama32_3b.md`](vllm_v1_llama32_3b.md), [`vllm_v1_deepseek_r1_distill.md`](vllm_v1_deepseek_r1_distill.md). Prompt redesign: [`docs/persona_prompt_efficiency.md`](../docs/persona_prompt_efficiency.md). Manuscript figure: `memos/figures/vllm_v1_llama31_ip_collapse.png`.
