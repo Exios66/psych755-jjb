@@ -23,6 +23,7 @@ Individual research memoranda for PSYCH 755, following the course template
 | [`common_n_head_to_head.md`](common_n_head_to_head.md) | Jack J. Burleson | Equal complete-case ranking of major transit predictors |
 | [`residual_ca_after_rideshare.md`](residual_ca_after_rideshare.md) | Jack J. Burleson | Does CA still separate riders after accounting for Q28? |
 | [`mi_head_to_head.md`](mi_head_to_head.md) | Jack J. Burleson | Does MI restore demos/CA or attenuate Q28’s lead? |
+| [`transit_focus_regular_and_intensity.md`](transit_focus_regular_and_intensity.md) | Jack J. Burleson | TF1/TF2: predict regular transit & intensity with mobility held out? |
 | [`vllm_v1_cross_model_comparison.md`](vllm_v1_cross_model_comparison.md) | Jack J. Burleson | Do v1 vLLM models recover PRCA as digital twins (cross-model)? |
 | [`vllm_v1_llama31_8b.md`](vllm_v1_llama31_8b.md) | Jack J. Burleson | Does Llama-3.1-8B recover PRCA on prompt v1? |
 | [`vllm_v1_llama32_3b.md`](vllm_v1_llama32_3b.md) | Jack J. Burleson | Does Llama-3.2-3B-Instruct recover PRCA on prompt v1? |

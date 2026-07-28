@@ -18,12 +18,14 @@ abstract: |
   (demographics → employment → geography → transportation), and score predictions against
   ground-truth PRCA. Three primary research questions (RQ1–RQ3) examine whether employment
   status, transportation-use cues, and joint geo/employment/transit context improve absolute
-  CA prediction error and alter demographic bias patterns. Five secondary research questions
+  CA prediction error and alter demographic bias patterns.   Five secondary research questions
   (S1–S5) reverse the predictive direction on the same matched sample, asking how CA, place,
   and mobility self-reports relate to regular public-transit use (Q26 weekly-or-more) under
-  classical Random Forests rather than LLM inference. All displayed statistics use the full
-  Prolific↔Qualtrics matched analytic cohort (N = 241; 101 regular / 140 non-regular weekly+
-  transit riders).
+  classical Random Forests rather than LLM inference. A further secondary *focus* pair (TF1–TF2)
+  asks whether models can estimate regular ridership and transit intensity from demographics,
+  context, and CA scores when transit / ride-share / car answers are held out of the prompt.
+  All displayed statistics use the full Prolific↔Qualtrics matched analytic cohort
+  (N = 241; 101 regular / 140 non-regular weekly+ transit riders).
 
   Full-cohort GPU (vLLM) baselines on the original prompt-v1 five-tier ladder show that
   none of four open-weight instruct/distill models is a high-fidelity digital twin
@@ -40,9 +42,11 @@ abstract: |
   geography (0.551) and CA scores (0.590) remain near chance. Extended follow-ups show Q28
   retains lift after car access, demographics (especially age) modestly predict ridership,
   and CA adds little once Q28 is known. A kitchen-sink mobility+demo forest reaches AUC =
-  0.824 but remains Q28-dominated. Together, the primary and secondary results clarify which
-  mobility cues belong in persona tiers and which reverse predictors of transit habits
-  carry the strongest tabular signal in this sample.
+  0.824 but remains Q28-dominated. Holding mobility self-reports out (TF1), a profile of
+  demos + employment + geo still reaches regular-transit AUC = 0.662 (0.672 with CA);
+  fine-grained intensity (TF2) remains weak. Together, the primary and secondary results
+  clarify which mobility cues belong in persona tiers and which reverse predictors of
+  transit habits carry the strongest tabular signal in this sample.
 keywords:
   - communication apprehension
   - large language models
@@ -222,7 +226,7 @@ Separately, large language models are increasingly used as **survey respondents*
 
 ## Research Questions
 
-The primary design compares **information tiers** rather than a single prompt: each participant is personified five ways (`demos` → `employment` → `geo` → `transit` → `full`) while ground-truth PRCA stays fixed. The present study addressed three primary research questions concerning whether accumulated persona context shrinks prediction error and whether residual error still clusters by group membership, and five secondary research questions concerning classical predictors of regular public-transit use on the same matched sample [@cheng2023; @santurkar2023]. Because persona prompting is known to be packaging-sensitive [@hu2024; @argyle2023], the project also documents signal-first redesigns (v2/v3) as future GPU work rather than conflating them with the published v1 baselines.
+The primary design compares **information tiers** rather than a single prompt: each participant is personified five ways (`demos` → `employment` → `geo` → `transit` → `full`) while ground-truth PRCA stays fixed. The present study addressed three primary research questions concerning whether accumulated persona context shrinks prediction error and whether residual error still clusters by group membership; five secondary research questions concerning classical predictors of regular public-transit use; and a secondary *focus* pair that holds transit self-reports out of the persona/profile and asks models to estimate ridership instead [@cheng2023; @santurkar2023]. Because persona prompting is known to be packaging-sensitive [@hu2024; @argyle2023], the project also documents signal-first redesigns (v2/v3) as future GPU work rather than conflating them with the published v1 baselines.
 
 ::: {.research-focus-block}
 ### Primary Research Questions
@@ -254,7 +258,18 @@ The primary design compares **information tiers** rather than a single prompt: e
 **Research Question 5 (S5):** Do Wave-2 covariates—demographics, country versus coordinates, ride-share days conditional on car access, joint CA and mobility models, and residual CA after ride-share—improve prediction of regular public-transit use beyond the Wave-1 mobility predictors?
 :::
 
-Supporting methods pages: [cohort EDA](docs/cohort_eda.md), [ML baselines](docs/ml_baselines.md), [ML vs LLM metrics](docs/ml_vs_llm.md), and [feature importance](docs/factor_feature_importance.md). Secondary write-ups: [S1](docs/secondary_rq_transit_ca.md), [S2](docs/secondary_rq_geo_predicts_transit.md), [S3](docs/secondary_rq_ca_predicts_transit.md), [S4](docs/secondary_rq_q27_q28_predict_transit.md), [S5](docs/secondary_rq_followup_experiments.md). Code and site source: [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb) [@psych755repo]; author profile: [github.com/Exios66](https://github.com/Exios66) [@github].
+::: {.research-focus-block}
+### Secondary Focus — Transit Prediction with Mobility Held Out
+
+*Outcome.* Binary regular public-transit use (`Q26` weekly+) and ordinal transit intensity (`Q26` day-frequency; `Q27` rides/day).  
+*Design.* Profile features and persona prompts that include demographics, employment, geography, and (for intensity / CA arms) PRCA scores — with **Q26–Q29, Q20, Q21, and Q19 held out**. Classical Random Forests establish the tabular ceiling; parallel transit-focus LLM prompts (`tf_demos` → `tf_geo_ca`) are generated for future GPU twins ([write-up](docs/secondary_rq_transit_focus.md); [memo](memos/transit_focus_regular_and_intensity.md)).
+
+**Focus Question 1 (TF1):** Given contextual information and a user profile with transit questions held out of the prompt, can models estimate whether the user is a regular public-transit rider? (Seeded RF AUC = **0.662** profile-only; **0.672** with CA; n = 224.)
+
+**Focus Question 2 (TF2):** Given demographics, context, and CA scores — still holding transit self-reports out — can models estimate the user’s public-transit use intensity (Q26 / Q27)? (Seeded RF Q26 balanced accuracy = **0.283**, ordinal MAE = **1.22**; Q27 remains majority-class dominated.)
+:::
+
+Supporting methods pages: [cohort EDA](docs/cohort_eda.md), [ML baselines](docs/ml_baselines.md), [ML vs LLM metrics](docs/ml_vs_llm.md), and [feature importance](docs/factor_feature_importance.md). Secondary write-ups: [S1](docs/secondary_rq_transit_ca.md), [S2](docs/secondary_rq_geo_predicts_transit.md), [S3](docs/secondary_rq_ca_predicts_transit.md), [S4](docs/secondary_rq_q27_q28_predict_transit.md), [S5](docs/secondary_rq_followup_experiments.md), [TF1/TF2](docs/secondary_rq_transit_focus.md). Code and site source: [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb) [@psych755repo]; author profile: [github.com/Exios66](https://github.com/Exios66) [@github].
 
 # Methods
 
