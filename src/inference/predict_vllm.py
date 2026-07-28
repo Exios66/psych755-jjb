@@ -25,6 +25,11 @@ import pandas as pd
 import yaml
 
 from ca_personas.personas import SYSTEM_PROMPT
+from inference.braintrust_tracing import (
+    braintrust_configured,
+    resolve_system_prompt,
+    start_vllm_run,
+)
 from inference.utils import (
     convert_prompt_to_messages,
     find_duplicate_caseids,
@@ -238,6 +243,10 @@ def vllm_predict(
     tensor_parallel_size: int = 2,
     gpu_memory_utilization: float = 0.9,
     max_model_len: int | None = None,
+    preset_name: str | None = None,
+    braintrust_enabled: bool | None = None,
+    braintrust_project: str | None = None,
+    braintrust_experiment: str | None = None,
 ) -> None:
     """Run chat-templated vLLM generation and append results to *result_csv*.
 
@@ -258,6 +267,12 @@ def vllm_predict(
     result_csv : str
         Output path.  Rows whose ``caseid`` already exists will be skipped
         (checkpoint-resume).
+    preset_name : str, optional
+        Generation preset label (logged to Braintrust metadata).
+    braintrust_enabled : bool, optional
+        Force Braintrust on/off; default follows ``BRAINTRUST_API_KEY``.
+    braintrust_project / braintrust_experiment : str, optional
+        Override Braintrust project / experiment name.
     """
     df = df.copy()
     df["caseid"] = df["caseid"].map(normalize_caseid)
@@ -368,41 +383,97 @@ def vllm_predict(
     # ---- generation -------------------------------------------------------
     batch_size = getattr(model_cfg, "batch_size", 16)
     save_freq = getattr(model_cfg, "save_freq", 200)
-    system_msg = getattr(model_cfg, "system_msg", DEFAULT_SYSTEM_MSG)
+    local_system = getattr(model_cfg, "system_msg", DEFAULT_SYSTEM_MSG)
+    system_msg, prompt_meta = resolve_system_prompt(
+        fallback=local_system,
+        use_braintrust=braintrust_enabled,
+        project=braintrust_project,
+    )
+    print(
+        f"[braintrust] system_prompt source={prompt_meta.get('source')} "
+        f"slug={prompt_meta.get('slug')}"
+    )
+
+    bt_run = start_vllm_run(
+        model=model_name,
+        preset=preset_name or "unspecified",
+        enabled=braintrust_enabled,
+        project=braintrust_project,
+        experiment=braintrust_experiment,
+        system_prompt_meta=prompt_meta,
+        extra_metadata={
+            "result_csv": result_csv,
+            "temperature": getattr(model_cfg, "temperature", None),
+            "top_p": getattr(model_cfg, "top_p", None),
+            "seed": getattr(model_cfg, "seed", None),
+            "quantization": quantization,
+            "tensor_parallel_size": tp,
+            "guided_json": bool(getattr(model_cfg, "guided_json", False)),
+        },
+    )
+    if braintrust_configured(enabled=braintrust_enabled) and not bt_run.enabled:
+        print("[braintrust] configured but experiment not started; generations still saved locally")
 
     total_samples = len(df)
     t0 = time.perf_counter()
     dataset = df.reset_index(drop=True)
     chunks = [dataset.iloc[i : i + save_freq] for i in range(0, len(dataset), save_freq)]
 
-    for i, chunk_df in tqdm(enumerate(chunks), total=len(chunks), desc="vLLM chunks"):
-        prompts = _build_prompts(chunk_df, system_msg, tokenizer)
-        all_texts: list[str] = []
-        for j in range(0, len(prompts), batch_size):
-            batch_prompts = prompts[j : j + batch_size]
-            outputs = llm.generate(batch_prompts, sampling_params)
-            for out in outputs:
-                all_texts.append(out.outputs[0].text if out.outputs else "")
+    try:
+        for i, chunk_df in tqdm(enumerate(chunks), total=len(chunks), desc="vLLM chunks"):
+            prompts = _build_prompts(chunk_df, system_msg, tokenizer)
+            all_texts: list[str] = []
+            for j in range(0, len(prompts), batch_size):
+                batch_prompts = prompts[j : j + batch_size]
+                outputs = llm.generate(batch_prompts, sampling_params)
+                for out in outputs:
+                    all_texts.append(out.outputs[0].text if out.outputs else "")
 
-        out_df = chunk_df[["caseid"]].copy()
-        if "answer" in chunk_df.columns:
-            out_df.insert(1, "answer", chunk_df["answer"].values)
-        out_df["generated_text"] = all_texts
-        out_df["generated_text"] = (
-            out_df["generated_text"]
-            .astype(str)
-            .str.replace("\n", " ", regex=False)
-            .str.strip()
-        )
+            out_df = chunk_df[["caseid"]].copy()
+            if "answer" in chunk_df.columns:
+                out_df.insert(1, "answer", chunk_df["answer"].values)
+            out_df["generated_text"] = all_texts
+            out_df["generated_text"] = (
+                out_df["generated_text"]
+                .astype(str)
+                .str.replace("\n", " ", regex=False)
+                .str.strip()
+            )
 
-        write_header = not os.path.exists(result_csv)
-        out_df.to_csv(
-            result_csv,
-            mode="w" if write_header else "a",
-            header=write_header,
-            index=False,
-        )
-        print(f"Saved chunk {i + 1}/{len(chunks)} to {result_csv}")
+            write_header = not os.path.exists(result_csv)
+            out_df.to_csv(
+                result_csv,
+                mode="w" if write_header else "a",
+                header=write_header,
+                index=False,
+            )
+            print(f"Saved chunk {i + 1}/{len(chunks)} to {result_csv}")
+
+            if bt_run.enabled:
+                log_rows: list[dict] = []
+                chunk_reset = chunk_df.reset_index(drop=True)
+                for pos, row in chunk_reset.iterrows():
+                    log_rows.append(
+                        {
+                            "caseid": row["caseid"],
+                            "prompt": row.get("prompt", ""),
+                            "answer": row.get("answer") if "answer" in chunk_df.columns else None,
+                            "generated_text": all_texts[int(pos)],
+                        }
+                    )
+                summary = bt_run.log_batch(
+                    log_rows,
+                    system_msg=system_msg,
+                    model=model_name,
+                    preset=preset_name,
+                )
+                print(
+                    f"[braintrust] logged chunk {i + 1}: "
+                    f"parse_rate={summary.get('parse_rate')} "
+                    f"mae_mean={summary.get('mae_mean')}"
+                )
+    finally:
+        bt_run.close()
 
     elapsed = time.perf_counter() - t0
     rate = total_samples / elapsed if elapsed > 0 else 0.0
@@ -498,6 +569,36 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--quantization", type=str, default=None,
                     choices=("fp8", "bitsandbytes", "awq", "gptq", "none"),
                     help="vLLM quantisation method (default from --preset).")
+    ap.add_argument(
+        "--braintrust",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "Enable/disable Braintrust experiment logging. "
+            "Default: on when BRAINTRUST_API_KEY is set."
+        ),
+    )
+    ap.add_argument(
+        "--braintrust_project",
+        type=str,
+        default=None,
+        help="Braintrust project name (default: BRAINTRUST_PROJECT / psych755-ca-personas).",
+    )
+    ap.add_argument(
+        "--braintrust_experiment",
+        type=str,
+        default=None,
+        help="Braintrust experiment name (default: auto from model/preset/time).",
+    )
+    ap.add_argument(
+        "--braintrust_prompt_slug",
+        type=str,
+        default=None,
+        help=(
+            "Load system prompt from Braintrust prompt registry by slug "
+            "(sets BRAINTRUST_PROMPT_SLUG for this process)."
+        ),
+    )
 
     args = ap.parse_args(argv)
     preset = load_vllm_preset(args.preset)
@@ -526,6 +627,9 @@ def main(argv: list[str] | None = None) -> None:
     if args.quantization == "none":
         args.quantization = None
 
+    if args.braintrust_prompt_slug:
+        os.environ["BRAINTRUST_PROMPT_SLUG"] = args.braintrust_prompt_slug
+
     df = pd.read_csv(args.prompt_csv)
     if "caseid" not in df.columns or "prompt" not in df.columns:
         raise SystemExit("Input CSV must have columns: caseid, prompt")
@@ -533,7 +637,16 @@ def main(argv: list[str] | None = None) -> None:
     df = _attach_ground_truth(df, args.ground_truth_csv)
 
     model_cfg = _model_cfg_from_args(args)
-    vllm_predict(df, f"cuda:{args.gpu}", model_cfg, args.result_csv)
+    vllm_predict(
+        df,
+        f"cuda:{args.gpu}",
+        model_cfg,
+        args.result_csv,
+        preset_name=args.preset,
+        braintrust_enabled=args.braintrust,
+        braintrust_project=args.braintrust_project,
+        braintrust_experiment=args.braintrust_experiment,
+    )
 
 
 if __name__ == "__main__":
