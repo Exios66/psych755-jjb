@@ -1420,7 +1420,7 @@ def run_all_followup_experiments(
     n_splits: int = 5,
     n_perm_repeats: int = 30,
     n_boot: int = 2000,
-    n_imputations: int = 10,
+    n_imputations: int = 20,
     random_state: int = 42,
 ) -> dict[str, Any]:
     keys = list(experiment_keys) if experiment_keys is not None else list(EXPERIMENT_RUNNERS)
