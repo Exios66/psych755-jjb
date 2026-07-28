@@ -65,6 +65,11 @@ def evaluate_predictions(
         "Employment status",
         "LocationLatitude",
         "LocationLongitude",
+        # Mobility audit covariates for stereotyping / discriminatory-error slices.
+        "Q26",
+        "Q27",
+        "Q28",
+        "Q29",
         "gt_group_ca",
         "gt_interpersonal_ca",
         "gt_group_band",

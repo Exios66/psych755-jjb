@@ -259,15 +259,27 @@ def run_pipeline(
                 "Check participant_id alignment between predictions and scored cohort."
             )
 
-    # Stereotyping slices for base demos (student status) and RQ1 (employment).
+    # Stereotyping / discriminatory-error battery (demos + mobility audits).
+    from ca_personas.stereotyping import run_stereotyping_battery
+
+    stereo_dir = evaluation_dir / "stereotyping"
+    stereo = run_stereotyping_battery(
+        evaluation,
+        participants,
+        output_dir=stereo_dir,
+    )
+    # Preserve legacy filenames at evaluation_dir root for Posit sync / site cells.
     student_err_path = evaluation_dir / "error_by_student_status.csv"
     employment_err_path = evaluation_dir / "error_by_employment.csv"
-    summarize_errors_by_group(evaluation, "Student status").to_csv(
+    summarize_errors_by_group(stereo["evaluation"], "Student status").to_csv(
         student_err_path, index=False
     )
-    summarize_errors_by_group(evaluation, "Employment status").to_csv(
+    summarize_errors_by_group(stereo["evaluation"], "Employment status").to_csv(
         employment_err_path, index=False
     )
+    sex_err_path = evaluation_dir / "error_by_sex.csv"
+    if "Sex" in stereo["evaluation"].columns:
+        summarize_errors_by_group(stereo["evaluation"], "Sex").to_csv(sex_err_path, index=False)
 
     for side in ("group", "interpersonal"):
         confusion = summarize_band_confusion(evaluation, side=side)
@@ -284,7 +296,11 @@ def run_pipeline(
         "summary": summary_path,
         "error_by_student_status": student_err_path,
         "error_by_employment": employment_err_path,
+        "stereotyping_dir": stereo_dir,
     }
+    if sex_err_path.is_file():
+        artifacts["error_by_sex"] = sex_err_path
+    artifacts.update({f"stereo_{k}": v for k, v in stereo["artifacts"].items()})
     if report_path is not None:
         artifacts["cleaning_report"] = report_path
     for key, path in eda_artifacts.items():
