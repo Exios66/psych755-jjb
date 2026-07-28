@@ -12,6 +12,9 @@ project:
     - docs/factor_feature_importance.md
     - docs/persona_prompt_efficiency.md
     - docs/persona_prompt_versions.md
+    - docs/llm_v1_run_specifications.md
+    - docs/llm_v2_v3_enhanced_variants.md
+    - docs/stereotyping_evaluation.md
     - docs/llm_baseline_llama31_v1.md
     - docs/llm_baseline_llama32_instruct_v1.md
     - docs/llm_baseline_deepseek_r1_distill_v1.md
@@ -84,6 +87,12 @@ website:
             text: Prompt versions (v1–v3)
           - href: docs/persona_prompt_efficiency.md
             text: Persona prompt packaging (v2/v3)
+          - href: docs/llm_v1_run_specifications.md
+            text: v1 run specifications
+          - href: docs/llm_v2_v3_enhanced_variants.md
+            text: v2/v3 enhanced variants
+          - href: docs/stereotyping_evaluation.md
+            text: Stereotyping evaluation
           - href: docs/llm_baseline_llama31_v1.md
             text: Llama-3.1 baseline (prompt v1)
           - href: docs/llm_baseline_llama32_instruct_v1.md
@@ -196,6 +205,9 @@ website:
           - docs/factor_feature_importance.md
           - docs/persona_prompt_versions.md
           - docs/persona_prompt_efficiency.md
+          - docs/llm_v1_run_specifications.md
+          - docs/llm_v2_v3_enhanced_variants.md
+          - docs/stereotyping_evaluation.md
           - docs/llm_baseline_llama31_v1.md
           - docs/llm_baseline_llama32_instruct_v1.md
           - docs/llm_baseline_deepseek_r1_distill_v1.md

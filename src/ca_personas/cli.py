@@ -422,6 +422,41 @@ def build_parser() -> argparse.ArgumentParser:
         help="Max rows for TreeExplainer sampling",
     )
 
+    stereo = sub.add_parser(
+        "stereotype-eval",
+        help=(
+            "Stereotyping / discriminatory-error battery: MAE gaps by "
+            "Sex/Student/Employment/Age/transit/Q28, tier widening, association tests"
+        ),
+    )
+    _add_shared_data_args(stereo)
+    stereo.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/evaluation/stereotyping"),
+        help="Directory for stereotyping CSVs and results_card.json",
+    )
+    stereo.add_argument(
+        "--evaluation",
+        type=Path,
+        default=None,
+        help="Optional existing evaluation.csv (skips re-running LLM)",
+    )
+    stereo.add_argument(
+        "--participants",
+        type=Path,
+        default=None,
+        help="Optional participants.csv for audit covariates",
+    )
+    stereo.add_argument(
+        "--provider",
+        choices=["ollama", "openrouter", "mock"],
+        default="mock",
+        help="LLM provider when evaluation.csv is not supplied (default: mock)",
+    )
+    stereo.add_argument("--model", default=None, help="LLM model override")
+    stereo.add_argument("--sleep", type=float, default=0.0)
+
     # Flat args retained so `ca-personas --provider mock` still works.
     _add_shared_data_args(parser)
     parser.add_argument("--tiers", nargs="+", choices=list(TIERS), default=None)
@@ -693,6 +728,54 @@ def main(argv: list[str] | None = None) -> int:
                     "results_card": str(result["paths"]["results_card"]),
                     "n_figures": len(result["figure_paths"]),
                     "n_analytic": int(len(result["participants"])),
+                },
+                indent=2,
+            )
+        )
+        return 0
+
+    if command == "stereotype-eval":
+        import pandas as pd
+
+        from ca_personas.evaluate import evaluate_predictions
+        from ca_personas.llm import get_client
+        from ca_personas.predict import run_predictions
+        from ca_personas.stereotyping import run_stereotyping_battery
+
+        if args.evaluation is not None:
+            evaluation = pd.read_csv(args.evaluation)
+            if args.participants is not None:
+                participants = pd.read_csv(args.participants)
+            else:
+                prolific, qualtrics = _paths_or_defaults(args)
+                participants, _ = load_full_cohort(
+                    prolific_paths=prolific,
+                    qualtrics_path=qualtrics,
+                    join_how=args.join,
+                )
+        else:
+            prolific, qualtrics = _paths_or_defaults(args)
+            participants, _ = load_full_cohort(
+                prolific_paths=prolific,
+                qualtrics_path=qualtrics,
+                join_how=args.join,
+            )
+            prompts = build_persona_prompts(participants, tiers=list(RESEARCH_TIERS))
+            client = get_client(args.provider, model=args.model)
+            predictions = run_predictions(client, prompts, sleep_seconds=args.sleep)
+            evaluation = evaluate_predictions(participants, predictions)
+
+        result = run_stereotyping_battery(
+            evaluation,
+            participants,
+            output_dir=args.output_dir,
+        )
+        print(
+            json.dumps(
+                {
+                    "n_evaluation_rows": result["card"]["n_evaluation_rows"],
+                    "slices": result["card"]["slices_evaluated"],
+                    "artifacts": {k: str(v) for k, v in result["artifacts"].items()},
                 },
                 indent=2,
             )

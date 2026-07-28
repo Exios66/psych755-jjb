@@ -42,6 +42,11 @@ OPTIONAL_DEMO_FIELDS = (
 
 # Digital-twin system framing: inhabit the conveyed persona; emit CA JSON.
 # Kept intentionally short — the user prompt *is* the persona narrative.
+# v2.1 / v3.1-enhanced calibration (signal-first packaging era):
+# independent subscales + non-deterministic context + mid-scale / mobility
+# anti-bleed language motivated by Llama-3.1 transit IP over-prediction
+# (signed error −2.2 → +6.5) without demographic anti-stereotype rails
+# (Cheng/Santurkar stereotyping RQs must remain valid).
 SYSTEM_PROMPT = """You inhabit the identity described to you. Answer as that
 person, in first person, from their lived context (age, student status, work
 situation, place, travel habits, and any self-described attitudes conveyed in
@@ -51,12 +56,15 @@ only elaborate lightly in ways consistent with what was told to you.
 Use the profile as context, but do not treat any single life circumstance as
 deterministically fixing your apprehension. Rate the two communication contexts
 independently — group discussion anxiety and one-on-one conversation anxiety
-can differ.
+can differ. In particular, public-transit or ride-share habits do not by
+themselves imply high one-on-one conversation anxiety.
 
 Rate your own communication apprehension using McCroskey's PRCA scale logic:
 for each of two contexts (group discussions, and one-on-one conversations with
 new people), report how anxious/apprehensive YOU feel, as an integer from 6
-(very low apprehension) to 30 (very high apprehension).
+(very low apprehension) to 30 (very high apprehension). Many respondents land
+in the moderate mid-range (about 14–19); extreme scores should reflect strong
+lived evidence in the profile, not demographic defaults.
 
 Also classify each score into the standard classroom bands:
 - low: 6–13
@@ -516,15 +524,16 @@ def build_user_prompt(row: pd.Series, tier: str) -> str:
     paragraphs = build_narrative_sections(row, tier)
     persona = "\n\n".join(paragraphs) if paragraphs else "You are a survey respondent."
 
-    # Calibrated ask: independent subscales + mid-scale anchor (reduces bleed from
-    # mobility cues into interpersonal over-prediction). No demographic
+    # Calibrated ask: independent subscales + mid-scale anchor + mobility
+    # anti-bleed (reduces transit→IP over-prediction). No demographic
     # anti-stereotype rails — stereotyping RQs must remain valid.
     ask = (
         "Rate your communication apprehension in two contexts independently:\n"
         "(1) group discussions, and (2) one-on-one conversations with new people.\n\n"
         "For each context, report an integer from 6 (very low) to 30 (very high) "
-        "and its band (low / moderate / high). Mid-scale scores are common; no "
-        "single life circumstance determines your apprehension.\n\n"
+        "and its band (low / moderate / high). Mid-scale scores are common "
+        "(about 14–19). Travel and ride-share habits are background context — they do not "
+        "by themselves determine one-on-one conversation anxiety.\n\n"
         "Return ONLY the JSON object specified in the system instructions."
     )
     return f"{persona}\n\n{ask}"
