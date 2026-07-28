@@ -280,16 +280,19 @@ def resolve_system_prompt(
             version=chosen_version,
             environment=chosen_env,
         )
-        built = prompt.build({})
+        # build() takes mustache variables as kwargs (not a positional dict).
+        built = prompt.build()
         messages = built.get("messages") if isinstance(built, dict) else None
         if not messages:
-            # Some prompt shapes expose chat messages under prompt_data.
             raise ValueError("Braintrust prompt.build() returned no messages")
-        system_parts = [
-            str(m.get("content", "")).strip()
-            for m in messages
-            if isinstance(m, dict) and m.get("role") == "system" and m.get("content")
-        ]
+        system_parts: list[str] = []
+        for m in messages:
+            role = getattr(m, "role", None) if not isinstance(m, dict) else m.get("role")
+            content = (
+                getattr(m, "content", None) if not isinstance(m, dict) else m.get("content")
+            )
+            if role == "system" and content:
+                system_parts.append(str(content).strip())
         if not system_parts:
             raise ValueError("Braintrust prompt has no system message")
         text = "\n\n".join(system_parts).strip()
@@ -297,6 +300,7 @@ def resolve_system_prompt(
             raise ValueError("Braintrust system message empty")
         meta["source"] = "braintrust"
         meta["prompt_id"] = getattr(prompt, "id", None) or getattr(prompt, "name", None)
+        meta["version"] = chosen_version or getattr(prompt, "version", None)
         return text, meta
     except Exception as exc:  # noqa: BLE001 - never block inference
         meta["source"] = "local_fallback"
