@@ -46,6 +46,54 @@ ENV_PROMPT_VERSION = "BRAINTRUST_PROMPT_VERSION"
 ENV_PROMPT_ENVIRONMENT = "BRAINTRUST_PROMPT_ENVIRONMENT"
 ENV_ENABLED = "BRAINTRUST_ENABLED"
 ENV_EXPERIMENT = "BRAINTRUST_EXPERIMENT"
+# How many Braintrust *scores* to upload per row (plan limits count these).
+#   metrics_only — traces + metrics only (default; avoids num_scores quota)
+#   slim         — parse_ok + means only (~4 scores/row)
+#   full         — all per-side scores (~12/row; burns monthly quota fast)
+ENV_SCORE_MODE = "BRAINTRUST_SCORE_MODE"
+_SLIM_SCORE_KEYS = (
+    "parse_ok",
+    "exact_match_mean",
+    "band_match_mean",
+    "score_accuracy_mean",
+    "inverse_mae_mean",
+)
+# Module-level circuit breaker when Braintrust plan limits reject uploads.
+_PLAN_LIMIT_HIT = False
+
+
+def scores_for_upload(scores: Mapping[str, float] | None) -> dict[str, float] | None:
+    """Filter scorer dict for Braintrust upload based on ``BRAINTRUST_SCORE_MODE``.
+
+    Returns ``None`` only when the caller should *omit* the scores kwarg
+    (unused — Braintrust requires scores). Prefer ``metrics_only`` which sends
+    a single ``logged=1.0`` score so rows still appear without burning quota.
+    """
+    mode = (os.getenv(ENV_SCORE_MODE) or "metrics_only").strip().lower()
+    if mode in {"0", "none", "off"}:
+        # Still need one score for the API; use a constant.
+        return {"logged": 1.0}
+    if mode in {"metrics", "metrics_only", "trace"}:
+        out: dict[str, float] = {"logged": 1.0}
+        if scores and "parse_ok" in scores:
+            out["parse_ok"] = float(scores["parse_ok"])
+        return out
+    if mode in {"full", "all"}:
+        return dict(scores) if scores else {"logged": 1.0}
+    # slim
+    if not scores:
+        return {"logged": 1.0}
+    slim = {k: float(scores[k]) for k in _SLIM_SCORE_KEYS if k in scores}
+    return slim or {"logged": 1.0}
+
+
+def _looks_like_plan_limit(exc: BaseException | str) -> bool:
+    text = str(exc).lower()
+    return (
+        "plan limits" in text
+        or "num_scores" in text
+        or "resource constraint" in text
+    )
 
 
 def braintrust_configured(*, enabled: bool | None = None) -> bool:
@@ -370,6 +418,20 @@ class BraintrustRun:
             "generated_text": generated_text,
             "parsed": scored.get("parsed"),
         }
+        global _PLAN_LIMIT_HIT
+        if _PLAN_LIMIT_HIT:
+            return scored
+
+        # Keep full score dict in metrics so dashboards still work without
+        # burning Braintrust num_scores quota (see BRAINTRUST_SCORE_MODE).
+        metrics_out: dict[str, float] = {}
+        if scored.get("metrics"):
+            metrics_out.update({k: float(v) for k, v in scored["metrics"].items()})
+        if scored.get("scores"):
+            for k, v in scored["scores"].items():
+                metrics_out.setdefault(f"score_{k}", float(v))
+        upload_scores = scores_for_upload(scored.get("scores"))
+
         try:
             self._experiment.log(
                 input={
@@ -380,8 +442,8 @@ class BraintrustRun:
                 output=output,
                 expected=scored.get("expected"),
                 error=scored.get("error"),
-                scores=scored.get("scores") or None,
-                metrics=scored.get("metrics") or None,
+                scores=upload_scores,
+                metrics=metrics_out or None,
                 metadata={k: v for k, v in meta.items() if v is not None},
                 tags=tags,
                 id=cid,
@@ -390,6 +452,13 @@ class BraintrustRun:
             self.n_logged += 1
         except Exception as exc:  # noqa: BLE001 - do not abort GPU batch
             print(f"[braintrust] log failed for {cid}: {exc}")
+            if _looks_like_plan_limit(exc):
+                _PLAN_LIMIT_HIT = True
+                self.enabled = False
+                print(
+                    "[braintrust] plan/score limit hit — disabling further "
+                    "uploads for this process (traces already attempted)"
+                )
         return scored
 
     def log_batch(

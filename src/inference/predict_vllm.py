@@ -384,11 +384,20 @@ def vllm_predict(
     batch_size = getattr(model_cfg, "batch_size", 16)
     save_freq = getattr(model_cfg, "save_freq", 200)
     local_system = getattr(model_cfg, "system_msg", DEFAULT_SYSTEM_MSG)
-    system_msg, prompt_meta = resolve_system_prompt(
-        fallback=local_system,
-        use_braintrust=braintrust_enabled,
-        project=braintrust_project,
-    )
+    # Explicit --system_msg(_file) wins (e.g. transit-focus); still log generations.
+    if getattr(model_cfg, "system_msg_explicit", False):
+        system_msg = local_system
+        prompt_meta = {
+            "source": "local_override",
+            "project": braintrust_project or os.getenv("BRAINTRUST_PROJECT"),
+            "slug": None,
+        }
+    else:
+        system_msg, prompt_meta = resolve_system_prompt(
+            fallback=local_system,
+            use_braintrust=braintrust_enabled,
+            project=braintrust_project,
+        )
     print(
         f"[braintrust] system_prompt source={prompt_meta.get('source')} "
         f"slug={prompt_meta.get('slug')}"
@@ -484,10 +493,30 @@ def vllm_predict(
 # CLI
 # ---------------------------------------------------------------------------
 
+def _resolve_system_msg(args: argparse.Namespace) -> tuple[str, bool]:
+    """Prefer ``--system_msg_file`` / ``--system_msg``, else CA default.
+
+    Returns ``(system_msg, explicit)`` where *explicit* is True when the CLI
+    overrode the default (so Braintrust registry must not replace it).
+    """
+    path = getattr(args, "system_msg_file", None) or ""
+    if path:
+        text = Path(path).read_text(encoding="utf-8").strip()
+        if not text:
+            raise SystemExit(f"--system_msg_file is empty: {path}")
+        return text, True
+    inline = getattr(args, "system_msg", None)
+    if inline:
+        return str(inline).strip(), True
+    return DEFAULT_SYSTEM_MSG, False
+
+
 def _model_cfg_from_args(args: argparse.Namespace) -> SimpleNamespace:
+    system_msg, system_msg_explicit = _resolve_system_msg(args)
     return SimpleNamespace(
         model_full_name=args.model,
-        system_msg=DEFAULT_SYSTEM_MSG,
+        system_msg=system_msg,
+        system_msg_explicit=system_msg_explicit,
         max_output_tokens=args.max_output_tokens,
         temperature=args.temperature,
         top_p=args.top_p,
@@ -520,6 +549,18 @@ def main(argv: list[str] | None = None) -> None:
                          "uses GPUs id..id+N-1.")
     ap.add_argument("--model", type=str, default=DEFAULT_MODEL,
                     help="HuggingFace model id or local path.")
+    ap.add_argument(
+        "--system_msg_file",
+        type=str,
+        default="",
+        help="Optional path to a system prompt file (overrides CA default).",
+    )
+    ap.add_argument(
+        "--system_msg",
+        type=str,
+        default="",
+        help="Optional inline system prompt (overrides CA default; file wins).",
+    )
     ap.add_argument(
         "--hf_access_token_file",
         type=str,

@@ -35,6 +35,7 @@ VLLM_TEMPERATURE="${VLLM_TEMPERATURE:-}"
 VLLM_TOP_P="${VLLM_TOP_P:-}"
 VLLM_SEED="${VLLM_SEED:-}"
 VLLM_GUIDED_JSON="${VLLM_GUIDED_JSON:-}"
+VLLM_SYSTEM_MSG_FILE="${VLLM_SYSTEM_MSG_FILE:-}"
 HF_ACCESS_TOKEN_FILE="${HF_ACCESS_TOKEN_FILE:-hf_access_token.txt}"
 HF_HOME="${HF_HOME:-${PROJECT_ROOT}/hf_cache}"
 export HF_HOME
@@ -112,6 +113,9 @@ CMD=(
 if [[ -n "$MAX_OUTPUT_TOKENS" ]]; then
   CMD+=(--max_output_tokens "$MAX_OUTPUT_TOKENS")
 fi
+if [[ -n "$VLLM_SYSTEM_MSG_FILE" ]]; then
+  CMD+=(--system_msg_file "$VLLM_SYSTEM_MSG_FILE")
+fi
 if [[ -n "$VLLM_TEMPERATURE" ]]; then
   CMD+=(--temperature "$VLLM_TEMPERATURE")
 fi
@@ -148,6 +152,7 @@ fi
   echo "result_csv: $RESULT_PATH"
   echo "model: $MODEL"
   echo "preset: $VLLM_PRESET"
+  echo "system_msg_file: ${VLLM_SYSTEM_MSG_FILE:-<default CA>}"
   echo "gpu: $GPU"
   echo "tensor_parallel_size: $VLLM_TP_SIZE"
   echo "quantization: $VLLM_QUANTIZATION"

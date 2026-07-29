@@ -41,8 +41,11 @@ def infer_export_bucket(tag: str) -> str:
       v2               — signal-first 5-tier enhanced runs
       v3               — 8-tier ablation enhanced runs
       prior_v3_greedy  — pre-refresh greedy v3 comparison archives
+      transit_focus    — TF1/TF2 mobility-held-out transit prediction
     """
     t = tag.lower()
+    if "transit_focus" in t or t.startswith("tf_"):
+        return "transit_focus"
     if "prior_greedy" in t or t.endswith("_prior"):
         return "prior_v3_greedy"
     if t.endswith("_v3") or "_v3_" in t:

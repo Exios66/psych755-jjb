@@ -24,6 +24,7 @@ from ca_personas.followup_experiments import (
     EXPERIMENT_RUNNERS,
     run_followup_experiments_pipeline,
 )
+from ca_personas.transit_focus import FOCUS_SPECS, run_transit_focus_pipeline
 
 
 def _add_shared_data_args(parser: argparse.ArgumentParser) -> None:
@@ -331,6 +332,48 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path("memos/figures"),
         help="Directory for memo figures (default: memos/figures)",
+    )
+
+    tfocus = sub.add_parser(
+        "transit-focus",
+        help=(
+            "Secondary focus TF1/TF2: predict regular transit and Q26/Q27 "
+            "intensity from profile (+ CA) with mobility items held out; "
+            "also writes transit-focus persona prompts for LLM twins"
+        ),
+    )
+    _add_shared_data_args(tfocus)
+    tfocus.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/transit_focus"),
+        help="Directory for TF1/TF2 artifacts and persona prompts",
+    )
+    tfocus.add_argument(
+        "--specs",
+        nargs="+",
+        choices=sorted(FOCUS_SPECS),
+        default=None,
+        help="Subset of focus specs (default: all TF1/TF2)",
+    )
+    tfocus.add_argument("--splits", type=int, default=5, help="Stratified CV folds")
+    tfocus.add_argument(
+        "--perm-repeats",
+        type=int,
+        default=20,
+        help="Permutation-importance repeats (binary specs)",
+    )
+    tfocus.add_argument("--seed", type=int, default=42, help="RNG seed")
+    tfocus.add_argument(
+        "--no-prompts",
+        action="store_true",
+        help="Skip writing transit-focus LLM persona prompts",
+    )
+    tfocus.add_argument(
+        "--prompts-dir",
+        type=Path,
+        default=None,
+        help="Optional override directory for transit-focus persona prompts",
     )
 
     followups = sub.add_parser(
@@ -682,6 +725,23 @@ def main(argv: list[str] | None = None) -> int:
             random_state=args.seed,
             spec_keys=args.specs,
             figures_dir=args.figures_dir,
+        )
+        print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
+        return 0
+
+    if command == "transit-focus":
+        prolific, qualtrics = _paths_or_defaults(args)
+        artifacts = run_transit_focus_pipeline(
+            prolific_paths=prolific,
+            qualtrics_path=qualtrics,
+            join_how=args.join,
+            output_dir=args.output_dir,
+            spec_keys=args.specs,
+            n_splits=args.splits,
+            n_perm_repeats=args.perm_repeats,
+            random_state=args.seed,
+            write_prompts=not args.no_prompts,
+            prompts_dir=args.prompts_dir,
         )
         print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
         return 0

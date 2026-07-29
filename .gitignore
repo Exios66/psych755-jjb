@@ -64,3 +64,5 @@ notebooks/*.executed.ipynb
 !artifacts/pr_graph/
 !artifacts/pr_graph/**
 .sibling_data_link
+# Added by Braintrust Wizard
+.braintrust.json
