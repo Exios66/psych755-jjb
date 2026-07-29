@@ -39,6 +39,29 @@ HF_ACCESS_TOKEN_FILE="${HF_ACCESS_TOKEN_FILE:-hf_access_token.txt}"
 HF_HOME="${HF_HOME:-${PROJECT_ROOT}/hf_cache}"
 export HF_HOME
 
+# Braintrust (opt-in when BRAINTRUST_API_KEY is set). See docs in
+# src/inference/README.md and prompts/braintrust_ca_system.py.
+BRAINTRUST_PROJECT="${BRAINTRUST_PROJECT:-psych755-ca-personas}"
+BRAINTRUST_EXPERIMENT="${BRAINTRUST_EXPERIMENT:-}"
+BRAINTRUST_PROMPT_SLUG="${BRAINTRUST_PROMPT_SLUG:-ca-digital-twin-system}"
+BRAINTRUST_ENABLED="${BRAINTRUST_ENABLED:-}"
+export BRAINTRUST_PROJECT BRAINTRUST_PROMPT_SLUG
+if [[ -n "${BRAINTRUST_API_KEY:-}" ]]; then
+  export BRAINTRUST_API_KEY
+fi
+if [[ -n "${BRAINTRUST_PROMPT_VERSION:-}" ]]; then
+  export BRAINTRUST_PROMPT_VERSION
+fi
+if [[ -n "${BRAINTRUST_PROMPT_ENVIRONMENT:-}" ]]; then
+  export BRAINTRUST_PROMPT_ENVIRONMENT
+fi
+if [[ -n "${BRAINTRUST_EXPERIMENT}" ]]; then
+  export BRAINTRUST_EXPERIMENT
+fi
+if [[ -n "${BRAINTRUST_ENABLED}" ]]; then
+  export BRAINTRUST_ENABLED
+fi
+
 BACKGROUND="${BACKGROUND:-1}"
 PYTHON_BIN="${PYTHON_BIN:-}"
 
@@ -103,6 +126,20 @@ if [[ "$VLLM_GUIDED_JSON" == "1" || "$VLLM_GUIDED_JSON" == "true" ]]; then
 elif [[ "$VLLM_GUIDED_JSON" == "0" || "$VLLM_GUIDED_JSON" == "false" ]]; then
   CMD+=(--no-guided_json)
 fi
+if [[ -n "${BRAINTRUST_EXPERIMENT}" ]]; then
+  CMD+=(--braintrust_experiment "$BRAINTRUST_EXPERIMENT")
+fi
+if [[ -n "${BRAINTRUST_PROJECT}" ]]; then
+  CMD+=(--braintrust_project "$BRAINTRUST_PROJECT")
+fi
+if [[ -n "${BRAINTRUST_PROMPT_SLUG}" ]]; then
+  CMD+=(--braintrust_prompt_slug "$BRAINTRUST_PROMPT_SLUG")
+fi
+if [[ "${BRAINTRUST_ENABLED}" == "1" || "${BRAINTRUST_ENABLED}" == "true" ]]; then
+  CMD+=(--braintrust)
+elif [[ "${BRAINTRUST_ENABLED}" == "0" || "${BRAINTRUST_ENABLED}" == "false" ]]; then
+  CMD+=(--no-braintrust)
+fi
 
 {
   echo "==== CA digital-twin vLLM run ===="
@@ -115,6 +152,9 @@ fi
   echo "tensor_parallel_size: $VLLM_TP_SIZE"
   echo "quantization: $VLLM_QUANTIZATION"
   echo "HF_HOME: $HF_HOME"
+  echo "braintrust_project: $BRAINTRUST_PROJECT"
+  echo "braintrust_prompt_slug: $BRAINTRUST_PROMPT_SLUG"
+  echo "braintrust_api_key_set: $([ -n "${BRAINTRUST_API_KEY:-}" ] && echo yes || echo no)"
   echo "cmd: ${CMD[*]}"
   echo "================================="
 } | tee "$LOG_PATH"

@@ -31,3 +31,7 @@ pytest>=8.0
 #   transformers>=4.44
 #   tqdm>=4.66
 #   huggingface_hub>=0.24
+#   braintrust>=0.21
+#
+# Optional: Braintrust logging / prompt registry without the CUDA stack
+# pip install -e ".[braintrust]"
