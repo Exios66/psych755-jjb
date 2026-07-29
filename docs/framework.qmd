@@ -87,6 +87,19 @@ Observational contrast on the matched analytic sample (no LLM):
 | Write-up | [`docs/secondary_rq_followup_experiments.md`](secondary_rq_followup_experiments.md) |
 | Artifacts | `outputs/followup_experiments/` |
 
+### Secondary focus — transit prediction with mobility held out (TF1 / TF2)
+
+| Piece | Detail |
+|---|---|
+| Hold-out | `Q26`–`Q29`, `Q20`, `Q21`, `Q19` excluded from features **and** persona text |
+| TF1 | demos + employment + geo (± CA) → `regular_transit` |
+| TF2 | demos + employment + geo + CA → Q26 ordinal / Q27 multiclass |
+| Model | Balanced mixed-type Random Forest + stratified CV; LLM twin prompts (`tf_*` tiers) |
+| CLI | `ca-personas transit-focus` |
+| Write-up | [`docs/secondary_rq_transit_focus.md`](secondary_rq_transit_focus.md) |
+| Memo | [`memos/transit_focus_regular_and_intensity.md`](../memos/transit_focus_regular_and_intensity.md) |
+| Artifacts | `outputs/transit_focus/` (+ `persona_prompts/`) |
+
 ## Ground-truth scoring
 
 Group items: `Q1–Q6`. Interpersonal items: `Q13–Q18`.

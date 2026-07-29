@@ -27,7 +27,9 @@ project:
     - docs/secondary_rq_q27_q28_predict_transit.md
     - docs/secondary_rq_transit_covariate_followups.md
     - docs/secondary_rq_followup_experiments.md
+    - docs/secondary_rq_transit_focus.md
     - memos/transit_riders_ca.md
+    - memos/transit_focus_regular_and_intensity.md
     - memos/geo_predicts_transit.md
     - memos/ca_scores_predict_transit.md
     - memos/q27_q28_predict_transit.md
@@ -120,6 +122,8 @@ website:
             text: S5 · Mobility covariates
           - href: docs/secondary_rq_followup_experiments.md
             text: Wave-2 follow-up experiments
+          - href: docs/secondary_rq_transit_focus.md
+            text: TF1/TF2 · Transit focus (held-out)
       - text: Memos
         menu:
           - href: memos/transit_riders_ca.md
@@ -158,6 +162,8 @@ website:
             text: MI vs complete-case
           - href: memos/comprehensive_predictors_transit.md
             text: Comprehensive predictors
+          - href: memos/transit_focus_regular_and_intensity.md
+            text: "TF1/TF2 · Transit focus (held-out)"
           - href: memos/feature_predictive_power_ml_llm.md
             text: Feature power (SHAP / F1)
           - href: memos/vllm_v1_cross_model_comparison.md
@@ -223,6 +229,7 @@ website:
           - docs/secondary_rq_q27_q28_predict_transit.md
           - docs/secondary_rq_transit_covariate_followups.md
           - docs/secondary_rq_followup_experiments.md
+          - docs/secondary_rq_transit_focus.md
       - section: "Research memos"
         contents:
           - section: "Core secondary (S1–S5)"
@@ -232,6 +239,9 @@ website:
               - memos/ca_scores_predict_transit.md
               - memos/q27_q28_predict_transit.md
               - memos/transit_covariate_followups.md
+          - section: "Transit focus (held-out)"
+            contents:
+              - memos/transit_focus_regular_and_intensity.md
           - section: "Mobility follow-ups"
             contents:
               - memos/rideshare_predicts_transit.md

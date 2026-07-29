@@ -424,6 +424,48 @@ def build_parser() -> argparse.ArgumentParser:
         help="Directory for memo figures (default: memos/figures)",
     )
 
+    tfocus = sub.add_parser(
+        "transit-focus",
+        help=(
+            "Secondary focus TF1/TF2: predict regular transit and Q26/Q27 "
+            "intensity from profile (+ CA) with mobility items held out; "
+            "also writes transit-focus persona prompts for LLM twins"
+        ),
+    )
+    _add_shared_data_args(tfocus)
+    tfocus.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/transit_focus"),
+        help="Directory for TF1/TF2 artifacts and persona prompts",
+    )
+    tfocus.add_argument(
+        "--specs",
+        nargs="+",
+        choices=sorted(FOCUS_SPECS),
+        default=None,
+        help="Subset of focus specs (default: all TF1/TF2)",
+    )
+    tfocus.add_argument("--splits", type=int, default=5, help="Stratified CV folds")
+    tfocus.add_argument(
+        "--perm-repeats",
+        type=int,
+        default=20,
+        help="Permutation-importance repeats (binary specs)",
+    )
+    tfocus.add_argument("--seed", type=int, default=42, help="RNG seed")
+    tfocus.add_argument(
+        "--no-prompts",
+        action="store_true",
+        help="Skip writing transit-focus LLM persona prompts",
+    )
+    tfocus.add_argument(
+        "--prompts-dir",
+        type=Path,
+        default=None,
+        help="Optional override directory for transit-focus persona prompts",
+    )
+
     shap_cmd = sub.add_parser(
         "shap-eval",
         help=(
