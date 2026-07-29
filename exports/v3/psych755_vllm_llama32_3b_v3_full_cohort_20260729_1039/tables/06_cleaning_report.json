@@ -1,0 +1,29 @@
+[
+  {
+    "n_prolific_raw":262,
+    "n_prolific_unique":262,
+    "n_qualtrics_raw":273,
+    "n_qualtrics_with_pid":255,
+    "n_qualtrics_complete_ca":260,
+    "n_joined":252,
+    "n_matched_both":252,
+    "n_analytic":241,
+    "n_dropped_missing_pid":0,
+    "n_dropped_incomplete_ca":11,
+    "n_dropped_unscorable_ca":0,
+    "n_dropped_unjoined":31,
+    "n_prolific_only":10,
+    "n_qualtrics_only":21,
+    "n_qualtrics_missing_pid":18,
+    "waves":{
+      "B":153,
+      "A":99
+    },
+    "notes":[
+      "Normalized 19 DATA_EXPIRED Student status values to missing.",
+      "Full Prolific waves (File A\/B) omit Ethnicity \/ Nationality \/ Language; demos tier uses Age, Sex, Country of residence, and Student status.",
+      "Analytic sample = Prolific\u2229Qualtrics with complete scorable PRCA group + interpersonal items.",
+      "Merge coverage (pre-CA filter): 252 matched Prolific\u2229Qualtrics; 21 Qualtrics-only (incl. 18 blank Q0 test rows; disregard); 10 Prolific-only (disregard)."
+    ]
+  }
+]

@@ -1,0 +1,10 @@
+tier,n_predictions,n_with_ground_truth,mae_group,mae_interpersonal,mean_error_group,mean_error_interpersonal,exact_acc_group,mean_norm_score_distance_group,band_acc_group,n_band_group,mean_band_distance_group,mean_norm_band_distance_group,exact_acc_interpersonal,mean_norm_score_distance_interpersonal,band_acc_interpersonal,n_band_interpersonal,mean_band_distance_interpersonal,mean_norm_band_distance_interpersonal
+all,1928,0,,,,,,,,0,,,,,,0,,
+demos,241,0,,,,,,,,0,,,,,,0,,
+employment,241,0,,,,,,,,0,,,,,,0,,
+full,241,0,,,,,,,,0,,,,,,0,,
+geo,241,0,,,,,,,,0,,,,,,0,,
+transit,241,0,,,,,,,,0,,,,,,0,,
+v3_public_transit,241,0,,,,,,,,0,,,,,,0,,
+v3_rideshare,241,0,,,,,,,,0,,,,,,0,,
+v3_voice,241,0,,,,,,,,0,,,,,,0,,

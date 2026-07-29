@@ -1,0 +1,9 @@
+tier,delta_mae_group_vs_demos,delta_mae_interpersonal_vs_demos,delta_band_acc_group_vs_demos,delta_band_acc_interpersonal_vs_demos
+demos,,,,
+employment,,,,
+geo,,,,
+transit,,,,
+full,,,,
+v3_rideshare,,,,
+v3_public_transit,,,,
+v3_voice,,,,

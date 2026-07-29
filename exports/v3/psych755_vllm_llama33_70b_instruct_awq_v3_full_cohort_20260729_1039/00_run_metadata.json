@@ -1,0 +1,27 @@
+{
+  "export_stamp": "20260729_1039",
+  "model_tag": "llama33_70b_instruct_awq_v3",
+  "model": "meta-llama/Llama-3.3-70B-Instruct-AWQ",
+  "quantization": "awq",
+  "notes": "Prompt v3 prior greedy",
+  "n_participants": 241,
+  "n_prompt_rows": 1928,
+  "n_result_rows": 1928,
+  "n_predictions_parsed": 1928,
+  "parse_rate": 1.0,
+  "tiers": [
+    "demos",
+    "employment",
+    "geo",
+    "transit",
+    "full",
+    "v3_rideshare",
+    "v3_public_transit",
+    "v3_voice"
+  ],
+  "join": "inner",
+  "throughput_samples_per_s": null,
+  "wall_time_s": null,
+  "gpu": "NVIDIA RTX A5000",
+  "host": "rogers-gpu-1.discovery.wisc.edu"
+}
