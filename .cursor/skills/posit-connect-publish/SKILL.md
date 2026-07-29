@@ -15,11 +15,11 @@ End-to-end workflow for this repo (`psych755-jjb`): **full-data analyses → upd
 ## Canonical deployment
 
 | Field | Value |
-|---|---|
+| --- | --- |
 | Account | `jackjburleson` |
 | Content ID | `019f9a10-ebb9-d1d5-839f-97e794bfd0ca` |
-| Dashboard | https://connect.posit.cloud/jackjburleson/content/019f9a10-ebb9-d1d5-839f-97e794bfd0ca |
-| Public share URL | https://019f9a10-ebb9-d1d5-839f-97e794bfd0ca.share.connect.posit.cloud/ |
+| Dashboard | <https://connect.posit.cloud/jackjburleson/content/019f9a10-ebb9-d1d5-839f-97e794bfd0ca> |
+| Public share URL | <https://019f9a10-ebb9-d1d5-839f-97e794bfd0ca.share.connect.posit.cloud/> |
 | Config | `_publish.yml`, `_quarto.yml` |
 
 Do **not** publish to the older `jjb-morningstar` content id unless the user explicitly asks and auth has write access to that account.
@@ -148,7 +148,7 @@ Report the share URL + dashboard URL to the user.
 ## Common failure modes
 
 | Symptom | Fix |
-|---|---|
+| --- | --- |
 | Only excerpt fixtures found | Stage File A/B/C; refuse publish |
 | Device auth → wrong account / 403 on content | Re-auth as JackJBurleson owner |
 | Quarto lacks `posit-connect-cloud` | Install Quarto ≥ 1.10 |

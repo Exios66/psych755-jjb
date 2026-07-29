@@ -14,7 +14,7 @@ quality gates.
 | Piece | Role |
 |---|---|
 | `src/ca_personas/` | Analysis package + `ca-personas` CLI (clean, score, personas, ML, secondary RQs, SHAP) |
-| `src/inference/` | vLLM digital-twin export / batch generation / ingest |
+| `src/inference/` | vLLM digital-twin export / batch generation / ingest (+ optional Braintrust) |
 | `index.qmd` + `_quarto.yml` | Primary Quarto **website** manuscript (the main “app”) |
 | `docs/`, `memos/` | Methods write-ups and research memos (also rendered into the site) |
 | `notebooks/` | Executable analyses mirroring CLI workflows |
@@ -200,7 +200,7 @@ python scripts/rerun_posit_mock_from_participants.py
 ### vLLM digital-twin (GPU; optional)
 
 ```bash
-pip install -e ".[vllm]"
+pip install -e ".[vllm]"          # includes braintrust optional dep
 python -m inference.export_prompts --tiers demos employment geo transit full \
   --output-dir outputs/vllm_prompts
 ./scripts/run_vllm.sh
@@ -209,7 +209,11 @@ python -m inference.ingest_results \
   --predictions_csv outputs/predictions/vllm_predictions.csv
 ```
 
-See `src/inference/README.md`.
+**Braintrust (opt-in):** set `BRAINTRUST_API_KEY` so each vLLM run logs parse /
+exact / band / inverse-MAE scores into project `psych755-ca-personas`. Push /
+iterate the system prompt via `bt functions push prompts/braintrust_ca_system.py`
+(slug `ca-digital-twin-system`). Post-hoc: `python -m inference.braintrust_log_results`.
+See `src/inference/README.md`. Never commit the API key.
 
 ### Memo / APA figures
 
@@ -234,6 +238,7 @@ Shared styling: `src/ca_personas/viz_style.py`, `src/ca_personas/apa_plotting.py
 | `ml-baseline` | Tabular ML suite on tiered CA prediction |
 | `compare` | ML vs LLM shared metrics |
 | `shap-eval` | SHAP / band F1 / tier ablation |
+| `stereotype-eval` | Stereotyping MAE gaps + association tests (Sex/Age/Student/Employment/transit/Q28) |
 | `transit-ca` | Secondary: regular transit vs CA |
 | `geo-transit-rf` | Secondary: lat/long → transit RF |
 | `ca-transit-rf` | Secondary: group/interpersonal CA → transit RF |

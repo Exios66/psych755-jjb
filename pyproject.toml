@@ -27,11 +27,19 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
+braintrust = [
+  "braintrust>=0.30.1",
+]
+wandb = [
+  "wandb>=0.17",
+]
 vllm = [
   "vllm>=0.6",
   "transformers>=4.44",
   "tqdm>=4.66",
   "huggingface_hub>=0.24",
+  "braintrust>=0.30.1",
+  "wandb>=0.17",
 ]
 
 [project.scripts]

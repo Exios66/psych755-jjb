@@ -49,7 +49,7 @@ These questions use the **full Prolific↔Qualtrics matched analytic sample** (F
 | 5 | Do **group & interpersonal CA** scores predict regular transit use? (RF + CV) | [`secondary_rq_ca_transit_rf.ipynb`](notebooks/secondary_rq_ca_transit_rf.ipynb) | `ca-personas ca-transit-rf` · [write-up](docs/secondary_rq_ca_predicts_transit.md) |
 | 6 | Do **car access / employment / ride-share** predict regular transit? (geo-memo follow-ups) | [`secondary_rq_transit_covariate_followups.ipynb`](notebooks/secondary_rq_transit_covariate_followups.ipynb) | `ca-personas covariate-transit-rf` · [write-up](docs/secondary_rq_transit_covariate_followups.md) |
 | 7 | Do **Q27** (transit intensity) & **Q28** (ride-share days) predict regular transit? (traditional ML) | same follow-up CLI (`--specs q27_intensity q28_days q27_q28`) | [write-up](docs/secondary_rq_q27_q28_predict_transit.md) · [memo](memos/q27_q28_predict_transit.md) · manuscript `index.qmd` |
-| 8–15 | **Wave-2 follow-ups** answering open memo questions (demographics, country, Q28\|car, CA+mobility, country×car, Q27-among-riders, common-*N*, residual CA) | [`secondary_rq_followup_experiments.ipynb`](notebooks/secondary_rq_followup_experiments.ipynb) | `ca-personas followup-experiments` · [agenda](docs/research_memo_agenda.md) · [write-up](docs/secondary_rq_followup_experiments.md) |
+| 8–16 | **Wave-2 follow-ups** answering open memo questions (demographics, country, Q28\|car, CA+mobility, country×car, Q27-among-riders, common-*N*, residual CA, MI head-to-head) | [`secondary_rq_followup_experiments.ipynb`](notebooks/secondary_rq_followup_experiments.ipynb) | `ca-personas followup-experiments` · [agenda](docs/research_memo_agenda.md) · [write-up](docs/secondary_rq_followup_experiments.md) |
 
 **Primary operationalization of “regular transit” (RQs 1–6):** `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more public transit).
 
@@ -277,6 +277,14 @@ python scripts/publish_posit_jackjburleson.py
 ```
 
 Agent runbook: [`.cursor/skills/posit-connect-publish/SKILL.md`](.cursor/skills/posit-connect-publish/SKILL.md).
+
+### GitHub Pages mirror (permanent portfolio URL)
+
+Posit Connect content IDs can change; a Quarto → GitHub Pages workflow publishes a stable mirror from `main`:
+
+**URL:** [https://exios66.github.io/psych755-jjb/](https://exios66.github.io/psych755-jjb/)
+
+Workflow: [`.github/workflows/publish-gh-pages.yml`](.github/workflows/publish-gh-pages.yml) (mock LLM + `artifacts/posit_full_cohort/` — same keyless path as local `quarto render`). One-time setup: repo **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 
 ## Notes
 

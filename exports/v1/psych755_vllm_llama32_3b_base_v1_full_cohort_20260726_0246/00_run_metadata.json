@@ -1,0 +1,26 @@
+{
+  "export_stamp": "20260726_0246",
+  "model_tag": "llama32_3b_base_v1",
+  "model": "meta-llama/Llama-3.2-3B",
+  "model_note": "BASE (non-Instruct) checkpoint; no native chat_template \u2014 Llama-3 Instruct template applied as fallback.",
+  "quantization": "fp8 (Marlin weight-only on NVIDIA RTX A5000)",
+  "n_participants": 241,
+  "n_prompt_rows": 1205,
+  "n_result_rows": 1205,
+  "n_predictions_parsed": 85,
+  "parse_rate": 0.07053941908713693,
+  "tiers": [
+    "demos",
+    "employment",
+    "geo",
+    "transit",
+    "full"
+  ],
+  "join": "inner",
+  "throughput_samples_per_s": 6.38,
+  "wall_time_s": 189.0,
+  "gpu": "NVIDIA RTX A5000 (GPU 0)",
+  "host": "rogers-gpu-1.discovery.wisc.edu",
+  "comparison_prior": "exports/psych755_vllm_llama31_full_cohort_20260726_0221 (Llama-3.1-8B-Instruct)",
+  "export_bucket": "v1"
+}

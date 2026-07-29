@@ -22,8 +22,15 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pandas as pd
+import yaml
 
 from ca_personas.personas import SYSTEM_PROMPT
+from inference.braintrust_tracing import (
+    braintrust_configured,
+    resolve_system_prompt,
+    start_vllm_run,
+)
+from inference.wandb_tracing import start_wandb_run, wandb_configured
 from inference.utils import (
     convert_prompt_to_messages,
     find_duplicate_caseids,
@@ -41,6 +48,37 @@ os.environ.setdefault("HF_HOME", str(_REPO_ROOT / "hf_cache"))
 DEFAULT_SYSTEM_MSG = SYSTEM_PROMPT.strip()
 
 DEFAULT_MODEL = "meta-llama/Llama-3.1-8B-Instruct"
+PRESETS_PATH = _REPO_ROOT / "config" / "vllm_presets.yaml"
+
+# Soft JSON schema for guided decoding (vLLM GuidedDecodingParams when available).
+CA_JSON_SCHEMA: dict = {
+    "type": "object",
+    "properties": {
+        "self_reported_group_ca": {"type": "integer", "minimum": 6, "maximum": 30},
+        "self_reported_interpersonal_ca": {"type": "integer", "minimum": 6, "maximum": 30},
+        "self_reported_band_group": {"type": "string", "enum": ["low", "moderate", "high"]},
+        "self_reported_band_interpersonal": {
+            "type": "string",
+            "enum": ["low", "moderate", "high"],
+        },
+    },
+    "required": [
+        "self_reported_group_ca",
+        "self_reported_interpersonal_ca",
+        "self_reported_band_group",
+        "self_reported_band_interpersonal",
+    ],
+}
+
+
+def load_vllm_preset(name: str, *, path: Path = PRESETS_PATH) -> dict:
+    """Load a named generation preset from ``config/vllm_presets.yaml``."""
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    presets = data.get("presets") or {}
+    if name not in presets:
+        known = ", ".join(sorted(presets)) or "(none)"
+        raise SystemExit(f"Unknown vLLM preset {name!r}; known: {known}")
+    return dict(presets[name])
 
 
 # ---------------------------------------------------------------------------
@@ -206,6 +244,13 @@ def vllm_predict(
     tensor_parallel_size: int = 2,
     gpu_memory_utilization: float = 0.9,
     max_model_len: int | None = None,
+    preset_name: str | None = None,
+    braintrust_enabled: bool | None = None,
+    braintrust_project: str | None = None,
+    braintrust_experiment: str | None = None,
+    wandb_enabled: bool | None = None,
+    wandb_project: str | None = None,
+    wandb_run_name: str | None = None,
 ) -> None:
     """Run chat-templated vLLM generation and append results to *result_csv*.
 
@@ -226,6 +271,12 @@ def vllm_predict(
     result_csv : str
         Output path.  Rows whose ``caseid`` already exists will be skipped
         (checkpoint-resume).
+    preset_name : str, optional
+        Generation preset label (logged to Braintrust metadata).
+    braintrust_enabled : bool, optional
+        Force Braintrust on/off; default follows ``BRAINTRUST_API_KEY``.
+    braintrust_project / braintrust_experiment : str, optional
+        Override Braintrust project / experiment name.
     """
     df = df.copy()
     df["caseid"] = df["caseid"].map(normalize_caseid)
@@ -304,65 +355,219 @@ def vllm_predict(
 
     llm = LLM(**llm_kwargs)
 
-    sampling_params = SamplingParams(
-        max_tokens=model_cfg.max_output_tokens,
-        temperature=getattr(model_cfg, "temperature", 0.0),
-        top_p=getattr(model_cfg, "top_p", 1.0),
-        repetition_penalty=getattr(model_cfg, "repetition_penalty", 1.0),
+    sampling_kwargs: dict = {
+        "max_tokens": model_cfg.max_output_tokens,
+        "temperature": getattr(model_cfg, "temperature", 0.0),
+        "top_p": getattr(model_cfg, "top_p", 1.0),
+        "repetition_penalty": getattr(model_cfg, "repetition_penalty", 1.0),
+    }
+    seed = getattr(model_cfg, "seed", None)
+    if seed is not None:
+        sampling_kwargs["seed"] = int(seed)
+
+    # Optional guided JSON (vLLM version-dependent). Falls back to soft prompt
+    # contract when GuidedDecodingParams is unavailable.
+    if getattr(model_cfg, "guided_json", False):
+        try:
+            from vllm.sampling_params import GuidedDecodingParams  # type: ignore
+
+            sampling_kwargs["guided_decoding"] = GuidedDecodingParams(json=CA_JSON_SCHEMA)
+            print("[vLLM] Guided JSON decoding enabled")
+        except Exception as exc:  # noqa: BLE001
+            print(f"[vLLM] Guided JSON unavailable ({exc}); using prompt-only JSON contract")
+
+    sampling_params = SamplingParams(**sampling_kwargs)
+    print(
+        "[vLLM] sampling: "
+        f"temp={sampling_kwargs['temperature']} top_p={sampling_kwargs['top_p']} "
+        f"rep={sampling_kwargs['repetition_penalty']} seed={seed} "
+        f"max_tokens={sampling_kwargs['max_tokens']}"
     )
 
     # ---- generation -------------------------------------------------------
     batch_size = getattr(model_cfg, "batch_size", 16)
     save_freq = getattr(model_cfg, "save_freq", 200)
-    system_msg = getattr(model_cfg, "system_msg", DEFAULT_SYSTEM_MSG)
+    local_system = getattr(model_cfg, "system_msg", DEFAULT_SYSTEM_MSG)
+    # Explicit --system_msg(_file) wins (e.g. transit-focus); still log generations.
+    if getattr(model_cfg, "system_msg_explicit", False):
+        system_msg = local_system
+        prompt_meta = {
+            "source": "local_override",
+            "project": braintrust_project or os.getenv("BRAINTRUST_PROJECT"),
+            "slug": None,
+        }
+    else:
+        system_msg, prompt_meta = resolve_system_prompt(
+            fallback=local_system,
+            use_braintrust=braintrust_enabled,
+            project=braintrust_project,
+        )
+    print(
+        f"[braintrust] system_prompt source={prompt_meta.get('source')} "
+        f"slug={prompt_meta.get('slug')}"
+    )
+
+    run_meta = {
+        "result_csv": result_csv,
+        "temperature": getattr(model_cfg, "temperature", None),
+        "top_p": getattr(model_cfg, "top_p", None),
+        "seed": getattr(model_cfg, "seed", None),
+        "quantization": quantization,
+        "tensor_parallel_size": tp,
+        "guided_json": bool(getattr(model_cfg, "guided_json", False)),
+    }
+    bt_run = start_vllm_run(
+        model=model_name,
+        preset=preset_name or "unspecified",
+        enabled=braintrust_enabled,
+        project=braintrust_project,
+        experiment=braintrust_experiment,
+        system_prompt_meta=prompt_meta,
+        extra_metadata=run_meta,
+    )
+    if braintrust_configured(enabled=braintrust_enabled) and not bt_run.enabled:
+        print("[braintrust] configured but experiment not started; generations still saved locally")
+
+    wb_run = start_wandb_run(
+        model=model_name,
+        preset=preset_name or "unspecified",
+        enabled=wandb_enabled,
+        project=wandb_project,
+        run_name=wandb_run_name or braintrust_experiment,
+        system_prompt_meta=prompt_meta,
+        extra_config=run_meta,
+    )
+    if wandb_configured(enabled=wandb_enabled) and not wb_run.enabled:
+        print("[wandb] configured but run not started; generations still saved locally")
 
     total_samples = len(df)
     t0 = time.perf_counter()
     dataset = df.reset_index(drop=True)
     chunks = [dataset.iloc[i : i + save_freq] for i in range(0, len(dataset), save_freq)]
+    run_parse_ok = 0
+    run_n = 0
+    run_mae: list[float] = []
 
-    for i, chunk_df in tqdm(enumerate(chunks), total=len(chunks), desc="vLLM chunks"):
-        prompts = _build_prompts(chunk_df, system_msg, tokenizer)
-        all_texts: list[str] = []
-        for j in range(0, len(prompts), batch_size):
-            batch_prompts = prompts[j : j + batch_size]
-            outputs = llm.generate(batch_prompts, sampling_params)
-            for out in outputs:
-                all_texts.append(out.outputs[0].text if out.outputs else "")
+    try:
+        for i, chunk_df in tqdm(enumerate(chunks), total=len(chunks), desc="vLLM chunks"):
+            prompts = _build_prompts(chunk_df, system_msg, tokenizer)
+            all_texts: list[str] = []
+            for j in range(0, len(prompts), batch_size):
+                batch_prompts = prompts[j : j + batch_size]
+                outputs = llm.generate(batch_prompts, sampling_params)
+                for out in outputs:
+                    all_texts.append(out.outputs[0].text if out.outputs else "")
 
-        out_df = chunk_df[["caseid"]].copy()
-        if "answer" in chunk_df.columns:
-            out_df.insert(1, "answer", chunk_df["answer"].values)
-        out_df["generated_text"] = all_texts
-        out_df["generated_text"] = (
-            out_df["generated_text"]
-            .astype(str)
-            .str.replace("\n", " ", regex=False)
-            .str.strip()
-        )
+            out_df = chunk_df[["caseid"]].copy()
+            if "answer" in chunk_df.columns:
+                out_df.insert(1, "answer", chunk_df["answer"].values)
+            out_df["generated_text"] = all_texts
+            out_df["generated_text"] = (
+                out_df["generated_text"]
+                .astype(str)
+                .str.replace("\n", " ", regex=False)
+                .str.strip()
+            )
 
-        write_header = not os.path.exists(result_csv)
-        out_df.to_csv(
-            result_csv,
-            mode="w" if write_header else "a",
-            header=write_header,
-            index=False,
-        )
-        print(f"Saved chunk {i + 1}/{len(chunks)} to {result_csv}")
+            write_header = not os.path.exists(result_csv)
+            out_df.to_csv(
+                result_csv,
+                mode="w" if write_header else "a",
+                header=write_header,
+                index=False,
+            )
+            print(f"Saved chunk {i + 1}/{len(chunks)} to {result_csv}")
+
+            log_rows: list[dict] = []
+            chunk_reset = chunk_df.reset_index(drop=True)
+            for pos, row in chunk_reset.iterrows():
+                log_rows.append(
+                    {
+                        "caseid": row["caseid"],
+                        "prompt": row.get("prompt", ""),
+                        "answer": row.get("answer") if "answer" in chunk_df.columns else None,
+                        "generated_text": all_texts[int(pos)],
+                    }
+                )
+
+            if bt_run.enabled:
+                summary = bt_run.log_batch(
+                    log_rows,
+                    system_msg=system_msg,
+                    model=model_name,
+                    preset=preset_name,
+                )
+                print(
+                    f"[braintrust] logged chunk {i + 1}: "
+                    f"parse_rate={summary.get('parse_rate')} "
+                    f"mae_mean={summary.get('mae_mean')}"
+                )
+
+            if wb_run.enabled or wandb_configured(enabled=wandb_enabled):
+                wb_summary = wb_run.log_chunk(
+                    chunk_idx=i,
+                    n_chunks=len(chunks),
+                    rows=log_rows,
+                    model=model_name,
+                    preset=preset_name,
+                )
+                if wb_run.enabled:
+                    print(
+                        f"[wandb] logged chunk {i + 1}: "
+                        f"parse_rate={wb_summary.get('parse_rate')} "
+                        f"mae_mean={wb_summary.get('mae_mean')}"
+                    )
+                if wb_summary.get("n"):
+                    run_n += int(wb_summary["n"])
+                    pr = wb_summary.get("parse_rate")
+                    if pr is not None:
+                        run_parse_ok += int(round(pr * wb_summary["n"]))
+                    if wb_summary.get("mae_mean") is not None:
+                        run_mae.append(float(wb_summary["mae_mean"]))
+    finally:
+        if run_n:
+            wb_run.log_summary(
+                {
+                    "n": run_n,
+                    "parse_rate": run_parse_ok / run_n if run_n else None,
+                    "mae_mean": (sum(run_mae) / len(run_mae)) if run_mae else None,
+                }
+            )
+        bt_run.close()
+        wb_run.close()
 
     elapsed = time.perf_counter() - t0
     rate = total_samples / elapsed if elapsed > 0 else 0.0
     print(f"[vLLM] Total: {elapsed:.1f}s, {total_samples} samples, {rate:.2f} samples/s")
 
-
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
+def _resolve_system_msg(args: argparse.Namespace) -> tuple[str, bool]:
+    """Prefer ``--system_msg_file`` / ``--system_msg``, else CA default.
+
+    Returns ``(system_msg, explicit)`` where *explicit* is True when the CLI
+    overrode the default (so Braintrust registry must not replace it).
+    """
+    path = getattr(args, "system_msg_file", None) or ""
+    if path:
+        text = Path(path).read_text(encoding="utf-8").strip()
+        if not text:
+            raise SystemExit(f"--system_msg_file is empty: {path}")
+        return text, True
+    inline = getattr(args, "system_msg", None)
+    if inline:
+        return str(inline).strip(), True
+    return DEFAULT_SYSTEM_MSG, False
+
+
 def _model_cfg_from_args(args: argparse.Namespace) -> SimpleNamespace:
+    system_msg, system_msg_explicit = _resolve_system_msg(args)
     return SimpleNamespace(
         model_full_name=args.model,
-        system_msg=DEFAULT_SYSTEM_MSG,
+        system_msg=system_msg,
+        system_msg_explicit=system_msg_explicit,
         max_output_tokens=args.max_output_tokens,
         temperature=args.temperature,
         top_p=args.top_p,
@@ -375,6 +580,8 @@ def _model_cfg_from_args(args: argparse.Namespace) -> SimpleNamespace:
         max_model_len=args.max_model_len,
         tensor_parallel_size=args.tensor_parallel_size,
         hf_access_token_file=args.hf_access_token_file,
+        seed=args.seed,
+        guided_json=bool(args.guided_json),
     )
 
 
@@ -394,6 +601,18 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--model", type=str, default=DEFAULT_MODEL,
                     help="HuggingFace model id or local path.")
     ap.add_argument(
+        "--system_msg_file",
+        type=str,
+        default="",
+        help="Optional path to a system prompt file (overrides CA default).",
+    )
+    ap.add_argument(
+        "--system_msg",
+        type=str,
+        default="",
+        help="Optional inline system prompt (overrides CA default; file wins).",
+    )
+    ap.add_argument(
         "--hf_access_token_file",
         type=str,
         default="hf_access_token.txt",
@@ -407,32 +626,127 @@ def main(argv: list[str] | None = None) -> None:
                     help="Sub-batch size for llm.generate calls.")
     ap.add_argument("--save_freq", type=int, default=200,
                     help="Flush results to CSV every N rows.")
-    ap.add_argument("--max_output_tokens", type=int, default=256,
-                    help="Maximum new tokens per sample (CA JSON needs headroom).")
-    ap.add_argument("--temperature", type=float, default=0.0,
-                    help="Sampling temperature (0 = greedy).")
-    ap.add_argument("--top_p", type=float, default=1.0,
-                    help="Nucleus sampling (1.0 = disabled).")
-    ap.add_argument("--repetition_penalty", type=float, default=1.0,
-                    help=">1 penalises repeated tokens (e.g. 1.1 with 4-bit + greedy).")
+    ap.add_argument("--max_output_tokens", type=int, default=None,
+                    help="Maximum new tokens per sample (default from --preset).")
+    ap.add_argument("--temperature", type=float, default=None,
+                    help="Sampling temperature (0 = greedy). Default from --preset.")
+    ap.add_argument("--top_p", type=float, default=None,
+                    help="Nucleus sampling (1.0 = disabled). Default from --preset.")
+    ap.add_argument("--repetition_penalty", type=float, default=None,
+                    help=">1 penalises repeated tokens. Default from --preset.")
+    ap.add_argument("--seed", type=int, default=None,
+                    help="Sampling seed for reproducibility. Default from --preset.")
+    ap.add_argument(
+        "--guided_json",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Enable/disable vLLM guided JSON decoding (CA schema).",
+    )
+    ap.add_argument(
+        "--preset",
+        type=str,
+        default="v1_baseline",
+        choices=("v1_baseline", "v2_enhanced", "v3_enhanced", "large_model"),
+        help="Generation preset from config/vllm_presets.yaml (default: v1_baseline).",
+    )
     ap.add_argument("--gpu_memory_utilization", type=float, default=0.9,
                     help="vLLM GPU memory fraction.")
-    ap.add_argument("--max_model_len", type=int, default=8192,
-                    help="Maximum model context length.")
+    ap.add_argument("--max_model_len", type=int, default=None,
+                    help="Maximum model context length (default from --preset).")
     ap.add_argument("--tensor_parallel_size", type=int, default=2,
                     help="Tensor-parallel degree (number of GPUs).")
     ap.add_argument("--load_mode", type=str, default="none",
                     choices=("4bit", "8bit", "none"),
                     help="Legacy shorthand: 4bit/8bit -> bitsandbytes quantisation.")
-    ap.add_argument("--quantization", type=str, default="fp8",
+    ap.add_argument("--quantization", type=str, default=None,
                     choices=("fp8", "bitsandbytes", "awq", "gptq", "none"),
-                    help="vLLM quantisation method. 'fp8' recommended for Ada/Hopper.")
+                    help="vLLM quantisation method (default from --preset).")
+    ap.add_argument(
+        "--braintrust",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "Enable/disable Braintrust experiment logging. "
+            "Default: on when BRAINTRUST_API_KEY is set."
+        ),
+    )
+    ap.add_argument(
+        "--braintrust_project",
+        type=str,
+        default=None,
+        help="Braintrust project name (default: BRAINTRUST_PROJECT / psych755-ca-personas).",
+    )
+    ap.add_argument(
+        "--braintrust_experiment",
+        type=str,
+        default=None,
+        help="Braintrust experiment name (default: auto from model/preset/time).",
+    )
+    ap.add_argument(
+        "--braintrust_prompt_slug",
+        type=str,
+        default=None,
+        help=(
+            "Load system prompt from Braintrust prompt registry by slug "
+            "(sets BRAINTRUST_PROMPT_SLUG for this process)."
+        ),
+    )
+    ap.add_argument(
+        "--wandb",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "Enable/disable Weights & Biases run logging. "
+            "Default: on when WANDB_API_KEY is set (or WANDB_MODE=offline)."
+        ),
+    )
+    ap.add_argument(
+        "--wandb_project",
+        type=str,
+        default=None,
+        help="W&B project (default: WANDB_PROJECT / psych755-ca-personas).",
+    )
+    ap.add_argument(
+        "--wandb_run_name",
+        type=str,
+        default=None,
+        help="W&B run name (default: WANDB_RUN_NAME or auto from model/preset/time).",
+    )
 
     args = ap.parse_args(argv)
+
+    from ca_personas.tracing import configure_tracing
+
+    configure_tracing()
+
+    preset = load_vllm_preset(args.preset)
+    print(f"[vLLM] preset={args.preset}: {preset.get('description', '').strip()[:120]}")
+
+    # Apply preset defaults; explicit CLI flags win.
+    if args.temperature is None:
+        args.temperature = float(preset.get("temperature", 0.0))
+    if args.top_p is None:
+        args.top_p = float(preset.get("top_p", 1.0))
+    if args.repetition_penalty is None:
+        args.repetition_penalty = float(preset.get("repetition_penalty", 1.0))
+    if args.seed is None and preset.get("seed") is not None:
+        args.seed = int(preset["seed"])
+    if args.guided_json is None:
+        args.guided_json = bool(preset.get("guided_json", False))
+    if args.max_model_len is None:
+        args.max_model_len = int(preset.get("max_model_len", 8192))
+    if args.max_output_tokens is None:
+        args.max_output_tokens = int(preset.get("max_output_tokens", 256))
+    if args.quantization is None:
+        args.quantization = preset.get("quantization", "fp8")
+
     if args.load_mode == "none":
         args.load_mode = ""
     if args.quantization == "none":
         args.quantization = None
+
+    if args.braintrust_prompt_slug:
+        os.environ["BRAINTRUST_PROMPT_SLUG"] = args.braintrust_prompt_slug
 
     df = pd.read_csv(args.prompt_csv)
     if "caseid" not in df.columns or "prompt" not in df.columns:
@@ -441,7 +755,19 @@ def main(argv: list[str] | None = None) -> None:
     df = _attach_ground_truth(df, args.ground_truth_csv)
 
     model_cfg = _model_cfg_from_args(args)
-    vllm_predict(df, f"cuda:{args.gpu}", model_cfg, args.result_csv)
+    vllm_predict(
+        df,
+        f"cuda:{args.gpu}",
+        model_cfg,
+        args.result_csv,
+        preset_name=args.preset,
+        braintrust_enabled=args.braintrust,
+        braintrust_project=args.braintrust_project,
+        braintrust_experiment=args.braintrust_experiment,
+        wandb_enabled=args.wandb,
+        wandb_project=args.wandb_project,
+        wandb_run_name=args.wandb_run_name,
+    )
 
 
 if __name__ == "__main__":

@@ -27,9 +27,27 @@ class LLMClient(ABC):
         """Return a chat completion as plain text content."""
 
 
+def _normalize_model_text(text: str) -> str:
+    """Normalize SentencePiece artifacts and prefer post-``</think>`` content.
+
+    Some vLLM + DeepSeek-R1 distill decodes emit U+0120/U+010A (Ġ/Ċ) instead of
+    spaces/newlines; R1-style models also wrap answers in ``<think>…</think>``.
+    """
+    cleaned = (
+        text.replace("\u0120", " ")
+        .replace("\u010a", "\n")
+        .replace("Ġ", " ")
+        .replace("Ċ", "\n")
+    )
+    if "</think>" in cleaned:
+        cleaned = cleaned.rsplit("</think>", 1)[-1]
+    return cleaned.strip()
+
+
 def extract_json_object(text: str) -> dict[str, Any]:
     """Parse a JSON object from model output, tolerating markdown fences."""
-    cleaned = text.strip()
+    cleaned = _normalize_model_text(text)
+    cleaned = cleaned.strip()
     fence = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", cleaned, flags=re.DOTALL)
     if fence:
         cleaned = fence.group(1)
@@ -118,6 +136,10 @@ def get_client(
         from ca_personas.llm.mock import MockLLMClient
 
         return MockLLMClient(model=model or "mock-persona")
+
+    from ca_personas.tracing import configure_tracing
+
+    configure_tracing()
     if chosen == "ollama":
         from ca_personas.llm.ollama import OllamaClient
 

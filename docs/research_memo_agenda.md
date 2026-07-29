@@ -35,6 +35,7 @@ After the primary persona-tier LLM pipeline and the first wave of secondary Rand
 | 6 | [`memos/q27_intensity_among_riders.md`](../memos/q27_intensity_among_riders.md) | Does Q27 help *within* regular riders? | `--experiments q27_among_regular` | Best AUC ≈ **0.549** — weak |
 | 7 | [`memos/common_n_head_to_head.md`](../memos/common_n_head_to_head.md) | AUC ranks confounded by missingness? | `--experiments common_n` | On n=139, **Q28 still first** (0.659) |
 | 8 | [`memos/residual_ca_after_rideshare.md`](../memos/residual_ca_after_rideshare.md) | Third-variable / residual CA after Q28 | `--experiments residual_ca_q28` | CA adds only **+0.021** AUC over Q28 |
+| 9 | [`memos/mi_head_to_head.md`](../memos/mi_head_to_head.md) | MI restore demos/CA vs attenuate Q28? | `--experiments mi_head_to_head` | **Q28 lead preserved** (0.762); demos/CA not restored |
 
 ## Methods shared across wave 2
 
@@ -56,11 +57,11 @@ Live GPU baselines are documented separately in [`docs/llm_vllm_memo_agenda.md`]
 | [`memos/vllm_v1_deepseek_r1_distill.md`](../memos/vllm_v1_deepseek_r1_distill.md) | DeepSeek-R1-Distill tier-stable; best group MAE |
 | [`memos/vllm_v1_llama33_70b.md`](../memos/vllm_v1_llama33_70b.md) | Llama-3.3-70B mode-collapse cautionary case |
 
-## Intentionally deferred (need further live LLM or new data)
+## Intentionally deferred (future work; need further live LLM or new data)
 
-- v2 / v3 prompt re-runs on the same GPU models
+- **v2 / v3 prompt re-runs** on the same GPU models (design extensions implemented in code; not yet GPU-evaluated — [`persona_prompt_versions.md`](persona_prompt_versions.md))
 - Live-LLM TreeSHAP / surrogate SHAP (mock already covered)
-- Multiply-imputed car items (would change missingness story)
+- Richer / MNAR-sensitive MI of car items (wave-2 MI head-to-head is implemented; see [`memos/mi_head_to_head.md`](../memos/mi_head_to_head.md))
 - City/density GIS layers beyond Qualtrics lat/long
 - Ordinal multiclass `Q26` models (threshold sensitivity exists in transit-CA module)
 

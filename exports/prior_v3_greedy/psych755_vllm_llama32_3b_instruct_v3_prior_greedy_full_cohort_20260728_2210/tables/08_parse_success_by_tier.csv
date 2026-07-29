@@ -1,0 +1,9 @@
+tier,sum,mean,count
+demos,241,1.0,241
+employment,241,1.0,241
+full,241,1.0,241
+geo,241,1.0,241
+transit,241,1.0,241
+v3_public_transit,241,1.0,241
+v3_rideshare,241,1.0,241
+v3_voice,241,1.0,241

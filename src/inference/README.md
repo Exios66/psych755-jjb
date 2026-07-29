@@ -8,13 +8,21 @@ Launcher structure adapted from [`ai_terrarium_v2`](https://github.com/Exios66/a
 
 ```
 src/inference/
-├── __init__.py           # Package exports
-├── predict_vllm.py       # Core: vllm_predict() + CLI
-├── utils.py              # caseid helpers, checkpoint resume, HF token
-├── ca_prompts.py         # PersonaPrompt ↔ caseid/prompt bridge
-├── export_prompts.py     # CLI: build prompts.csv (+ ground_truth.csv)
-├── ingest_results.py     # CLI: results.csv → CA predictions.csv
+├── __init__.py              # Package exports
+├── predict_vllm.py          # Core: vllm_predict() + CLI (+ Braintrust hooks)
+├── utils.py                 # caseid helpers, checkpoint resume, HF token
+├── ca_prompts.py            # PersonaPrompt ↔ caseid/prompt bridge
+├── export_prompts.py        # CLI: build prompts.csv (+ ground_truth.csv)
+├── ingest_results.py        # CLI: results.csv → CA predictions.csv
+├── braintrust_tracing.py    # PRCA scorers + experiment logging helpers
+├── braintrust_log_results.py# Post-hoc: results CSV → Braintrust experiment
+├── braintrust_eval.py       # Offline Eval() for prompt comparison / bt eval
+├── wandb_tracing.py         # Weights & Biases chunk metrics helpers
+├── wandb_log_results.py     # Post-hoc: results CSV → W&B run
 └── README.md
+
+prompts/
+└── braintrust_ca_system.py  # Pushable Braintrust prompt (bt functions push)
 
 scripts/
 ├── run_vllm.sh           # One-command launcher (foreground or nohup)
@@ -95,3 +103,92 @@ If the result CSV already exists, rows whose `caseid` is present are skipped. Co
 | `--hf_access_token_file` | `hf_access_token.txt` | Token file for gated models |
 
 See `python -m inference.predict_vllm --help` for the full list.
+
+## Braintrust integration
+
+Every vLLM path can log generations into a Braintrust **experiment** and load
+the system prompt from the Braintrust **prompt registry** so playground edits
+can be A/B'd without redeploying code.
+
+### Install
+
+```bash
+pip install -e ".[vllm]"         # includes braintrust
+# or scoring / prompt push only:
+pip install -e ".[braintrust]"
+```
+
+### Enable
+
+```bash
+export BRAINTRUST_API_KEY=...          # required to upload
+export BRAINTRUST_PROJECT=psych755-ca-personas
+export BRAINTRUST_PROMPT_SLUG=ca-digital-twin-system
+# optional pin:
+# export BRAINTRUST_PROMPT_VERSION=<version>
+./scripts/run_vllm.sh
+```
+
+When the API key is unset, logging is a no-op (local CSV still written). Use
+`--no-braintrust` / `BRAINTRUST_ENABLED=false` to force off.
+
+### Metrics logged per case
+
+| Score (0–1, higher better) | Meaning |
+|---|---|
+| `parse_ok` | Generated text parses into valid CA JSON |
+| `exact_match_{group,interpersonal}` | Predicted integer equals ground truth |
+| `band_match_{group,interpersonal}` | Resolved PRCA band matches GT |
+| `score_accuracy_*` | `1 − abs_error/24` |
+| `band_accuracy_*` | `1 − band_distance/2` |
+| `exact_match_mean` / `band_match_mean` / `score_accuracy_mean` | Aggregates |
+| `inverse_mae_mean` | `1 − mae/24` for prompt ranking |
+
+Raw MAE / signed error also land in Braintrust **metrics**.
+
+### Prompt iteration loop
+
+```bash
+# 1) Push local SYSTEM_PROMPT into the registry (once / after local edits)
+bt functions push prompts/braintrust_ca_system.py
+
+# 2) Edit in Braintrust playground (slug: ca-digital-twin-system)
+
+# 3) Re-run vLLM — predict_vllm loads the registry system message when keyed
+BRAINTRUST_API_KEY=... ./scripts/run_vllm.sh
+
+# 4) Or score an existing results CSV without regenerating
+python -m inference.braintrust_log_results \
+  --result_csv outputs/vllm_results/results.csv \
+  --prompt_csv outputs/vllm_prompts/prompts.csv \
+  --model meta-llama/Llama-3.1-8B-Instruct \
+  --preset v2_enhanced
+
+# 5) Offline Eval() / playground remote eval (task replays stored generations)
+VLLM_RESULT_CSV=outputs/vllm_results/results.csv \
+  python -m inference.braintrust_eval
+```
+
+When a playground version wins, copy the system text back into
+`src/ca_personas/personas.py` and `prompts/system_prompt.md` so mock / Quarto
+paths stay in sync.
+
+## Weights & Biases integration
+
+Chunk-level MAE / parse / band metrics sync to a W&B run alongside Braintrust.
+
+```bash
+pip install -e ".[wandb]"   # or ".[vllm]"
+# Put key in gitignored .env.wandb (see .env.example), then:
+export WANDB_API_KEY=...
+export WANDB_PROJECT=psych755-ca-personas
+./scripts/run_vllm.sh
+
+# Post-hoc from an existing results CSV:
+python -m inference.wandb_log_results \
+  --result_csv outputs/vllm_results/results.csv \
+  --model meta-llama/Llama-3.1-8B-Instruct \
+  --preset v2_enhanced
+```
+
+`WANDB_ENABLED=false` / `--no-wandb` forces off. Offline dry-run: `WANDB_MODE=offline`.

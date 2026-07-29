@@ -1,0 +1,24 @@
+{
+  "export_stamp": "20260728_2214",
+  "model_tag": "llama31_8b_instruct_v2",
+  "model": "meta-llama/Llama-3.1-8B-Instruct",
+  "quantization": "fp8",
+  "notes": "Prompt v2 packaging + v2_enhanced decode (temp=0.3, seed=42, guided JSON).",
+  "n_participants": 241,
+  "n_prompt_rows": 1205,
+  "n_result_rows": 1205,
+  "n_predictions_parsed": 1204,
+  "parse_rate": 0.9991701244813278,
+  "tiers": [
+    "demos",
+    "employment",
+    "geo",
+    "transit",
+    "full"
+  ],
+  "join": "inner",
+  "throughput_samples_per_s": null,
+  "wall_time_s": null,
+  "gpu": "NVIDIA RTX A5000",
+  "host": "rogers-gpu-1.discovery.wisc.edu"
+}

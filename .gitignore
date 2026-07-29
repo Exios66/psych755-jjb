@@ -30,6 +30,9 @@ build/
 
 # Secrets / local env
 .env
+.env.braintrust
+.env.wandb
+wandb/
 hf_access_token.txt
 anthropic_api_key.txt
 
@@ -63,3 +66,5 @@ notebooks/*.executed.ipynb
 !artifacts/pr_graph/
 !artifacts/pr_graph/**
 .sibling_data_link
+# Added by Braintrust Wizard
+.braintrust.json

@@ -14,7 +14,7 @@ subtitle: "Secondary research questions — wave-2 Random Forests answering open
 
 ## Motivation
 
-Wave-1 secondary memos left specific uncertainties: unused Prolific demographics, country vs coordinates, whether **Q28** survives conditioning on car access, whether **CA** adds signal beside mobility items, country×car interactions, Q27 usefulness *within* regular riders, fair common-*N* rankings, and residual CA after ride-share stratification. Wave 2 implements eight offline experiments on the same matched cohort.
+Wave-1 secondary memos left specific uncertainties: unused Prolific demographics, country vs coordinates, whether **Q28** survives conditioning on car access, whether **CA** adds signal beside mobility items, country×car interactions, Q27 usefulness *within* regular riders, fair common-*N* rankings, residual CA after ride-share stratification, and whether **multiple imputation** would restore demos/CA or attenuate Q28. Wave 2 implements nine offline experiments on the same matched cohort.
 
 ## Shared methods
 
@@ -30,7 +30,8 @@ Wave-1 secondary memos left specific uncertainties: unused Prolific demographics
 
 | Experiment | Analytic n | Primary ROC-AUC | Interpretation |
 |---|---:|---:|---|
-| CA + Q28 + car (joint) | 149 | **0.736** | Best joint complete-case model; mobility-dominated |
+| MI joint CA+Q28+car | 241 | **0.808** | Best MI joint; Q28 singleton lead preserved |
+| CA + Q28 + car (joint CC) | 149 | **0.736** | Best joint complete-case model; mobility-dominated |
 | Q28 \| car (nested Q28+Q21) | 149 | **0.730** | Q28 retains lift; car adds incremental AUC |
 | Country + car | 149 | **0.699** | Synergy over either alone |
 | Common-*N* head-to-head (best = Q28) | 139 | **0.659** | Ranking robust to equal missingness |
@@ -82,14 +83,19 @@ Equal-complete-case ranking: **Q28 (0.659) > country (0.619) > car (0.602) > geo
 
 Overall transit→CA contrast replicates (group Δ ≈ −2.72, *p* < .001). Nested RF: Q28 AUC 0.762 → CA+Q28 0.783 (**+0.021**). Within Q28 strata, CA differences are heterogeneous (significant in Never and 0–1 days; near zero in 2–4 days).
 
+### Multiply-imputed vs complete-case head-to-head
+
+M = 20 imputations of Q20/Q21/Student on n = 241. **Singleton MI order:** Q28 (0.762) ≫ demos (0.617) ≫ CA (0.590) ≳ car (0.562). Demographics/CA are not restored to competitive levels; Q28’s lead is not attenuated. Joint CA+Q28+car rises to **0.808** when car items are MI-filled on the full frame; standalone car weakens under MI (−0.045). See [`memos/mi_head_to_head.md`](../memos/mi_head_to_head.md).
+
 ## Implications for persona tiers
 
-1. Ride-share days remain the dominant tabular mobility cue—even after car conditioning and common-*N* equalization.  
+1. Ride-share days remain the dominant tabular mobility cue—even after car conditioning, common-*N* equalization, and multiple imputation of car/student items.  
 2. Demographics (especially age) deserve attention in bias audits of the `demos` tier.  
 3. Country and lat/long are interchangeable weak place cues.  
 4. CA’s association with regular transit is largely redundant with Q28 for *prediction*, though the mean CA gap among riders remains descriptively real.  
-5. Q27 intensity is not a useful secondary target among already-regular riders.
+5. Q27 intensity is not a useful secondary target among already-regular riders.  
+6. MI expands joint mobility models to full *N* without letting demos/CA overtake Q28 as singletons.
 
 ## Limitations
 
-Complete-case shrinkage for car items (~149 / 139); same-wave self-reports; convenience sample; AUCs are ranking metrics, not decision thresholds; within-stratum Welch tests are exploratory and underpowered in sparse Q28 cells.
+Complete-case shrinkage for car items (~149 / 139); MI assumes MAR given auxiliaries and uses simple code-rounding for categoricals; same-wave self-reports; convenience sample; AUCs are ranking metrics, not decision thresholds; within-stratum Welch tests are exploratory and underpowered in sparse Q28 cells.

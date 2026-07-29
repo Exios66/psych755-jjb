@@ -1,0 +1,11 @@
+group_col,group_key,tier,n_predictions,n_with_ground_truth,mae_group,mae_interpersonal,mean_error_group,mean_error_interpersonal,band_acc_group,band_acc_interpersonal
+Sex,Female,demos,120,0,,,,,,
+Sex,Female,employment,120,0,,,,,,
+Sex,Female,full,120,10,7.5,7.9,4.7,4.7,0.3,0.2
+Sex,Female,geo,120,15,7.4,7.133333333333334,4.066666666666666,3.4,0.3333333333333333,0.3333333333333333
+Sex,Female,transit,120,19,5.947368421052632,6.157894736842105,1.5263157894736843,3.0,0.42105263157894735,0.2631578947368421
+Sex,Male,demos,121,0,,,,,,
+Sex,Male,employment,121,0,,,,,,
+Sex,Male,full,121,10,5.1,7.0,4.5,7.0,0.1,0.0
+Sex,Male,geo,121,15,6.466666666666667,7.0,3.933333333333333,4.6,0.3333333333333333,0.26666666666666666
+Sex,Male,transit,121,16,6.0625,7.25,4.4375,6.5,0.1875,0.125

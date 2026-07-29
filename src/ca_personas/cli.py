@@ -24,6 +24,7 @@ from ca_personas.followup_experiments import (
     EXPERIMENT_RUNNERS,
     run_followup_experiments_pipeline,
 )
+from ca_personas.transit_focus import FOCUS_SPECS, run_transit_focus_pipeline
 
 
 def _add_shared_data_args(parser: argparse.ArgumentParser) -> None:
@@ -333,11 +334,53 @@ def build_parser() -> argparse.ArgumentParser:
         help="Directory for memo figures (default: memos/figures)",
     )
 
+    tfocus = sub.add_parser(
+        "transit-focus",
+        help=(
+            "Secondary focus TF1/TF2: predict regular transit and Q26/Q27 "
+            "intensity from profile (+ CA) with mobility items held out; "
+            "also writes transit-focus persona prompts for LLM twins"
+        ),
+    )
+    _add_shared_data_args(tfocus)
+    tfocus.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/transit_focus"),
+        help="Directory for TF1/TF2 artifacts and persona prompts",
+    )
+    tfocus.add_argument(
+        "--specs",
+        nargs="+",
+        choices=sorted(FOCUS_SPECS),
+        default=None,
+        help="Subset of focus specs (default: all TF1/TF2)",
+    )
+    tfocus.add_argument("--splits", type=int, default=5, help="Stratified CV folds")
+    tfocus.add_argument(
+        "--perm-repeats",
+        type=int,
+        default=20,
+        help="Permutation-importance repeats (binary specs)",
+    )
+    tfocus.add_argument("--seed", type=int, default=42, help="RNG seed")
+    tfocus.add_argument(
+        "--no-prompts",
+        action="store_true",
+        help="Skip writing transit-focus LLM persona prompts",
+    )
+    tfocus.add_argument(
+        "--prompts-dir",
+        type=Path,
+        default=None,
+        help="Optional override directory for transit-focus persona prompts",
+    )
+
     followups = sub.add_parser(
         "followup-experiments",
         help=(
             "Extended secondary RQs: demographics/country/nested Q28|car/"
-            "CA+mobility/common-N/residual CA/Q27-among-riders"
+            "CA+mobility/common-N/residual CA/Q27-among-riders/MI head-to-head"
         ),
     )
     _add_shared_data_args(followups)
@@ -367,12 +410,60 @@ def build_parser() -> argparse.ArgumentParser:
         default=2000,
         help="Bootstrap resamples for residual-CA Welch CIs",
     )
+    followups.add_argument(
+        "--n-imputations",
+        type=int,
+        default=20,
+        help="Multiple-imputation count for mi_head_to_head (default: 20)",
+    )
     followups.add_argument("--seed", type=int, default=42, help="RNG seed")
     followups.add_argument(
         "--figures-dir",
         type=Path,
         default=Path("memos/figures"),
         help="Directory for memo figures (default: memos/figures)",
+    )
+
+    tfocus = sub.add_parser(
+        "transit-focus",
+        help=(
+            "Secondary focus TF1/TF2: predict regular transit and Q26/Q27 "
+            "intensity from profile (+ CA) with mobility items held out; "
+            "also writes transit-focus persona prompts for LLM twins"
+        ),
+    )
+    _add_shared_data_args(tfocus)
+    tfocus.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/transit_focus"),
+        help="Directory for TF1/TF2 artifacts and persona prompts",
+    )
+    tfocus.add_argument(
+        "--specs",
+        nargs="+",
+        choices=sorted(FOCUS_SPECS),
+        default=None,
+        help="Subset of focus specs (default: all TF1/TF2)",
+    )
+    tfocus.add_argument("--splits", type=int, default=5, help="Stratified CV folds")
+    tfocus.add_argument(
+        "--perm-repeats",
+        type=int,
+        default=20,
+        help="Permutation-importance repeats (binary specs)",
+    )
+    tfocus.add_argument("--seed", type=int, default=42, help="RNG seed")
+    tfocus.add_argument(
+        "--no-prompts",
+        action="store_true",
+        help="Skip writing transit-focus LLM persona prompts",
+    )
+    tfocus.add_argument(
+        "--prompts-dir",
+        type=Path,
+        default=None,
+        help="Optional override directory for transit-focus persona prompts",
     )
 
     shap_cmd = sub.add_parser(
@@ -416,6 +507,41 @@ def build_parser() -> argparse.ArgumentParser:
         help="Max rows for TreeExplainer sampling",
     )
 
+    stereo = sub.add_parser(
+        "stereotype-eval",
+        help=(
+            "Stereotyping / discriminatory-error battery: MAE gaps by "
+            "Sex/Student/Employment/Age/transit/Q28, tier widening, association tests"
+        ),
+    )
+    _add_shared_data_args(stereo)
+    stereo.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("outputs/evaluation/stereotyping"),
+        help="Directory for stereotyping CSVs and results_card.json",
+    )
+    stereo.add_argument(
+        "--evaluation",
+        type=Path,
+        default=None,
+        help="Optional existing evaluation.csv (skips re-running LLM)",
+    )
+    stereo.add_argument(
+        "--participants",
+        type=Path,
+        default=None,
+        help="Optional participants.csv for audit covariates",
+    )
+    stereo.add_argument(
+        "--provider",
+        choices=["ollama", "openrouter", "mock"],
+        default="mock",
+        help="LLM provider when evaluation.csv is not supplied (default: mock)",
+    )
+    stereo.add_argument("--model", default=None, help="LLM model override")
+    stereo.add_argument("--sleep", type=float, default=0.0)
+
     # Flat args retained so `ca-personas --provider mock` still works.
     _add_shared_data_args(parser)
     parser.add_argument("--tiers", nargs="+", choices=list(TIERS), default=None)
@@ -444,6 +570,9 @@ def _paths_or_defaults(args: argparse.Namespace) -> tuple[list[Path], Path]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    from ca_personas.tracing import configure_tracing
+
+    configure_tracing()
     parser = build_parser()
     args = parser.parse_args(argv)
     command = args.command or "run"
@@ -645,6 +774,23 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
         return 0
 
+    if command == "transit-focus":
+        prolific, qualtrics = _paths_or_defaults(args)
+        artifacts = run_transit_focus_pipeline(
+            prolific_paths=prolific,
+            qualtrics_path=qualtrics,
+            join_how=args.join,
+            output_dir=args.output_dir,
+            spec_keys=args.specs,
+            n_splits=args.splits,
+            n_perm_repeats=args.perm_repeats,
+            random_state=args.seed,
+            write_prompts=not args.no_prompts,
+            prompts_dir=args.prompts_dir,
+        )
+        print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
+        return 0
+
     if command == "followup-experiments":
         prolific, qualtrics = _paths_or_defaults(args)
         artifacts = run_followup_experiments_pipeline(
@@ -657,6 +803,7 @@ def main(argv: list[str] | None = None) -> int:
             n_splits=args.splits,
             n_perm_repeats=args.perm_repeats,
             n_boot=args.n_boot,
+            n_imputations=args.n_imputations,
             random_state=args.seed,
         )
         print(json.dumps({k: str(v) for k, v in artifacts.items()}, indent=2))
@@ -686,6 +833,54 @@ def main(argv: list[str] | None = None) -> int:
                     "results_card": str(result["paths"]["results_card"]),
                     "n_figures": len(result["figure_paths"]),
                     "n_analytic": int(len(result["participants"])),
+                },
+                indent=2,
+            )
+        )
+        return 0
+
+    if command == "stereotype-eval":
+        import pandas as pd
+
+        from ca_personas.evaluate import evaluate_predictions
+        from ca_personas.llm import get_client
+        from ca_personas.predict import run_predictions
+        from ca_personas.stereotyping import run_stereotyping_battery
+
+        if args.evaluation is not None:
+            evaluation = pd.read_csv(args.evaluation)
+            if args.participants is not None:
+                participants = pd.read_csv(args.participants)
+            else:
+                prolific, qualtrics = _paths_or_defaults(args)
+                participants, _ = load_full_cohort(
+                    prolific_paths=prolific,
+                    qualtrics_path=qualtrics,
+                    join_how=args.join,
+                )
+        else:
+            prolific, qualtrics = _paths_or_defaults(args)
+            participants, _ = load_full_cohort(
+                prolific_paths=prolific,
+                qualtrics_path=qualtrics,
+                join_how=args.join,
+            )
+            prompts = build_persona_prompts(participants, tiers=list(RESEARCH_TIERS))
+            client = get_client(args.provider, model=args.model)
+            predictions = run_predictions(client, prompts, sleep_seconds=args.sleep)
+            evaluation = evaluate_predictions(participants, predictions)
+
+        result = run_stereotyping_battery(
+            evaluation,
+            participants,
+            output_dir=args.output_dir,
+        )
+        print(
+            json.dumps(
+                {
+                    "n_evaluation_rows": result["card"]["n_evaluation_rows"],
+                    "slices": result["card"]["slices_evaluated"],
+                    "artifacts": {k: str(v) for k, v in result["artifacts"].items()},
                 },
                 indent=2,
             )
