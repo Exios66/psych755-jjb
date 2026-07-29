@@ -1,0 +1,24 @@
+{
+  "export_stamp": "20260728_2209",
+  "model_tag": "llama33_70b_instruct_awq_v1",
+  "model": "casperhansen/llama-3.3-70b-instruct-awq",
+  "quantization": "awq-4bit TP=2",
+  "notes": "Prompt v1 greedy baseline; known ~mode-collapse risk on this cohort.",
+  "n_participants": 241,
+  "n_prompt_rows": 1205,
+  "n_result_rows": 1205,
+  "n_predictions_parsed": 1205,
+  "parse_rate": 1.0,
+  "tiers": [
+    "demos",
+    "employment",
+    "geo",
+    "transit",
+    "full"
+  ],
+  "join": "inner",
+  "throughput_samples_per_s": 3.52,
+  "wall_time_s": 342.1,
+  "gpu": "NVIDIA RTX A5000",
+  "host": "rogers-gpu-1.discovery.wisc.edu"
+}

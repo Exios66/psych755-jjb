@@ -1,0 +1,25 @@
+{
+  "export_stamp": "20260726_0324",
+  "model_tag": "deepseek_r1_distill_llama8b_v1",
+  "model": "deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
+  "quantization": "fp8 (Marlin weight-only)",
+  "notes": "R1-distill; ingest normalizes SentencePiece \u0120/\u010a and prefers text after </think>.",
+  "n_participants": 241,
+  "n_prompt_rows": 1205,
+  "n_result_rows": 1205,
+  "n_predictions_parsed": 1202,
+  "parse_rate": 0.9975103734439834,
+  "tiers": [
+    "demos",
+    "employment",
+    "geo",
+    "transit",
+    "full"
+  ],
+  "join": "inner",
+  "throughput_samples_per_s": 1.34,
+  "wall_time_s": 450.1,
+  "gpu": "NVIDIA RTX A5000",
+  "host": "rogers-gpu-1.discovery.wisc.edu",
+  "export_bucket": "v1"
+}

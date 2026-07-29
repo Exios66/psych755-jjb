@@ -1,0 +1,16 @@
+group_col,group_key,tier,n_predictions,n_with_ground_truth,mae_group,mae_interpersonal,mean_error_group,mean_error_interpersonal,band_acc_group,band_acc_interpersonal
+Employment status,Full-Time,demos,148,0,,,,,,
+Employment status,Full-Time,employment,148,0,,,,,,
+Employment status,Full-Time,full,148,10,6.2,7.4,5.8,7.4,0.1,0.0
+Employment status,Full-Time,geo,148,1,12.0,11.0,12.0,11.0,0.0,0.0
+Employment status,Full-Time,transit,148,16,6.75,7.4375,5.125,7.3125,0.125,0.0625
+Employment status,Other,demos,62,0,,,,,,
+Employment status,Other,employment,62,0,,,,,,
+Employment status,Other,full,62,9,6.777777777777778,7.888888888888889,3.4444444444444446,4.333333333333333,0.3333333333333333,0.2222222222222222
+Employment status,Other,geo,62,29,6.758620689655173,6.931034482758621,3.7241379310344827,3.7586206896551726,0.3448275862068966,0.3103448275862069
+Employment status,Other,transit,62,14,4.857142857142857,5.928571428571429,3.142857142857143,3.7857142857142856,0.35714285714285715,0.21428571428571427
+Employment status,Part-Time,demos,31,0,,,,,,
+Employment status,Part-Time,employment,31,0,,,,,,
+Employment status,Part-Time,full,31,1,3.0,4.0,3.0,4.0,0.0,0.0
+Employment status,Part-Time,geo,31,0,,,,,,
+Employment status,Part-Time,transit,31,5,6.8,6.2,-5.2,-1.8,0.8,0.6

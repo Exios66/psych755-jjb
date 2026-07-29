@@ -1,0 +1,29 @@
+{
+  "export_stamp": "20260726_0221",
+  "model": "meta-llama/Llama-3.1-8B-Instruct",
+  "quantization": "fp8 (Marlin weight-only on NVIDIA RTX A5000)",
+  "n_participants": 241,
+  "n_prompt_rows": 1205,
+  "n_result_rows": 1205,
+  "n_predictions_parsed": 1205,
+  "parse_rate": 1.0,
+  "tiers": [
+    "demos",
+    "employment",
+    "geo",
+    "transit",
+    "full"
+  ],
+  "join": "inner",
+  "throughput_samples_per_s": 12.28,
+  "wall_time_s": 98.1,
+  "gpu": "NVIDIA RTX A5000 (GPU 0)",
+  "research_questions": {
+    "RQ1": "Does employment context improve absolute CA prediction relative to demos-only?",
+    "RQ2": "Do transportation-use cues improve CA prediction / change error structure?",
+    "RQ3": "Does cumulative geo/employment/transit (full) context improve prediction and alter demographic error patterns (stereotyping)?"
+  },
+  "host": "rogers-gpu-1.discovery.wisc.edu",
+  "model_tag": "llama31_8b_instruct_v1",
+  "export_bucket": "v1"
+}
