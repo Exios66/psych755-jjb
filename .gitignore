@@ -31,6 +31,8 @@ build/
 # Secrets / local env
 .env
 .env.braintrust
+.env.wandb
+wandb/
 hf_access_token.txt
 anthropic_api_key.txt
 

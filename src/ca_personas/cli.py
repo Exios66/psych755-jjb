@@ -528,6 +528,9 @@ def _paths_or_defaults(args: argparse.Namespace) -> tuple[list[Path], Path]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    from ca_personas.tracing import configure_tracing
+
+    configure_tracing()
     parser = build_parser()
     args = parser.parse_args(argv)
     command = args.command or "run"

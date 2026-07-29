@@ -17,6 +17,8 @@ src/inference/
 ├── braintrust_tracing.py    # PRCA scorers + experiment logging helpers
 ├── braintrust_log_results.py# Post-hoc: results CSV → Braintrust experiment
 ├── braintrust_eval.py       # Offline Eval() for prompt comparison / bt eval
+├── wandb_tracing.py         # Weights & Biases chunk metrics helpers
+├── wandb_log_results.py     # Post-hoc: results CSV → W&B run
 └── README.md
 
 prompts/
@@ -170,3 +172,23 @@ VLLM_RESULT_CSV=outputs/vllm_results/results.csv \
 When a playground version wins, copy the system text back into
 `src/ca_personas/personas.py` and `prompts/system_prompt.md` so mock / Quarto
 paths stay in sync.
+
+## Weights & Biases integration
+
+Chunk-level MAE / parse / band metrics sync to a W&B run alongside Braintrust.
+
+```bash
+pip install -e ".[wandb]"   # or ".[vllm]"
+# Put key in gitignored .env.wandb (see .env.example), then:
+export WANDB_API_KEY=...
+export WANDB_PROJECT=psych755-ca-personas
+./scripts/run_vllm.sh
+
+# Post-hoc from an existing results CSV:
+python -m inference.wandb_log_results \
+  --result_csv outputs/vllm_results/results.csv \
+  --model meta-llama/Llama-3.1-8B-Instruct \
+  --preset v2_enhanced
+```
+
+`WANDB_ENABLED=false` / `--no-wandb` forces off. Offline dry-run: `WANDB_MODE=offline`.

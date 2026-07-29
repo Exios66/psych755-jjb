@@ -30,6 +30,7 @@ from inference.braintrust_tracing import (
     resolve_system_prompt,
     start_vllm_run,
 )
+from inference.wandb_tracing import start_wandb_run, wandb_configured
 from inference.utils import (
     convert_prompt_to_messages,
     find_duplicate_caseids,
@@ -247,6 +248,9 @@ def vllm_predict(
     braintrust_enabled: bool | None = None,
     braintrust_project: str | None = None,
     braintrust_experiment: str | None = None,
+    wandb_enabled: bool | None = None,
+    wandb_project: str | None = None,
+    wandb_run_name: str | None = None,
 ) -> None:
     """Run chat-templated vLLM generation and append results to *result_csv*.
 
@@ -403,6 +407,15 @@ def vllm_predict(
         f"slug={prompt_meta.get('slug')}"
     )
 
+    run_meta = {
+        "result_csv": result_csv,
+        "temperature": getattr(model_cfg, "temperature", None),
+        "top_p": getattr(model_cfg, "top_p", None),
+        "seed": getattr(model_cfg, "seed", None),
+        "quantization": quantization,
+        "tensor_parallel_size": tp,
+        "guided_json": bool(getattr(model_cfg, "guided_json", False)),
+    }
     bt_run = start_vllm_run(
         model=model_name,
         preset=preset_name or "unspecified",
@@ -410,23 +423,30 @@ def vllm_predict(
         project=braintrust_project,
         experiment=braintrust_experiment,
         system_prompt_meta=prompt_meta,
-        extra_metadata={
-            "result_csv": result_csv,
-            "temperature": getattr(model_cfg, "temperature", None),
-            "top_p": getattr(model_cfg, "top_p", None),
-            "seed": getattr(model_cfg, "seed", None),
-            "quantization": quantization,
-            "tensor_parallel_size": tp,
-            "guided_json": bool(getattr(model_cfg, "guided_json", False)),
-        },
+        extra_metadata=run_meta,
     )
     if braintrust_configured(enabled=braintrust_enabled) and not bt_run.enabled:
         print("[braintrust] configured but experiment not started; generations still saved locally")
+
+    wb_run = start_wandb_run(
+        model=model_name,
+        preset=preset_name or "unspecified",
+        enabled=wandb_enabled,
+        project=wandb_project,
+        run_name=wandb_run_name or braintrust_experiment,
+        system_prompt_meta=prompt_meta,
+        extra_config=run_meta,
+    )
+    if wandb_configured(enabled=wandb_enabled) and not wb_run.enabled:
+        print("[wandb] configured but run not started; generations still saved locally")
 
     total_samples = len(df)
     t0 = time.perf_counter()
     dataset = df.reset_index(drop=True)
     chunks = [dataset.iloc[i : i + save_freq] for i in range(0, len(dataset), save_freq)]
+    run_parse_ok = 0
+    run_n = 0
+    run_mae: list[float] = []
 
     try:
         for i, chunk_df in tqdm(enumerate(chunks), total=len(chunks), desc="vLLM chunks"):
@@ -458,18 +478,19 @@ def vllm_predict(
             )
             print(f"Saved chunk {i + 1}/{len(chunks)} to {result_csv}")
 
+            log_rows: list[dict] = []
+            chunk_reset = chunk_df.reset_index(drop=True)
+            for pos, row in chunk_reset.iterrows():
+                log_rows.append(
+                    {
+                        "caseid": row["caseid"],
+                        "prompt": row.get("prompt", ""),
+                        "answer": row.get("answer") if "answer" in chunk_df.columns else None,
+                        "generated_text": all_texts[int(pos)],
+                    }
+                )
+
             if bt_run.enabled:
-                log_rows: list[dict] = []
-                chunk_reset = chunk_df.reset_index(drop=True)
-                for pos, row in chunk_reset.iterrows():
-                    log_rows.append(
-                        {
-                            "caseid": row["caseid"],
-                            "prompt": row.get("prompt", ""),
-                            "answer": row.get("answer") if "answer" in chunk_df.columns else None,
-                            "generated_text": all_texts[int(pos)],
-                        }
-                    )
                 summary = bt_run.log_batch(
                     log_rows,
                     system_msg=system_msg,
@@ -481,13 +502,43 @@ def vllm_predict(
                     f"parse_rate={summary.get('parse_rate')} "
                     f"mae_mean={summary.get('mae_mean')}"
                 )
+
+            if wb_run.enabled or wandb_configured(enabled=wandb_enabled):
+                wb_summary = wb_run.log_chunk(
+                    chunk_idx=i,
+                    n_chunks=len(chunks),
+                    rows=log_rows,
+                    model=model_name,
+                    preset=preset_name,
+                )
+                if wb_run.enabled:
+                    print(
+                        f"[wandb] logged chunk {i + 1}: "
+                        f"parse_rate={wb_summary.get('parse_rate')} "
+                        f"mae_mean={wb_summary.get('mae_mean')}"
+                    )
+                if wb_summary.get("n"):
+                    run_n += int(wb_summary["n"])
+                    pr = wb_summary.get("parse_rate")
+                    if pr is not None:
+                        run_parse_ok += int(round(pr * wb_summary["n"]))
+                    if wb_summary.get("mae_mean") is not None:
+                        run_mae.append(float(wb_summary["mae_mean"]))
     finally:
+        if run_n:
+            wb_run.log_summary(
+                {
+                    "n": run_n,
+                    "parse_rate": run_parse_ok / run_n if run_n else None,
+                    "mae_mean": (sum(run_mae) / len(run_mae)) if run_mae else None,
+                }
+            )
         bt_run.close()
+        wb_run.close()
 
     elapsed = time.perf_counter() - t0
     rate = total_samples / elapsed if elapsed > 0 else 0.0
     print(f"[vLLM] Total: {elapsed:.1f}s, {total_samples} samples, {rate:.2f} samples/s")
-
 
 # ---------------------------------------------------------------------------
 # CLI
@@ -640,8 +691,34 @@ def main(argv: list[str] | None = None) -> None:
             "(sets BRAINTRUST_PROMPT_SLUG for this process)."
         ),
     )
+    ap.add_argument(
+        "--wandb",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "Enable/disable Weights & Biases run logging. "
+            "Default: on when WANDB_API_KEY is set (or WANDB_MODE=offline)."
+        ),
+    )
+    ap.add_argument(
+        "--wandb_project",
+        type=str,
+        default=None,
+        help="W&B project (default: WANDB_PROJECT / psych755-ca-personas).",
+    )
+    ap.add_argument(
+        "--wandb_run_name",
+        type=str,
+        default=None,
+        help="W&B run name (default: WANDB_RUN_NAME or auto from model/preset/time).",
+    )
 
     args = ap.parse_args(argv)
+
+    from ca_personas.tracing import configure_tracing
+
+    configure_tracing()
+
     preset = load_vllm_preset(args.preset)
     print(f"[vLLM] preset={args.preset}: {preset.get('description', '').strip()[:120]}")
 
@@ -687,6 +764,9 @@ def main(argv: list[str] | None = None) -> None:
         braintrust_enabled=args.braintrust,
         braintrust_project=args.braintrust_project,
         braintrust_experiment=args.braintrust_experiment,
+        wandb_enabled=args.wandb,
+        wandb_project=args.wandb_project,
+        wandb_run_name=args.wandb_run_name,
     )
 
 

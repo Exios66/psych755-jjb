@@ -136,6 +136,10 @@ def get_client(
         from ca_personas.llm.mock import MockLLMClient
 
         return MockLLMClient(model=model or "mock-persona")
+
+    from ca_personas.tracing import configure_tracing
+
+    configure_tracing()
     if chosen == "ollama":
         from ca_personas.llm.ollama import OllamaClient
 

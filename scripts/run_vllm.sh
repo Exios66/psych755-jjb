@@ -17,6 +17,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
+# Load gitignored tracing secrets when present (Braintrust / W&B).
+if [[ -f "$PROJECT_ROOT/.env.braintrust" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$PROJECT_ROOT/.env.braintrust"
+  set +a
+fi
+if [[ -f "$PROJECT_ROOT/.env.wandb" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$PROJECT_ROOT/.env.wandb"
+  set +a
+fi
+
 PROMPT_PATH="${PROMPT_PATH:-${PROJECT_ROOT}/outputs/vllm_prompts/prompts.csv}"
 RESULT_PATH="${RESULT_PATH:-${PROJECT_ROOT}/outputs/vllm_results/results.csv}"
 GROUND_TRUTH_CSV="${GROUND_TRUTH_CSV:-${PROJECT_ROOT}/outputs/vllm_prompts/ground_truth.csv}"
@@ -61,6 +75,32 @@ if [[ -n "${BRAINTRUST_EXPERIMENT}" ]]; then
 fi
 if [[ -n "${BRAINTRUST_ENABLED}" ]]; then
   export BRAINTRUST_ENABLED
+fi
+
+# Weights & Biases (opt-in when WANDB_API_KEY is set).
+WANDB_PROJECT="${WANDB_PROJECT:-psych755-ca-personas}"
+WANDB_ENTITY="${WANDB_ENTITY:-}"
+WANDB_RUN_NAME="${WANDB_RUN_NAME:-}"
+WANDB_ENABLED="${WANDB_ENABLED:-}"
+WANDB_MODE="${WANDB_MODE:-}"
+export WANDB_PROJECT
+if [[ -n "${WANDB_API_KEY:-}" ]]; then
+  export WANDB_API_KEY
+fi
+if [[ -n "${WANDB_ENTITY}" ]]; then
+  export WANDB_ENTITY
+fi
+if [[ -n "${WANDB_RUN_NAME}" ]]; then
+  export WANDB_RUN_NAME
+fi
+if [[ -n "${WANDB_ENABLED}" ]]; then
+  export WANDB_ENABLED
+fi
+if [[ -n "${WANDB_MODE}" ]]; then
+  export WANDB_MODE
+fi
+if [[ -n "${WANDB_TAGS:-}" ]]; then
+  export WANDB_TAGS
 fi
 
 BACKGROUND="${BACKGROUND:-1}"
@@ -144,6 +184,20 @@ if [[ "${BRAINTRUST_ENABLED}" == "1" || "${BRAINTRUST_ENABLED}" == "true" ]]; th
 elif [[ "${BRAINTRUST_ENABLED}" == "0" || "${BRAINTRUST_ENABLED}" == "false" ]]; then
   CMD+=(--no-braintrust)
 fi
+if [[ -n "${WANDB_RUN_NAME}" ]]; then
+  CMD+=(--wandb_run_name "$WANDB_RUN_NAME")
+elif [[ -n "${BRAINTRUST_EXPERIMENT}" ]]; then
+  # Align W&B run name with Braintrust experiment when unset.
+  CMD+=(--wandb_run_name "$BRAINTRUST_EXPERIMENT")
+fi
+if [[ -n "${WANDB_PROJECT}" ]]; then
+  CMD+=(--wandb_project "$WANDB_PROJECT")
+fi
+if [[ "${WANDB_ENABLED}" == "1" || "${WANDB_ENABLED}" == "true" ]]; then
+  CMD+=(--wandb)
+elif [[ "${WANDB_ENABLED}" == "0" || "${WANDB_ENABLED}" == "false" ]]; then
+  CMD+=(--no-wandb)
+fi
 
 {
   echo "==== CA digital-twin vLLM run ===="
@@ -160,6 +214,10 @@ fi
   echo "braintrust_project: $BRAINTRUST_PROJECT"
   echo "braintrust_prompt_slug: $BRAINTRUST_PROMPT_SLUG"
   echo "braintrust_api_key_set: $([ -n "${BRAINTRUST_API_KEY:-}" ] && echo yes || echo no)"
+  echo "wandb_project: $WANDB_PROJECT"
+  echo "wandb_entity: ${WANDB_ENTITY:-<default>}"
+  echo "wandb_api_key_set: $([ -n "${WANDB_API_KEY:-}" ] && echo yes || echo no)"
+  echo "wandb_enabled: ${WANDB_ENABLED:-auto}"
   echo "cmd: ${CMD[*]}"
   echo "================================="
 } | tee "$LOG_PATH"

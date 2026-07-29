@@ -1,6 +1,6 @@
 # vLLM export index
 
-_Regenerated 2026-07-28 23:33:43_
+_Regenerated 2026-07-28 23:53:56_
 
 Layout:
 
@@ -23,8 +23,8 @@ Transit-focus packages: `scripts/package_transit_focus_export.py` → `exports/t
 | Status | Bucket | Tag | Model |
 |---|---|---|---|
 | ✅ done | `v2` | `llama31_8b_instruct_v2` | Llama-3.1-8B-Instruct |
-| 🔄 running | `v2` | `llama32_3b_v2` | Llama-3.2-3B (base) |
-| ⏳ pending | `v2` | `llama32_3b_instruct_v2` | Llama-3.2-3B-Instruct |
+| ⏳ pending | `v2` | `llama32_3b_v2` | Llama-3.2-3B (base) |
+| ✅ done | `v2` | `llama32_3b_instruct_v2` | Llama-3.2-3B-Instruct |
 | ⏳ pending | `v2` | `deepseek_r1_distill_llama8b_v2` | DeepSeek-R1-Distill-Llama-8B |
 | ⏳ pending | `v2` | `llama33_70b_instruct_awq_v2` | Llama-3.3-70B-Instruct-AWQ |
 | ⏳ pending | `v3` | `llama31_8b_instruct_v3` | Llama-3.1-8B-Instruct |
@@ -44,7 +44,7 @@ Predict `regular_transit` + Q26 from demos/employment/geo/(+CA) with mobility he
 | ⏳ pending | `transit_focus` | `deepseek_r1_distill_llama8b_transit_focus` | DeepSeek-R1-Distill-Llama-8B |
 | ⏳ pending | `transit_focus` | `llama33_70b_instruct_awq_transit_focus` | Llama-3.3-70B-Instruct-AWQ |
 
-**Queue currently on:** `llama32_3b_v2`
+**Queue currently on:** `llama32_3b_instruct_v2`
 
 ## `v1/` — Published prompt-v1 baselines (greedy / Jul-26).
 
@@ -61,6 +61,7 @@ Predict `regular_transit` + Q26 from demos/employment/geo/(+CA) with mobility he
 | Package dir | Model | Tiers | Parse | Report |
 |---|---|---:|---:|---|
 | [`psych755_vllm_llama31_8b_instruct_v2_full_cohort_20260728_2214`](v2/psych755_vllm_llama31_8b_instruct_v2_full_cohort_20260728_2214/) | `meta-llama/Llama-3.1-8B-Instruct` | 5 | 99.9% | yes |
+| [`psych755_vllm_llama32_3b_instruct_v2_full_cohort_20260728_2353`](v2/psych755_vllm_llama32_3b_instruct_v2_full_cohort_20260728_2353/) | `meta-llama/Llama-3.2-3B-Instruct` | 5 | 100.0% | yes |
 
 ## `v3/` — 8-tier ablations + `v3_enhanced` / `large_model` presets (refreshed anti-bleed).
 
@@ -80,8 +81,7 @@ _Empty — new packages will appear here._
 
 ## Not on disk yet (will appear as queues finish)
 
-- `v2/psych755_vllm_llama32_3b_v2_full_cohort_<stamp>/` — Llama-3.2-3B (base) ← running
-- `v2/psych755_vllm_llama32_3b_instruct_v2_full_cohort_<stamp>/` — Llama-3.2-3B-Instruct 
+- `v2/psych755_vllm_llama32_3b_v2_full_cohort_<stamp>/` — Llama-3.2-3B (base) 
 - `v2/psych755_vllm_deepseek_r1_distill_llama8b_v2_full_cohort_<stamp>/` — DeepSeek-R1-Distill-Llama-8B 
 - `v2/psych755_vllm_llama33_70b_instruct_awq_v2_full_cohort_<stamp>/` — Llama-3.3-70B-Instruct-AWQ 
 - `v3/psych755_vllm_llama31_8b_instruct_v3_full_cohort_<stamp>/` — Llama-3.1-8B-Instruct 

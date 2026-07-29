@@ -450,7 +450,23 @@ class BraintrustRun:
                 allow_concurrent_with_spans=True,
             )
             self.n_logged += 1
+            # Periodic sync flush so plan-limit errors surface (async drops otherwise).
+            if self.n_logged % 25 == 0:
+                try:
+                    self._experiment.flush()
+                except Exception as flush_exc:  # noqa: BLE001
+                    if _looks_like_plan_limit(flush_exc):
+                        _PLAN_LIMIT_HIT = True
+                        self.enabled = False
+                        print(
+                            "[braintrust] plan/score limit on flush — disabling "
+                            "further uploads for this process"
+                        )
+                        raise
+                    print(f"[braintrust] flush warning: {flush_exc}")
         except Exception as exc:  # noqa: BLE001 - do not abort GPU batch
+            if _PLAN_LIMIT_HIT:
+                return scored
             print(f"[braintrust] log failed for {cid}: {exc}")
             if _looks_like_plan_limit(exc):
                 _PLAN_LIMIT_HIT = True
@@ -498,17 +514,27 @@ class BraintrustRun:
         return summary
 
     def close(self) -> dict[str, Any] | None:
+        global _PLAN_LIMIT_HIT
         if not self.enabled or self._experiment is None:
             return None
         summary = None
+        # Avoid long retry loops when the Braintrust plan quota is exhausted.
+        if _PLAN_LIMIT_HIT:
+            print("[braintrust] skipping summarize/flush (plan limit already hit)")
+            self._experiment = None
+            return None
         try:
             summary = self._experiment.summarize()
         except Exception as exc:  # noqa: BLE001
             print(f"[braintrust] summarize failed: {exc}")
+            if _looks_like_plan_limit(exc):
+                _PLAN_LIMIT_HIT = True
         try:
             self._experiment.flush()
-        except Exception:
-            pass
+        except Exception as exc:  # noqa: BLE001
+            print(f"[braintrust] flush failed: {exc}")
+            if _looks_like_plan_limit(exc):
+                _PLAN_LIMIT_HIT = True
         try:
             permalink = getattr(self._experiment, "permalink", None)
             if callable(permalink):
@@ -517,6 +543,7 @@ class BraintrustRun:
                     print(f"[braintrust] experiment: {url}")
         except Exception:
             pass
+        self._experiment = None
         return summary
 
 
