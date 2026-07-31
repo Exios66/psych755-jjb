@@ -42,7 +42,7 @@ Document the first wave of **live GPU vLLM** evaluations on the matched analytic
 ## Intentionally deferred (future work)
 
 - **Canonical `v3_enhanced` refresh** — v2 is GPU-evaluated on Llama-3.1-8B, Llama-3.2-3B-Instruct, and DeepSeek-R1-Distill-8B (v2_enhanced; `exports/v2/`), and v3 greedy 8-tier ablations on Llama-3.1, 3.2-3B-Instruct, and 3.3-70B (`exports/v3/`); the committed v3 packages are greedy-decode (identical to `prior_v3_greedy`), so the `v3_enhanced` decode refresh remains — see [`persona_prompt_versions.md`](persona_prompt_versions.md).  
-- Live TreeSHAP / stereotyping slice memos per model  
+- **Completed since the v1 wave:** v2/v3 evaluation memo ([`memos/vllm_v2_v3_evaluation.md`](../memos/vllm_v2_v3_evaluation.md)) and real live-export stereotyping slices ([`memos/live_llm_stereotyping_slices.md`](../memos/live_llm_stereotyping_slices.md)).  
 - Temperature / constrained-decoding ablations (70B `large_model` preset)  
 
 ## Reproduction

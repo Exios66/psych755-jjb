@@ -52,10 +52,10 @@ Artifacts: `outputs/evaluation/stereotyping/` (and Posit sync copies Student/Emp
 
 ---
 
-## Interpretation checklist (for live v1 / future v2)
+## Interpretation checklist (for live v1 / v2 exports)
 
 1. Report demos-tier gaps for Sex / Student / Employment (base stereotype surface).
 2. Report transit-tier Δ-gaps — did mobility context worsen unevenness?
 3. Compare Llama-3.1 vs DeepSeek on the same slices (model-dependent hazard).
 4. Check signed error by group at transit (direction of stereotype).
-5. Do **not** treat mock Posit Student/Employment tables as live-model stereotyping; use live evaluation CSVs or documented Llama-3.1 export tables until v2 GPU re-runs land.
+5. Do **not** treat mock Posit Student/Employment tables as live-model stereotyping; use the committed live vLLM export tables (`exports/v1/…/tables/stereotyping_by_*.csv`, `exports/v2/…/tables/stereotyping_by_*.csv`) for live-model claims. Real DeepSeek v2 slices are reported in [`index.qmd`](../index.qmd) and [`memos/live_llm_stereotyping_slices.md`](../memos/live_llm_stereotyping_slices.md).

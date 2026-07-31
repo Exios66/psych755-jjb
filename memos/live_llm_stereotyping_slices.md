@@ -1,0 +1,65 @@
+---
+title: "Memo: Live-LLM error by demographic group (DeepSeek v2 stereotyping slices)"
+subtitle: "Research memorandum — MAE and signed error across Sex, Student status, and Employment groups from the committed v2 export"
+author: Jack J. Burleson
+date: 2026-07-31
+---
+
+**Research question:** Does the live full-cohort LLM's prediction error vary systematically with demographic or contextual group membership — and do gaps widen as persona tiers accumulate?
+
+---
+
+## Answer, Response, + Summary of Results
+
+Group-CA MAE and signed error (predicted − ground truth) were sliced by Sex, Student status, and Employment status from the committed DeepSeek-R1-Distill-Llama-8B v2 export (`exports/v2/psych755_vllm_deepseek_r1_distill_llama8b_v2_full_cohort_20260730_2213/tables/stereotyping_by_*.csv`). Slices cover all five v2 tiers (`demos` → `full`).
+
+**Short answer:** Sex and student-status MAE gaps are small (≤ ≈0.5 points). **Employment is the striking slice**: Full-Time error sits at 4.35–4.63 in every tier, while Part-Time and Other hover at 5.5–6.2. Signed error is near zero for Full-Time (−0.01) but **−2.0 to −3.6 for Part-Time / Other** at every tier — the live agent systematically **under-predicts CA for non-full-time respondents**. This sharpens the RQ1 story: employment does not *shrink* overall MAE, but it is a real **calibration split** in the live model.
+
+---
+
+## Employment status (group-CA MAE by tier)
+
+| Group | demos | employment | geo | transit | full | n (transit) |
+|---|---:|---:|---:|---:|---:|---:|
+| Full-Time | 4.37 | 4.63 | 4.35 | 4.39 | 4.43 | 148 |
+| Part-Time | 6.06 | 5.84 | 6.00 | 5.55 | 5.87 | 31 |
+| Other | 6.16 | 6.05 | 5.61 | 6.07 | 6.19 | 61 |
+
+Signed error (predicted − true) at `demos` / `transit`: Full-Time **−0.01** / +0.43; Part-Time **−2.00** / −1.68; Other **−3.58** / −3.61. The gap is present from the base tier and does not close with richer context — the agent's point estimates for Part-Time and Other respondents sit 2.0–3.6 points below their true group-CA scores.
+
+## Sex (group-CA MAE by tier)
+
+| Group | demos | employment | geo | transit | full | n (transit) |
+|---|---:|---:|---:|---:|---:|---:|
+| Female | 4.93 | 5.09 | 4.73 | 4.73 | 5.02 | 120 |
+| Male | 5.17 | 5.21 | 5.04 | 5.20 | 5.12 | 120 |
+
+Sex gaps are small (≤ ≈0.5 points) at every tier. Both groups are under-predicted on average at `demos` (Female −1.47; Male −0.90), converging toward zero by `transit` (−0.97 / −0.77).
+
+## Student status (group-CA MAE by tier)
+
+| Group | demos | employment | geo | transit | full | n (transit) |
+|---|---:|---:|---:|---:|---:|---:|
+| Yes | 5.24 | 4.71 | 4.68 | 5.00 | 4.82 | 34 |
+| No | 5.07 | 5.23 | 4.95 | 4.89 | 5.07 | 190 |
+
+MAE gaps are small (≤ ≈0.5 points); signed error is negative for both groups at every tier (Students −1.59 → −2.47; non-students −1.11 → −0.50), indicating mild under-prediction that does not track tier widening.
+
+## Interpretation
+
+1. **Employment is a calibration split, not an error shrinker.** This is the same RQ1 pattern in live data that the tier-level MAE tables flatten: employment information did not lower pooled MAE, but the error is not exchangeable across employment groups. Full-Time respondents are predicted almost exactly (mean error ≈ 0), while Part-Time and Other respondents are systematically under-predicted by 2.0–3.6 points.
+2. **The split is present from the base tier.** It does not require mobility context to appear and does not worsen monotonically with tiers — it is a demographic stereotype surface, not a context-sensitive widening.
+3. **Sex and student status are comparatively fair slices.** Small absolute gaps and no monotone widening support a nuanced reading: the bias is not blanket; it is concentrated where employment categories carry inferential stereotypes (non-standard work arrangements → lower predicted CA).
+4. **Mobility-exposure slices remain an open audit.** The stereotyping battery defines `regular_transit` and Q28 slices (`docs/stereotyping_evaluation.md`); the manuscript reports these for the DeepSeek v2 export when available.
+
+## What questions or uncertainties remain?
+
+Would the same employment calibration split appear in Llama-3.1 (whose `transit` collapse over-predicts interpersonal CA) or in the collapsed 70B? Do the Part-Time/Other under-predictions track true employment-rate differences in CA ground truth, or an agent prior? The stereo-type association tests (Kruskal–Wallis, ε²) in `ca-personas stereotype-eval` are the formal inference step for these gaps.
+
+## What other analyses pair with this memo?
+
+- v2/v3 pooled and per-tier results: `memos/vllm_v2_v3_evaluation.md`
+- Band discrimination and surrogate SHAP for the same live agent: `memos/feature_predictive_power_ml_llm.md`
+- Stereotyping battery definition and interpretation rules: `docs/stereotyping_evaluation.md`
+
+*Sources:* `exports/v2/psych755_vllm_deepseek_r1_distill_llama8b_v2_full_cohort_20260730_2213/tables/stereotyping_by_{Sex,Student_status,Employment_status}.csv` · `ca_personas.stereotyping` · manuscript `index.qmd` § "Error by demographic group (live DeepSeek v2)"

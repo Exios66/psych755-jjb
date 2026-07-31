@@ -107,7 +107,7 @@ Seeded tables: `outputs/ml_baseline/ml_baseline_mae_pivot_*.csv`, `ml_baseline_l
 
 6. **Band accuracy stays modest.** Even the best transit group model (Ridge) reaches band accuracy **0.481** — better than chance among three bands, but far from reliable low/moderate/high recovery from demographics + context alone. R² peaks around **0.13–0.15** at transit for the best models.
 
-7. **Implication for LLM personification.** The relevant classical floor is no longer “RF = 4.68.” Use the **suite best** at each tier (**4.25–4.49** at transit). An LLM that only matches RF but loses to Ridge/Elastic Net is still behind the tabular ceiling. Mock-LLM group MAE on this site (**7.84–8.56** across research tiers) remains well above every model here ([`index.qmd`](../index.qmd)).
+7. **Implication for LLM personification.** The relevant classical floor is no longer “RF = 4.68.” Use the **suite best** at each tier (**4.25–4.49** at transit). An LLM that only matches RF but loses to Ridge/Elastic Net is still behind the tabular ceiling. Live full-cohort vLLM group MAEs (best pooled: DeepSeek-R1-Distill-Llama-8B under v2 packaging **5.02**; prompt-v1 range 5.22–6.02) remain above the suite floor here ([`index.qmd`](../index.qmd)).
 
 ---
 

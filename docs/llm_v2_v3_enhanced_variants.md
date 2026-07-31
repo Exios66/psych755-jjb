@@ -1,6 +1,6 @@
 ---
 title: "v2/v3 enhanced variants"
-subtitle: "Literature- and data-backed improvements for the next GPU digital-twin rounds"
+subtitle: "Literature- and data-backed v2/v3 improvements — design rationale and GPU-evaluated results"
 ---
 
 **Evidence base:** Llama-3.1 transit IP collapse ([baseline](llm_baseline_llama31_v1.md)); 70B mode collapse ([baseline](llm_baseline_llama33_70b_v1.md)); Q28 dominance ([memo](../memos/q27_q28_predict_transit.md)); Argyle et al. 2023 silicon sampling; Park et al. 2023/2024 generative agents; Hu & Collier 2024 persona effect; Cheng 2023 / Santurkar 2023 stereotyping.
@@ -82,7 +82,7 @@ Llama-3.2-3B (base) failed JSON parsing in both v1 (7.1%) and v3 (0%) and is exc
 2. **`v3_rideshare` ≥ `v3_public_transit` on group MAE?** *Yes* — Llama-3.1: 5.86 < 6.04, and `v3_rideshare` (5.86) beats the kitchen-sink `transit` tier (6.07).
 3. **`v3_voice` helps without IP penalty?** *Yes* — group 5.64, IP 5.82 vs transit 6.07 / 7.77.
 4. **Collapse combination-specific?** *Yes* — single cues stable (IP 4.85–5.92); only the bundled mobility dump collapses (7.77).
-5. **Stereotyping gaps remain measurable?** *Pending* — run `ca-personas stereotype-eval` on each package’s `tables/02_evaluation_rowlevel.csv`.
+5. **Stereotyping gaps remain measurable?** *Measured* — DeepSeek v2 slices (Sex/Student/Employment) are reported in [`index.qmd`](../index.qmd) and [`memos/live_llm_stereotyping_slices.md`](../memos/live_llm_stereotyping_slices.md) from `exports/v2/…/tables/stereotyping_by_*.csv`.
 
 Still open: canonical `v3_enhanced` decode refresh, v2/v3 on the base 3B, and 70B under `large_model`.
 

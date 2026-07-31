@@ -56,11 +56,13 @@ Live GPU baselines are documented separately in [`docs/llm_vllm_memo_agenda.md`]
 | [`memos/vllm_v1_llama32_3b.md`](../memos/vllm_v1_llama32_3b.md) | Llama-3.2-3B Instruct lower MAE than 8B |
 | [`memos/vllm_v1_deepseek_r1_distill.md`](../memos/vllm_v1_deepseek_r1_distill.md) | DeepSeek-R1-Distill tier-stable; best group MAE |
 | [`memos/vllm_v1_llama33_70b.md`](../memos/vllm_v1_llama33_70b.md) | Llama-3.3-70B mode-collapse cautionary case |
+| [`memos/vllm_v2_v3_evaluation.md`](../memos/vllm_v2_v3_evaluation.md) | v2/v3 GPU runs: DeepSeek improves; collapse combination-specific |
+| [`memos/live_llm_stereotyping_slices.md`](../memos/live_llm_stereotyping_slices.md) | Real DeepSeek v2 stereotyping slices (Sex/Student/Employment) |
 
 ## Intentionally deferred (future work; need further live LLM or new data)
 
 - **v2 / v3 canonical refresh** — v2 is now GPU-evaluated on Llama-3.1-8B, Llama-3.2-3B-Instruct, and DeepSeek-R1-Distill-8B (v2_enhanced; `exports/v2/`), and v3 greedy 8-tier ablations on Llama-3.1, 3.2-3B-Instruct, and 3.3-70B (`exports/v3/`). Remaining: canonical `v3_enhanced` decode refresh, base-3B v2/v3, and 70B under `large_model` — see [`persona_prompt_versions.md`](persona_prompt_versions.md)
-- Live-LLM TreeSHAP / surrogate SHAP (mock already covered)
+- **Completed since wave 1:** live-export TreeSHAP / surrogate SHAP ([`memos/feature_predictive_power_ml_llm.md`](../memos/feature_predictive_power_ml_llm.md)) and real stereotyping slices ([`memos/live_llm_stereotyping_slices.md`](../memos/live_llm_stereotyping_slices.md))
 - Richer / MNAR-sensitive MI of car items (wave-2 MI head-to-head is implemented; see [`memos/mi_head_to_head.md`](../memos/mi_head_to_head.md))
 - City/density GIS layers beyond Qualtrics lat/long
 - Ordinal multiclass `Q26` models (threshold sensitivity exists in transit-CA module)

@@ -8,10 +8,10 @@ Layout:
 exports/
   INDEX.md              ← this file
   v1/                   ← prompt-v1 CA baselines (done)
-  v2/                   ← enhanced 5-tier CA (filling)
-  v3/                   ← enhanced 8-tier CA (queued)
+  v2/                   ← enhanced 5-tier CA (done: DeepSeek / Llama-3.1 / Llama-3.2-Instruct)
+  v3/                   ← 8-tier greedy ablations (done: 4 packages; DeepSeek v3 still pending)
   transit_focus/        ← TF1/TF2 transit-prediction LLM twins
-  prior_v3_greedy/      ← archived pre-refresh v3
+  prior_v3_greedy/      ← archived greedy v3 (identical predictions to `v3/`; kept for the pre-stamp record)
   zips/
 ```
 
@@ -32,6 +32,8 @@ Transit-focus packages: `scripts/package_transit_focus_export.py` → `exports/t
 | ✅ done | `v3` | `llama32_3b_instruct_v3` | Llama-3.2-3B-Instruct |
 | ⏳ pending | `v3` | `deepseek_r1_distill_llama8b_v3` | DeepSeek-R1-Distill-Llama-8B |
 | ✅ done | `v3` | `llama33_70b_instruct_awq_v3` | Llama-3.3-70B-Instruct-AWQ |
+
+Note: `llama32_3b_v3` (base) parses **0%** of outputs (7.1% in v1) and is excluded from reported metrics; `llama32_3b_v2` remains pending for the same reason. `v3/` packages are greedy-decode ablations identical to `prior_v3_greedy/`.
 
 ## Transit-focus queue matrix (TF1/TF2)
 
@@ -62,7 +64,9 @@ Predict `regular_transit` + Q26 from demos/employment/geo/(+CA) with mobility he
 | [`psych755_vllm_llama31_8b_instruct_v2_full_cohort_20260728_2214`](v2/psych755_vllm_llama31_8b_instruct_v2_full_cohort_20260728_2214/) | `meta-llama/Llama-3.1-8B-Instruct` | 5 | 99.9% | yes |
 | [`psych755_vllm_llama32_3b_instruct_v2_full_cohort_20260728_2353`](v2/psych755_vllm_llama32_3b_instruct_v2_full_cohort_20260728_2353/) | `meta-llama/Llama-3.2-3B-Instruct` | 5 | 100.0% | yes |
 
-## `v3/` — 8-tier ablations + `v3_enhanced` / `large_model` presets (refreshed anti-bleed).
+## `v3/` — 8-tier greedy ablations (anti-bleed prompts; same decoding as the archived `prior_v3_greedy` runs).
+
+> `v3_enhanced` (temp 0.3, seed 42, guided JSON) remains a **pending** decode refresh — the committed `v3/` packages are greedy-decode ablations.
 
 | Package dir | Model | Tiers | Parse | Report |
 |---|---|---:|---:|---|
@@ -75,7 +79,7 @@ Predict `regular_transit` + Q26 from demos/employment/geo/(+CA) with mobility he
 
 _Empty — new packages will appear here._
 
-## `prior_v3_greedy/` — Pre-refresh greedy v3 archives (comparison only; not the new target).
+## `prior_v3_greedy/` — Archived greedy v3 runs (predictions identical to the stamped `v3/` packages; kept for the 20260728 record).
 
 | Package dir | Model | Tiers | Parse | Report |
 |---|---|---:|---:|---|
