@@ -326,7 +326,7 @@ def fig_covariate_followups() -> None:
         ("employment", "Employment"),
         ("chance", "Chance"),
     ]
-    fig, ax = plt.subplots(figsize=(7.2, 4.6))
+    fig, ax = plt.subplots(figsize=(8.0, 5.0))
     horizontal_bars(
         ax,
         [lab for _, lab in order],
@@ -334,7 +334,7 @@ def fig_covariate_followups() -> None:
         xlabel="Cross-validated ROC-AUC",
         highlight_index=0,
         vlines={"Chance=.500": 0.5, "Geo=.551": 0.551, "CA=.590": 0.590},
-        xlim=(0.45, 0.85),
+        xlim=(0.45, 0.88),
     )
     _save(fig, MEMOS_FIG / "transit_covariate_followups_memo.png")
 

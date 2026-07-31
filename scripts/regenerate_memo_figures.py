@@ -107,7 +107,7 @@ def plot_geo_memo(analysis: dict, path: Path) -> Path:
         "Does survey geography predict regular transit?",
         f"n={len(frame)}  ·  lat/long CV ROC-AUC={auc:.3f}  ·  modest signal near chance",
     )
-    fig.subplots_adjust(top=0.80, left=0.08, right=0.98, bottom=0.12, wspace=0.25)
+    fig.subplots_adjust(top=0.80, left=0.12, right=0.98, bottom=0.12, wspace=0.25)
     return save_figure(fig, path)
 
 
@@ -150,7 +150,7 @@ def plot_ca_memo(analysis: dict, path: Path) -> Path:
         "Do group & interpersonal CA predict regular transit?",
         f"n={len(frame)}  ·  joint RF AUC={auc:.3f}  ·  modest discrimination above chance",
     )
-    fig.subplots_adjust(top=0.80, left=0.08, right=0.98, bottom=0.12, wspace=0.25)
+    fig.subplots_adjust(top=0.80, left=0.12, right=0.98, bottom=0.12, wspace=0.25)
     return save_figure(fig, path)
 
 
@@ -243,7 +243,7 @@ def plot_transit_ca_memo(analysis: dict, path: Path) -> Path:
         "Do regular transit riders differ in communication apprehension?",
         "Matched cohort  ·  weekly+ Q26 vs rest  ·  lower CA among regular riders",
     )
-    fig.subplots_adjust(top=0.80, left=0.08, right=0.98, bottom=0.16, wspace=0.28)
+    fig.subplots_adjust(top=0.80, left=0.10, right=0.98, bottom=0.18, wspace=0.28)
     return save_figure(fig, path)
 
 

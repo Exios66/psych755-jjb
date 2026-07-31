@@ -110,7 +110,8 @@ def grouped_bars(
         ax.set_ylim(*ylim)
     elif series:
         ymax = max(float(np.nanmax(v)) for v in series.values())
-        ax.set_ylim(0, ymax * 1.18)
+        headroom = 1.25 if annotate else 1.18
+        ax.set_ylim(0, ymax * headroom)
     if len(names) > 1:
         ax.legend(frameon=False, loc="upper right")
     return apa_axes(ax)
@@ -147,6 +148,9 @@ def horizontal_bars(
     ax.set_xlabel(xlabel)
     if xlim is not None:
         ax.set_xlim(*xlim)
+    else:
+        xmax = max(vals) + max(0.15, max(vals) * 0.03)
+        ax.set_xlim(0, xmax)
     for yi, v in zip(y, vals):
         ax.text(v + (0.008 if xlim is None else (xlim[1] - xlim[0]) * 0.01), yi, f"{v:.3f}", va="center", fontsize=8)
     if vlines:
@@ -281,9 +285,12 @@ def prevalence_bars(
         fontsize=8,
     )
     ax.set_xlabel(xlabel)
-    ax.set_xlim(0, 1.05)
+    ax.set_xlim(0, 1.10)
     for yi, v in zip(y, vals):
-        ax.text(min(float(v) + 0.02, 0.90), yi, f"{v:.1%}", va="center", fontsize=8)
+        label = f"{v:.1%}"
+        if ns is not None:
+            label = f"{v:.1%}  (n={ns[yi]})"
+        ax.text(min(float(v) + 0.02, 0.92), yi, label, va="center", fontsize=8)
     if sample_prevalence is not None:
         ax.axvline(
             sample_prevalence,

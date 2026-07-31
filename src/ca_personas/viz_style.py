@@ -96,6 +96,7 @@ def apply_memo_style() -> None:
 def save_figure(fig: Figure, path: str | Path, *, dpi: int = 220) -> Path:
     out = Path(path)
     out.parent.mkdir(parents=True, exist_ok=True)
+    fig.tight_layout()
     fig.savefig(out, dpi=dpi, bbox_inches="tight", facecolor=PAPER, edgecolor="none")
     plt.close(fig)
     return out
@@ -237,7 +238,7 @@ def plot_auc_bars(
         xlim = (0.45, min(0.92, max(0.72, xmax + 0.08)))
     ax.set_xlim(*xlim)
     ax.set_yticks(y)
-    ax.set_yticklabels(labels)
+    ax.set_yticklabels(labels, fontsize=9)
     ax.set_xlabel(xlabel)
     style_axes(ax, grid="x")
     bench_handles = add_benchmark_vlines(
@@ -247,9 +248,9 @@ def plot_auc_bars(
         ax.legend(
             handles=bench_handles,
             loc="lower right",
-            fontsize=8,
+            fontsize=7.5,
             title="Benchmarks",
-            title_fontsize=8.5,
+            title_fontsize=8,
             frameon=True,
             fancybox=False,
             edgecolor=GRID,
@@ -263,13 +264,16 @@ def plot_auc_bars(
             n_val = ns[order[i]]
             if n_val is not None and not (isinstance(n_val, float) and np.isnan(n_val)):
                 label = f"{auc:.3f}  ·  n={int(n_val)}"
+        # Ensure text stays within xlim by dynamically offsetting
+        xlim_actual = ax.get_xlim()
+        xpos = min(auc + 0.012, xlim_actual[1] - 0.03)
         ax.text(
-            min(auc + 0.008, xlim[1] - 0.01),
+            xpos,
             bar.get_y() + bar.get_height() / 2,
             label,
             va="center",
             ha="left",
-            fontsize=9,
+            fontsize=8.5,
             color=INK,
             fontweight="bold",
             zorder=4,
@@ -319,18 +323,19 @@ def plot_prevalence_bars(
             color=ACCENT,
         )
     ax.set_yticks(y)
-    ax.set_yticklabels(levels)
+    ax.set_yticklabels(levels, fontsize=9)
     ax.set_xlabel(xlabel)
     if title:
         ax.set_title(title, loc="left", fontsize=11, pad=8)
-    xmax = max(0.65, float(np.nanmax(pcts_arr)) + 0.12)
+    xmax = max(0.70, float(np.nanmax(pcts_arr)) + 0.15)
     ax.set_xlim(0, xmax)
     style_axes(ax, grid="x")
     for i, pct in enumerate(pcts_arr):
         txt = f"{pct:.0%}"
         if ns_arr is not None:
             txt = f"{pct:.0%}  (n={ns_arr[i]})"
-        ax.text(pct + 0.01, i, txt, va="center", ha="left", fontsize=8.5, color=INK)
+        xpos = min(pct + 0.015, xmax - 0.05)
+        ax.text(xpos, i, txt, va="center", ha="left", fontsize=8.5, color=INK)
 
 
 def plot_roc_curve(
@@ -400,15 +405,21 @@ def plot_forest_diffs(
         p = row.get("welch_p", np.nan)
         star = "" if pd.isna(p) else ("*" if p < 0.05 else "")
         labels.append(f"{row['Q28']}{star}")
-    ax.set_yticklabels(labels)
+    ax.set_yticklabels(labels, fontsize=8.5)
     ax.set_xlabel("Mean group CA (regular − not regular)")
     ax.set_title(title, loc="left", fontsize=11, pad=8)
     style_axes(ax, grid="x")
+    # Auto-expand xlim to fit text labels
+    xpad = max(abs(diffs)) * 0.12 + 0.2
+    xlim_curr = ax.get_xlim()
+    xlim_new = (min(xlim_curr[0], min(diffs) - xpad), max(xlim_curr[1], max(diffs) + xpad))
+    ax.set_xlim(*xlim_new)
     for i, (d, p) in enumerate(zip(diffs, work.get("welch_p", [np.nan] * len(work)))):
+        txt = f"{d:+.1f}" + (f"  p={p:.3f}" if pd.notna(p) else "")
         ax.text(
             d + (0.15 if d >= 0 else -0.15),
             i,
-            f"{d:+.1f}" + (f"  p={p:.3f}" if pd.notna(p) else ""),
+            txt,
             va="center",
             ha="left" if d >= 0 else "right",
             fontsize=8,

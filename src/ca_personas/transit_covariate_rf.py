@@ -615,7 +615,7 @@ def plot_family_memo_figure(
         f"Predictor of regular transit: {label}",
         f"Balanced Random Forest  ·  n={n}  ·  CV ROC-AUC={auc:.3f}  ·  outcome = Q26 weekly+",
     )
-    fig.subplots_adjust(top=0.80, left=0.12, right=0.98, bottom=0.12, wspace=0.28)
+    fig.subplots_adjust(top=0.80, left=0.14, right=0.98, bottom=0.12, wspace=0.28)
     return save_figure(fig, Path(output_path))
 
 
