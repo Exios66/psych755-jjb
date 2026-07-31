@@ -41,9 +41,9 @@ Document the first wave of **live GPU vLLM** evaluations on the matched analytic
 
 ## Intentionally deferred (future work)
 
-- **v2 / v3 prompt re-runs** on 1–2 models (priority: Llama-3.1 to test whether packaging stops the transit IP collapse; DeepSeek as the stable comparator). Packaging and ablation tiers are **already in code**; GPU evaluation is the missing piece — see [`persona_prompt_versions.md`](persona_prompt_versions.md).  
+- **Canonical `v3_enhanced` refresh** — v2 is GPU-evaluated on Llama-3.1-8B, Llama-3.2-3B-Instruct, and DeepSeek-R1-Distill-8B (v2_enhanced; `exports/v2/`), and v3 greedy 8-tier ablations on Llama-3.1, 3.2-3B-Instruct, and 3.3-70B (`exports/v3/`); the committed v3 packages are greedy-decode (identical to `prior_v3_greedy`), so the `v3_enhanced` decode refresh remains — see [`persona_prompt_versions.md`](persona_prompt_versions.md).  
 - Live TreeSHAP / stereotyping slice memos per model  
-- Temperature / constrained-decoding ablations  
+- Temperature / constrained-decoding ablations (70B `large_model` preset)  
 
 ## Reproduction
 

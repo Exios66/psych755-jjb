@@ -17,7 +17,7 @@ Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to
 
 ![Permutation importance and ROC curve for the tuned kitchen-sink Random Forest](figures/comprehensive_predictors_transit_memo.png)
 
-**Univariate screen.** Fit alone, `Q28` already achieves AUC ≈ **0.762**. No other primary feature exceeds 0.58 alone (`Age` ≈ 0.580; `gt_group_ca` ≈ 0.555; lat/lon and country ≈ 0.55). Proximal `Q27` (rides on a typical public-transit day)—reserved for an upper-bound model—scores ≈ 0.594 univariate.
+**Univariate screen.** Fit alone, `Q28` already achieves AUC ≈ **0.762**. No other primary feature exceeds 0.58 alone (`Age` ≈ 0.580; `gt_group_ca` ≈ 0.555; lat/lon and country ≈ 0.55). Proximal `Q27` (rides on a typical public-transit day)—reserved for an upper-bound model—scores ≈ 0.594 univariate on the imputed n = 241 screen frame (cf. the seeded Q27-only model, AUC **0.589** on n = 239 in [`q27_q28_predict_transit.md`](q27_q28_predict_transit.md)).
 
 **Feature-group ablations.**
 

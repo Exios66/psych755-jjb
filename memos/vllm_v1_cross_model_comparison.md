@@ -51,7 +51,31 @@ Non-collapsed models remain **above** the tabular Ridge floor (group MAE 4.49). 
 
 **Interpretation.** Prompt-v1 transit text is a **model-dependent hazard**, not a universal aid. Llama-3.1 over-predicts interpersonal CA once mobility cues appear. Llama-3.2 and DeepSeek are more robust; DeepSeek is the most **tier-stable**, while Llama-3.2 is the best **coarse group-band** classifier among the three. Llama-3.3-70B shows that **scale alone does not fix** digital-twin recovery — without predictive variance, tier RQs are uninterpretable.
 
-**Conclusion.** For prompt-v1 digital-twin evaluation on this cohort: prefer **DeepSeek-R1-Distill-Llama-8B** when minimizing group MAE, **Llama-3.2-3B-Instruct** when maximizing group band recovery / IP MAE, treat **Llama-3.1-8B-Instruct** as the cautionary transit-IP baseline that motivated packaging v2/v3, and treat **Llama-3.3-70B** as a **mode-collapse** cautionary case (not a scale win). No model yet closes the gap to classical ML (~4.5 MAE). Re-runs on v2/v3 prompts (and non-collapsed 70B decoding) remain necessary before claiming packaging or scale fixes stereotyping.
+**Conclusion.** For prompt-v1 digital-twin evaluation on this cohort: prefer **DeepSeek-R1-Distill-Llama-8B** when minimizing group MAE, **Llama-3.2-3B-Instruct** when maximizing group band recovery / IP MAE, treat **Llama-3.1-8B-Instruct** as the cautionary transit-IP baseline that motivated packaging v2/v3, and treat **Llama-3.3-70B** as a **mode-collapse** cautionary case (not a scale win). No model yet closes the gap to classical ML (~4.5 MAE).
+
+---
+
+## v2 / v3 follow-up (evaluated)
+
+The archived v2/v3 exports (`exports/v2/`, `exports/v3/`) answer the questions left open above. Pooled metrics:
+
+| Prompt version | Model | MAE group | MAE IP | Transit IP | Notes |
+|---|---|---:|---:|---:|---|
+| v2 (v2_enhanced) | DeepSeek-R1-Distill-8B | **5.02** | **5.26** | **5.09** | Best live result; no collapse |
+| v2 | Llama-3.2-3B-Instruct | 5.73 | 6.07 | 5.77 | v1 IP win (5.35) not replicated |
+| v2 | Llama-3.1-8B-Instruct | 5.99 | 7.63 | 8.23 | Collapse persists; demos IP 8.45 |
+| v3 (greedy, 8 tiers) | Llama-3.1-8B-Instruct | 5.99 | 5.76 | 7.77 | Single-cue ablations 4.85–5.92 |
+| v3 | Llama-3.2-3B-Instruct | 5.72 | 6.81 | 6.14 | — |
+| v3 | Llama-3.3-70B-Instruct | 6.01 | 4.61† | 4.61† | †Constant prior persists |
+
+**Answers to the open questions:**
+
+1. **Do v2/v3 remove Llama-3.1's transit IP collapse without harming DeepSeek / 3B?** *No for Llama-3.1.* Signal-first packaging + mobility anti-bleed do not stop the collapse (transit IP 8.23 ≈ 8.17) and raise its base IP error (demos 4.67 → 8.45). DeepSeek *improves* under v2 (group 5.22 → 5.02; IP 5.73 → 5.26). Llama-3.2-3B's v1 interpersonal advantage does not survive v2/v3 packaging.
+2. **Is the collapse a packaging artifact or combination-specific?** *Combination-specific.* Greedy v3 single-cue tiers leave IP stable (`v3_public_transit` 4.85, `v3_voice` 5.82, `v3_rideshare` 5.92); only the bundled mobility dump collapses it (7.77).
+3. **Can temperature / constrained decoding restore 70B variance?** *Not under greedy v3* (constant prior `(18, 12)` persists); the `v3_enhanced` / `large_model` presets remain untested on 70B.
+4. **Signed-error / stereotyping slices across models?** Still open — run `ca-personas stereotype-eval` on each package's `tables/02_evaluation_rowlevel.csv`.
+
+Open-text voice is **not** the collapse driver: `v3_voice` group MAE 5.64 / IP 5.82 for Llama-3.1 beat the kitchen-sink `transit` (6.07 / 7.77). On group MAE, `v3_rideshare` (5.86) is Llama-3.1's best tier, matching tabular Q28 dominance.
 
 *Sources:* `data/vllm/llama3_1.md` · `data/vllm/llama32_instruct.md` · `data/vllm/deepseek-distilled/deepseek_v1.md` · `data/vllm/llama-3-70b/llama_70b.md` · docs LLM baselines · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
 

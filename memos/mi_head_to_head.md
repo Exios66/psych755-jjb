@@ -23,7 +23,7 @@ We compare each predictor family under **listwise complete-case** versus **M = 2
 
 | Feature family | CC *n* | CC AUC | MI *n* | MI AUC | Δ (MI − CC) |
 |---|---:|---:|---:|---:|---:|
-| CA + Q28 + car (joint) | 149 | 0.734 | 241 | **0.808** | +0.074 |
+| CA + Q28 + car (joint) | 149 | 0.736 | 241 | **0.808** | +0.072 |
 | Demos + Q28 (joint) | 224 | 0.773 | 241 | 0.771 | −0.002 |
 | **Q28 days** | 241 | **0.762** | 241 | **0.762** | 0.000 |
 | Age + Sex + Student | 224 | 0.618 | 241 | 0.617 | −0.001 |
@@ -36,7 +36,7 @@ We compare each predictor family under **listwise complete-case** versus **M = 2
 
 1. **Rideshare advantage is not an artifact of complete-case *N*.** On the full analytic frame with MI-filled car/student items, Q28 still outranks demographics, CA, and car as a *singleton* family—the same ordinal conclusion as the common-*N* memo.  
 2. **MI does not “restore” demos/CA.** Expanding Student-missing rows to n = 241 leaves demographics ≈ 0.617 (flat vs their own CC). CA is unchanged because it was already complete. Neither approaches Q28.  
-3. **Imputation mainly helps *joint* mobility models.** Filling Q20/Q21 lets CA+Q28+car train on all 241 rows and lifts AUC (0.734 → 0.808). Standalone car *weakens* under MI (0.607 → 0.562)—imputed car is a noisier cue than car observed on the selected complete-case subset.  
+3. **Imputation mainly helps *joint* mobility models.** Filling Q20/Q21 lets CA+Q28+car train on all 241 rows and lifts AUC (0.736 → 0.808). Standalone car *weakens* under MI (0.607 → 0.562)—imputed car is a noisier cue than car observed on the selected complete-case subset.  
 4. Joint demos+Q28 stays high (~0.77) but still tracks Q28 rather than a demography rebound.
 
 *Sources:* `ca-personas followup-experiments --experiments mi_head_to_head --n-imputations 20` · `outputs/followup_experiments/mi_head_to_head/` · Posit full-cohort artifacts (n = 241)

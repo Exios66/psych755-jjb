@@ -56,4 +56,4 @@ How much of the `Q28`→`Q26` link is multimodality versus correlated urbanicity
 
 ## What other features may also well-predict regular public transit use?
 
-Car access recovers AUC = **0.607** ([`car_access_predicts_transit.md`](car_access_predicts_transit.md)); the joint car+employment+ride-share bundle recovers AUC = **0.747** on n = 143 — only +0.002 over ride-share alone on that smaller complete-case subset ([`transit_covariate_followups.md`](transit_covariate_followups.md)).
+Car access recovers AUC = **0.607** ([`car_access_predicts_transit.md`](car_access_predicts_transit.md)); the joint car+employment+ride-share bundle recovers AUC = **0.746** on n = 143 — only +0.002 over ride-share alone on that smaller complete-case subset ([`transit_covariate_followups.md`](transit_covariate_followups.md)).

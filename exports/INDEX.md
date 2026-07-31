@@ -1,6 +1,6 @@
 # vLLM export index
 
-_Regenerated 2026-07-28 23:53:56_
+_Regenerated 2026-07-30 22:13:21_
 
 Layout:
 
@@ -25,13 +25,13 @@ Transit-focus packages: `scripts/package_transit_focus_export.py` → `exports/t
 | ✅ done | `v2` | `llama31_8b_instruct_v2` | Llama-3.1-8B-Instruct |
 | ⏳ pending | `v2` | `llama32_3b_v2` | Llama-3.2-3B (base) |
 | ✅ done | `v2` | `llama32_3b_instruct_v2` | Llama-3.2-3B-Instruct |
-| ⏳ pending | `v2` | `deepseek_r1_distill_llama8b_v2` | DeepSeek-R1-Distill-Llama-8B |
+| ✅ done | `v2` | `deepseek_r1_distill_llama8b_v2` | DeepSeek-R1-Distill-Llama-8B |
 | ⏳ pending | `v2` | `llama33_70b_instruct_awq_v2` | Llama-3.3-70B-Instruct-AWQ |
-| ⏳ pending | `v3` | `llama31_8b_instruct_v3` | Llama-3.1-8B-Instruct |
-| ⏳ pending | `v3` | `llama32_3b_v3` | Llama-3.2-3B (base) |
-| ⏳ pending | `v3` | `llama32_3b_instruct_v3` | Llama-3.2-3B-Instruct |
+| ✅ done | `v3` | `llama31_8b_instruct_v3` | Llama-3.1-8B-Instruct |
+| ✅ done | `v3` | `llama32_3b_v3` | Llama-3.2-3B (base) |
+| ✅ done | `v3` | `llama32_3b_instruct_v3` | Llama-3.2-3B-Instruct |
 | ⏳ pending | `v3` | `deepseek_r1_distill_llama8b_v3` | DeepSeek-R1-Distill-Llama-8B |
-| ⏳ pending | `v3` | `llama33_70b_instruct_awq_v3` | Llama-3.3-70B-Instruct-AWQ |
+| ✅ done | `v3` | `llama33_70b_instruct_awq_v3` | Llama-3.3-70B-Instruct-AWQ |
 
 ## Transit-focus queue matrix (TF1/TF2)
 
@@ -43,8 +43,6 @@ Predict `regular_transit` + Q26 from demos/employment/geo/(+CA) with mobility he
 | ⏳ pending | `transit_focus` | `llama32_3b_instruct_transit_focus` | Llama-3.2-3B-Instruct |
 | ⏳ pending | `transit_focus` | `deepseek_r1_distill_llama8b_transit_focus` | DeepSeek-R1-Distill-Llama-8B |
 | ⏳ pending | `transit_focus` | `llama33_70b_instruct_awq_transit_focus` | Llama-3.3-70B-Instruct-AWQ |
-
-**Queue currently on:** `llama32_3b_instruct_v2`
 
 ## `v1/` — Published prompt-v1 baselines (greedy / Jul-26).
 
@@ -60,12 +58,18 @@ Predict `regular_transit` + Q26 from demos/employment/geo/(+CA) with mobility he
 
 | Package dir | Model | Tiers | Parse | Report |
 |---|---|---:|---:|---|
+| [`psych755_vllm_deepseek_r1_distill_llama8b_v2_full_cohort_20260730_2213`](v2/psych755_vllm_deepseek_r1_distill_llama8b_v2_full_cohort_20260730_2213/) | `deepseek-ai/DeepSeek-R1-Distill-Llama-8B` | 5 | 99.8% | yes |
 | [`psych755_vllm_llama31_8b_instruct_v2_full_cohort_20260728_2214`](v2/psych755_vllm_llama31_8b_instruct_v2_full_cohort_20260728_2214/) | `meta-llama/Llama-3.1-8B-Instruct` | 5 | 99.9% | yes |
 | [`psych755_vllm_llama32_3b_instruct_v2_full_cohort_20260728_2353`](v2/psych755_vllm_llama32_3b_instruct_v2_full_cohort_20260728_2353/) | `meta-llama/Llama-3.2-3B-Instruct` | 5 | 100.0% | yes |
 
 ## `v3/` — 8-tier ablations + `v3_enhanced` / `large_model` presets (refreshed anti-bleed).
 
-_Empty — new packages will appear here._
+| Package dir | Model | Tiers | Parse | Report |
+|---|---|---:|---:|---|
+| [`psych755_vllm_llama31_8b_instruct_v3_full_cohort_20260729_1039`](v3/psych755_vllm_llama31_8b_instruct_v3_full_cohort_20260729_1039/) | `meta-llama/Llama-3.1-8B-Instruct` | 8 | 100.0% | yes |
+| [`psych755_vllm_llama32_3b_instruct_v3_full_cohort_20260729_1039`](v3/psych755_vllm_llama32_3b_instruct_v3_full_cohort_20260729_1039/) | `meta-llama/Llama-3.2-3B-Instruct` | 8 | 100.0% | yes |
+| [`psych755_vllm_llama32_3b_v3_full_cohort_20260729_1039`](v3/psych755_vllm_llama32_3b_v3_full_cohort_20260729_1039/) | `meta-llama/Llama-3.2-3B` | 8 | 0.0% | yes |
+| [`psych755_vllm_llama33_70b_instruct_awq_v3_full_cohort_20260729_1039`](v3/psych755_vllm_llama33_70b_instruct_awq_v3_full_cohort_20260729_1039/) | `meta-llama/Llama-3.3-70B-Instruct-AWQ` | 8 | 100.0% | yes |
 
 ## `transit_focus/` — TF1/TF2: predict regular transit + Q26 with mobility held out.
 
@@ -82,13 +86,8 @@ _Empty — new packages will appear here._
 ## Not on disk yet (will appear as queues finish)
 
 - `v2/psych755_vllm_llama32_3b_v2_full_cohort_<stamp>/` — Llama-3.2-3B (base) 
-- `v2/psych755_vllm_deepseek_r1_distill_llama8b_v2_full_cohort_<stamp>/` — DeepSeek-R1-Distill-Llama-8B 
 - `v2/psych755_vllm_llama33_70b_instruct_awq_v2_full_cohort_<stamp>/` — Llama-3.3-70B-Instruct-AWQ 
-- `v3/psych755_vllm_llama31_8b_instruct_v3_full_cohort_<stamp>/` — Llama-3.1-8B-Instruct 
-- `v3/psych755_vllm_llama32_3b_v3_full_cohort_<stamp>/` — Llama-3.2-3B (base) 
-- `v3/psych755_vllm_llama32_3b_instruct_v3_full_cohort_<stamp>/` — Llama-3.2-3B-Instruct 
 - `v3/psych755_vllm_deepseek_r1_distill_llama8b_v3_full_cohort_<stamp>/` — DeepSeek-R1-Distill-Llama-8B 
-- `v3/psych755_vllm_llama33_70b_instruct_awq_v3_full_cohort_<stamp>/` — Llama-3.3-70B-Instruct-AWQ 
 - `transit_focus/psych755_vllm_llama31_8b_instruct_transit_focus_full_cohort_<stamp>/` — Llama-3.1-8B-Instruct 
 - `transit_focus/psych755_vllm_llama32_3b_instruct_transit_focus_full_cohort_<stamp>/` — Llama-3.2-3B-Instruct 
 - `transit_focus/psych755_vllm_deepseek_r1_distill_llama8b_transit_focus_full_cohort_<stamp>/` — DeepSeek-R1-Distill-Llama-8B 

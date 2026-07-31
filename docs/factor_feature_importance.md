@@ -26,7 +26,7 @@ Practical takeaway for the manuscript: reporting **separate** MAE for group vs i
 
 A Random Forest predicting CA from persona-style covariates on the **full matched analytic cohort (N = 241)**, with permutation importance on held-out folds, ranks features as follows (mean importance across group + interpersonal targets).
 
-**Reconciliation note.** This table ranks covariates for predicting **CA**. The TreeSHAP ranking in [`memos/feature_predictive_power_ml_llm.md`](../memos/feature_predictive_power_ml_llm.md) also predicts CA but with a different explainer (Age is 6th there; Employment is 2nd). Neither ranking is a “global” importance order for predicting **regular transit** (see secondary RQ memos).
+**Reconciliation note.** This table (permutation importance on held-out folds) and the TreeSHAP ranking in [`memos/feature_predictive_power_ml_llm.md`](../memos/feature_predictive_power_ml_llm.md) (mean \|SHAP\| at the `transit` tier, real vLLM-backed outputs in `outputs/shap_eval/`) both rank covariates for predicting **CA**, but with different explainers: permutation puts Age 2nd, while TreeSHAP puts Employment 2nd and Age 6th. Q28 (ride-share days) leads under both. A third ranking — the surrogate SHAP of the live DeepSeek v2 persona agent — shows the LLM over-weights geolocation and Age relative to the Q28/employment mix that predicts true CA (see the memo). Neither the permutation nor the TreeSHAP ranking is a “global” importance order for predicting **regular transit** (see secondary RQ memos), where Q28 (AUC 0.762) still leads but Age and longitude also carry weight.
 
 ![Top covariates](figures/feature_importance_top.png)
 

@@ -45,7 +45,7 @@ Benchmarks pasted from companion seeded runs: geo AUC = 0.551; CA AUC = 0.590; c
 | Spec | n | ROC-AUC | AP | Bal. acc. | F1 |
 |---|---:|---:|---:|---:|---:|
 | **Q28 only** | 241 | **0.762** | 0.689 | 0.730 | 0.702 |
-| Mobility bundle | 143 | 0.747 | 0.605 | 0.717 | 0.667 |
+| Mobility bundle | 143 | 0.746 | 0.604 | 0.717 | 0.667 |
 | Ride-share (Q28/Q29) | 233 | 0.745 | 0.655 | 0.731 | 0.709 |
 | Car access (Q20/Q21) | 149 | 0.607 | 0.515 | 0.639 | 0.476 |
 | CA benchmark | 241 | 0.590 | — | — | — |

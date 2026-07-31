@@ -51,6 +51,6 @@ Communication-apprehension scores (group and interpersonal PRCA) were examined i
 | Ride-share frequency (`Q28`/`Q29`) | [`rideshare_predicts_transit.md`](rideshare_predicts_transit.md) | `secondary_rq_rideshare_transit_rf.ipynb` | **0.745** |
 | Car license & access (`Q20`/`Q21`) | [`car_access_predicts_transit.md`](car_access_predicts_transit.md) | `secondary_rq_car_access_transit_rf.ipynb` | **0.607** |
 | Employment status | [`employment_predicts_transit.md`](employment_predicts_transit.md) | `secondary_rq_employment_transit_rf.ipynb` | **0.528** |
-| Joint mobility bundle | [`transit_covariate_followups.md`](transit_covariate_followups.md) | `secondary_rq_transit_covariate_followups.ipynb` | **0.747** |
+| Joint mobility bundle | [`transit_covariate_followups.md`](transit_covariate_followups.md) | `secondary_rq_transit_covariate_followups.ipynb` | **0.746** |
 
 CLI: `ca-personas covariate-transit-rf --join inner --seed 42`.

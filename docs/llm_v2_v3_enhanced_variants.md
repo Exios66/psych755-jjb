@@ -20,7 +20,7 @@ subtitle: "Literature- and data-backed improvements for the next GPU digital-twi
 
 ---
 
-## Packaging enhancements (already in code; GPU-evaluated on Llama-3.1 v2; v3 prior runs archived)
+## Packaging enhancements (in code; GPU-evaluated — see [results](#results-july-2026-runs))
 
 | Change | Rationale |
 |---|---|
@@ -61,7 +61,30 @@ python -m inference.export_prompts --output-dir outputs/vllm_prompts_v3  # all 8
 VLLM_PRESET=v3_enhanced MODEL=deepseek-ai/DeepSeek-R1-Distill-Llama-8B ./scripts/run_vllm.sh
 ```
 
-**Acceptance criteria** (vs v1 Llama baseline): transit IP MAE no longer explodes; `v3_rideshare` ≥ `v3_public_transit` on group MAE; `v3_voice` helps without IP penalty; stereotyping gaps remain measurable ([`persona_prompt_versions.md`](persona_prompt_versions.md)).
+## Results (July 2026 runs)
+
+GPU exports under `exports/v2/` (v2_enhanced decode; 5 tiers) and `exports/v3/` (greedy decode; 8 tiers) are evaluated with the project evaluator. Pooled metrics per model:
+
+| Prompt version | Model | MAE group | MAE IP | Band G | Band IP | Notes |
+|---|---|---:|---:|---:|---:|---|
+| v2 | DeepSeek-R1-Distill-Llama-8B | **5.02** | **5.26** | 35.7% | 34.2% | Best live result; transit IP 5.09 (no collapse) |
+| v2 | Llama-3.1-8B-Instruct | 5.99 | 7.63 | 29.9% | 25.7% | Collapse persists (transit 8.23); demos IP 8.45 |
+| v2 | Llama-3.2-3B-Instruct | 5.73 | 6.07 | 32.2% | 42.3% | v1 IP win (5.35) not replicated |
+| v3 | Llama-3.1-8B-Instruct | 5.99 | 5.76 | 25.5% | 42.9% | Transit tier 7.77; ablations 4.85–5.92 |
+| v3 | Llama-3.2-3B-Instruct | 5.72 | 6.81 | 41.8% | 40.6% | — |
+| v3 | Llama-3.3-70B-Instruct-AWQ | 6.01 | 4.61† | 26.5% | 52.6%† | †Constant prior `(18, 12)` persists |
+
+Llama-3.2-3B (base) failed JSON parsing in both v1 (7.1%) and v3 (0%) and is excluded. v3 packages are byte-identical to the archived `prior_v3_greedy` runs.
+
+**Acceptance-criteria verdicts (vs v1 Llama baseline):**
+
+1. **Transit IP no longer explodes?** *No for Llama-3.1* — v2 transit IP 8.23 ≈ v1 8.17, and demos IP worsens (4.67 → 8.45). DeepSeek v2 is flat (transit IP 5.09). Packaging changes error in model-specific directions.
+2. **`v3_rideshare` ≥ `v3_public_transit` on group MAE?** *Yes* — Llama-3.1: 5.86 < 6.04, and `v3_rideshare` (5.86) beats the kitchen-sink `transit` tier (6.07).
+3. **`v3_voice` helps without IP penalty?** *Yes* — group 5.64, IP 5.82 vs transit 6.07 / 7.77.
+4. **Collapse combination-specific?** *Yes* — single cues stable (IP 4.85–5.92); only the bundled mobility dump collapses (7.77).
+5. **Stereotyping gaps remain measurable?** *Pending* — run `ca-personas stereotype-eval` on each package’s `tables/02_evaluation_rowlevel.csv`.
+
+Still open: canonical `v3_enhanced` decode refresh, v2/v3 on the base 3B, and 70B under `large_model`.
 
 ---
 

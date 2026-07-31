@@ -57,7 +57,7 @@ From committed analytic participants (`artifacts/posit_full_cohort/participants.
 | Profile → regular | 224 | ROC-AUC **0.662** | Beats chance; Age + longitude lead permutation importance |
 | Profile + CA → regular | 224 | ROC-AUC **0.672** | CA adds only **+0.010** AUC over profile alone |
 | Profile + CA → Q26 | 224 | Bal. acc. **0.283** (ordinal MAE **1.22**) | Beats majority accuracy (0.228) but weak absolute recovery |
-| Profile + CA → Q27 | 221 | Bal. acc. **0.371** (ordinal MAE **0.38**) | Does **not** beat majority accuracy (0.805; class imbalance) |
+| Profile + CA → Q27 | 222 | Bal. acc. **0.371** (ordinal MAE **0.38**) | Does **not** beat majority accuracy (0.805; class imbalance) |
 
 Compare: Wave-2 Age+Sex+Student → regular transit AUC = **0.618** (n=224). Adding employment + lat/long lifts the tabular ceiling to **0.662** without any mobility self-report.
 

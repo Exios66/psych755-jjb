@@ -33,7 +33,7 @@ CLI: `ca-personas transit-focus` · artifacts `outputs/transit_focus/` · LLM pr
 | Profile → regular transit | 224 | ROC-AUC | **0.662** |
 | Profile + CA → regular transit | 224 | ROC-AUC | **0.672** |
 | Profile + CA → Q26 days | 224 | Balanced accuracy / ordinal MAE | **0.283** / **1.22** |
-| Profile + CA → Q27 rides | 221 | Balanced accuracy / ordinal MAE | **0.371** / **0.38** |
+| Profile + CA → Q27 rides | 222 | Balanced accuracy / ordinal MAE | **0.371** / **0.38** |
 
 **TF1.** Non-mobility profile alone recovers regular ridership well above chance (0.662). Adding CA scores helps only modestly (+0.010). Permutation importance is led by **Age**, then **longitude**, latitude, employment — consistent with the Wave-2 demographics memo (Age+Sex+Student AUC 0.618) but stronger once place and work are included.
 
