@@ -4,6 +4,7 @@
   "n_not_regular": 140,
   "prevalence": 0.4190871369294606,
   "transit_ca": {
+    "memo": "memos/transit_riders_ca.md",
     "group": {
       "score": "gt_group_ca",
       "n_regular": 101,
@@ -17,14 +18,14 @@
       "pct_diff_vs_overall": -10.824501859947627,
       "welch_t": -3.676531638712411,
       "welch_df": 236.9131613823941,
-      "welch_p": 0.00029250822800505247,
+      "welch_p": 0.0002925082280050524,
       "mannwhitney_u": 5374.5,
       "mannwhitney_p": 0.0014555822517995248,
       "cohens_d": -0.46238123740548615,
       "hedges_g": -0.4609287309005474,
       "boot_diff_vs_not_regular": -2.7246817538896746,
-      "boot_ci_low": -4.14541548797737,
-      "boot_ci_high": -1.2844236209335258,
+      "boot_ci_low": -4.229971711456861,
+      "boot_ci_high": -1.2169572135784998,
       "significant_at_05": true
     },
     "interpersonal": {
@@ -46,20 +47,19 @@
       "cohens_d": -0.2997797392856572,
       "hedges_g": -0.2988380228271682,
       "boot_diff_vs_not_regular": -1.7287835926449802,
-      "boot_ci_low": -3.1220526874115992,
-      "boot_ci_high": -0.2536386138613856,
+      "boot_ci_low": -3.0726661951909486,
+      "boot_ci_high": -0.22740275813295788,
       "significant_at_05": true
-    },
-    "memo": "memos/transit_riders_ca.md"
+    }
   },
   "geo_rf": {
-    "roc_auc": 0.5512729844413012,
+    "roc_auc": 0.5511315417256011,
     "country_only_roc_auc": 0.5492220650636492,
     "chance": 0.5,
     "memo": "memos/geo_predicts_transit.md"
   },
   "ca_rf": {
-    "roc_auc": 0.5896746817538897,
+    "roc_auc": 0.5898161244695899,
     "group_only": 0.5547736916548798,
     "interpersonal_only": 0.5064710042432814,
     "confusion": {
@@ -81,7 +81,7 @@
       "average_precision": 0.688872869993286,
       "balanced_accuracy": 0.7303748231966054,
       "f1": 0.7022222222222222,
-      "brier": 0.1894062656618444
+      "brier": 0.18940626566184446
     },
     {
       "spec_key": "q27_q28",
@@ -93,7 +93,7 @@
       "average_precision": 0.689606135030495,
       "balanced_accuracy": 0.6960467785909026,
       "f1": 0.6666666666666666,
-      "brier": 0.1925951643823189
+      "brier": 0.1925975303073085
     },
     {
       "spec_key": "mobility_bundle",
@@ -101,11 +101,11 @@
       "n": 143.0,
       "n_regular": 56.0,
       "prevalence": 0.3916083916083916,
-      "roc_auc": 0.7467159277504106,
-      "average_precision": 0.6052583001385728,
+      "roc_auc": 0.7461001642036125,
+      "average_precision": 0.604275756408346,
       "balanced_accuracy": 0.7166461412151067,
       "f1": 0.6666666666666666,
-      "brier": 0.1975936141216755
+      "brier": 0.19753305426005585
     },
     {
       "spec_key": "rideshare",
@@ -117,19 +117,19 @@
       "average_precision": 0.6548216401037097,
       "balanced_accuracy": 0.731079451228705,
       "f1": 0.7085201793721974,
-      "brier": 0.1971843756206003
+      "brier": 0.19716100129030228
     },
     {
       "spec_key": "car_access",
       "label": "Car license & access (Q20/Q21)",
       "n": 149.0,
       "n_regular": 58.0,
-      "prevalence": 0.3892617449664429,
+      "prevalence": 0.38926174496644295,
       "roc_auc": 0.6073323228495642,
       "average_precision": 0.5150205538870885,
       "balanced_accuracy": 0.6394467601364153,
-      "f1": 0.4761904761904761,
-      "brier": 0.2266754065572617
+      "f1": 0.47619047619047616,
+      "brier": 0.22667569578210986
     },
     {
       "spec_key": "ca_benchmark",
@@ -153,7 +153,7 @@
       "average_precision": 0.513399352861135,
       "balanced_accuracy": 0.6225426890515138,
       "f1": 0.4666666666666667,
-      "brier": 0.230955256494286
+      "brier": 0.23095893474081577
     },
     {
       "spec_key": "geo_benchmark",
@@ -174,10 +174,10 @@
       "n_regular": 101.0,
       "prevalence": 0.4190871369294606,
       "roc_auc": 0.5280763790664781,
-      "average_precision": 0.4244485046490305,
+      "average_precision": 0.42444850464903056,
       "balanced_accuracy": 0.5595120226308345,
       "f1": 0.5857142857142857,
-      "brier": 0.24724032068607
+      "brier": 0.24724032068607005
     },
     {
       "spec_key": "chance",
@@ -256,5 +256,19 @@
     "followups": "memos/transit_covariate_followups.md",
     "feature_power": "memos/feature_predictive_power_ml_llm.md",
     "ml_baselines": "docs/ml_baselines.md"
+  },
+  "meta": {
+    "seed": 42,
+    "n_boot": 800,
+    "n_perm_repeats": 8,
+    "covariate_specs": [
+      "car_access",
+      "employment",
+      "rideshare",
+      "q27_intensity",
+      "q28_days",
+      "q27_q28",
+      "mobility_bundle"
+    ]
   }
 }

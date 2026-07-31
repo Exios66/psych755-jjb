@@ -20,7 +20,7 @@ subtitle: "Literature- and data-backed improvements for the next GPU digital-twi
 
 ---
 
-## Packaging enhancements (already in code; v2/v3)
+## Packaging enhancements (already in code; GPU-evaluated on Llama-3.1 v2; v3 prior runs archived)
 
 | Change | Rationale |
 |---|---|

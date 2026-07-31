@@ -115,7 +115,11 @@ def resolve_full_data(*, allow_excerpt: bool) -> tuple[list[Path], Path]:
 
 def run(cmd: list[str], *, cwd: Path = ROOT) -> None:
     _log("$ " + " ".join(cmd))
-    subprocess.run(cmd, cwd=cwd, check=True)
+    env = os.environ.copy()
+    venv_bin = ROOT / ".venv" / "bin"
+    if venv_bin.is_dir():
+        env["PATH"] = f"{venv_bin}{os.pathsep}{env.get('PATH', '')}"
+    subprocess.run(cmd, cwd=cwd, check=True, env=env)
 
 
 def run_full_analyses(prolific: list[Path], qualtrics: Path, *, seed: int) -> None:

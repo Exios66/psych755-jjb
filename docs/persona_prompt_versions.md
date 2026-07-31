@@ -7,7 +7,7 @@ subtitle: "How the Terrarium tier stack evolved for RQ efficiency and predictive
 **System contract:** [`prompts/system_prompt.md`](../prompts/system_prompt.md)  
 **Examples:** [`prompts/examples/`](../prompts/examples/)
 
-This page maps the three prompt generations used in the project. **All primary digital-twin claims in the manuscript are prompt-v1.** Versions 2–3 are **implemented in code** (signal-first packaging + three ablation tiers) but **not yet GPU-evaluated**; they are design extensions for future work, motivated by the Llama-3.1 transit interpersonal collapse on v1.
+This page maps the three prompt generations used in the project. **All primary digital-twin claims in the manuscript are prompt-v1.** Versions 2–3 are **implemented in code** (signal-first packaging + three ablation tiers). v2 packaging has been GPU-evaluated on **Llama-3.1-8B-Instruct** (v2_enhanced preset; Rogers GPU; July 28). v3 ablation tiers have prior-greedy runs archived for comparison (Llama-3.1, Llama-3.2-3B, Llama-3.3-70B; July 28). The full multi-model v2/v3 live-baseline evaluation and canonical v3 refresh remain pending.
 
 ---
 
@@ -16,8 +16,8 @@ This page maps the three prompt generations used in the project. **All primary d
 | Version | What changed | Tiers | Live LLM baseline |
 |---|---|---:|---|
 | **v1** | Original Terrarium core ladder; high-precision lat/lon; rides-per-day even when Never; fused CA ask | 5 (`demos`→`full`) | **Yes** — [Llama-3.1 report](llm_baseline_llama31_v1.md) (+ three sibling models) |
-| **v2 (v3.1 packaging)** | Same 5 fields/topology; signal-first packaging (1-decimal geo, skip intensity when Never, independent-subscale ask, light system calibration) | 5 | **Designed; GPU re-run deferred (future work)** |
-| **v3** | Keeps v2 packaging; adds three parallel ablations on the demos→employment→geo base | **8** | **Designed; GPU re-run deferred (future work)** |
+| **v2 (v3.1 packaging)** | Same 5 fields/topology; signal-first packaging (1-decimal geo, skip intensity when Never, independent-subscale ask, light system calibration) | 5 | **Yes** — [Llama-3.1-8B](exports/v2/psych755_vllm_llama31_8b_instruct_v2_full_cohort_20260728_2214/) (v2_enhanced; Rogers GPU; Jul 28); multi-model suite pending |
+| **v3** | Keeps v2 packaging; adds three parallel ablations on the demos→employment→geo base | **8** | **Prior-greedy** (Llama-3.1/3.2/3.3-70B; Jul 28; archived pre-refresh); canonical evaluation pending |
 
 ```mermaid
 flowchart TB

@@ -59,7 +59,7 @@ Live GPU baselines are documented separately in [`docs/llm_vllm_memo_agenda.md`]
 
 ## Intentionally deferred (future work; need further live LLM or new data)
 
-- **v2 / v3 prompt re-runs** on the same GPU models (design extensions implemented in code; not yet GPU-evaluated — [`persona_prompt_versions.md`](persona_prompt_versions.md))
+- **v2 / v3 prompt re-runs** on the same GPU models (v2 evaluated on Llama-3.1-8B [v2_enhanced]; v3 prior-greedy runs archived; full multi-model suite and canonical v3 refresh pending — [`persona_prompt_versions.md`](persona_prompt_versions.md))
 - Live-LLM TreeSHAP / surrogate SHAP (mock already covered)
 - Richer / MNAR-sensitive MI of car items (wave-2 MI head-to-head is implemented; see [`memos/mi_head_to_head.md`](../memos/mi_head_to_head.md))
 - City/density GIS layers beyond Qualtrics lat/long

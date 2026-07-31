@@ -1,6 +1,6 @@
 {
   "data_source": "full_cohort File A/B/C",
-  "resolved_source_label": "/tmp/sibling_data File A/B/C",
+  "resolved_source_label": "../sibling_data File A/B/C",
   "n_analytic": 241,
   "provider": "mock",
   "join_how": "inner",
@@ -9,8 +9,13 @@
     "employment",
     "geo",
     "transit",
-    "full"
+    "full",
+    "v3_rideshare",
+    "v3_public_transit",
+    "v3_voice"
   ],
   "n_prolific_files": 2,
+  "secondary_results": "artifacts/posit_full_cohort/secondary_results.json",
+  "secondary_seed": 42,
   "note": "Committed for Posit Connect Cloud renders when private File A/B/C are absent. Never generated from data/excerpts/."
 }
