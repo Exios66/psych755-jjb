@@ -68,3 +68,11 @@ notebooks/*.executed.ipynb
 .sibling_data_link
 # Added by Braintrust Wizard
 .braintrust.json
+
+# Large vLLM data CSVs — keep only per-run REPORT/meta/small aggregate tables
+**/results.csv
+exports/**/raw/
+exports/**/tables/01_vllm_predictions_parsed.csv
+exports/**/tables/02_evaluation_rowlevel.csv
+*.zip
+!exports/**/REPORT_results_interpretation_and_model_success.html
