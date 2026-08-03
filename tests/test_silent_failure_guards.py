@@ -68,8 +68,14 @@ def test_config_path_resolution_falls_back_to_excerpts(monkeypatch, tmp_path):
         "_staging_dirs",
         lambda: [tmp_path / "missing_sibling", tmp_path / "also_missing"],
     )
-    # Config lists sibling_data paths that are absent in this sandbox.
+    # Point the config's sibling_data paths at absent locations so the test is
+    # hermetic regardless of whether full-cohort exports are staged locally.
     config = load_config(ROOT / "config" / "default.yaml")
+    config["paths"]["prolific_files"] = [
+        str(tmp_path / "missing_FileA.csv"),
+        str(tmp_path / "missing_FileB.csv"),
+    ]
+    config["paths"]["qualtrics"] = str(tmp_path / "missing_FileC.csv")
     prolific = _resolve_prolific_paths(None, config, allow_excerpt_fallback=True)
     qualtrics = _resolve_qualtrics_path(None, config, allow_excerpt_fallback=True)
     assert all(p.is_file() for p in prolific)
@@ -91,6 +97,11 @@ def test_config_path_resolution_can_refuse_excerpt_fallback(monkeypatch, tmp_pat
         lambda: [tmp_path / "missing_sibling", tmp_path / "also_missing"],
     )
     config = load_config(ROOT / "config" / "default.yaml")
+    config["paths"]["prolific_files"] = [
+        str(tmp_path / "missing_FileA.csv"),
+        str(tmp_path / "missing_FileB.csv"),
+    ]
+    config["paths"]["qualtrics"] = str(tmp_path / "missing_FileC.csv")
     with pytest.raises(FileNotFoundError):
         _resolve_prolific_paths(None, config, allow_excerpt_fallback=False)
 
