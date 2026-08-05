@@ -16,6 +16,7 @@ Covers development on `main` since `0.3.0` (2026-07-27).
 - Live-export TreeSHAP / surrogate-SHAP feature-power memo (`memos/feature_predictive_power_ml_llm.qmd`)
 - Ground-truth group-CA descriptive table by demographic slice in the manuscript stereotyping section
 - Cross-memo scaffolding links: README index now covers all 27 memos, orphan memos link siblings, wave-1 parents link forward to wave-2 follow-ups, `.md`/`.qmd` link mismatches fixed
+- LLM metric-cleaning runbook (`docs/metric_cleaning_runbook.md`) documenting the exact parse → validate → score → band → metric → aggregate pipeline (#63, #64)
 
 ### Changed
 
@@ -23,6 +24,7 @@ Covers development on `main` since `0.3.0` (2026-07-27).
 - Replace mock-LLM diagnostics in the manuscript with real ML-vs-vLLM results and committed vLLM export tables
 - Discussion section: link every RQ/S/TF answer to its memo scaffold and add a Conclusion
 - Bibliography: add verified references (Daly 1978; Binz & Schulz 2024; Grossmann et al. 2023; Horton et al. 2023; Salewski et al. 2023; Sclar et al. 2024), fix park2024 title/authors, polish DOI/URL fields
+- Sync `pyproject.toml` package version to the changelog's current release (`0.3.0`) so the two stop disagreeing (#65)
 
 ### Fixed
 
@@ -30,6 +32,10 @@ Covers development on `main` since `0.3.0` (2026-07-27).
 - Relative `exports/…` links in `docs/persona_prompt_versions.md` (missing `../`)
 - Stale "mock at render" and "GPU deferred" claims across README, AGENTS.md, docs, and memos
 - Remove committed Quarto-render library dir `memos/live_llm_stereotyping_slices_files/` from git and ignore `memos/*_files/`
+- Rerun the seeded full-cohort ML baseline so `docs/figures/ml_baseline_*` show the full seven-model suite instead of the stale two-model artifacts (#66)
+- Render the mermaid diagram in `docs/persona_prompt_versions.md` (plain fences emit no mermaid JS in `.md` pages; the page now loads the mermaid library and wraps the diagram in a `.mermaid` div) (#60)
+- Regenerate follow-up experiment figures from fresh `outputs/followup_experiments/` so the memo charts are no longer stale (#67)
+- Regenerate the Q27/Q28 prevalence chart with the corrected level ordering so bars display low→high (#68)
 
 ### Removed
 

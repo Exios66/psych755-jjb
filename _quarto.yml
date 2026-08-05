@@ -15,6 +15,7 @@ project:
     - docs/llm_v1_run_specifications.md
     - docs/llm_v2_v3_enhanced_variants.md
     - docs/stereotyping_evaluation.md
+    - docs/metric_cleaning_runbook.md
     - docs/llm_baseline_llama31_v1.md
     - docs/llm_baseline_llama32_instruct_v1.md
     - docs/llm_baseline_deepseek_r1_distill_v1.md
@@ -98,6 +99,8 @@ website:
             text: v2/v3 enhanced variants
           - href: docs/stereotyping_evaluation.md
             text: Stereotyping evaluation
+          - href: docs/metric_cleaning_runbook.md
+            text: Metric cleaning runbook
           - href: docs/llm_baseline_llama31_v1.md
             text: Llama-3.1 baseline (prompt v1)
           - href: docs/llm_baseline_llama32_instruct_v1.md
@@ -221,6 +224,7 @@ website:
           - docs/llm_v1_run_specifications.md
           - docs/llm_v2_v3_enhanced_variants.md
           - docs/stereotyping_evaluation.md
+          - docs/metric_cleaning_runbook.md
           - docs/llm_baseline_llama31_v1.md
           - docs/llm_baseline_llama32_instruct_v1.md
           - docs/llm_baseline_deepseek_r1_distill_v1.md

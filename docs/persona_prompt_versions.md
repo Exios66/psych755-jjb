@@ -1,6 +1,10 @@
 ---
 title: "Persona prompt versions (v1 → v2 → v3)"
 subtitle: "How the Terrarium tier stack evolved for RQ efficiency and predictive power"
+include-in-header:
+  - text: |
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+      <script>mermaid.initialize({ startOnLoad: true });</script>
 ---
 
 **Code:** [`src/ca_personas/personas.py`](../src/ca_personas/personas.py)  
@@ -19,13 +23,13 @@ This page maps the three prompt generations used in the project. **All primary d
 | **v2 (v3.1 packaging)** | Same 5 fields/topology; signal-first packaging (1-decimal geo, skip intensity when Never, independent-subscale ask, light system calibration) | 5 | **Yes** — [Llama-3.1-8B](../exports/v2/psych755_vllm_llama31_8b_instruct_v2_full_cohort_20260728_2214/) + [Llama-3.2-3B-Instruct](../exports/v2/psych755_vllm_llama32_3b_instruct_v2_full_cohort_20260728_2353/) + [DeepSeek-R1-Distill-8B](../exports/v2/psych755_vllm_deepseek_r1_distill_llama8b_v2_full_cohort_20260730_2213/) (v2_enhanced) |
 | **v3** | Keeps v2 packaging; adds three parallel ablations on the demos→employment→geo base | **8** | **Greedy** — [Llama-3.1](../exports/v3/psych755_vllm_llama31_8b_instruct_v3_full_cohort_20260729_1039/), [Llama-3.2-3B-Instruct](../exports/v3/psych755_vllm_llama32_3b_instruct_v3_full_cohort_20260729_1039/), [Llama-3.3-70B](../exports/v3/psych755_vllm_llama33_70b_instruct_awq_v3_full_cohort_20260729_1039/); canonical `v3_enhanced` refresh pending |
 
-```mermaid
+<div class="mermaid">
 flowchart TB
   v1[v1_core_5] --> llama[Llama31_baseline]
   llama --> v2[v2_packaging_same_5]
   v2 --> v3[v3_plus_3_ablations]
   v3 --> export[1928_prompts_export]
-```
+</div>
 
 ---
 
