@@ -10,9 +10,9 @@ exports/
   v1/                   ← prompt-v1 CA baselines (done)
   v2/                   ← enhanced 5-tier CA (done: DeepSeek / Llama-3.1 / Llama-3.2-Instruct)
   v3/                   ← 8-tier greedy ablations (done: 4 packages; DeepSeek v3 still pending)
-  transit_focus/        ← TF1/TF2 transit-prediction LLM twins
-  prior_v3_greedy/      ← archived greedy v3 (identical predictions to `v3/`; kept for the pre-stamp record)
-  zips/
+  transit_focus/        ← TF1/TF2 transit-prediction LLM twins (empty / not yet on disk)
+  prior_v3_greedy/      ← archived greedy v3 (identical predictions to `v3/`; kept off-repo)
+  zips/                 ← archived bundle zips (off-repo)
 ```
 
 CA packages: `scripts/package_vllm_export.py` → `exports/<v1|v2|v3>/`.
@@ -77,15 +77,17 @@ Predict `regular_transit` + Q26 from demos/employment/geo/(+CA) with mobility he
 
 ## `transit_focus/` — TF1/TF2: predict regular transit + Q26 with mobility held out.
 
-_Empty — new packages will appear here._
+_Empty / not yet on disk — packages will appear here when the transit-focus GPU queue finishes._
 
-## `prior_v3_greedy/` — Archived greedy v3 runs (predictions identical to the stamped `v3/` packages; kept for the 20260728 record).
+## `prior_v3_greedy/` — Archived greedy v3 runs (predictions identical to the stamped `v3/` packages; kept for the 20260728 record)
+
+> These packages are archived **off-repo** (not committed under `exports/`); the identical predictions are committed in the `v3/` packages above.
 
 | Package dir | Model | Tiers | Parse | Report |
-|---|---|---:|---:|---|
-| [`psych755_vllm_llama31_8b_instruct_v3_prior_greedy_full_cohort_20260728_2210`](prior_v3_greedy/psych755_vllm_llama31_8b_instruct_v3_prior_greedy_full_cohort_20260728_2210/) | `meta-llama/Llama-3.1-8B-Instruct` | 8 | 100.0% | yes |
-| [`psych755_vllm_llama32_3b_instruct_v3_prior_greedy_full_cohort_20260728_2210`](prior_v3_greedy/psych755_vllm_llama32_3b_instruct_v3_prior_greedy_full_cohort_20260728_2210/) | `meta-llama/Llama-3.2-3B-Instruct` | 8 | 100.0% | yes |
-| [`psych755_vllm_llama33_70b_instruct_awq_v3_prior_greedy_full_cohort_20260728_2210`](prior_v3_greedy/psych755_vllm_llama33_70b_instruct_awq_v3_prior_greedy_full_cohort_20260728_2210/) | `casperhansen/llama-3.3-70b-instruct-awq` | 8 | 100.0% | yes |
+|---|---:|---:|---:|---:|---:|
+| `psych755_vllm_llama31_8b_instruct_v3_prior_greedy_full_cohort_20260728_2210` | `meta-llama/Llama-3.1-8B-Instruct` | 8 | 100.0% | yes |
+| `psych755_vllm_llama32_3b_instruct_v3_prior_greedy_full_cohort_20260728_2210` | `meta-llama/Llama-3.2-3B-Instruct` | 8 | 100.0% | yes |
+| `psych755_vllm_llama33_70b_instruct_awq_v3_prior_greedy_full_cohort_20260728_2210` | `casperhansen/llama-3.3-70b-instruct-awq` | 8 | 100.0% | yes |
 
 ## Not on disk yet (will appear as queues finish)
 

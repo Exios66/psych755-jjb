@@ -5,6 +5,9 @@
 !index.html
 ~$*.docx
 
+# Quarto per-document render library dirs (regenerated on render)
+memos/*_files/
+
 # OS
 .DS_Store
 Thumbs.db

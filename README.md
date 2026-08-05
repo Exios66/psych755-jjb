@@ -48,7 +48,7 @@ These questions use the **full Prolific↔Qualtrics matched analytic sample** (F
 | 4 | Do Qualtrics **latitude & longitude** predict regular transit use? (RF + CV) | [`secondary_rq_geo_transit_rf.ipynb`](notebooks/secondary_rq_geo_transit_rf.ipynb) | `ca-personas geo-transit-rf` |
 | 5 | Do **group & interpersonal CA** scores predict regular transit use? (RF + CV) | [`secondary_rq_ca_transit_rf.ipynb`](notebooks/secondary_rq_ca_transit_rf.ipynb) | `ca-personas ca-transit-rf` · [write-up](docs/secondary_rq_ca_predicts_transit.md) |
 | 6 | Do **car access / employment / ride-share** predict regular transit? (geo-memo follow-ups) | [`secondary_rq_transit_covariate_followups.ipynb`](notebooks/secondary_rq_transit_covariate_followups.ipynb) | `ca-personas covariate-transit-rf` · [write-up](docs/secondary_rq_transit_covariate_followups.md) |
-| 7 | Do **Q27** (transit intensity) & **Q28** (ride-share days) predict regular transit? (traditional ML) | same follow-up CLI (`--specs q27_intensity q28_days q27_q28`) | [write-up](docs/secondary_rq_q27_q28_predict_transit.md) · [memo](memos/q27_q28_predict_transit.md) · manuscript `index.qmd` |
+| 7 | Do **Q27** (transit intensity) & **Q28** (ride-share days) predict regular transit? (traditional ML) | same follow-up CLI (`--specs q27_intensity q28_days q27_q28`) | [write-up](docs/secondary_rq_q27_q28_predict_transit.md) · [memo](memos/q27_q28_predict_transit.qmd) · manuscript `index.qmd` |
 | 8–16 | **Wave-2 follow-ups** answering open memo questions (demographics, country, Q28\|car, CA+mobility, country×car, Q27-among-riders, common-*N*, residual CA, MI head-to-head) | [`secondary_rq_followup_experiments.ipynb`](notebooks/secondary_rq_followup_experiments.ipynb) | `ca-personas followup-experiments` · [agenda](docs/research_memo_agenda.md) · [write-up](docs/secondary_rq_followup_experiments.md) |
 
 **Primary operationalization of “regular transit” (RQs 1–6):** `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more public transit).
@@ -221,7 +221,7 @@ ca-personas shap-eval --join inner --provider mock --shap-tier transit
 jupyter nbconvert --to notebook --execute notebooks/feature_predictive_power_shap.ipynb
 ```
 
-Artifacts write to `outputs/shap_eval/` (metrics, SHAP tables, figures). Research memo: [`memos/feature_predictive_power_ml_llm.md`](memos/feature_predictive_power_ml_llm.md).
+Artifacts write to `outputs/shap_eval/` (metrics, SHAP tables, figures). Research memo: [`memos/feature_predictive_power_ml_llm.qmd`](memos/feature_predictive_power_ml_llm.qmd).
 
 ## vLLM digital-twin batch inference
 
@@ -254,7 +254,7 @@ Shared styling lives in [`src/ca_personas/viz_style.py`](src/ca_personas/viz_sty
 
 ## Quarto manuscript website
 
-The project is a Quarto **website** configured by [`_quarto.yml`](_quarto.yml). The primary manuscript is [`index.qmd`](index.qmd); it runs the offline mock pipeline on the **full matched cohort** at render time (or loads committed `artifacts/posit_full_cohort/` on Connect Cloud) so the site never displays excerpt-fixture statistics.
+The project is a Quarto **website** configured by [`_quarto.yml`](_quarto.yml). The primary manuscript is [`index.qmd`](index.qmd); it renders ground-truth and EDA tables from the **full matched cohort** at render time (or loads committed `artifacts/posit_full_cohort/` on Connect Cloud) so the site never displays excerpt-fixture statistics. All reported LLM and ML results come from committed full-cohort vLLM exports, seeded tabular runs, and committed artifact tables — no mock-LLM predictions are displayed; the deterministic mock provider is reserved for offline pipeline smoke tests.
 
 ```bash
 # from the root of the repo

@@ -60,7 +60,7 @@ project:
     - artifacts/pr_graph/**
 
 website:
-  title: "LLM Prediction of Communication Apprehension"
+  title: "Tiered Persona Prompting for Communication Apprehension: A Digital-Twin Evaluation Against Classical Machine-Learning Baselines"
   description: "PSYCH 755 manuscript — tiered persona prompts, PRCA ground truth, and LLM prediction error"
   site-url: https://connect.posit.cloud/jackjburleson/content/019f9a10-ebb9-d1d5-839f-97e794bfd0ca
   repo-url: https://github.com/Exios66/psych755-jjb

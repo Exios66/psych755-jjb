@@ -121,6 +121,14 @@ Activate the venv first (`source .venv/bin/activate`).
 pytest                          # primary gate; offline, ~2 min
 ```
 
+**Known test gaps (accepted backlog, not blockers):** no dedicated tests yet for
+`src/ca_personas/cli.py`, `src/ca_personas/llm/{mock,ollama,openrouter}.py`,
+`src/ca_personas/viz_style.py`, `src/ca_personas/tracing.py`, and most of
+`src/inference/` (only `ca_prompts`, `utils`, and the tracing stubs are covered).
+Core analysis paths (loading, scoring, ML baselines, secondary RQs, SHAP,
+stereotyping, personas) have dedicated tests. Add coverage when touching those
+modules.
+
 ### Offline pipeline smoke
 
 ```bash
@@ -172,8 +180,11 @@ quarto render                   # writes _site/
 # static view: python3 -m http.server -d _site <port>
 ```
 
-Site cells use the **mock** LLM on the full matched cohort (or load
-`artifacts/posit_full_cohort/` when File A/B/C are absent).
+Site cells render ground-truth and EDA tables from the full matched cohort (or
+load `artifacts/posit_full_cohort/` when File A/B/C are absent). All reported LLM
+and ML results come from committed full-cohort vLLM exports, seeded tabular runs,
+and committed artifact tables — no mock-LLM predictions are displayed; the
+deterministic mock provider is reserved for offline pipeline smoke tests.
 
 ### Posit Connect Cloud (JackJBurleson)
 
@@ -244,6 +255,7 @@ Shared styling: `src/ca_personas/viz_style.py`, `src/ca_personas/apa_plotting.py
 | `ca-transit-rf` | Secondary: group/interpersonal CA → transit RF |
 | `covariate-transit-rf` | Mobility / Q27 / Q28 covariate RFs |
 | `comprehensive-transit-rf` | Broader transit predictor RF suite |
+| `transit-focus` | TF1/TF2: predict regular transit & intensity with mobility held out |
 | `followup-experiments` | Wave-2 follow-up experiment battery |
 
 Shared flags typically include `--join {inner,outer,left}`, optional

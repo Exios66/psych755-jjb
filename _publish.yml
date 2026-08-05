@@ -14,7 +14,7 @@
 #
 # == Manual publish (from CLI) ==
 #   1. Render:  quarto render
-#   2. Publish: python scripts/posit_publish.py
+#   2. Publish: python scripts/publish_posit_jackjburleson.py
 #
 # First time: OAuth device flow (opens a URL in your browser)
 # After that: Set POSIT_CONNECT_CLOUD_ACCESS_TOKEN in .env to skip OAuth

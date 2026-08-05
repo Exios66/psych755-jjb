@@ -48,4 +48,3 @@ scoring:
 # CLI --join remains authoritative for the join strategy.
 cleaning:
   require_complete_ca: true
-  join_how: inner

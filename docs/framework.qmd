@@ -156,7 +156,7 @@ ca-personas run --provider mock --join inner
 
 ## Providers
 
-Set `CA_LLM_PROVIDER` to `ollama` or `openrouter` (see `.env.example`). Use `--provider mock` for offline dry runs and Posit Connect Cloud renders.
+Set `CA_LLM_PROVIDER` to `ollama` or `openrouter` (see `.env.example`). Use `--provider mock` for offline dry runs and unit tests. Posit Connect Cloud renders load committed full-cohort vLLM exports and artifact tables, not mock predictions.
 
 ## vLLM batch path
 

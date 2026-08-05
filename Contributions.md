@@ -2,7 +2,7 @@
 
 **Group:** Jack J. Burleson (solo)  
 **Group Members:** Jack J. Burleson (`@Exios66` / `@jjburleson`)  
-**Project:** Do LLMs Stereotype Communication Apprehension? (PSYCH 755)  
+**Project:** Tiered Persona Prompting for Communication Apprehension: A Digital-Twin Evaluation Against Classical Machine-Learning Baselines (PSYCH 755)  
 **Repository:** [https://github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
 
 ---

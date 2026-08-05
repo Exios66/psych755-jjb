@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+Covers development on `main` since `0.3.0` (2026-07-27).
+
+### Added
+
+- Real full-cohort vLLM v2/v3 exports committed under `exports/v2/` and `exports/v3/` (signal-first v2 packaging + 8-tier greedy v3 ablations), with pooled evaluation memo `memos/vllm_v2_v3_evaluation.qmd`
+- Live-LLM stereotyping slices memo (`memos/live_llm_stereotyping_slices.qmd`) from the committed DeepSeek v2 export
+- Live-export TreeSHAP / surrogate-SHAP feature-power memo (`memos/feature_predictive_power_ml_llm.qmd`)
+- Ground-truth group-CA descriptive table by demographic slice in the manuscript stereotyping section
+- Cross-memo scaffolding links: README index now covers all 27 memos, orphan memos link siblings, wave-1 parents link forward to wave-2 follow-ups, `.md`/`.qmd` link mismatches fixed
+
+### Changed
+
+- Retitle manuscript to "Tiered Persona Prompting for Communication Apprehension: A Digital-Twin Evaluation Against Classical Machine-Learning Baselines"; align site title (`_quarto.yml`), Contributions record, and publish-script expected-title check
+- Replace mock-LLM diagnostics in the manuscript with real ML-vs-vLLM results and committed vLLM export tables
+- Discussion section: link every RQ/S/TF answer to its memo scaffold and add a Conclusion
+- Bibliography: add verified references (Daly 1978; Binz & Schulz 2024; Grossmann et al. 2023; Horton et al. 2023; Salewski et al. 2023; Sclar et al. 2024), fix park2024 title/authors, polish DOI/URL fields
+
+### Fixed
+
+- Broken `memos/README.md` links (`.md` → `.qmd`) and README.md memo-link targets
+- Relative `exports/…` links in `docs/persona_prompt_versions.md` (missing `../`)
+- Stale "mock at render" and "GPU deferred" claims across README, AGENTS.md, docs, and memos
+- Remove committed Quarto-render library dir `memos/live_llm_stereotyping_slices_files/` from git and ignore `memos/*_files/`
+
+### Removed
+
+- Redundant CLI-wrapper scripts (`scripts/run_pipeline.py`, `prepare_full_cohort.py`, `score_ground_truth.py`, `build_personas.py`, `run_ca_transit_rf.py`, `run_geo_transit_rf.py`, `run_transit_ca.py`, `posit_publish.py`); `_publish.yml` now points to `publish_posit_jackjburleson.py`
+- Dead `cleaning.join_how` key from `config/default.yaml`
+
 ## [0.3.0] - 2026-07-27
 
 Covers development on `main` from 2026-07-26 through 2026-07-27 (since `ac56b60` / #44).
