@@ -8,7 +8,7 @@ subtitle: "Secondary research question 5 — Random Forest write-up"
 **Notebook:** [`notebooks/secondary_rq_ca_transit_rf.ipynb`](../notebooks/secondary_rq_ca_transit_rf.ipynb)  
 **CLI:** `ca-personas ca-transit-rf --join inner`  
 **Artifacts:** `outputs/ca_transit_rf/`  
-**Companion memo:** [`memos/ca_scores_predict_transit.md`](../memos/ca_scores_predict_transit.md)
+**Companion memo:** [`memos/ca_scores_predict_transit.qmd`](../memos/ca_scores_predict_transit.qmd)
 
 ---
 
@@ -90,15 +90,15 @@ At a 0.5 probability threshold, the primary model’s out-of-fold confusion coun
 
 1. **Direction.** Higher communication apprehension is associated with *lower* probability of weekly+ public transit. Regular riders sit roughly 1.7–2.7 PRCA points lower than non-regular riders, with the larger gap on the **group** subscale.
 
-2. **Magnitude of predictive power.** A CV ROC-AUC of **0.590** beats chance by +0.090 and geo by +0.039, but trails Q28 (0.762) by −0.172 ([memo](../memos/q27_q28_predict_transit.md)). OOF confusion (TN=76, FP=64, FN=40, TP=61) shows substantial overlap.
+2. **Magnitude of predictive power.** A CV ROC-AUC of **0.590** beats chance by +0.090 and geo by +0.039, but trails Q28 (0.762) by −0.172 ([memo](../memos/q27_q28_predict_transit.qmd)). OOF confusion (TN=76, FP=64, FN=40, TP=61) shows substantial overlap.
 
 3. **Group vs interpersonal.** Group CA is the larger contributor (single-feature AUC = 0.555 vs 0.506; permutation mean AUC drop = 0.309 vs 0.223). Adding interpersonal CA lifts AUC by +0.035 over group only.
 
 4. **Link to other secondary RQs.**
-   - Transit → CA ([`transit_ca`](secondary_rq_transit_ca.md); [memo](../memos/transit_riders_ca.md)): regular riders differ in mean CA (group Δ = −2.72); this RQ shows that difference translates into AUC = 0.590 out-of-sample.
-   - Geo → transit ([`geo_transit_rf`](secondary_rq_geo_predicts_transit.md); [memo](../memos/geo_predicts_transit.md)): lat/long alone yielded ROC-AUC = 0.551. CA subscales here yield AUC = 0.590.
+   - Transit → CA ([`transit_ca`](secondary_rq_transit_ca.md); [memo](../memos/transit_riders_ca.qmd)): regular riders differ in mean CA (group Δ = −2.72); this RQ shows that difference translates into AUC = 0.590 out-of-sample.
+   - Geo → transit ([`geo_transit_rf`](secondary_rq_geo_predicts_transit.md); [memo](../memos/geo_predicts_transit.qmd)): lat/long alone yielded ROC-AUC = 0.551. CA subscales here yield AUC = 0.590.
 
-5. **Implication for the primary persona project.** When LLM persona tiers include transit information, the model is being given a cue empirically related to true CA (group Δ = −2.72 among regular riders; [memo](../memos/transit_riders_ca.md)).
+5. **Implication for the primary persona project.** When LLM persona tiers include transit information, the model is being given a cue empirically related to true CA (group Δ = −2.72 among regular riders; [memo](../memos/transit_riders_ca.qmd)).
 
 ## Limitations
 

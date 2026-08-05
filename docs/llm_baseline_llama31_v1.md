@@ -4,7 +4,7 @@ subtitle: "vLLM digital-twin results on the original 5-tier Terrarium prompts"
 ---
 
 **Model:** `meta-llama/Llama-3.1-8B-Instruct` · **Prompt generation:** pre–v3.1 packaging (version 1 core ladder)  
-**Companion:** [Cross-model memo](../memos/vllm_v1_cross_model_comparison.md) · [Llama-3.2-3B](llm_baseline_llama32_instruct_v1.md) · [DeepSeek](llm_baseline_deepseek_r1_distill_v1.md) · [Llama-3.3-70B](llm_baseline_llama33_70b_v1.md) · [Prompt version map](persona_prompt_versions.md) · [v2/v3 packaging](persona_prompt_efficiency.md)
+**Companion:** [Cross-model memo](../memos/vllm_v1_cross_model_comparison.qmd) · [Llama-3.2-3B](llm_baseline_llama32_instruct_v1.md) · [DeepSeek](llm_baseline_deepseek_r1_distill_v1.md) · [Llama-3.3-70B](llm_baseline_llama33_70b_v1.md) · [Prompt version map](persona_prompt_versions.md) · [v2/v3 packaging](persona_prompt_efficiency.md)
 
 > This page is the published baseline for **prompt version 1** (five cumulative tiers: `demos` → `full`). Later packaging (v2 / v3.1) and ablation tiers (v3) are **designed** against these failure modes and implemented in code; GPU re-evaluation is **deferred future work** ([`persona_prompt_versions.md`](persona_prompt_versions.md)).
 

@@ -28,31 +28,33 @@ project:
     - docs/secondary_rq_transit_covariate_followups.md
     - docs/secondary_rq_followup_experiments.md
     - docs/secondary_rq_transit_focus.md
-    - memos/transit_riders_ca.md
-    - memos/transit_focus_regular_and_intensity.md
-    - memos/geo_predicts_transit.md
-    - memos/ca_scores_predict_transit.md
-    - memos/q27_q28_predict_transit.md
-    - memos/transit_covariate_followups.md
-    - memos/rideshare_predicts_transit.md
-    - memos/car_access_predicts_transit.md
-    - memos/employment_predicts_transit.md
-    - memos/demographics_predict_transit.md
-    - memos/country_predicts_transit.md
-    - memos/q28_conditioned_on_car.md
-    - memos/ca_mobility_joint_predicts_transit.md
-    - memos/country_car_predicts_transit.md
-    - memos/q27_intensity_among_riders.md
-    - memos/common_n_head_to_head.md
-    - memos/residual_ca_after_rideshare.md
-    - memos/mi_head_to_head.md
-    - memos/feature_predictive_power_ml_llm.md
-    - memos/comprehensive_predictors_transit.md
-    - memos/vllm_v1_cross_model_comparison.md
-    - memos/vllm_v1_llama31_8b.md
-    - memos/vllm_v1_llama32_3b.md
-    - memos/vllm_v1_deepseek_r1_distill.md
-    - memos/vllm_v1_llama33_70b.md
+    - memos/transit_riders_ca.qmd
+    - memos/transit_focus_regular_and_intensity.qmd
+    - memos/geo_predicts_transit.qmd
+    - memos/ca_scores_predict_transit.qmd
+    - memos/q27_q28_predict_transit.qmd
+    - memos/transit_covariate_followups.qmd
+    - memos/rideshare_predicts_transit.qmd
+    - memos/car_access_predicts_transit.qmd
+    - memos/employment_predicts_transit.qmd
+    - memos/demographics_predict_transit.qmd
+    - memos/country_predicts_transit.qmd
+    - memos/q28_conditioned_on_car.qmd
+    - memos/ca_mobility_joint_predicts_transit.qmd
+    - memos/country_car_predicts_transit.qmd
+    - memos/q27_intensity_among_riders.qmd
+    - memos/common_n_head_to_head.qmd
+    - memos/residual_ca_after_rideshare.qmd
+    - memos/mi_head_to_head.qmd
+    - memos/feature_predictive_power_ml_llm.qmd
+    - memos/comprehensive_predictors_transit.qmd
+    - memos/vllm_v1_cross_model_comparison.qmd
+    - memos/vllm_v1_llama31_8b.qmd
+    - memos/vllm_v1_llama32_3b.qmd
+    - memos/vllm_v1_deepseek_r1_distill.qmd
+    - memos/vllm_v1_llama33_70b.qmd
+    - memos/vllm_v2_v3_evaluation.qmd
+    - memos/live_llm_stereotyping_slices.qmd
   resources:
     - docs/pr_graph/**
     - artifacts/pr_graph/**
@@ -126,59 +128,59 @@ website:
             text: TF1/TF2 · Transit focus (held-out)
       - text: Memos
         menu:
-          - href: memos/transit_riders_ca.md
+          - href: memos/transit_riders_ca.qmd
             text: "S1 · Transit riders & CA"
-          - href: memos/geo_predicts_transit.md
+          - href: memos/geo_predicts_transit.qmd
             text: "S2 · Geo → transit"
-          - href: memos/ca_scores_predict_transit.md
+          - href: memos/ca_scores_predict_transit.qmd
             text: "S3 · CA → transit"
-          - href: memos/q27_q28_predict_transit.md
+          - href: memos/q27_q28_predict_transit.qmd
             text: "S4 · Q27/Q28 → transit"
-          - href: memos/transit_covariate_followups.md
+          - href: memos/transit_covariate_followups.qmd
             text: "S5 · Mobility follow-ups"
-          - href: memos/rideshare_predicts_transit.md
+          - href: memos/rideshare_predicts_transit.qmd
             text: Ride-share → transit
-          - href: memos/car_access_predicts_transit.md
+          - href: memos/car_access_predicts_transit.qmd
             text: Car access → transit
-          - href: memos/employment_predicts_transit.md
+          - href: memos/employment_predicts_transit.qmd
             text: Employment → transit
-          - href: memos/demographics_predict_transit.md
+          - href: memos/demographics_predict_transit.qmd
             text: Demographics → transit
-          - href: memos/country_predicts_transit.md
+          - href: memos/country_predicts_transit.qmd
             text: Country → transit
-          - href: memos/q28_conditioned_on_car.md
+          - href: memos/q28_conditioned_on_car.qmd
             text: Q28 | car (nested)
-          - href: memos/ca_mobility_joint_predicts_transit.md
+          - href: memos/ca_mobility_joint_predicts_transit.qmd
             text: CA + mobility joint
-          - href: memos/country_car_predicts_transit.md
+          - href: memos/country_car_predicts_transit.qmd
             text: Country × car
-          - href: memos/q27_intensity_among_riders.md
+          - href: memos/q27_intensity_among_riders.qmd
             text: Q27 among riders
-          - href: memos/common_n_head_to_head.md
+          - href: memos/common_n_head_to_head.qmd
             text: Common-N ranking
-          - href: memos/residual_ca_after_rideshare.md
+          - href: memos/residual_ca_after_rideshare.qmd
             text: Residual CA after Q28
-          - href: memos/mi_head_to_head.md
+          - href: memos/mi_head_to_head.qmd
             text: MI vs complete-case
-          - href: memos/comprehensive_predictors_transit.md
+          - href: memos/comprehensive_predictors_transit.qmd
             text: Comprehensive predictors
-          - href: memos/transit_focus_regular_and_intensity.md
+          - href: memos/transit_focus_regular_and_intensity.qmd
             text: "TF1/TF2 · Transit focus (held-out)"
-          - href: memos/feature_predictive_power_ml_llm.md
+          - href: memos/feature_predictive_power_ml_llm.qmd
             text: Feature power (SHAP / F1)
-          - href: memos/vllm_v1_cross_model_comparison.md
+          - href: memos/vllm_v1_cross_model_comparison.qmd
             text: "vLLM · Cross-model (v1)"
-          - href: memos/vllm_v1_llama31_8b.md
+          - href: memos/vllm_v1_llama31_8b.qmd
             text: "vLLM · Llama-3.1-8B"
-          - href: memos/vllm_v1_llama32_3b.md
+          - href: memos/vllm_v1_llama32_3b.qmd
             text: "vLLM · Llama-3.2-3B"
-          - href: memos/vllm_v1_deepseek_r1_distill.md
+          - href: memos/vllm_v1_deepseek_r1_distill.qmd
             text: "vLLM · DeepSeek-R1-Distill"
-          - href: memos/vllm_v1_llama33_70b.md
+          - href: memos/vllm_v1_llama33_70b.qmd
             text: "vLLM · Llama-3.3-70B"
-          - href: memos/vllm_v2_v3_evaluation.md
+          - href: memos/vllm_v2_v3_evaluation.qmd
             text: "vLLM · v2/v3 evaluation"
-          - href: memos/live_llm_stereotyping_slices.md
+          - href: memos/live_llm_stereotyping_slices.qmd
             text: "LLM · Stereotyping slices (live)"
     right:
       - icon: github
@@ -218,8 +220,7 @@ website:
           - docs/persona_prompt_efficiency.md
           - docs/llm_v1_run_specifications.md
           - docs/llm_v2_v3_enhanced_variants.md
-    - docs/stereotyping_evaluation.md
-    - docs/bugfix_audit.md
+          - docs/stereotyping_evaluation.md
           - docs/llm_baseline_llama31_v1.md
           - docs/llm_baseline_llama32_instruct_v1.md
           - docs/llm_baseline_deepseek_r1_distill_v1.md
@@ -239,43 +240,43 @@ website:
         contents:
           - section: "Core secondary (S1–S5)"
             contents:
-              - memos/transit_riders_ca.md
-              - memos/geo_predicts_transit.md
-              - memos/ca_scores_predict_transit.md
-              - memos/q27_q28_predict_transit.md
-              - memos/transit_covariate_followups.md
+              - memos/transit_riders_ca.qmd
+              - memos/geo_predicts_transit.qmd
+              - memos/ca_scores_predict_transit.qmd
+              - memos/q27_q28_predict_transit.qmd
+              - memos/transit_covariate_followups.qmd
           - section: "Transit focus (held-out)"
             contents:
-              - memos/transit_focus_regular_and_intensity.md
+              - memos/transit_focus_regular_and_intensity.qmd
           - section: "Mobility follow-ups"
             contents:
-              - memos/rideshare_predicts_transit.md
-              - memos/car_access_predicts_transit.md
-              - memos/employment_predicts_transit.md
-              - memos/comprehensive_predictors_transit.md
+              - memos/rideshare_predicts_transit.qmd
+              - memos/car_access_predicts_transit.qmd
+              - memos/employment_predicts_transit.qmd
+              - memos/comprehensive_predictors_transit.qmd
           - section: "Wave-2 experiments"
             contents:
-              - memos/demographics_predict_transit.md
-              - memos/country_predicts_transit.md
-              - memos/q28_conditioned_on_car.md
-              - memos/ca_mobility_joint_predicts_transit.md
-              - memos/country_car_predicts_transit.md
-              - memos/q27_intensity_among_riders.md
-              - memos/common_n_head_to_head.md
-              - memos/residual_ca_after_rideshare.md
-              - memos/mi_head_to_head.md
+              - memos/demographics_predict_transit.qmd
+              - memos/country_predicts_transit.qmd
+              - memos/q28_conditioned_on_car.qmd
+              - memos/ca_mobility_joint_predicts_transit.qmd
+              - memos/country_car_predicts_transit.qmd
+              - memos/q27_intensity_among_riders.qmd
+              - memos/common_n_head_to_head.qmd
+              - memos/residual_ca_after_rideshare.qmd
+              - memos/mi_head_to_head.qmd
           - section: "Feature attributions"
             contents:
-              - memos/feature_predictive_power_ml_llm.md
+              - memos/feature_predictive_power_ml_llm.qmd
           - section: "v1 vLLM digital-twin memos"
             contents:
-              - memos/vllm_v1_cross_model_comparison.md
-              - memos/vllm_v1_llama31_8b.md
-              - memos/vllm_v1_llama32_3b.md
-              - memos/vllm_v1_deepseek_r1_distill.md
-    - memos/vllm_v1_llama33_70b.md
-    - memos/vllm_v2_v3_evaluation.md
-    - memos/live_llm_stereotyping_slices.md
+              - memos/vllm_v1_cross_model_comparison.qmd
+              - memos/vllm_v1_llama31_8b.qmd
+              - memos/vllm_v1_llama32_3b.qmd
+              - memos/vllm_v1_deepseek_r1_distill.qmd
+              - memos/vllm_v1_llama33_70b.qmd
+              - memos/vllm_v2_v3_evaluation.qmd
+              - memos/live_llm_stereotyping_slices.qmd
 
 crossref:
   fig-title: "Figure"

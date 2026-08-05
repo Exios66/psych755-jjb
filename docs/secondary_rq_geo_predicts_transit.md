@@ -8,7 +8,7 @@ subtitle: "Secondary research question 4 — Random Forest write-up"
 **Notebook:** [`notebooks/secondary_rq_geo_transit_rf.ipynb`](../notebooks/secondary_rq_geo_transit_rf.ipynb)  
 **CLI:** `ca-personas geo-transit-rf --join inner`  
 **Artifacts:** `outputs/geo_transit_rf/`  
-**Companion memo:** [`memos/geo_predicts_transit.md`](../memos/geo_predicts_transit.md)
+**Companion memo:** [`memos/geo_predicts_transit.qmd`](../memos/geo_predicts_transit.qmd)
 
 ---
 
@@ -61,11 +61,11 @@ Permutation importance ranks **longitude** (mean AUC drop = 0.335) above **latit
 
 ## Interpretation
 
-**Geography, as captured by Qualtrics lat/long, recovers CV ROC-AUC = 0.551 in this sample** ([memo](../memos/geo_predicts_transit.md)).
+**Geography, as captured by Qualtrics lat/long, recovers CV ROC-AUC = 0.551 in this sample** ([memo](../memos/geo_predicts_transit.qmd)).
 
 1. Discrimination is above chance (+0.051) but remains near the country-only baseline (0.549).
 2. Nearly all of that signal is redundant with **country of residence**.
-3. Compared with the CA→transit RF (AUC = 0.590; [memo](../memos/ca_scores_predict_transit.md)), place alone is a weaker classifier; Q28 recovers AUC = 0.762 ([memo](../memos/q27_q28_predict_transit.md)).
+3. Compared with the CA→transit RF (AUC = 0.590; [memo](../memos/ca_scores_predict_transit.qmd)), place alone is a weaker classifier; Q28 recovers AUC = 0.762 ([memo](../memos/q27_q28_predict_transit.qmd)).
 4. For the primary persona project, the `geo` tier supplies a coarse place cue that may help CA prediction indirectly (via country / urbanicity correlates) but should not be treated as a precise transit-accessibility measure.
 
 ## Limitations

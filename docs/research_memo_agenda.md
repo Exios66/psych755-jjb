@@ -27,15 +27,15 @@ After the primary persona-tier LLM pipeline and the first wave of secondary Rand
 
 | # | Memo | Open question answered | CLI / module | Primary result (seed 42) |
 |---|---|---|---|---|
-| 1 | [`memos/demographics_predict_transit.md`](../memos/demographics_predict_transit.md) | Unused Prolific demos; student status named open | `followup-experiments --experiments demographics` | AUC ≈ **0.618** (Age dominates) |
-| 2 | [`memos/country_predicts_transit.md`](../memos/country_predicts_transit.md) | Country vs raw coordinates | `--experiments country` | AUC ≈ **0.552** ≈ geo |
-| 3 | [`memos/q28_conditioned_on_car.md`](../memos/q28_conditioned_on_car.md) | Does Q28 retain lift after car? | `--experiments nested_q28_car` | Q28 alone 0.665 → Q28+Q21 **0.730** (n=149) |
-| 4 | [`memos/ca_mobility_joint_predicts_transit.md`](../memos/ca_mobility_joint_predicts_transit.md) | Psych vs mobility importance (complete-case) | `--experiments ca_q28_car` | Joint AUC **0.736**; CA alone weak on this subset |
-| 5 | [`memos/country_car_predicts_transit.md`](../memos/country_car_predicts_transit.md) | Country × car interaction | `--experiments country_car` | Joint AUC **0.699** > either alone |
-| 6 | [`memos/q27_intensity_among_riders.md`](../memos/q27_intensity_among_riders.md) | Does Q27 help *within* regular riders? | `--experiments q27_among_regular` | Best AUC ≈ **0.549** — weak |
-| 7 | [`memos/common_n_head_to_head.md`](../memos/common_n_head_to_head.md) | AUC ranks confounded by missingness? | `--experiments common_n` | On n=139, **Q28 still first** (0.659) |
-| 8 | [`memos/residual_ca_after_rideshare.md`](../memos/residual_ca_after_rideshare.md) | Third-variable / residual CA after Q28 | `--experiments residual_ca_q28` | CA adds only **+0.021** AUC over Q28 |
-| 9 | [`memos/mi_head_to_head.md`](../memos/mi_head_to_head.md) | MI restore demos/CA vs attenuate Q28? | `--experiments mi_head_to_head` | **Q28 lead preserved** (0.762); demos/CA not restored |
+| 1 | [`memos/demographics_predict_transit.qmd`](../memos/demographics_predict_transit.qmd) | Unused Prolific demos; student status named open | `followup-experiments --experiments demographics` | AUC ≈ **0.618** (Age dominates) |
+| 2 | [`memos/country_predicts_transit.qmd`](../memos/country_predicts_transit.qmd) | Country vs raw coordinates | `--experiments country` | AUC ≈ **0.552** ≈ geo |
+| 3 | [`memos/q28_conditioned_on_car.qmd`](../memos/q28_conditioned_on_car.qmd) | Does Q28 retain lift after car? | `--experiments nested_q28_car` | Q28 alone 0.665 → Q28+Q21 **0.730** (n=149) |
+| 4 | [`memos/ca_mobility_joint_predicts_transit.qmd`](../memos/ca_mobility_joint_predicts_transit.qmd) | Psych vs mobility importance (complete-case) | `--experiments ca_q28_car` | Joint AUC **0.736**; CA alone weak on this subset |
+| 5 | [`memos/country_car_predicts_transit.qmd`](../memos/country_car_predicts_transit.qmd) | Country × car interaction | `--experiments country_car` | Joint AUC **0.699** > either alone |
+| 6 | [`memos/q27_intensity_among_riders.qmd`](../memos/q27_intensity_among_riders.qmd) | Does Q27 help *within* regular riders? | `--experiments q27_among_regular` | Best AUC ≈ **0.549** — weak |
+| 7 | [`memos/common_n_head_to_head.qmd`](../memos/common_n_head_to_head.qmd) | AUC ranks confounded by missingness? | `--experiments common_n` | On n=139, **Q28 still first** (0.659) |
+| 8 | [`memos/residual_ca_after_rideshare.qmd`](../memos/residual_ca_after_rideshare.qmd) | Third-variable / residual CA after Q28 | `--experiments residual_ca_q28` | CA adds only **+0.021** AUC over Q28 |
+| 9 | [`memos/mi_head_to_head.qmd`](../memos/mi_head_to_head.qmd) | MI restore demos/CA vs attenuate Q28? | `--experiments mi_head_to_head` | **Q28 lead preserved** (0.762); demos/CA not restored |
 
 ## Methods shared across wave 2
 
@@ -51,19 +51,19 @@ Live GPU baselines are documented separately in [`docs/llm_vllm_memo_agenda.md`]
 
 | Memo | Headline |
 |---|---|
-| [`memos/vllm_v1_cross_model_comparison.md`](../memos/vllm_v1_cross_model_comparison.md) | DeepSeek best group MAE; 3B best group bands; 8B IP collapses at transit; 70B collapsed |
-| [`memos/vllm_v1_llama31_8b.md`](../memos/vllm_v1_llama31_8b.md) | Llama-3.1-8B cautionary baseline |
-| [`memos/vllm_v1_llama32_3b.md`](../memos/vllm_v1_llama32_3b.md) | Llama-3.2-3B Instruct lower MAE than 8B |
-| [`memos/vllm_v1_deepseek_r1_distill.md`](../memos/vllm_v1_deepseek_r1_distill.md) | DeepSeek-R1-Distill tier-stable; best group MAE |
-| [`memos/vllm_v1_llama33_70b.md`](../memos/vllm_v1_llama33_70b.md) | Llama-3.3-70B mode-collapse cautionary case |
-| [`memos/vllm_v2_v3_evaluation.md`](../memos/vllm_v2_v3_evaluation.md) | v2/v3 GPU runs: DeepSeek improves; collapse combination-specific |
-| [`memos/live_llm_stereotyping_slices.md`](../memos/live_llm_stereotyping_slices.md) | Real DeepSeek v2 stereotyping slices (Sex/Student/Employment) |
+| [`memos/vllm_v1_cross_model_comparison.qmd`](../memos/vllm_v1_cross_model_comparison.qmd) | DeepSeek best group MAE; 3B best group bands; 8B IP collapses at transit; 70B collapsed |
+| [`memos/vllm_v1_llama31_8b.qmd`](../memos/vllm_v1_llama31_8b.qmd) | Llama-3.1-8B cautionary baseline |
+| [`memos/vllm_v1_llama32_3b.qmd`](../memos/vllm_v1_llama32_3b.qmd) | Llama-3.2-3B Instruct lower MAE than 8B |
+| [`memos/vllm_v1_deepseek_r1_distill.qmd`](../memos/vllm_v1_deepseek_r1_distill.qmd) | DeepSeek-R1-Distill tier-stable; best group MAE |
+| [`memos/vllm_v1_llama33_70b.qmd`](../memos/vllm_v1_llama33_70b.qmd) | Llama-3.3-70B mode-collapse cautionary case |
+| [`memos/vllm_v2_v3_evaluation.qmd`](../memos/vllm_v2_v3_evaluation.qmd) | v2/v3 GPU runs: DeepSeek improves; collapse combination-specific |
+| [`memos/live_llm_stereotyping_slices.qmd`](../memos/live_llm_stereotyping_slices.qmd) | Real DeepSeek v2 stereotyping slices (Sex/Student/Employment) |
 
 ## Intentionally deferred (future work; need further live LLM or new data)
 
 - **v2 / v3 canonical refresh** — v2 is now GPU-evaluated on Llama-3.1-8B, Llama-3.2-3B-Instruct, and DeepSeek-R1-Distill-8B (v2_enhanced; `exports/v2/`), and v3 greedy 8-tier ablations on Llama-3.1, 3.2-3B-Instruct, and 3.3-70B (`exports/v3/`). Remaining: canonical `v3_enhanced` decode refresh, base-3B v2/v3, and 70B under `large_model` — see [`persona_prompt_versions.md`](persona_prompt_versions.md)
-- **Completed since wave 1:** live-export TreeSHAP / surrogate SHAP ([`memos/feature_predictive_power_ml_llm.md`](../memos/feature_predictive_power_ml_llm.md)) and real stereotyping slices ([`memos/live_llm_stereotyping_slices.md`](../memos/live_llm_stereotyping_slices.md))
-- Richer / MNAR-sensitive MI of car items (wave-2 MI head-to-head is implemented; see [`memos/mi_head_to_head.md`](../memos/mi_head_to_head.md))
+- **Completed since wave 1:** live-export TreeSHAP / surrogate SHAP ([`memos/feature_predictive_power_ml_llm.qmd`](../memos/feature_predictive_power_ml_llm.qmd)) and real stereotyping slices ([`memos/live_llm_stereotyping_slices.qmd`](../memos/live_llm_stereotyping_slices.qmd))
+- Richer / MNAR-sensitive MI of car items (wave-2 MI head-to-head is implemented; see [`memos/mi_head_to_head.qmd`](../memos/mi_head_to_head.qmd))
 - City/density GIS layers beyond Qualtrics lat/long
 - Ordinal multiclass `Q26` models (threshold sensitivity exists in transit-CA module)
 

@@ -5,7 +5,7 @@ subtitle: "TF1 regular-rider classification and TF2 intensity estimation from pr
 
 **Code:** [`src/ca_personas/transit_focus.py`](../src/ca_personas/transit_focus.py)  
 **CLI:** `ca-personas transit-focus --join inner --seed 42`  
-**Memo:** [`memos/transit_focus_regular_and_intensity.md`](../memos/transit_focus_regular_and_intensity.md)  
+**Memo:** [`memos/transit_focus_regular_and_intensity.qmd`](../memos/transit_focus_regular_and_intensity.qmd)  
 **Artifacts:** `outputs/transit_focus/`  
 **Persona prompts:** `outputs/transit_focus/persona_prompts/`
 

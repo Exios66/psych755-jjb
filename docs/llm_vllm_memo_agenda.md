@@ -17,11 +17,11 @@ Document the first wave of **live GPU vLLM** evaluations on the matched analytic
 
 | Memo | Model | Headline |
 |---|---|---|
-| [`memos/vllm_v1_cross_model_comparison.md`](../memos/vllm_v1_cross_model_comparison.md) | All four | DeepSeek best group MAE (5.22); 3B best group bands (52.7%); 8B IP collapses at transit; 70B mode-collapse |
-| [`memos/vllm_v1_llama31_8b.md`](../memos/vllm_v1_llama31_8b.md) | Llama-3.1-8B-Instruct | IP MAE 4.67 → 8.17 at transit; packaging v2/v3 motivation |
-| [`memos/vllm_v1_llama32_3b.md`](../memos/vllm_v1_llama32_3b.md) | Llama-3.2-3B-Instruct | Lower MAE than 8B; robust-ish transit; IP bands ~chance |
-| [`memos/vllm_v1_deepseek_r1_distill.md`](../memos/vllm_v1_deepseek_r1_distill.md) | DeepSeek-R1-Distill-Llama-8B | Best group MAE; tier-stable; 99.8% parse |
-| [`memos/vllm_v1_llama33_70b.md`](../memos/vllm_v1_llama33_70b.md) | Llama-3.3-70B-Instruct | Mode collapse (~93% constant 18/12); not a scale win |
+| [`memos/vllm_v1_cross_model_comparison.qmd`](../memos/vllm_v1_cross_model_comparison.qmd) | All four | DeepSeek best group MAE (5.22); 3B best group bands (52.7%); 8B IP collapses at transit; 70B mode-collapse |
+| [`memos/vllm_v1_llama31_8b.qmd`](../memos/vllm_v1_llama31_8b.qmd) | Llama-3.1-8B-Instruct | IP MAE 4.67 → 8.17 at transit; packaging v2/v3 motivation |
+| [`memos/vllm_v1_llama32_3b.qmd`](../memos/vllm_v1_llama32_3b.qmd) | Llama-3.2-3B-Instruct | Lower MAE than 8B; robust-ish transit; IP bands ~chance |
+| [`memos/vllm_v1_deepseek_r1_distill.qmd`](../memos/vllm_v1_deepseek_r1_distill.qmd) | DeepSeek-R1-Distill-Llama-8B | Best group MAE; tier-stable; 99.8% parse |
+| [`memos/vllm_v1_llama33_70b.qmd`](../memos/vllm_v1_llama33_70b.qmd) | Llama-3.3-70B-Instruct | Mode collapse (~93% constant 18/12); not a scale win |
 
 ## Method pages (tables)
 
@@ -42,7 +42,7 @@ Document the first wave of **live GPU vLLM** evaluations on the matched analytic
 ## Intentionally deferred (future work)
 
 - **Canonical `v3_enhanced` refresh** — v2 is GPU-evaluated on Llama-3.1-8B, Llama-3.2-3B-Instruct, and DeepSeek-R1-Distill-8B (v2_enhanced; `exports/v2/`), and v3 greedy 8-tier ablations on Llama-3.1, 3.2-3B-Instruct, and 3.3-70B (`exports/v3/`); the committed v3 packages are greedy-decode (identical to `prior_v3_greedy`), so the `v3_enhanced` decode refresh remains — see [`persona_prompt_versions.md`](persona_prompt_versions.md).  
-- **Completed since the v1 wave:** v2/v3 evaluation memo ([`memos/vllm_v2_v3_evaluation.md`](../memos/vllm_v2_v3_evaluation.md)) and real live-export stereotyping slices ([`memos/live_llm_stereotyping_slices.md`](../memos/live_llm_stereotyping_slices.md)).  
+- **Completed since the v1 wave:** v2/v3 evaluation memo ([`memos/vllm_v2_v3_evaluation.qmd`](../memos/vllm_v2_v3_evaluation.qmd)) and real live-export stereotyping slices ([`memos/live_llm_stereotyping_slices.qmd`](../memos/live_llm_stereotyping_slices.qmd)).  
 - Temperature / constrained-decoding ablations (70B `large_model` preset)  
 
 ## Reproduction

@@ -7,7 +7,7 @@ subtitle: "Secondary research question — traditional ML write-up for transit i
 **Analysis code:** [`src/ca_personas/transit_covariate_rf.py`](../src/ca_personas/transit_covariate_rf.py)  
 **CLI:** `ca-personas covariate-transit-rf --specs q27_intensity q28_days q27_q28 --join inner --seed 42`  
 **Artifacts:** `outputs/transit_covariate_rf/{q27_intensity,q28_days,q27_q28}/`  
-**Research memo:** [`memos/q27_q28_predict_transit.md`](../memos/q27_q28_predict_transit.md)  
+**Research memo:** [`memos/q27_q28_predict_transit.qmd`](../memos/q27_q28_predict_transit.qmd)  
 **Manuscript:** [`index.qmd`](../index.qmd)
 
 ---
@@ -39,7 +39,7 @@ Regular-transit prevalence rises from 15.7% (Q28 Never) to 94.1% (Q28 8+ days/mo
 
 ## Interpretation
 
-Q28 recovers CV ROC-AUC = **0.762** (+0.211 vs geo, +0.172 vs CA). Q27 recovers AUC = **0.589** and is redundant once Q28 is included (joint AUC = 0.761). Full prose: [`memos/q27_q28_predict_transit.md`](../memos/q27_q28_predict_transit.md).
+Q28 recovers CV ROC-AUC = **0.762** (+0.211 vs geo, +0.172 vs CA). Q27 recovers AUC = **0.589** and is redundant once Q28 is included (joint AUC = 0.761). Full prose: [`memos/q27_q28_predict_transit.qmd`](../memos/q27_q28_predict_transit.qmd).
 
 ## Reproducibility
 

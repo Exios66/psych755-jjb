@@ -8,7 +8,7 @@ subtitle: "Secondary research questions 1–3 — observational contrast"
 **Notebook:** [`notebooks/secondary_rq_transit_ca.ipynb`](../notebooks/secondary_rq_transit_ca.ipynb)  
 **CLI:** `ca-personas transit-ca --join inner`  
 **Artifacts:** `outputs/transit_ca/`  
-**Companion memo:** [`memos/transit_riders_ca.md`](../memos/transit_riders_ca.md)
+**Companion memo:** [`memos/transit_riders_ca.qmd`](../memos/transit_riders_ca.qmd)
 
 ---
 
@@ -85,7 +85,7 @@ Alternate definitions of “regular” (e.g., 8+ only vs weekly+) preserve the *
 
 1. **Direction.** Higher CA ↔ less weekly+ transit, on both subscales, with a clearer signal for **group** discussion anxiety (Δ = −2.72, *d* = −0.46, *p* = .0003).
 2. **Magnitude.** Cohen's *d* = −0.46 (group) and −0.30 (interpersonal): many high-CA respondents still ride, and many low-CA respondents do not.
-3. **Link to other secondary RQs.** Mean differences here become the CA→transit Random Forest signal (ROC-AUC = 0.590; [memo](../memos/ca_scores_predict_transit.md)) and sit beside geo→transit AUC = 0.551 ([memo](../memos/geo_predicts_transit.md)).
+3. **Link to other secondary RQs.** Mean differences here become the CA→transit Random Forest signal (ROC-AUC = 0.590; [memo](../memos/ca_scores_predict_transit.qmd)) and sit beside geo→transit AUC = 0.551 ([memo](../memos/geo_predicts_transit.qmd)).
 4. **Implication for persona tiers.** When LLM prompts include transit frequency, they receive a cue empirically associated with true CA — so transit is a legitimate contextual feature, not an arbitrary demographic tag.
 
 ## Limitations

@@ -47,7 +47,7 @@ Observational contrast on the matched analytic sample (no LLM):
 | Tests | Welch *t*, Mann–Whitney, Cohen's *d*, bootstrap CI |
 | CLI / notebook | `ca-personas transit-ca` · `notebooks/secondary_rq_transit_ca.ipynb` |
 | Write-up | [`docs/secondary_rq_transit_ca.md`](secondary_rq_transit_ca.md) |
-| Memo | [`memos/transit_riders_ca.md`](../memos/transit_riders_ca.md) |
+| Memo | [`memos/transit_riders_ca.qmd`](../memos/transit_riders_ca.qmd) |
 | Artifacts | `outputs/transit_ca/` (descriptives, comparisons, distributions, results card) |
 
 ### Secondary RQ — geography predicts regular transit?
@@ -60,7 +60,7 @@ Observational contrast on the matched analytic sample (no LLM):
 | Baselines | Chance / majority; country-only RF |
 | CLI / notebook | `ca-personas geo-transit-rf` · `notebooks/secondary_rq_geo_transit_rf.ipynb` |
 | Write-up | [`docs/secondary_rq_geo_predicts_transit.md`](secondary_rq_geo_predicts_transit.md) |
-| Memo | [`memos/geo_predicts_transit.md`](../memos/geo_predicts_transit.md) |
+| Memo | [`memos/geo_predicts_transit.qmd`](../memos/geo_predicts_transit.qmd) |
 | Artifacts | `outputs/geo_transit_rf/` |
 
 ### Secondary RQ — CA scores predict regular transit?
@@ -72,7 +72,7 @@ Observational contrast on the matched analytic sample (no LLM):
 | Model | Balanced Random Forest + stratified CV; group-only / interpersonal-only ablations |
 | CLI / notebook | `ca-personas ca-transit-rf` · `notebooks/secondary_rq_ca_transit_rf.ipynb` |
 | Write-up | [`docs/secondary_rq_ca_predicts_transit.md`](secondary_rq_ca_predicts_transit.md) |
-| Memo | [`memos/ca_scores_predict_transit.md`](../memos/ca_scores_predict_transit.md) |
+| Memo | [`memos/ca_scores_predict_transit.qmd`](../memos/ca_scores_predict_transit.qmd) |
 | Artifacts | `outputs/ca_transit_rf/` |
 
 ### Secondary RQ — wave-2 extended follow-ups
@@ -97,7 +97,7 @@ Observational contrast on the matched analytic sample (no LLM):
 | Model | Balanced mixed-type Random Forest + stratified CV; LLM twin prompts (`tf_*` tiers) |
 | CLI | `ca-personas transit-focus` |
 | Write-up | [`docs/secondary_rq_transit_focus.md`](secondary_rq_transit_focus.md) |
-| Memo | [`memos/transit_focus_regular_and_intensity.md`](../memos/transit_focus_regular_and_intensity.md) |
+| Memo | [`memos/transit_focus_regular_and_intensity.qmd`](../memos/transit_focus_regular_and_intensity.qmd) |
 | Artifacts | `outputs/transit_focus/` (+ `persona_prompts/`) |
 
 ## Ground-truth scoring

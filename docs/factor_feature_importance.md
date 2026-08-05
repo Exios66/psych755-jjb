@@ -26,7 +26,7 @@ Practical takeaway for the manuscript: reporting **separate** MAE for group vs i
 
 A Random Forest predicting CA from persona-style covariates on the **full matched analytic cohort (N = 241)**, with permutation importance on held-out folds, ranks features as follows (mean importance across group + interpersonal targets).
 
-**Reconciliation note.** This table (permutation importance on held-out folds) and the TreeSHAP ranking in [`memos/feature_predictive_power_ml_llm.md`](../memos/feature_predictive_power_ml_llm.md) (mean \|SHAP\| at the `transit` tier, real vLLM-backed outputs in `outputs/shap_eval/`) both rank covariates for predicting **CA**, but with different explainers: permutation puts Age 2nd, while TreeSHAP puts Employment 2nd and Age 6th. Q28 (ride-share days) leads under both. A third ranking — the surrogate SHAP of the live DeepSeek v2 persona agent — shows the LLM over-weights geolocation and Age relative to the Q28/employment mix that predicts true CA (see the memo). Neither the permutation nor the TreeSHAP ranking is a “global” importance order for predicting **regular transit** (see secondary RQ memos), where Q28 (AUC 0.762) still leads but Age and longitude also carry weight.
+**Reconciliation note.** This table (permutation importance on held-out folds) and the TreeSHAP ranking in [`memos/feature_predictive_power_ml_llm.qmd`](../memos/feature_predictive_power_ml_llm.qmd) (mean \|SHAP\| at the `transit` tier, real vLLM-backed outputs in `outputs/shap_eval/`) both rank covariates for predicting **CA**, but with different explainers: permutation puts Age 2nd, while TreeSHAP puts Employment 2nd and Age 6th. Q28 (ride-share days) leads under both. A third ranking — the surrogate SHAP of the live DeepSeek v2 persona agent — shows the LLM over-weights geolocation and Age relative to the Q28/employment mix that predicts true CA (see the memo). Neither the permutation nor the TreeSHAP ranking is a “global” importance order for predicting **regular transit** (see secondary RQ memos), where Q28 (AUC 0.762) still leads but Age and longitude also carry weight.
 
 ![Top covariates](figures/feature_importance_top.png)
 
@@ -52,7 +52,7 @@ Full File A/B waves omit ethnicity / nationality / language, so those fields are
 | Q28 (1.518), Age (1.326), lat/long, and employment dominate tabular importance | `transit` and `geo` tiers are the most justified contextual additions |
 | Employment ranks 4th (1.075) | RQ1 (employment lift) should show incremental, not dramatic, gains — matching RF MAE 5.72→5.59 ([`ml_baselines.md`](ml_baselines.md)) |
 | Sex importance = 0.258 (rank 7) | Large LLM error gaps by sex would look more like stereotyping than “using the sample’s real signal” |
-| Ride-share Q28 (1.518) > public transit Q26 (0.731) for predicting CA | Models (and prompts) that only mention bus/train may miss the higher-ranked mobility cue; reverse-prediction also favors Q28 (AUC = 0.762; [memo](../memos/q27_q28_predict_transit.md)) |
+| Ride-share Q28 (1.518) > public transit Q26 (0.731) for predicting CA | Models (and prompts) that only mention bus/train may miss the higher-ranked mobility cue; reverse-prediction also favors Q28 (AUC = 0.762; [memo](../memos/q27_q28_predict_transit.qmd)) |
 
 ## Reproducibility
 

@@ -9,7 +9,7 @@ subtitle: "Head-to-head evaluation across persona information tiers"
 **Real-export harness:** [`scripts/regenerate_ml_vs_llm_shap.py`](../scripts/regenerate_ml_vs_llm_shap.py) (F1 / SHAP / band discrimination from committed `exports/`)  
 **ML reference:** [`ml_baselines.md`](ml_baselines.md)  
 **Live LLM baselines:** [`persona_prompt_versions.md`](persona_prompt_versions.md), [`llm_v2_v3_enhanced_variants.md`](llm_v2_v3_enhanced_variants.md)  
-**Band / SHAP memo:** [`memos/feature_predictive_power_ml_llm.md`](../memos/feature_predictive_power_ml_llm.md)  
+**Band / SHAP memo:** [`memos/feature_predictive_power_ml_llm.qmd`](../memos/feature_predictive_power_ml_llm.qmd)  
 **Manuscript:** [`index.qmd`](../index.qmd)
 
 ---
@@ -29,7 +29,7 @@ Shared metrics (via `evaluate_predictions` / `summarize_errors`):
 - Exact-score accuracy
 - Band accuracy (low / moderate / high) and per-band F1
 - Mean band distance and normalized score / band distance
-- **Low-vs-high ROC-AUC and ordinal (Hand–Till) AUC** for band discrimination (see [memo](../memos/feature_predictive_power_ml_llm.md))
+- **Low-vs-high ROC-AUC and ordinal (Hand–Till) AUC** for band discrimination (see [memo](../memos/feature_predictive_power_ml_llm.qmd))
 
 ## How to read the comparison
 
@@ -83,7 +83,7 @@ Suite **best** MAE by tier (seed = 42; full tables in [`ml_baselines.md`](ml_bas
 
 ### Band discrimination (the metric MAE hides)
 
-At `transit`, RF separates low from high CA (AUC 0.72 group / 0.74 interpersonal; band accuracy 0.48 / 0.53; mean band distance 0.57 / 0.52), while DeepSeek v2 is at chance (low-vs-high AUC 0.53 / 0.49; band accuracy 0.36 / 0.36; band distance 0.70 / 0.68) and never emits the high band. Full tables and figures: [`memos/feature_predictive_power_ml_llm.md`](../memos/feature_predictive_power_ml_llm.md).
+At `transit`, RF separates low from high CA (AUC 0.72 group / 0.74 interpersonal; band accuracy 0.48 / 0.53; mean band distance 0.57 / 0.52), while DeepSeek v2 is at chance (low-vs-high AUC 0.53 / 0.49; band accuracy 0.36 / 0.36; band distance 0.70 / 0.68) and never emits the high band. Full tables and figures: [`memos/feature_predictive_power_ml_llm.qmd`](../memos/feature_predictive_power_ml_llm.qmd).
 
 ## Reproduce
 

@@ -85,7 +85,7 @@ Overall transit→CA contrast replicates (group Δ ≈ −2.72, *p* < .001). Nes
 
 ### Multiply-imputed vs complete-case head-to-head
 
-M = 20 imputations of Q20/Q21/Student on n = 241. **Singleton MI order:** Q28 (0.762) ≫ demos (0.617) ≫ CA (0.590) ≳ car (0.562). Demographics/CA are not restored to competitive levels; Q28’s lead is not attenuated. Joint CA+Q28+car rises to **0.808** when car items are MI-filled on the full frame; standalone car weakens under MI (−0.045). See [`memos/mi_head_to_head.md`](../memos/mi_head_to_head.md).
+M = 20 imputations of Q20/Q21/Student on n = 241. **Singleton MI order:** Q28 (0.762) ≫ demos (0.617) ≫ CA (0.590) ≳ car (0.562). Demographics/CA are not restored to competitive levels; Q28’s lead is not attenuated. Joint CA+Q28+car rises to **0.808** when car items are MI-filled on the full frame; standalone car weakens under MI (−0.045). See [`memos/mi_head_to_head.qmd`](../memos/mi_head_to_head.qmd).
 
 ## Implications for persona tiers
 

@@ -4,7 +4,7 @@ subtitle: "vLLM digital-twin results on the original 5-tier Terrarium prompts"
 ---
 
 **Model:** `deepseek-ai/DeepSeek-R1-Distill-Llama-8B` · **Prompt generation:** version 1 core ladder  
-**Companion:** [Cross-model memo](../memos/vllm_v1_cross_model_comparison.md) · [Llama-3.1](llm_baseline_llama31_v1.md) · [Llama-3.2-3B](llm_baseline_llama32_instruct_v1.md) · [Llama-3.3-70B](llm_baseline_llama33_70b_v1.md) · [Prompt versions](persona_prompt_versions.md)
+**Companion:** [Cross-model memo](../memos/vllm_v1_cross_model_comparison.qmd) · [Llama-3.1](llm_baseline_llama31_v1.md) · [Llama-3.2-3B](llm_baseline_llama32_instruct_v1.md) · [Llama-3.3-70B](llm_baseline_llama33_70b_v1.md) · [Prompt versions](persona_prompt_versions.md)
 
 > R1-distill generations may include `<think>…</think>` reasoning; the project ingest prefers post-`</think>` text and normalizes SentencePiece `Ġ`/`Ċ` before JSON parse.
 

@@ -4,7 +4,7 @@ subtitle: "vLLM digital-twin results — mode-collapse cautionary case"
 ---
 
 **Model:** `meta-llama/Llama-3.3-70B-Instruct` · **Prompt generation:** version 1 core ladder  
-**Companion:** [Cross-model memo](../memos/vllm_v1_cross_model_comparison.md) · [70B research memo](../memos/vllm_v1_llama33_70b.md) · [Llama-3.1](llm_baseline_llama31_v1.md) · [Llama-3.2-3B](llm_baseline_llama32_instruct_v1.md) · [DeepSeek](llm_baseline_deepseek_r1_distill_v1.md) · [Prompt versions](persona_prompt_versions.md)
+**Companion:** [Cross-model memo](../memos/vllm_v1_cross_model_comparison.qmd) · [70B research memo](../memos/vllm_v1_llama33_70b.qmd) · [Llama-3.1](llm_baseline_llama31_v1.md) · [Llama-3.2-3B](llm_baseline_llama32_instruct_v1.md) · [DeepSeek](llm_baseline_deepseek_r1_distill_v1.md) · [Prompt versions](persona_prompt_versions.md)
 
 > **Read first:** This run is a **mode-collapse** failure, not a scale win. ≈93% of generations are the constant pair `(group=18, interpersonal=12)`. Treat MAE / band tables as diagnostics of that prior, not as evidence that 70B recovers PRCA.
 

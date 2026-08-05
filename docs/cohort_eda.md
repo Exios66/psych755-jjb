@@ -62,7 +62,7 @@ Full-time respondents report lower CA. If an LLM stereotypes “unemployed / oth
 | 4–8 days/month | 46 | 13.28 | 13.48 |
 | 8+ days/month | 55 | 12.84 | 13.16 |
 
-Higher ridership ↔ lower mean CA (Never group M = 17.38 → 8+ days M = 12.84). This is the descriptive foundation for [Transit → CA](secondary_rq_transit_ca.md) ([memo](../memos/transit_riders_ca.md)) and [CA → Transit](secondary_rq_ca_predicts_transit.md) ([memo](../memos/ca_scores_predict_transit.md)).
+Higher ridership ↔ lower mean CA (Never group M = 17.38 → 8+ days M = 12.84). This is the descriptive foundation for [Transit → CA](secondary_rq_transit_ca.md) ([memo](../memos/transit_riders_ca.qmd)) and [CA → Transit](secondary_rq_ca_predicts_transit.md) ([memo](../memos/ca_scores_predict_transit.qmd)).
 
 ## Stereotyping lens — sex, student status & country
 

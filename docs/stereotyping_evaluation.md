@@ -58,4 +58,4 @@ Artifacts: `outputs/evaluation/stereotyping/` (and Posit sync copies Student/Emp
 2. Report transit-tier Δ-gaps — did mobility context worsen unevenness?
 3. Compare Llama-3.1 vs DeepSeek on the same slices (model-dependent hazard).
 4. Check signed error by group at transit (direction of stereotype).
-5. Do **not** treat mock Posit Student/Employment tables as live-model stereotyping; use the committed live vLLM export tables (`exports/v1/…/tables/stereotyping_by_*.csv`, `exports/v2/…/tables/stereotyping_by_*.csv`) for live-model claims. Real DeepSeek v2 slices are reported in [`index.qmd`](../index.qmd) and [`memos/live_llm_stereotyping_slices.md`](../memos/live_llm_stereotyping_slices.md).
+5. Do **not** treat mock Posit Student/Employment tables as live-model stereotyping; use the committed live vLLM export tables (`exports/v1/…/tables/stereotyping_by_*.csv`, `exports/v2/…/tables/stereotyping_by_*.csv`) for live-model claims. Real DeepSeek v2 slices are reported in [`index.qmd`](../index.qmd) and [`memos/live_llm_stereotyping_slices.qmd`](../memos/live_llm_stereotyping_slices.qmd).

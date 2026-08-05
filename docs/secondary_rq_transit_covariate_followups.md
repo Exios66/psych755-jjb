@@ -12,13 +12,13 @@ subtitle: "Secondary research questions — geo-memo follow-up Random Forests"
 [`secondary_rq_transit_covariate_followups.ipynb`](../notebooks/secondary_rq_transit_covariate_followups.ipynb)  
 **CLI:** `ca-personas covariate-transit-rf --join inner --seed 42`  
 **Artifacts:** `outputs/transit_covariate_rf/`  
-**Memos:** [`memos/transit_covariate_followups.md`](../memos/transit_covariate_followups.md) and family memos under `memos/`
+**Memos:** [`memos/transit_covariate_followups.qmd`](../memos/transit_covariate_followups.qmd) and family memos under `memos/`
 
 ---
 
 ## Research questions
 
-The geography → transit memo ([`memos/geo_predicts_transit.md`](../memos/geo_predicts_transit.md)) asked which other features might predict regular public-transit use after finding lat/long discrimination of AUC = **0.551**. Communication-apprehension scores were already tested (AUC = **0.590**; [`memos/ca_scores_predict_transit.md`](../memos/ca_scores_predict_transit.md)). This write-up evaluates the remaining named candidates:
+The geography → transit memo ([`memos/geo_predicts_transit.qmd`](../memos/geo_predicts_transit.qmd)) asked which other features might predict regular public-transit use after finding lat/long discrimination of AUC = **0.551**. Communication-apprehension scores were already tested (AUC = **0.590**; [`memos/ca_scores_predict_transit.qmd`](../memos/ca_scores_predict_transit.qmd)). This write-up evaluates the remaining named candidates:
 
 1. Driver's license & car access (`Q20`, `Q21`)
 2. Employment status

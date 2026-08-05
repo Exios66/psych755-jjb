@@ -115,7 +115,7 @@ Seeded tables: `outputs/ml_baseline/ml_baseline_mae_pivot_*.csv`, `ml_baseline_l
 
 - These MAE numbers are the **classical reference** for [`ml_vs_llm.md`](ml_vs_llm.md): an LLM tier “helps” only if it approaches or beats the **best suite MAE** on the same tier (not RF alone).
 - Because even the best suite MAE remains **4.25–4.49** points at `transit`, persona prompts that land in that range are competitive with tabular learners — not magical.
-- Feature-importance diagnostics ([factor_feature_importance.md](factor_feature_importance.md); [memo](../memos/feature_predictive_power_ml_llm.md)) still use RF/TreeSHAP to show *which* covariates carry signal (Q28 ranks first for predicting CA); the expanded suite answers *how high* that signal goes across model classes.
+- Feature-importance diagnostics ([factor_feature_importance.md](factor_feature_importance.md); [memo](../memos/feature_predictive_power_ml_llm.qmd)) still use RF/TreeSHAP to show *which* covariates carry signal (Q28 ranks first for predicting CA); the expanded suite answers *how high* that signal goes across model classes.
 
 ---
 
