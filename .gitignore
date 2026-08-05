@@ -5,7 +5,10 @@
 !index.html
 ~$*.docx
 
-# Quarto per-document render library dirs (regenerated on render)
+# Quarto render artifacts (per-document lib dirs + site libs; regenerated on render)
+**/*_files/
+**/site_libs/
+/index_files/
 memos/*_files/
 
 # OS
