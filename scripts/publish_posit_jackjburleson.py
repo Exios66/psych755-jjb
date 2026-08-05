@@ -515,7 +515,7 @@ def main(argv: list[str] | None = None) -> int:
     _log(f"Using account_id={account_id}")
     result = publish_bundle(access, site)
 
-    expect = list(args.expect) or ["Do LLMs Stereotype Communication Apprehension", "Q27"]
+    expect = list(args.expect) or ["Tiered Persona Prompting for Communication Apprehension", "Q27"]
     if checks.get("q28_auc"):
         expect.append(f"{checks['q28_auc']:.3f}"[:5])  # e.g. 0.762
     verify_live(result["share_url"], expect_substrings=expect)
