@@ -41,7 +41,7 @@ Figures below match the formal write-up [`docs/secondary_rq_ca_predicts_transit.
 
 Permutation importance likewise ranks **group CA** above interpersonal CA. Combining both subscales improves AUC by about +0.035 over the better single-feature model.
 
-**Conclusion.** Group and interpersonal CA recover CV ROC-AUC = **0.590** for weekly+ transit — above chance (+0.090) and above geo (0.551), but below Q28 (0.762; [`q27_q28_predict_transit.md`](q27_q28_predict_transit.qmd)). The relationship is consistent in direction (higher apprehension ↔ less weekly+ transit) and is driven more by **group** than interpersonal CA. CA alone does not separate riders cleanly (OOF confusion TN=76, FP=64, FN=40, TP=61), so treat these scores as a behavioral correlate, not a deterministic proxy.
+**Conclusion.** Group and interpersonal CA recover CV ROC-AUC = **0.590** for weekly+ transit — above chance (+0.090) and above geo (0.551), but below Q28 (0.762; [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd)). The relationship is consistent in direction (higher apprehension ↔ less weekly+ transit) and is driven more by **group** than interpersonal CA. CA alone does not separate riders cleanly (OOF confusion TN=76, FP=64, FN=40, TP=61), so treat these scores as a behavioral correlate, not a deterministic proxy.
 
 *Sources:* `notebooks/secondary_rq_ca_transit_rf.ipynb` · `src/ca_personas/ca_transit_rf.py` · `ca-personas ca-transit-rf` · write-up `docs/secondary_rq_ca_predicts_transit.md` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
 
@@ -51,6 +51,8 @@ Permutation importance likewise ranks **group CA** above interpersonal CA. Combi
 
 Is the CA–transit link causal (e.g., anxiety reducing use of shared vehicles), reverse (transit exposure reducing apprehension), or driven by third variables such as urbanicity, car access, employment, or country of residence? Same-wave self-reports cannot separate these accounts.
 
+**Answered in follow-ups:** residual CA after stratifying on Q28 is [`residual_ca_after_rideshare.qmd`](residual_ca_after_rideshare.qmd) (CA adds only +0.021 AUC over Q28); CA + Q28 + car on a complete-case frame is [`ca_mobility_joint_predicts_transit.qmd`](ca_mobility_joint_predicts_transit.qmd) (joint 0.736); the multiply-imputed head-to-head is [`mi_head_to_head.qmd`](mi_head_to_head.qmd) (CA not restored to competitive levels).
+
 ## What other features may also well-predict regular public transit use?
 
-Survey geolocation recovers AUC = **0.551** ([`geo_predicts_transit.md`](geo_predicts_transit.qmd)). Head-to-head mobility follow-ups: ride-share family Q28/Q29 AUC = **0.745**, car access Q20/Q21 AUC = **0.607**, employment AUC = **0.528**, Q28 alone AUC = **0.762** — see [`transit_covariate_followups.md`](transit_covariate_followups.qmd) and [`q27_q28_predict_transit.md`](q27_q28_predict_transit.qmd).
+Survey geolocation recovers AUC = **0.551** ([`geo_predicts_transit.qmd`](geo_predicts_transit.qmd)). Head-to-head mobility follow-ups: ride-share family Q28/Q29 AUC = **0.745**, car access Q20/Q21 AUC = **0.607**, employment AUC = **0.528**, Q28 alone AUC = **0.762** — see [`transit_covariate_followups.qmd`](transit_covariate_followups.qmd) and [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd).

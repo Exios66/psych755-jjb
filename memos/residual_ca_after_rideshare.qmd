@@ -8,7 +8,7 @@ bibliography: ../references.bib
 
 **Research question:** After accounting for ride-share days (**Q28**), does group/interpersonal CA still separate regular from non-regular public-transit riders?
 
-**Parent open questions:** [`transit_riders_ca.md`](transit_riders_ca.qmd) · [`ca_scores_predict_transit.md`](ca_scores_predict_transit.qmd)
+**Parent open questions:** [`transit_riders_ca.qmd`](transit_riders_ca.qmd) · [`ca_scores_predict_transit.qmd`](ca_scores_predict_transit.qmd)
 
 ---
 
@@ -63,7 +63,7 @@ CA incremental over Q28 ≈ **+0.021**.
 2. The descriptive CA gap is not a pure Q28 artifact—contrasts persist in the Never stratum—but the **0–1 days reversal** warns against a single global CA–transit story.  
 3. For persona-tier design, ride-share exposure remains the higher-value mobility cue; CA should not be treated as an independent transit classifier once Q28 is known.
 
-*Sources:* `ca-personas followup-experiments --experiments residual_ca_q28` · `outputs/followup_experiments/residual_ca_q28/`
+*Sources:* `ca-personas followup-experiments --experiments residual_ca_q28` · `outputs/followup_experiments/residual_ca_q28/` · formal write-up [`docs/secondary_rq_followup_experiments.md`](../docs/secondary_rq_followup_experiments.md)
 
 ---
 

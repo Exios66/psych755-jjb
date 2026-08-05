@@ -18,7 +18,7 @@ Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to
 
 ![Permutation importance and ROC curve for the tuned kitchen-sink Random Forest](figures/comprehensive_predictors_transit_memo.png){#fig-cp-comprehensive-predictors-transit}
 
-**Univariate screen.** Fit alone, `Q28` already achieves AUC ≈ **0.762**. No other primary feature exceeds 0.58 alone (`Age` ≈ 0.580; `gt_group_ca` ≈ 0.555; lat/lon and country ≈ 0.55). Proximal `Q27` (rides on a typical public-transit day)—reserved for an upper-bound model—scores ≈ 0.594 univariate on the imputed n = 241 screen frame (cf. the seeded Q27-only model, AUC **0.589** on n = 239 in [`q27_q28_predict_transit.md`](q27_q28_predict_transit.qmd)).
+**Univariate screen.** Fit alone, `Q28` already achieves AUC ≈ **0.762**. No other primary feature exceeds 0.58 alone (`Age` ≈ 0.580; `gt_group_ca` ≈ 0.555; lat/lon and country ≈ 0.55). Proximal `Q27` (rides on a typical public-transit day)—reserved for an upper-bound model—scores ≈ 0.594 univariate on the imputed n = 241 screen frame (cf. the seeded Q27-only model, AUC **0.589** on n = 239 in [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd)).
 
 **Feature-group ablations.**
 
@@ -43,7 +43,7 @@ Leave-one-group-out confirms the hierarchy: dropping **rideshare** costs ≈ **�
 
 **Conclusion.** In this cohort, regular public-transit use is **most powerfully predicted by adjacent mobility behavior**—especially ride-share days per month—augmented by car access and age. Communication apprehension and approximate geolocation remain detectable but secondary once mobility covariates are included. A tuned Random Forest over the defensible kitchen-sink feature set achieves **strong** out-of-fold discrimination (ROC-AUC ≈ 0.82). Adding proximal transit-intensity item `Q27` yields only a marginal further lift, so the primary model already captures most available tabular signal without direct outcome leakage.
 
-*Sources:* `notebooks/secondary_rq_comprehensive_transit_rf.ipynb` · `src/ca_personas/comprehensive_transit_rf.py` · `ca-personas comprehensive-transit-rf` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
+*Sources:* `notebooks/secondary_rq_comprehensive_transit_rf.ipynb` · `src/ca_personas/comprehensive_transit_rf.py` · `ca-personas comprehensive-transit-rf` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb) · formal write-up [`docs/secondary_rq_followup_experiments.md`](../docs/secondary_rq_followup_experiments.md)
 
 ---
 

@@ -8,8 +8,8 @@ bibliography: ../references.bib
 
 **Research question:** Do driver's license (`Q20`) and car access (`Q21`) predict whether a matched respondent takes public transportation regularly?
 
-**Parent memo:** [`geo_predicts_transit.md`](geo_predicts_transit.qmd)  
-**Comparison memo:** [`transit_covariate_followups.md`](transit_covariate_followups.qmd)
+**Parent memo:** [`geo_predicts_transit.qmd`](geo_predicts_transit.qmd)  
+**Comparison memo:** [`transit_covariate_followups.qmd`](transit_covariate_followups.qmd)
 
 ---
 
@@ -49,7 +49,7 @@ Permutation importance ranks **Q21** (mean AUC drop = 0.182) above **Q20** (0.01
 
 **Conclusion.** Car access recovers AUC = **0.607** on complete cases (n = 149): lacking a usable car is associated with 76.0% regular ridership vs 30.9% among those with access, yet item missingness truncates the analytic *N*. Interpret as a mobility constraint correlate, not a causal estimate.
 
-*Sources:* `notebooks/secondary_rq_car_access_transit_rf.ipynb` · `src/ca_personas/transit_covariate_rf.py` · `ca-personas covariate-transit-rf --specs car_access` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
+*Sources:* `notebooks/secondary_rq_car_access_transit_rf.ipynb` · `src/ca_personas/transit_covariate_rf.py` · `ca-personas covariate-transit-rf --specs car_access` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb) · formal write-up [`docs/secondary_rq_transit_covariate_followups.md`](../docs/secondary_rq_transit_covariate_followups.md)
 
 ---
 
@@ -59,4 +59,4 @@ Are `Q20`/`Q21` missing systematically (e.g., skip logic, survey fatigue), and w
 
 ## What other features may also well-predict regular public transit use?
 
-Ride-share frequency (`Q28`/`Q29`) recovers AUC = **0.745** ([`rideshare_predicts_transit.md`](rideshare_predicts_transit.qmd)). Employment status alone recovers AUC = **0.528** ([`employment_predicts_transit.md`](employment_predicts_transit.qmd)). Head-to-head: [`transit_covariate_followups.md`](transit_covariate_followups.qmd).
+Ride-share frequency (`Q28`/`Q29`) recovers AUC = **0.745** ([`rideshare_predicts_transit.qmd`](rideshare_predicts_transit.qmd)). Employment status alone recovers AUC = **0.528** ([`employment_predicts_transit.qmd`](employment_predicts_transit.qmd)). Head-to-head: [`transit_covariate_followups.qmd`](transit_covariate_followups.qmd).

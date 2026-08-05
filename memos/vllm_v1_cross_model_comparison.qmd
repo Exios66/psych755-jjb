@@ -10,7 +10,7 @@ bibliography: ../references.bib
 
 **Formal method pages:** [`docs/llm_baseline_llama31_v1.md`](../docs/llm_baseline_llama31_v1.md) · [`docs/llm_baseline_llama32_instruct_v1.md`](../docs/llm_baseline_llama32_instruct_v1.md) · [`docs/llm_baseline_deepseek_r1_distill_v1.md`](../docs/llm_baseline_deepseek_r1_distill_v1.md) · [`docs/llm_baseline_llama33_70b_v1.md`](../docs/llm_baseline_llama33_70b_v1.md) · [`docs/persona_prompt_versions.md`](../docs/persona_prompt_versions.md)
 
-**Sibling memos (per model):** [`vllm_v1_llama31_8b.md`](vllm_v1_llama31_8b.qmd) · [`vllm_v1_llama32_3b.md`](vllm_v1_llama32_3b.qmd) · [`vllm_v1_deepseek_r1_distill.md`](vllm_v1_deepseek_r1_distill.qmd) · [`vllm_v1_llama33_70b.md`](vllm_v1_llama33_70b.qmd)
+**Sibling memos (per model):** [`vllm_v1_llama31_8b.qmd`](vllm_v1_llama31_8b.qmd) · [`vllm_v1_llama32_3b.qmd`](vllm_v1_llama32_3b.qmd) · [`vllm_v1_deepseek_r1_distill.qmd`](vllm_v1_deepseek_r1_distill.qmd) · [`vllm_v1_llama33_70b.qmd`](vllm_v1_llama33_70b.qmd)
 
 ---
 
@@ -100,4 +100,4 @@ Do v2 (signal-first) and v3 (rideshare / public-transit / voice ablations) remov
 
 ## What other analyses pair with this memo?
 
-Per-model memos below unpack RQ tables and confusion matrices. Classical ceilings: [`docs/ml_baselines.md`](../docs/ml_baselines.md). Feature attributions (mock LLM era): [`feature_predictive_power_ml_llm.md`](feature_predictive_power_ml_llm.qmd). Prompt redesign rationale: [`docs/persona_prompt_efficiency.md`](../docs/persona_prompt_efficiency.md).
+Per-model memos below unpack RQ tables and confusion matrices. Classical ceilings: [`docs/ml_baselines.md`](../docs/ml_baselines.md). Feature attributions (mock LLM era): [`feature_predictive_power_ml_llm.qmd`](feature_predictive_power_ml_llm.qmd). Prompt redesign rationale: [`docs/persona_prompt_efficiency.md`](../docs/persona_prompt_efficiency.md).

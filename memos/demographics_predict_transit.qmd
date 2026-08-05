@@ -8,7 +8,7 @@ bibliography: ../references.bib
 
 **Research question:** Do Prolific demographics—**Age**, **Sex**, and **Student status**—predict regular public-transit use in the matched cohort?
 
-**Companion:** [`country_predicts_transit.md`](country_predicts_transit.qmd) · [`common_n_head_to_head.md`](common_n_head_to_head.qmd) · agenda [`docs/research_memo_agenda.md`](../docs/research_memo_agenda.md)
+**Companion:** [`country_predicts_transit.qmd`](country_predicts_transit.qmd) · [`common_n_head_to_head.qmd`](common_n_head_to_head.qmd) · agenda [`docs/research_memo_agenda.md`](../docs/research_memo_agenda.md)
 
 ---
 
@@ -61,4 +61,4 @@ Permutation importance (AUC drop): Age ≈ 0.33 · Sex ≈ 0.13 · Student ≈ 0
 
 ## What questions or uncertainties remain?
 
-Does age remain predictive after conditioning on Q28 and car access on a common-*N* frame? (Partially answered in [`common_n_head_to_head.md`](common_n_head_to_head.qmd)—demographics fall near chance when mobility items are forced into the overlap.)
+Does age remain predictive after conditioning on Q28 and car access on a common-*N* frame? (Partially answered in [`common_n_head_to_head.qmd`](common_n_head_to_head.qmd)—demographics fall near chance when mobility items are forced into the overlap.)

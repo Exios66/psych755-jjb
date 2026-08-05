@@ -8,7 +8,7 @@ bibliography: ../references.bib
 
 **Research question:** On a complete-case frame, how do group/interpersonal **CA**, ride-share days (**Q28**), and car access (**Q21**) jointly and separately predict regular transit?
 
-**Companions:** [`ca_scores_predict_transit.md`](ca_scores_predict_transit.qmd) · [`q28_conditioned_on_car.md`](q28_conditioned_on_car.qmd) · [`residual_ca_after_rideshare.md`](residual_ca_after_rideshare.qmd)
+**Companions:** [`ca_scores_predict_transit.qmd`](ca_scores_predict_transit.qmd) · [`q28_conditioned_on_car.qmd`](q28_conditioned_on_car.qmd) · [`residual_ca_after_rideshare.qmd`](residual_ca_after_rideshare.qmd)
 
 ---
 
@@ -42,10 +42,10 @@ Permutation importance (joint model): Q28 ≈ 0.20 · Q21 ≈ 0.14 · interperso
 2. CA’s full-cohort AUC should not be compared naively to rideshare AUCs computed on different complete-case sets—**CA collapses when the sample is the car-complete subset**.  
 3. Adding CA to Q28 alone does not beat Q28 (0.657 < 0.665); CA helps only once car access is also present (joint 0.736).
 
-*Sources:* `ca-personas followup-experiments --experiments ca_q28_car` · `outputs/followup_experiments/ca_q28_car/`
+*Sources:* `ca-personas followup-experiments --experiments ca_q28_car` · `outputs/followup_experiments/ca_q28_car/` · formal write-up [`docs/secondary_rq_followup_experiments.md`](../docs/secondary_rq_followup_experiments.md)
 
 ---
 
 ## What questions or uncertainties remain?
 
-Is the CA collapse on n=149 selection (who answers car items) or true redundancy with mobility? See also residual-CA strata in [`residual_ca_after_rideshare.md`](residual_ca_after_rideshare.qmd).
+Is the CA collapse on n=149 selection (who answers car items) or true redundancy with mobility? See also residual-CA strata in [`residual_ca_after_rideshare.qmd`](residual_ca_after_rideshare.qmd).

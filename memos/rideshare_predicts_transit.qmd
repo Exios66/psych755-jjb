@@ -8,9 +8,9 @@ bibliography: ../references.bib
 
 **Research question:** Does ride-share use (`Q28` days; `Q29` typical rides) predict whether a matched respondent takes public transportation regularly?
 
-**Parent memo:** [`geo_predicts_transit.md`](geo_predicts_transit.qmd)  
-**Q27/Q28 focused memo:** [`q27_q28_predict_transit.md`](q27_q28_predict_transit.qmd) · manuscript § in [`index.qmd`](../index.qmd)  
-**Comparison memo:** [`transit_covariate_followups.md`](transit_covariate_followups.qmd)
+**Parent memo:** [`geo_predicts_transit.qmd`](geo_predicts_transit.qmd)  
+**Q27/Q28 focused memo:** [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd) · manuscript § in [`index.qmd`](../index.qmd)  
+**Comparison memo:** [`transit_covariate_followups.qmd`](transit_covariate_followups.qmd)
 
 ---
 
@@ -51,9 +51,9 @@ Using the matched analytic cohort with complete `Q28`/`Q29` (**n = 233**; 99 reg
 
 Permutation importance: **Q28** mean AUC drop = 0.291 vs **Q29** = 0.015. Average precision = 0.655 and Brier = 0.197. Relative to geo (AUC = 0.551) and CA (AUC = 0.590), the rideshare family gains +0.194 and +0.155 AUC respectively.
 
-**Conclusion.** Among the geo-memo follow-up candidates, the Q28/Q29 family recovers the highest stand-alone AUC in that trio (**0.745**); Q28 alone reaches **0.762** ([`q27_q28_predict_transit.md`](q27_q28_predict_transit.qmd)). The association is theoretically expected (shared mobility habits / multimodal travelers) but is still same-wave and non-causal; `Q28` and `Q26` may also share response styles or urban lifestyle confounds.
+**Conclusion.** Among the geo-memo follow-up candidates, the Q28/Q29 family recovers the highest stand-alone AUC in that trio (**0.745**); Q28 alone reaches **0.762** ([`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd)). The association is theoretically expected (shared mobility habits / multimodal travelers) but is still same-wave and non-causal; `Q28` and `Q26` may also share response styles or urban lifestyle confounds.
 
-*Sources:* `notebooks/secondary_rq_rideshare_transit_rf.ipynb` · `src/ca_personas/transit_covariate_rf.py` · `ca-personas covariate-transit-rf --specs rideshare` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
+*Sources:* `notebooks/secondary_rq_rideshare_transit_rf.ipynb` · `src/ca_personas/transit_covariate_rf.py` · `ca-personas covariate-transit-rf --specs rideshare` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb) · formal write-up [`docs/secondary_rq_transit_covariate_followups.md`](../docs/secondary_rq_transit_covariate_followups.md)
 
 ---
 
@@ -63,4 +63,4 @@ How much of the `Q28`→`Q26` link is multimodality versus correlated urbanicity
 
 ## What other features may also well-predict regular public transit use?
 
-Car access recovers AUC = **0.607** ([`car_access_predicts_transit.md`](car_access_predicts_transit.qmd)); the joint car+employment+ride-share bundle recovers AUC = **0.746** on n = 143 — only +0.002 over ride-share alone on that smaller complete-case subset ([`transit_covariate_followups.md`](transit_covariate_followups.qmd)).
+Car access recovers AUC = **0.607** ([`car_access_predicts_transit.qmd`](car_access_predicts_transit.qmd)); the joint car+employment+ride-share bundle recovers AUC = **0.746** on n = 143 — only +0.002 over ride-share alone on that smaller complete-case subset ([`transit_covariate_followups.qmd`](transit_covariate_followups.qmd)).

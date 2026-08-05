@@ -8,7 +8,7 @@ bibliography: ../references.bib
 
 **Research question:** Do **country of residence** and **car access (Q21)** jointly—or as an interaction—predict regular public-transit use better than either alone?
 
-**Parent open question:** [`transit_covariate_followups.md`](transit_covariate_followups.qmd) · **Companions:** [`country_predicts_transit.md`](country_predicts_transit.qmd) · [`car_access_predicts_transit.md`](car_access_predicts_transit.qmd)
+**Parent open question:** [`transit_covariate_followups.qmd`](transit_covariate_followups.qmd) · **Companions:** [`country_predicts_transit.qmd`](country_predicts_transit.qmd) · [`car_access_predicts_transit.qmd`](car_access_predicts_transit.qmd)
 
 ---
 
@@ -39,7 +39,7 @@ On respondents with complete country + Q21 (n = **149**), nested categorical Ran
 2. Additive encoding is sufficient; a saturated interaction string does not buy more AUC in this sample.  
 3. Still far below full-cohort Q28 (≈0.762), so country×car is a mid-tier place/mobility bundle—not a rideshare substitute.
 
-*Sources:* `ca-personas followup-experiments --experiments country_car` · `outputs/followup_experiments/country_car/`
+*Sources:* `ca-personas followup-experiments --experiments country_car` · `outputs/followup_experiments/country_car/` · formal write-up [`docs/secondary_rq_followup_experiments.md`](../docs/secondary_rq_followup_experiments.md)
 
 ---
 

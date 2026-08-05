@@ -9,7 +9,7 @@ bibliography: ../references.bib
 **Research question:** Does `meta-llama/Llama-3.1-8B-Instruct`, when personified via prompt-v1 cumulative Terrarium narratives, recover participants’ group and interpersonal PRCA scores — and do employment (RQ1), transit (RQ2), or full cumulative context (RQ3) reduce absolute error?
 
 **Formal write-up:** [`docs/llm_baseline_llama31_v1.md`](../docs/llm_baseline_llama31_v1.md)  
-**Cross-model memo:** [`vllm_v1_cross_model_comparison.md`](vllm_v1_cross_model_comparison.qmd)
+**Cross-model memo:** [`vllm_v1_cross_model_comparison.qmd`](vllm_v1_cross_model_comparison.qmd)
 
 ---
 
@@ -63,4 +63,4 @@ Does the transit IP collapse replicate under v2 packaging without changing model
 
 ## What other analyses pair with this memo?
 
-Cross-model ranking: [`vllm_v1_cross_model_comparison.md`](vllm_v1_cross_model_comparison.qmd). Smaller Llama and DeepSeek distill siblings: [`vllm_v1_llama32_3b.md`](vllm_v1_llama32_3b.qmd), [`vllm_v1_deepseek_r1_distill.md`](vllm_v1_deepseek_r1_distill.qmd). Prompt redesign: [`docs/persona_prompt_efficiency.md`](../docs/persona_prompt_efficiency.md). Manuscript figure: `memos/figures/vllm_v1_llama31_ip_collapse.png`.
+Cross-model ranking: [`vllm_v1_cross_model_comparison.qmd`](vllm_v1_cross_model_comparison.qmd). Smaller Llama and DeepSeek distill siblings: [`vllm_v1_llama32_3b.qmd`](vllm_v1_llama32_3b.qmd), [`vllm_v1_deepseek_r1_distill.qmd`](vllm_v1_deepseek_r1_distill.qmd). Prompt redesign: [`docs/persona_prompt_efficiency.md`](../docs/persona_prompt_efficiency.md). Manuscript figure: `memos/figures/vllm_v1_llama31_ip_collapse.png`.

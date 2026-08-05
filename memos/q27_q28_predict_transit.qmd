@@ -8,7 +8,7 @@ bibliography: ../references.bib
 
 **Research question:** In traditional machine-learning classifiers, how much predictive power do survey items **Q27** (rides on a typical public-transit day) and **Q28** (ride-share days in the last three months) carry for **regular** public-transit use?
 
-**Companion memos:** [`rideshare_predicts_transit.md`](rideshare_predicts_transit.qmd) · [`transit_covariate_followups.md`](transit_covariate_followups.qmd) · parent [`geo_predicts_transit.md`](geo_predicts_transit.qmd)  
+**Companion memos:** [`rideshare_predicts_transit.qmd`](rideshare_predicts_transit.qmd) · [`transit_covariate_followups.qmd`](transit_covariate_followups.qmd) · parent [`geo_predicts_transit.qmd`](geo_predicts_transit.qmd)  
 **Manuscript:** [`index.qmd`](../index.qmd) § *Secondary results: Q27/Q28 as ML predictors of regular transit*
 
 ---
@@ -89,3 +89,7 @@ Permutation importance in the joint **Q27 + Q28** forest ranks **Q28** (mean AUC
 ## What questions or uncertainties remain?
 
 Would Q28 retain its lift after conditioning on city density or car access? Does Q27 help *within* the regular-rider subgroup for intensity forecasting even though it weakly predicts the weekly+ threshold?
+
+**Answered in follow-ups:** Q28's lift after car conditioning is addressed by [`q28_conditioned_on_car.qmd`](q28_conditioned_on_car.qmd) (AUC 0.665 → 0.730 with Q21); the within-rider intensity question by [`q27_intensity_among_riders.qmd`](q27_intensity_among_riders.qmd) (best AUC ≈ 0.549 — no usable signal). CA-plus-mobility joint models and multiply-imputed head-to-heads complete the picture in [`ca_mobility_joint_predicts_transit.qmd`](ca_mobility_joint_predicts_transit.qmd) and [`mi_head_to_head.qmd`](mi_head_to_head.qmd).
+
+**Formal write-up:** [`docs/secondary_rq_q27_q28_predict_transit.md`](../docs/secondary_rq_q27_q28_predict_transit.md)

@@ -9,7 +9,7 @@ bibliography: ../references.bib
 **Research question:** Does the smaller `meta-llama/Llama-3.2-3B-Instruct` model recover PRCA group and interpersonal scores on the same prompt-v1 ladder as the 8B baseline — and does it avoid the transit-induced interpersonal failure seen in Llama-3.1?
 
 **Formal write-up:** [`docs/llm_baseline_llama32_instruct_v1.md`](../docs/llm_baseline_llama32_instruct_v1.md)  
-**Cross-model memo:** [`vllm_v1_cross_model_comparison.md`](vllm_v1_cross_model_comparison.qmd)
+**Cross-model memo:** [`vllm_v1_cross_model_comparison.qmd`](vllm_v1_cross_model_comparison.qmd)
 
 ---
 
@@ -67,4 +67,4 @@ Is the group-band advantage mostly a low-CA prior (confusion matrix) rather than
 
 ## What other analyses pair with this memo?
 
-Cross-model synthesis: [`vllm_v1_cross_model_comparison.md`](vllm_v1_cross_model_comparison.qmd). Llama-3.1 failure modes: [`vllm_v1_llama31_8b.md`](vllm_v1_llama31_8b.qmd). DeepSeek distill: [`vllm_v1_deepseek_r1_distill.md`](vllm_v1_deepseek_r1_distill.qmd).
+Cross-model synthesis: [`vllm_v1_cross_model_comparison.qmd`](vllm_v1_cross_model_comparison.qmd). Llama-3.1 failure modes: [`vllm_v1_llama31_8b.qmd`](vllm_v1_llama31_8b.qmd). DeepSeek distill: [`vllm_v1_deepseek_r1_distill.qmd`](vllm_v1_deepseek_r1_distill.qmd).

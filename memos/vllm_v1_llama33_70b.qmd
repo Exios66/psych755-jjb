@@ -9,7 +9,7 @@ bibliography: ../references.bib
 **Research question:** Does `meta-llama/Llama-3.3-70B-Instruct`, when personified via prompt-v1 cumulative Terrarium narratives, recover participants’ group and interpersonal PRCA scores — and do employment (RQ1), transit (RQ2), or full cumulative context (RQ3) reduce absolute error?
 
 **Formal write-up:** [`docs/llm_baseline_llama33_70b_v1.md`](../docs/llm_baseline_llama33_70b_v1.md)  
-**Cross-model memo:** [`vllm_v1_cross_model_comparison.md`](vllm_v1_cross_model_comparison.qmd)
+**Cross-model memo:** [`vllm_v1_cross_model_comparison.qmd`](vllm_v1_cross_model_comparison.qmd)
 
 ---
 
@@ -62,4 +62,4 @@ Was temperature / sampling configured too greedily (or with too-strong JSON sche
 
 ## What other analyses pair with this memo?
 
-Cross-model ranking: [`vllm_v1_cross_model_comparison.md`](vllm_v1_cross_model_comparison.qmd). Non-collapsed siblings: [`vllm_v1_llama31_8b.md`](vllm_v1_llama31_8b.qmd), [`vllm_v1_llama32_3b.md`](vllm_v1_llama32_3b.qmd), [`vllm_v1_deepseek_r1_distill.md`](vllm_v1_deepseek_r1_distill.qmd).
+Cross-model ranking: [`vllm_v1_cross_model_comparison.qmd`](vllm_v1_cross_model_comparison.qmd). Non-collapsed siblings: [`vllm_v1_llama31_8b.qmd`](vllm_v1_llama31_8b.qmd), [`vllm_v1_llama32_3b.qmd`](vllm_v1_llama32_3b.qmd), [`vllm_v1_deepseek_r1_distill.qmd`](vllm_v1_deepseek_r1_distill.qmd).

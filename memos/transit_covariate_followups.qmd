@@ -8,8 +8,8 @@ bibliography: ../references.bib
 
 **Research question:** Among the candidates listed in the geography → transit memo—car license/access (`Q20`/`Q21`), employment status, and ride-share frequency (`Q28`/`Q29`)—which features best predict regular public-transit use?
 
-**Parent memo:** [`geo_predicts_transit.md`](geo_predicts_transit.qmd)  
-**Family memos:** [`car_access_predicts_transit.md`](car_access_predicts_transit.qmd) · [`employment_predicts_transit.md`](employment_predicts_transit.qmd) · [`rideshare_predicts_transit.md`](rideshare_predicts_transit.qmd) · [`q27_q28_predict_transit.md`](q27_q28_predict_transit.qmd) (Q27 vs Q28 traditional ML)
+**Parent memo:** [`geo_predicts_transit.qmd`](geo_predicts_transit.qmd)  
+**Family memos:** [`car_access_predicts_transit.qmd`](car_access_predicts_transit.qmd) · [`employment_predicts_transit.qmd`](employment_predicts_transit.qmd) · [`rideshare_predicts_transit.qmd`](rideshare_predicts_transit.qmd) · [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd) (Q27 vs Q28 traditional ML)
 
 ---
 
@@ -17,7 +17,7 @@ bibliography: ../references.bib
 
 We re-used the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26` outcome; companion geo AUC = **0.551**, CA AUC = **0.590**, chance = **0.500**) and ran balanced Random Forests with stratified 5-fold CV (`seed=42`) for each feature family, plus a joint **mobility bundle**. Complete-case *N* differs by family because `Q20`/`Q21` (and some `Q29`) are missing more often than employment or `Q28`.
 
-**Short answer:** **Q28 alone** recovers the highest AUC in the suite (**0.762**; [`q27_q28_predict_transit.md`](q27_q28_predict_transit.qmd)). The Q28/Q29 rideshare family reaches **0.745**; car access **0.607**; employment **0.528**. Bundling car+employment+ride-share (**0.746** on n = 143) does not meaningfully beat ride-share alone once *N* shrinks to respondents with complete car items.
+**Short answer:** **Q28 alone** recovers the highest AUC in the suite (**0.762**; [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd)). The Q28/Q29 rideshare family reaches **0.745**; car access **0.607**; employment **0.528**. Bundling car+employment+ride-share (**0.746** on n = 143) does not meaningfully beat ride-share alone once *N* shrinks to respondents with complete car items.
 
 ![Head-to-head CV ROC-AUC for follow-up families vs benchmarks](figures/transit_covariate_followups_memo.png){#fig-cf-transit-covariate-followups}
 
@@ -55,6 +55,10 @@ We re-used the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26` o
 
 Would a model that includes CA + ride-share + car access on a multiply-imputed frame change the relative importance of psychological vs mobility predictors? How much of the `Q28`–`Q26` association is multimodality versus shared urban lifestyle confounds?
 
+**Answered in follow-ups:** the multiply-imputed head-to-head is [`mi_head_to_head.qmd`](mi_head_to_head.qmd) (Q28's lead preserved); CA + Q28 + car on a complete-case frame is [`ca_mobility_joint_predicts_transit.qmd`](ca_mobility_joint_predicts_transit.qmd) (joint AUC 0.736); Q28 conditional on car is [`q28_conditioned_on_car.qmd`](q28_conditioned_on_car.qmd); country × car is [`country_car_predicts_transit.qmd`](country_car_predicts_transit.qmd); equal-*N* ranking is [`common_n_head_to_head.qmd`](common_n_head_to_head.qmd).
+
 ## What other features may also well-predict regular public transit use?
 
-City/density proxies, country-of-residence interactions with car access, and student status remain open. The geo memo’s questions about VPN/IP geolocation quality also still apply when place cues are reintroduced alongside mobility items.
+City/density proxies, country-of-residence interactions with car access, and student status remain open. The geo memo’s questions about VPN/IP geolocation quality also still apply when place cues are reintroduced alongside mobility items. Student-status and demographic follow-ups are in [`demographics_predict_transit.qmd`](demographics_predict_transit.qmd), and the kitchen-sink ceiling is in [`comprehensive_predictors_transit.qmd`](comprehensive_predictors_transit.qmd).
+
+**Formal write-up:** [`docs/secondary_rq_transit_covariate_followups.md`](../docs/secondary_rq_transit_covariate_followups.md)

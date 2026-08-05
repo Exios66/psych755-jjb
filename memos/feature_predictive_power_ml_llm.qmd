@@ -153,4 +153,4 @@ Does the canonical `v3_enhanced` decode (temp 0.3, guided JSON) change DeepSeek'
 
 ## What other analyses pair with this memo?
 
-Secondary RQs on transit↔CA mean differences and CA/geo → regular-transit Random Forests (`memos/transit_riders_ca.md`, `memos/geo_predicts_transit.md`) ask the reverse predictive direction. The present memo asks which **inputs** best recover CA under ML and LLM personification, and which **bands** the models actually separate.
+Secondary RQs on transit↔CA mean differences and CA/geo → regular-transit Random Forests ([`transit_riders_ca.qmd`](transit_riders_ca.qmd), [`geo_predicts_transit.qmd`](geo_predicts_transit.qmd)) ask the reverse predictive direction. The present memo asks which **inputs** best recover CA under ML and LLM personification, and which **bands** the models actually separate. Live-model stereotyping slices on the same v2 export ([`live_llm_stereotyping_slices.qmd`](live_llm_stereotyping_slices.qmd)) and the cross-model / v2-v3 ranking memos ([`vllm_v1_cross_model_comparison.qmd`](vllm_v1_cross_model_comparison.qmd), [`vllm_v2_v3_evaluation.qmd`](vllm_v2_v3_evaluation.qmd)) complete the LLM-side picture.

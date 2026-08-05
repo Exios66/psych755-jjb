@@ -205,13 +205,13 @@ N = int(len(participants))
 
 # Introduction
 
-Communication apprehension (CA) is a well-studied individual difference describing fear or anxiety associated with real or anticipated communication [@mccroskey1970; @mccroskey1984]. McCroskey first introduced the Personal Report of Communication Apprehension (PRCA-24) in the fourth edition of *An Introduction to Rhetorical Communication* [@mccroskey1982], and the measure remains the standard self-report tool for the construct, with the current scoring guide maintained by the author [@mccroskeyprca24]. The PRCA-24 yields context-specific subscale scores—including **group discussion** and **interpersonal** conversation—each ranging from 6 (very low apprehension) to 30 (very high) [@mccroskey1982; @beatty1988].
+Communication apprehension (CA) is a well-studied individual difference describing fear or anxiety associated with real or anticipated communication [@mccroskey1970; @mccroskey1984]. McCroskey first introduced the Personal Report of Communication Apprehension (PRCA-24) in the fourth edition of *An Introduction to Rhetorical Communication* [@mccroskey1982], and the measure remains the standard self-report tool for the construct, with the current scoring guide maintained by the author [@mccroskeyprca24]. Early self-report batteries for social-communicative anxiety were compared and validated in the late 1970s [@daly1978], and the PRCA-24's content validity across communication contexts was subsequently established [@mccroskey1984]. The PRCA-24 yields context-specific subscale scores—including **group discussion** and **interpersonal** conversation—each ranging from 6 (very low apprehension) to 30 (very high) [@mccroskey1982; @beatty1988].
 
-Separately, large language models are increasingly used as **survey respondents** and **silicon samples**: prompts that condition on demographic or biographical attributes and emit attitude- or item-like answers [@argyle2023; @park2024]. Related work on generative agents and digital-twin simulation explores whether models can stand in for populations or individuals in social-science workflows [@park2023; @park2024]. Prior evaluations show that persona prompts can surface social stereotypes and opinion distributions that do not faithfully track the populations they purport to represent, and that outputs are sensitive to prompt packaging and position [@cheng2023; @santurkar2023; @hu2024]. That raises a concrete measurement question for psychological research tooling:
+Separately, large language models are increasingly used as **survey respondents** and **silicon samples**: prompts that condition on demographic or biographical attributes and emit attitude- or item-like answers [@argyle2023; @park2024]. Related work on generative agents and digital-twin simulation explores whether models can stand in for populations or individuals in social-science workflows [@park2023; @park2024; @binz2024], and computational social-science program statements identify LLM-driven simulation as a central methodological frontier [@grossmann2023]. Behavioral economists have pushed the same agenda in experimental economics, treating instruction-tuned models as implicit computational models of humans ("*homo silicus*") whose behavior can be probed in simulated scenarios [@horton2023]. Prior evaluations show that persona prompts can surface social stereotypes and opinion distributions that do not faithfully track the populations they purport to represent, and that outputs are sensitive to prompt packaging and position [@cheng2023; @santurkar2023; @hu2024; @salewski2023]. The same persona-impersonation mechanisms that recover human-like developmental or expertise effects can also reveal systematic group biases [@salewski2023], and formatting-level prompt variation alone shifts downstream answers in measurable ways [@sclar2024]. That raises a concrete measurement question for psychological research tooling:
 
 > When predicting an individual’s CA from demographic attributes alone, does an LLM’s prediction error vary systematically with demographic or contextual group membership — and does the model recover the same covariate signal that classical baselines extract?
 
-Methodologically, this manuscript sits between two traditions. The *data-modeling culture* [@breiman2001cultures] treats the task as estimating a stochastic relationship between covariates and an outcome and focuses on parameter inference; the *algorithmic-modeling culture* [@breiman2001cultures; @breiman2001] treats it as a predictive function-learning problem and focuses on out-of-sample error. We deliberately adopt both: classical tabular learners (Ridge, Elastic Net, k-nearest neighbors, Random Forest, and gradient-boosted trees) supply the algorithmic floor under cross-validation, while the reverse-predictor secondary analyses add inferential contrasts (Welch *t* tests, effect sizes, bootstrap CIs) of the data-modeling kind. The LLM persona agents are evaluated as a third, predictive family against the same ground truth, so digital-twin error can be benchmarked against a classical algorithmic baseline rather than judged in a vacuum [@argyle2023; @breiman2001cultures].
+Methodologically, this manuscript sits between two traditions. The *data-modeling culture* [@breiman2001cultures] treats the task as estimating a stochastic relationship between covariates and an outcome and focuses on parameter inference; the *algorithmic-modeling culture* [@breiman2001cultures; @breiman2001] treats it as a predictive function-learning problem and focuses on out-of-sample error. We deliberately adopt both: classical tabular learners (Ridge, Elastic Net, k-nearest neighbors, Random Forest, and gradient-boosted trees) supply the algorithmic floor under cross-validation, while the reverse-predictor secondary analyses add inferential contrasts (Welch *t* tests, effect sizes, bootstrap CIs) of the data-modeling kind. The LLM persona agents are evaluated as a third, predictive family against the same ground truth, so digital-twin error can be benchmarked against a classical algorithmic baseline rather than judged in a vacuum [@argyle2023; @breiman2001cultures; @park2023]. In the terminology of recent cognitive-model work, we are asking not whether LLMs can be *turned into* cognitive models of the PRCA-24 [@binz2024; @argyle2023] but how close a persona-conditioned inference family comes to a classical learner on the same held-out psychometric target.
 
 ## Research Questions
 
@@ -673,7 +673,7 @@ Mean of group + interpersonal targets (*F*1 = macro-averaged harmonic mean of pr
 : RF versus DeepSeek v2 MAE and band metrics by persona tier. {#tbl-mae-band-tier}
 
 
-RF improves **monotonically** as tiers accumulate (MAE 5.47 → 4.48; macro-F1 0.31 → 0.42; band accuracy 0.37 → 0.51). DeepSeek v2 does not: `employment` is its *worst* tier (5.47), `transit` (5.03) barely beats `demos` (5.08), and its band metrics are flat at ~0.25–0.36 — below RF at every tier (@fig-f1-ml-vs-llm).
+RF improves **monotonically** as tiers accumulate (MAE 5.47 → 4.48; macro-F1 0.31 → 0.42; band accuracy 0.37 → 0.51). DeepSeek v2 does not: `employment` is its *worst* tier (5.47), `transit` (5.03) barely beats `demos` (5.08), and its band metrics are flat at ~0.25–0.36 — below RF at every tier (@fig-f1-ml-vs-llm). In variance terms, the best tabular learner explains only a small share of true CA: RF $R^2$ rises from ≈ −0.37/−0.31 at `demos` (group / interpersonal) to **0.06–0.10** at `transit` (RMSE 5.82 / 5.51; table: `metrics_ml_llm.csv`). Even at its richest tier the classical suite leaves the large majority of individual CA variance unexplained, which contextualizes both the modest *d* = −0.46 transit-group CA contrast above and the single-digit exact-match ceiling of the persona agents.
 
 ![Band macro-F1 by tier — RF vs DeepSeek v2](memos/figures/fig_f1_ml_vs_llm.png){#fig-f1-ml-vs-llm}
 
@@ -754,6 +754,30 @@ Ride-share days (Q28) and employment drive true-CA prediction, while the persona
 
 ### Error by demographic group (live DeepSeek v2)
 
+Before interpreting group-level error gaps, it is useful to anchor them against the ground-truth CA distribution per group (committed `ground_truth_aggregates.csv`; group-CA *M* (*SD*)):
+
+```{python}
+#| label: tbl-gt-demographic
+#| tbl-cap: "Ground-Truth Group-CA by Demographic Slice (*N* = 241)"
+#| tbl-colwidths: [30, 22, 22, 26]
+
+gt_agg = pd.read_csv(COMMITTED_FULL / "ground_truth_aggregates.csv")
+rows = []
+for _, r in gt_agg[gt_agg["scope"].isin(["sex", "student_status", "employment"])].iterrows():
+    label = r["group_key"] if str(r["group_key"]) != "nan" else "Student = Missing"
+    rows.append(
+        {
+            "Slice": f"{label}",
+            "n": f"{r['n']:.0f}",
+            "Group CA M (SD)": f"{r['mean_group_ca']:.2f} ({r['std_group_ca']:.2f})",
+            "Group band high (%)": f"{r['group_band_high_pct'] * 100:.1f}",
+        }
+    )
+pd.DataFrame(rows)
+```
+
+*Note.* Group-CA means from the full matched analytic cohort. Full-time employment and (to a lesser degree) the student-status differences below sit at the floor of the "error by group" table that follows: they document the *true* group-level CA structure that the live agent's calibration split either tracks or misses.
+
 Real stereotyping slices from the committed v2 export (`exports/v2/…/tables/stereotyping_by_*.csv`), group-CA MAE by tier:
 
 | Group | demos | employment | geo | transit | n (transit) |
@@ -769,7 +793,7 @@ Real stereotyping slices from the committed v2 export (`exports/v2/…/tables/st
 : Group-CA MAE by demographic slice across v2 tiers for DeepSeek-R1-Distill-Llama-8B. {#tbl-stereo-slices}
 
 
-Sex and student-status MAE gaps are small (≤ ~0.5 points). **Employment is the striking slice**: Full-Time error sits at 4.35–4.63 in every tier, while Part-Time and Other hover at 5.5–6.2. Signed error (predicted − true) is near zero for Full-Time (−0.01) but **−2.0 to −3.6 for Part-Time / Other** at every tier — the live agent systematically **under-predicts CA for non-full-time respondents** ([`docs/stereotyping_evaluation.md`](docs/stereotyping_evaluation.md)). This sharpens the RQ1 story: employment does not *shrink* overall MAE, but it is a real **calibration split** in the live model.
+Sex and student-status MAE gaps are small (≤ ~0.5 points). **Employment is the striking slice**: Full-Time error sits at 4.35–4.63 in every tier, while Part-Time and Other hover at 5.5–6.2. Signed error (predicted − true) is near zero for Full-Time (−0.01) but **−2.0 to −3.6 for Part-Time / Other** at every tier — the live agent systematically **under-predicts CA for non-full-time respondents** ([`docs/stereotyping_evaluation.md`](docs/stereotyping_evaluation.md)). The ground-truth slice above (Group CA *M* ≈ 13.3 for Full-Time vs ≈ 16.2 / 17.0 for Part-Time / Other; high-band prevalence ≈ 13% vs 26% / 37%) shows this is **not** symmetric noise: non-full-time respondents genuinely cluster higher on CA, so the agent's negative signed error is a real *calibration miss* on a subgroup with elevated trait levels, not just a scatter artifact. This sharpens the RQ1 story: employment does not *shrink* overall MAE, but it is a real **calibration split** in the live model.
 
 ## Secondary results: regular transit and mobility predictors
 
@@ -1057,25 +1081,25 @@ Three cross-cutting conclusions follow.
 
 ## Answers to the research questions
 
-**RQ1 — employment.** Adding employment status does **not** shrink overall prediction error relative to `demos` (v1 tier-level ΔMAE ≈ 0 across models), so we retain the null for the aggregate comparison. The alternative is nonetheless supported in a different form: live DeepSeek v2 shows a real **calibration split** — Full-Time respondents are under-approximated (MAE 4.35–4.63; signed error ≈ −0.01) while Part-Time/Other are systematically under-predicted (signed error −2.0 to −3.6) at every tier. Employment is therefore a *calibration split*, not an error shrinker.
+**RQ1 — employment.** Adding employment status does **not** shrink overall prediction error relative to `demos` (v1 tier-level ΔMAE ≈ 0 across models), so we retain the null for the aggregate comparison. The alternative is nonetheless supported in a different form: live DeepSeek v2 shows a real **calibration split** — Full-Time respondents are under-approximated (MAE 4.35–4.63; signed error ≈ −0.01) while Part-Time/Other are systematically under-predicted (signed error −2.0 to −3.6) at every tier. Employment is therefore a *calibration split*, not an error shrinker. ([Memo: demographics → transit](memos/demographics_predict_transit.qmd) · [Memo: live-LLM stereotyping slices](memos/live_llm_stereotyping_slices.qmd))
 
-**RQ2 — transit.** We reject the null for the LLM family in a *model-dependent* direction: the mobility bundle slightly helps Llama-3.1's group bands but produces a **transit-triggered interpersonal collapse** (IP MAE 4.67 → 8.17; signed error flips −2.21 → +6.52), while DeepSeek's IP error stays flat. v3 greedy ablations isolate the trigger to the *bundled* mobility dump (bundled IP 7.77 vs single-cue 4.85–5.92). The classical RF baseline does improve monotonically with transit cues (MAE 5.47 → 4.48), so the null is rejected for the tabular family but the LLM uses mobility cues as stereotype proxies rather than psychologically sensible signal.
+**RQ2 — transit.** We reject the null for the LLM family in a *model-dependent* direction: the mobility bundle slightly helps Llama-3.1's group bands but produces a **transit-triggered interpersonal collapse** (IP MAE 4.67 → 8.17; signed error flips −2.21 → +6.52), while DeepSeek's IP error stays flat. v3 greedy ablations isolate the trigger to the *bundled* mobility dump (bundled IP 7.77 vs single-cue 4.85–5.92). The classical RF baseline does improve monotonically with transit cues (MAE 5.47 → 4.48), so the null is rejected for the tabular family but the LLM uses mobility cues as stereotype proxies rather than psychologically sensible signal. ([Memo: Llama-3.1 v1 baseline](memos/vllm_v1_llama31_8b.qmd) · [Memo: v2/v3 evaluation](memos/vllm_v2_v3_evaluation.qmd) · [Memo: cross-model comparison](memos/vllm_v1_cross_model_comparison.qmd))
 
-**RQ3 — full voice.** We reject the null only for specific model–target pairs: DeepSeek's best `full` IP MAE (5.42), Llama-3.2's best `full` group MAE (5.29). For Llama-3.1, voice partially walks back the transit collapse (IP 8.17 → 6.92) but stays above demos. Open-text voice is **not uniformly helpful** — no consistent aggregate improvement.
+**RQ3 — full voice.** We reject the null only for specific model–target pairs: DeepSeek's best `full` IP MAE (5.42), Llama-3.2's best `full` group MAE (5.29). For Llama-3.1, voice partially walks back the transit collapse (IP 8.17 → 6.92) but stays above demos. Open-text voice is **not uniformly helpful** — no consistent aggregate improvement. ([Memo: cross-model comparison](memos/vllm_v1_cross_model_comparison.qmd) · [Memo: v2/v3 evaluation](memos/vllm_v2_v3_evaluation.qmd))
 
-**S1 — transit ↔ CA.** We reject the null: regular riders report lower group (Δ = −2.72, *d* = −0.46, *p* < .001) and interpersonal (Δ = −1.73, *d* = −0.30, *p* = .020) CA.
+**S1 — transit ↔ CA.** We reject the null: regular riders report lower group (Δ = −2.72, *d* = −0.46, *p* < .001) and interpersonal (Δ = −1.73, *d* = −0.30, *p* = .020) CA. ([Memo: transit riders vs CA](memos/transit_riders_ca.qmd))
 
-**S2 — geo → transit.** We retain the null: lat/long RF CV ROC-AUC = 0.551 (country 0.549), statistically ≈ chance.
+**S2 — geo → transit.** We retain the null: lat/long RF CV ROC-AUC = 0.551 (country 0.549), statistically ≈ chance. ([Memo: geography → transit](memos/geo_predicts_transit.qmd))
 
-**S3 — CA → transit.** We retain the null in practical terms: CA RF ROC-AUC = 0.590, a weak reverse predictor well below conventional discriminability.
+**S3 — CA → transit.** We retain the null in practical terms: CA RF ROC-AUC = 0.590, a weak reverse predictor well below conventional discriminability. ([Memo: CA → transit](memos/ca_scores_predict_transit.qmd))
 
-**S4 — Q27/Q28 → transit.** We reject the null for ride-share: Q28 ROC-AUC = **0.762** (AP 0.689; F1 0.702). Q27 intensity alone is ≈ chance (0.589), and adding Q27 to Q28 adds nothing (0.761).
+**S4 — Q27/Q28 → transit.** We reject the null for ride-share: Q28 ROC-AUC = **0.762** (AP 0.689; F1 0.702). Q27 intensity alone is ≈ chance (0.589), and adding Q27 to Q28 adds nothing (0.761). ([Memo: Q27/Q28 → transit](memos/q27_q28_predict_transit.qmd))
 
-**S5 — follow-ups.** We reject the null in a qualified form: wave-2 covariates add lift only when they extend the ride-share family (CA+Q28+car 0.736; kitchen sink 0.824), but no covariate displaces Q28's dominance.
+**S5 — follow-ups.** We reject the null in a qualified form: wave-2 covariates add lift only when they extend the ride-share family (CA+Q28+car 0.736; kitchen sink 0.824), but no covariate displaces Q28's dominance. ([Memo: covariate follow-ups](memos/transit_covariate_followups.qmd) · [Memo: MI head-to-head](memos/mi_head_to_head.qmd))
 
 **TF1 — profile → transit.** We reject the null: demos+employment+geo reaches AUC **0.662** (0.672 with CA) — ridership is partly recoverable from non-mobility profiles.
 
-**TF2 — transit intensity.** We retain the null: fine-grained intensity is not recoverable (Q27 intensity AUC 0.549; Q26 ordinal MAE 1.22 vs majority 0.805). No answer is an answer here: transit frequency beyond weekly+ is effectively irreducible from the available covariates.
+**TF2 — transit intensity.** We retain the null: fine-grained intensity is not recoverable (Q27 intensity AUC 0.549; Q26 ordinal MAE 1.22 vs majority 0.805). No answer is an answer here: transit frequency beyond weekly+ is effectively irreducible from the available covariates. ([TF1/TF2 memo](memos/transit_focus_regular_and_intensity.qmd))
 
 ## Primary digital-twin findings
 
@@ -1083,7 +1107,7 @@ On the full matched analytic cohort (*N* = 241), each participant yields five pe
 
 ## Why transit breaks Llama-3.1 but not DeepSeek
 
-The Llama-3.1 interpersonal collapse is a signed-error flip (−2.21 → +6.52), not random scatter (@fig-llama31-ip-collapse). A plausible account — without claiming a causal architecture proof — is that **instruct-tuned** Llama-3.1 over-weights mobility language as a social-anxiety stereotype once the prompt-v1 transit dump appears, whereas the **reasoning-distilled** DeepSeek sibling keeps IP MAE flat and signed error near zero at the same tier [@santurkar2023; @cheng2023]. Training-data and decoding differences may also matter (DeepSeek’s post-`</think>` ingest still varied predictions; Llama-3.3-70B collapsed to a constant prior). The archived GPU runs add two causal clues. First, signal-first v2 packaging with a mobility anti-bleed clause does **not** remove the failure (transit IP 8.23 ≈ v1 8.17) and shifts Llama-3.1's base interpersonal calibration (demos IP 4.67 → 8.45) — packaging is model-specific, not a universal cure. Second, greedy v3 single-cue ablations leave IP stable (`v3_public_transit` 4.85, `v3_voice` 5.82, `v3_rideshare` 5.92) while the bundled dump still collapses it (7.77) — the trigger is the **combination** of mobility cues in one transit bundle, not any single item ([`docs/persona_prompt_versions.md`](docs/persona_prompt_versions.md); [`docs/llm_v2_v3_enhanced_variants.md`](docs/llm_v2_v3_enhanced_variants.md)).
+The Llama-3.1 interpersonal collapse is a signed-error flip (−2.21 → +6.52), not random scatter (@fig-llama31-ip-collapse). A plausible account — without claiming a causal architecture proof — is that **instruct-tuned** Llama-3.1 over-weights mobility language as a social-anxiety stereotype once the prompt-v1 transit dump appears, whereas the **reasoning-distilled** DeepSeek sibling keeps IP MAE flat and signed error near zero at the same tier [@santurkar2023; @cheng2023]. This is consistent with the broader impersonation literature, in which the same persona-conditioned generation that recovers developmental or expertise effects simultaneously exposes systematic group biases [@salewski2023]. Training-data and decoding differences may also matter (DeepSeek’s post-`</think>` ingest still varied predictions; Llama-3.3-70B collapsed to a constant prior). The archived GPU runs add two causal clues. First, signal-first v2 packaging with a mobility anti-bleed clause does **not** remove the failure (transit IP 8.23 ≈ v1 8.17) and shifts Llama-3.1's base interpersonal calibration (demos IP 4.67 → 8.45) — packaging is model-specific, not a universal cure, echoing findings that surface-level prompt formatting alone shifts model answers [@sclar2024]. Second, greedy v3 single-cue ablations leave IP stable (`v3_public_transit` 4.85, `v3_voice` 5.82, `v3_rideshare` 5.92) while the bundled dump still collapses it (7.77) — the trigger is the **combination** of mobility cues in one transit bundle, not any single item ([`docs/persona_prompt_versions.md`](docs/persona_prompt_versions.md); [`docs/llm_v2_v3_enhanced_variants.md`](docs/llm_v2_v3_enhanced_variants.md)).
 
 ## Q28 dominance and persona design
 
@@ -1091,7 +1115,7 @@ Secondary analyses show that **Q28 ride-share days** dominate reverse prediction
 
 ## Implications for survey research
 
-Even the best live model (DeepSeek under v2 packaging: group MAE **5.02**) remains roughly **1.1×** worse than Ridge regression on the same targets (~4.49), and exact twin recovery stays single-digit. That is a caution for **LLM-as-respondent / silicon-sampling** pipelines [@argyle2023; @park2024]: fluent persona inhabitance does not automatically recover individual psychometrics, parse success is not twin success (70B mode collapse), and classical tabular ceilings belong in the evaluation kit [@argyle2023; @hu2024]. Prompt packaging and model choice can change error *patterns* (transit hazard vs stability) without closing the ML gap. All displayed statistics on this page come from committed full-cohort vLLM exports, seeded tabular runs, and committed artifact tables — there are no mock-LLM claims; the deterministic mock provider is reserved for offline pipeline smoke tests.
+Even the best live model (DeepSeek under v2 packaging: group MAE **5.02**) remains roughly **1.1×** worse than Ridge regression on the same targets (~4.49), and exact twin recovery stays single-digit. That is a caution for **LLM-as-respondent / silicon-sampling** pipelines [@argyle2023; @park2024]: fluent persona inhabitance does not automatically recover individual psychometrics, parse success is not twin success (70B mode collapse), and classical tabular ceilings belong in the evaluation kit [@argyle2023; @hu2024]. Prompt packaging and model choice can change error *patterns* (transit hazard vs stability) without closing the ML gap. In the terms of the emerging LLM-simulation program — whether framed as *homo silicus* economic agents [@horton2023], cognitive-model finetuning [@binz2024], or the broader transformation of social-science research pipelines [@grossmann2023] — our benchmark adds a concrete psychometric caution: a model that is useful for *coarse opinion simulation* may still be a poor *individual-level digital twin* on a validated trait inventory, and the two claims must be separated. All displayed statistics on this page come from committed full-cohort vLLM exports, seeded tabular runs, and committed artifact tables — there are no mock-LLM claims; the deterministic mock provider is reserved for offline pipeline smoke tests.
 
 ## Limitations
 
@@ -1100,6 +1124,10 @@ Limitations include (a) same-wave observational designs for reverse-prediction A
 ## Future work
 
 Priority GPU work is a **canonical v3 refresh under the `v3_enhanced` decode preset** (temp 0.3, seed 42, guided JSON, mobility anti-bleed system text) on Llama-3.1, DeepSeek, Llama-3.2, and Llama-3.3-70B, since the committed v3 packages are greedy-decode ablations (identical to the archived `prior_v3_greedy` runs). v2 coverage is complete except for the base 3B and 70B; DeepSeek v2 and the 8-tier greedy ablations are evaluated and reported above (`exports/v2/`, `exports/v3/`). Use `ca-personas stereotype-eval` on each live export so Sex/Age/Student/Employment **and** mobility-exposure MAE gaps are reported with tier-widening Δs ([`docs/llm_v2_v3_enhanced_variants.md`](docs/llm_v2_v3_enhanced_variants.md)). Additional follow-ups: constrained decoding for the 70B collapse (`large_model` preset), and participant-level prediction histograms once raw exports are staged.
+
+## Conclusion
+
+On a full matched Prolific↔Qualtrics cohort (*N* = 241), no open-weight persona agent came close to being a high-fidelity PRCA digital twin: every live model exceeded the classical suite floor, exact recovery stayed single-digit, and the best agent (DeepSeek under v2 packaging, group MAE 5.02) trailed Ridge by roughly 1.1× while showing near-chance band discrimination and a systematic employment calibration split. The tabular story is starker and more interpretable — ride-share exposure (Q28) dominated prediction of weekly+ transit (AUC 0.762) and was the top feature for true CA, while geography, CA scores, and transit-day intensity added little. Together these findings argue that **persona prompting should be audited with band-level and attribution metrics, not MAE alone**, and that classical tabular learners remain the load-bearing benchmark for LLM-as-respondent claims. The memo scaffolding under [`memos/`](memos/README.md) and [`docs/`](docs/research_memo_agenda.md) documents each finding with the open questions that motivated the next wave of analyses.
 
 # Reproducibility
 

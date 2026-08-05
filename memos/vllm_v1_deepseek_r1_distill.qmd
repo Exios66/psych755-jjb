@@ -9,7 +9,7 @@ bibliography: ../references.bib
 **Research question:** Does `deepseek-ai/DeepSeek-R1-Distill-Llama-8B` recover group and interpersonal PRCA on prompt-v1 Terrarium tiers better than Llama-3.1/3.2 Instruct — and is its reasoning-distill format (chain-of-thought then answer) compatible with schema-valid CA JSON at scale?
 
 **Formal write-up:** [`docs/llm_baseline_deepseek_r1_distill_v1.md`](../docs/llm_baseline_deepseek_r1_distill_v1.md)  
-**Cross-model memo:** [`vllm_v1_cross_model_comparison.md`](vllm_v1_cross_model_comparison.qmd)
+**Cross-model memo:** [`vllm_v1_cross_model_comparison.qmd`](vllm_v1_cross_model_comparison.qmd)
 
 ---
 
@@ -63,4 +63,4 @@ Do the three parse failures share a prompt/tier pattern? Does forcing JSON-only 
 
 ## What other analyses pair with this memo?
 
-Cross-model synthesis: [`vllm_v1_cross_model_comparison.md`](vllm_v1_cross_model_comparison.qmd). Llama baselines: [`vllm_v1_llama31_8b.md`](vllm_v1_llama31_8b.qmd), [`vllm_v1_llama32_3b.md`](vllm_v1_llama32_3b.qmd).
+Cross-model synthesis: [`vllm_v1_cross_model_comparison.qmd`](vllm_v1_cross_model_comparison.qmd). Llama baselines: [`vllm_v1_llama31_8b.qmd`](vllm_v1_llama31_8b.qmd), [`vllm_v1_llama32_3b.qmd`](vllm_v1_llama32_3b.qmd).

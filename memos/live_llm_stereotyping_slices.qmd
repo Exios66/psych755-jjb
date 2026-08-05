@@ -68,8 +68,9 @@ Would the same employment calibration split appear in Llama-3.1 (whose `transit`
 
 ## What other analyses pair with this memo?
 
-- v2/v3 pooled and per-tier results: `memos/vllm_v2_v3_evaluation.md`
-- Band discrimination and surrogate SHAP for the same live agent: `memos/feature_predictive_power_ml_llm.md`
+- v2/v3 pooled and per-tier results: [`vllm_v2_v3_evaluation.qmd`](vllm_v2_v3_evaluation.qmd)
+- Band discrimination and surrogate SHAP for the same live agent: [`feature_predictive_power_ml_llm.qmd`](feature_predictive_power_ml_llm.qmd)
+- Wave-2 demographics → transit (age-driven, relevant to `demos`-tier bias audits): [`demographics_predict_transit.qmd`](demographics_predict_transit.qmd)
 - Stereotyping battery definition and interpretation rules: `docs/stereotyping_evaluation.md`
 
 *Sources:* `exports/v2/psych755_vllm_deepseek_r1_distill_llama8b_v2_full_cohort_20260730_2213/tables/stereotyping_by_{Sex,Student_status,Employment_status}.csv` · `ca_personas.stereotyping` · manuscript `index.qmd` § "Error by demographic group (live DeepSeek v2)"

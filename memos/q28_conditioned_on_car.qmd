@@ -8,7 +8,7 @@ bibliography: ../references.bib
 
 **Research question:** Does ride-share days (**Q28**) retain predictive lift for regular transit after conditioning on car access (**Q21** / **Q20**)?
 
-**Parent:** [`q27_q28_predict_transit.md`](q27_q28_predict_transit.qmd) · **Companions:** [`car_access_predicts_transit.md`](car_access_predicts_transit.qmd) · [`ca_mobility_joint_predicts_transit.md`](ca_mobility_joint_predicts_transit.qmd)
+**Parent:** [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd) · **Companions:** [`car_access_predicts_transit.qmd`](car_access_predicts_transit.qmd) · [`ca_mobility_joint_predicts_transit.qmd`](ca_mobility_joint_predicts_transit.qmd)
 
 ---
 
@@ -41,7 +41,7 @@ Permutation importance in Q28+Q21: Q28 mean AUC drop ≈ 0.15 · Q21 ≈ 0.13.
 2. Full-cohort Q28 AUC (≈0.762 on n=241) shrinks to 0.665 when forced onto car-complete rows; missingness still matters for absolute AUC, but the **relative** Q28>car ordering holds.  
 3. Adding license (Q20) on top of Q28+Q21 does not help (0.727 ≈ 0.730).
 
-*Sources:* `ca-personas followup-experiments --experiments nested_q28_car` · `outputs/followup_experiments/nested_q28_car/`
+*Sources:* `ca-personas followup-experiments --experiments nested_q28_car` · `outputs/followup_experiments/nested_q28_car/` · formal write-up [`docs/secondary_rq_followup_experiments.md`](../docs/secondary_rq_followup_experiments.md)
 
 ---
 

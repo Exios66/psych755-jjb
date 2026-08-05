@@ -39,7 +39,7 @@ CLI: `ca-personas transit-focus` · artifacts `outputs/transit_focus/` · LLM pr
 : Transit focus regular and intensity results. {#tbl-tf-1}
 
 
-**TF1.** Non-mobility profile alone recovers regular ridership well above chance (0.662). Adding CA scores helps only modestly (+0.010). Permutation importance is led by **Age**, then **longitude**, latitude, employment — consistent with the Wave-2 demographics memo (Age+Sex+Student AUC 0.618) but stronger once place and work are included.
+**TF1.** Non-mobility profile alone recovers regular ridership well above chance (0.662). Adding CA scores helps only modestly (+0.010). Permutation importance is led by **Age**, then **longitude**, latitude, employment — consistent with the Wave-2 demographics memo ([`demographics_predict_transit.qmd`](demographics_predict_transit.qmd); Age+Sex+Student AUC 0.618) but stronger once place and work are included. The profile-only result also parallels the CA → transit memo ([`ca_scores_predict_transit.qmd`](ca_scores_predict_transit.qmd)) and geography memo ([`geo_predicts_transit.qmd`](geo_predicts_transit.qmd)) in that non-mobility context alone is a weak-to-moderate ridership signal.
 
 **TF2.** Fine-grained Q26 recovery is weak in absolute terms (balanced accuracy 0.28) though it beats a majority classifier. Q27 is heavily imbalanced (most respondents report 1–2 rides/day); the forest does not beat majority accuracy.
 
@@ -54,3 +54,5 @@ Transit-focus persona tiers (`tf_demos` → `tf_employment` → `tf_geo` → `tf
 3. Ordinal models (ordered logit / ordinal RF) may improve Q26 MAE relative to flat multiclass RF.
 
 *Sources:* `src/ca_personas/transit_focus.py` · `ca-personas transit-focus` · [write-up](../docs/secondary_rq_transit_focus.md) · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
+
+*Related memos:* [demographics → transit](demographics_predict_transit.qmd) · [CA → transit](ca_scores_predict_transit.qmd) · [geography → transit](geo_predicts_transit.qmd)

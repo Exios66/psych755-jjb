@@ -42,10 +42,10 @@ Requiring complete Age, Sex, Student status, Country, Employment, Q20/Q21, Q28, 
 2. Absolute AUCs shrink versus full-cohort Q28 (0.762 → 0.659) because the overlap is smaller and more selected—but the **ordinal ranking** is stable.  
 3. Demographics’ modest full-sample AUC (0.618) does not survive once the sample is the car/mobility-complete subset—selection matters for demography more than for Q28.
 
-*Sources:* `ca-personas followup-experiments --experiments common_n` · `outputs/followup_experiments/common_n/`
+*Sources:* `ca-personas followup-experiments --experiments common_n` · `outputs/followup_experiments/common_n/` · formal write-up [`docs/secondary_rq_followup_experiments.md`](../docs/secondary_rq_followup_experiments.md)
 
 ---
 
 ## What questions or uncertainties remain?
 
-Would a multiply-imputed analysis restore demographics/CA while preserving the Q28 lead, or would imputation attenuate rideshare’s advantage? — **Answered** in [`mi_head_to_head.md`](mi_head_to_head.qmd): Q28 singleton lead preserved; demos/CA not restored to competitive levels.
+Would a multiply-imputed analysis restore demographics/CA while preserving the Q28 lead, or would imputation attenuate rideshare’s advantage? — **Answered** in [`mi_head_to_head.qmd`](mi_head_to_head.qmd): Q28 singleton lead preserved; demos/CA not restored to competitive levels.

@@ -8,7 +8,7 @@ bibliography: ../references.bib
 
 **Research question:** Would a multiply-imputed analysis restore demographics/CA while preserving the Q28 lead, or would imputation attenuate rideshare’s advantage?
 
-**Parent:** [`common_n_head_to_head.md`](common_n_head_to_head.qmd) · **Companions:** [`q28_conditioned_on_car.md`](q28_conditioned_on_car.qmd) · [`demographics_predict_transit.md`](demographics_predict_transit.qmd) · [`ca_scores_predict_transit.md`](ca_scores_predict_transit.qmd)
+**Parent:** [`common_n_head_to_head.qmd`](common_n_head_to_head.qmd) · **Companions:** [`q28_conditioned_on_car.qmd`](q28_conditioned_on_car.qmd) · [`demographics_predict_transit.qmd`](demographics_predict_transit.qmd) · [`ca_scores_predict_transit.qmd`](ca_scores_predict_transit.qmd)
 
 ---
 
@@ -43,7 +43,7 @@ We compare each predictor family under **listwise complete-case** versus **M = 2
 3. **Imputation mainly helps *joint* mobility models.** Filling Q20/Q21 lets CA+Q28+car train on all 241 rows and lifts AUC (0.736 → 0.808). Standalone car *weakens* under MI (0.607 → 0.562)—imputed car is a noisier cue than car observed on the selected complete-case subset.  
 4. Joint demos+Q28 stays high (~0.77) but still tracks Q28 rather than a demography rebound.
 
-*Sources:* `ca-personas followup-experiments --experiments mi_head_to_head --n-imputations 20` · `outputs/followup_experiments/mi_head_to_head/` · Posit full-cohort artifacts (n = 241)
+*Sources:* `ca-personas followup-experiments --experiments mi_head_to_head --n-imputations 20` · `outputs/followup_experiments/mi_head_to_head/` · Posit full-cohort artifacts (n = 241) · formal write-up [`docs/secondary_rq_followup_experiments.md`](../docs/secondary_rq_followup_experiments.md)
 
 ---
 

@@ -8,7 +8,7 @@ bibliography: ../references.bib
 
 **Research question:** Among weekly+ public-transit riders, which covariates predict **high transit-day intensity** (Q27 ≥ 3–4 rides on a typical use day)?
 
-**Parent open question:** [`q27_q28_predict_transit.md`](q27_q28_predict_transit.qmd)
+**Parent open question:** [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd)
 
 ---
 
@@ -52,7 +52,7 @@ Among **101** regular riders, 35 (34.7%) report high intensity (3–4 / 5–6 / 
 2. Combined with wave-1 results (Q27 alone AUC ≈ 0.589 for the weekly+ threshold), intensity items are weak both as *predictors of* and as *outcomes within* regular ridership.  
 3. Persona prompts that lean on “rides per day” without ride-share days are emphasizing a low-signal mobility facet.
 
-*Sources:* `ca-personas followup-experiments --experiments q27_among_regular` · `outputs/followup_experiments/q27_among_regular/`
+*Sources:* `ca-personas followup-experiments --experiments q27_among_regular` · `outputs/followup_experiments/q27_among_regular/` · formal write-up [`docs/secondary_rq_followup_experiments.md`](../docs/secondary_rq_followup_experiments.md)
 
 ---
 
