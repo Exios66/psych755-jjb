@@ -205,11 +205,13 @@ N = int(len(participants))
 
 # Introduction
 
-Communication apprehension (CA) is a well-studied individual difference describing fear or anxiety associated with real or anticipated communication [@mccroskey1970; @mccroskey1984]. The Personal Report of Communication Apprehension (PRCA-24) yields context-specific subscale scores—including **group discussion** and **interpersonal** conversation—each ranging from 6 (very low apprehension) to 30 (very high) [@mccroskey1982; @beatty1988].
+Communication apprehension (CA) is a well-studied individual difference describing fear or anxiety associated with real or anticipated communication [@mccroskey1970; @mccroskey1984]. McCroskey first introduced the Personal Report of Communication Apprehension (PRCA-24) in the fourth edition of *An Introduction to Rhetorical Communication* [@mccroskey1982], and the measure remains the standard self-report tool for the construct, with the current scoring guide maintained by the author [@mccroskeyprca24]. The PRCA-24 yields context-specific subscale scores—including **group discussion** and **interpersonal** conversation—each ranging from 6 (very low apprehension) to 30 (very high) [@mccroskey1982; @beatty1988].
 
 Separately, large language models are increasingly used as **survey respondents** and **silicon samples**: prompts that condition on demographic or biographical attributes and emit attitude- or item-like answers [@argyle2023; @park2024]. Related work on generative agents and digital-twin simulation explores whether models can stand in for populations or individuals in social-science workflows [@park2023; @park2024]. Prior evaluations show that persona prompts can surface social stereotypes and opinion distributions that do not faithfully track the populations they purport to represent, and that outputs are sensitive to prompt packaging and position [@cheng2023; @santurkar2023; @hu2024]. That raises a concrete measurement question for psychological research tooling:
 
 > When predicting an individual’s CA from demographic attributes alone, does an LLM’s prediction error vary systematically with demographic or contextual group membership — and does the model recover the same covariate signal that classical baselines extract?
+
+Methodologically, this manuscript sits between two traditions. The *data-modeling culture* [@breiman2001cultures] treats the task as estimating a stochastic relationship between covariates and an outcome and focuses on parameter inference; the *algorithmic-modeling culture* [@breiman2001cultures; @breiman2001] treats it as a predictive function-learning problem and focuses on out-of-sample error. We deliberately adopt both: classical tabular learners (Ridge, Elastic Net, k-nearest neighbors, Random Forest, and gradient-boosted trees) supply the algorithmic floor under cross-validation, while the reverse-predictor secondary analyses add inferential contrasts (Welch *t* tests, effect sizes, bootstrap CIs) of the data-modeling kind. The LLM persona agents are evaluated as a third, predictive family against the same ground truth, so digital-twin error can be benchmarked against a classical algorithmic baseline rather than judged in a vacuum [@argyle2023; @breiman2001cultures].
 
 ## Research Questions
 
@@ -325,6 +327,51 @@ Every table and figure uses the File A/B/C matched analytic sample (*N* = 241). 
 
 Group items (`Q1`–`Q6`) and interpersonal items (`Q13`–`Q18`) use five-point Likert labels mapped to 1–5. Comfort-oriented items are reverse-coded as $6 - x$. Each subscale is the sum of six items (range 6–30). Classroom bands follow low ≤ 13, moderate 14–19, and high ≥ 20.
 
+## Data cleaning and preparation
+
+Before analysis, the stacked Prolific waves (File A + File B) were joined to the Qualtrics responses (File C) on the Prolific `Participant id` ↔ Qualtrics `Q0` key using an inner join. We retained only respondents with complete group (`Q1`–`Q6`) and interpersonal (`Q13`–`Q18`) PRCA items so that every information tier shares the same ground-truth targets, yielding *N* = 241. Demographic fields (Age, Sex, Country of residence, Student status, Employment status) were carried from the Prolific profile; geolocation (latitude/longitude) and the mobility/transit items (`Q20`, `Q21`, `Q26`–`Q29`) came from the Qualtrics survey. Free-response items (`Q18_advice`, `Q19`) were kept as raw text for the `full` persona tier and were not used as tabular predictors. Cleaning produced the analytic sample described in @tbl-sample, with no imputation of PRCA items and no exclusion beyond missing PRCA responses on the inner-join match.
+
+```{python}
+#| label: tbl-clean
+#| tbl-cap: "Data Cleaning and Analytic Sample Steps"
+#| tbl-colwidths: [40, 60]
+
+pd.DataFrame(
+    [
+        {"Step": "Recruit via Prolific", "Detail": "Two waves (File A + File B), stacked on Prolific demographics"},
+        {"Step": "Survey via Qualtrics", "Detail": "File C: PRCA-24 items, mobility items (Q20/Q21/Q26–Q29), free-response voice"},
+        {"Step": "Join", "Detail": "Inner join on Prolific `Participant id` ↔ Qualtrics `Q0`"},
+        {"Step": "Raw matches", "Detail": "252 Prolific ∩ Qualtrics"},
+        {"Step": "Complete PRCA", "Detail": "241 with complete group + interpersonal items (analytic N)"},
+        {"Step": "Scoring", "Detail": "Likert 1–5; comfort items reverse-coded 6 − x; subscale sums 6–30"},
+        {"Step": "Bands", "Detail": "low ≤ 13 · moderate 14–19 · high ≥ 20"},
+    ]
+)
+```
+
+## Statistical methods
+
+Analyses follow the two modeling cultures [@breiman2001cultures; @breiman2001]. **Primary RQ1–RQ3** are predictive, algorithmic-culture comparisons: we optimize **mean absolute error (MAE)** and band-level accuracy/macro-F1 on the PRCA group and interpersonal targets, with exact-match rate and band distance reported as secondary diagnostics. The classical tabular suite (Ridge, Elastic Net, k-nearest neighbors, Random Forest, HistGradientBoosting, XGBoost, MLP) supplies the **baselines**, evaluated under the same tiers/targets; the best classical floor is Ridge at `transit` (group MAE ≈ 4.49). **Secondary S1–S5 and TF1–TF2** are reverse-prediction analyses on regular public-transit use (binary `Q26` weekly+; prevalence 0.419). Classification uses stratified 5-fold cross-validated Random Forests (`random_state=42`) reporting **ROC-AUC**, average precision, balanced accuracy, and F1; chance = 0.500. Where inferential statistics are used (S1; wave-2 Welch contrasts), we report Welch's *t*, *df*, Cohen's *d*, and 95% bootstrap CIs (1,000 resamples) for mean differences, with $\alpha$ = .05 two-tailed.
+
+**Hypotheses.** For each research question we test the null against the alternative below. Primary questions are evaluated against the classical ML floor rather than against chance; secondary classification questions are evaluated against the chance AUC of 0.500; S1 is a two-tailed mean difference test.
+
+| RQ | Null hypothesis (H₀) | Alternative hypothesis (H₁) |
+|---|---|---|
+| RQ1 · employment | Adding employment status does not change MAE vs `demos` (ΔMAE = 0). | Employment reduces MAE (ΔMAE < 0) and/or changes residual patterns across employment groups. |
+| RQ2 · transit | Adding the mobility bundle does not change MAE vs `geo` (ΔMAE = 0). | Transit cues reduce MAE (ΔMAE < 0) in a psychologically sensible way, not as stereotype proxies. |
+| RQ3 · full | Adding free-response voice does not change MAE vs `transit` (ΔMAE = 0). | Voice text reduces MAE (ΔMAE < 0). |
+| S1 · transit ↔ CA | Regular riders' group/interpersonal CA equals non-regular riders' (μ₁ = μ₂). | Regular riders differ in CA (μ₁ ≠ μ₂). |
+| S2 · geo → transit | Lat/long RF ROC-AUC = 0.500. | Lat/long ROC-AUC > 0.500. |
+| S3 · CA → transit | CA RF ROC-AUC = 0.500. | CA ROC-AUC > 0.500. |
+| S4 · Q27/Q28 → transit | Q27/Q28 RF ROC-AUC = 0.500. | Ride-share days and/or intensity ROC-AUC > 0.500. |
+| S5 · follow-ups | Wave-2 covariates add no lift over wave-1 predictors (ΔAUC = 0). | Covariates improve ROC-AUC (ΔAUC > 0). |
+| TF1 · profile → transit | Profile-only RF ROC-AUC = 0.500. | Non-mobility profile ROC-AUC > 0.500. |
+| TF2 · transit intensity | Intensity model performs at the majority-class baseline (ordinal MAE). | Intensity is recoverable beyond the majority baseline. |
+
+: Null and alternative hypotheses for every research question. {#tbl-hypotheses}
+
+Because the primary comparisons benchmark two predictive families on the same fixed ground truth, we report point estimates with cross-validation standard errors rather than *p* values for RQ1–RQ3; inferential *p* values are reported only where a stochastic contrast (Welch) is the appropriate model [@breiman2001cultures; @breiman2001].
+
 ```{python}
 #| label: tbl-gt-summary
 #| tbl-cap: "Descriptive Statistics for Ground-Truth PRCA Subscales (*N* = 241)"
@@ -342,6 +389,74 @@ gt = (
     .round(2)
 )
 gt
+```
+
+```{python}
+#| label: tbl-correlation
+#| tbl-cap: "Base-Reference Spearman Correlations Among Continuous and Ordinal Measures"
+#| tbl-colwidths: [30, 14, 14, 14, 14, 14, 14]
+
+def _ord(series: pd.Series, mapping: dict) -> pd.Series:
+    return series.map(mapping).astype(float)
+
+q26ord = {"Never": 0, "0-1 days a month": 1, "2-4 days a month": 2, "4-8 days a month": 3, "8 or more days a month": 4}
+q28ord = dict(q26ord)
+q27ord = {"1-2 rides in a typical day": 1, "3-4 rides in a typical day": 2, "5-6 rides in a typical day": 3, "7 or more rides in a typical day": 4}
+
+corr_vars = pd.DataFrame(
+    {
+        "Group CA": participants["gt_group_ca"],
+        "IP CA": participants["gt_interpersonal_ca"],
+        "Age": participants["Age"],
+        "Q26 transit days": _ord(participants["Q26"], q26ord),
+        "Q27 rides/day": _ord(participants["Q27"], q27ord),
+        "Q28 ride-share days": _ord(participants["Q28"], q28ord),
+    }
+)
+corr_mat = corr_vars.corr(method="spearman").round(2)
+corr_mat.style.set_properties(**{"text-align": "center"}).format(precision=2)
+```
+
+*Note.* Spearman *ρ* on complete ordinal codings of the mobility items (`Q26` transit-use days, `Q27` rides on a typical day, `Q28` ride-share days). Regular transit (`Q26` weekly+) and ride-share days are positively related (*ρ* ≈ 0.6–0.7); the PRCA subscales are strongly inter-correlated (*ρ* ≈ 0.6) and largely orthogonal to demographics and mobility cues — consistent with CA operating as a distinct trait rather than a proxy for transit exposure.
+
+```{python}
+#| label: tbl-group-descriptives
+#| tbl-cap: "Descriptive Statistics by Regular-Transit Group (*N* = 241)"
+#| tbl-colwidths: [35, 20, 20, 25]
+
+def _fmt(series: pd.Series, mask: pd.Series) -> str:
+    sub = series[mask].dropna()
+    return f"{sub.mean():.2f} ({sub.std():.2f})" if len(sub) else "—"
+
+regular = _ord(participants["Q26"], {"Never": 0, "0-1 days a month": 0, "2-4 days a month": 0, "4-8 days a month": 1, "8 or more days a month": 1}).astype(bool)
+pd.DataFrame(
+    [
+        {
+            "Measure": "Group CA",
+            "Regular (n = 101)": _fmt(participants["gt_group_ca"], regular),
+            "Not regular (n = 140)": _fmt(participants["gt_group_ca"], ~regular),
+            "Δ (reg − not)": f"{secondary['transit_ca']['group']['diff_regular_minus_not_regular']:.2f}",
+        },
+        {
+            "Measure": "Interpersonal CA",
+            "Regular (n = 101)": _fmt(participants["gt_interpersonal_ca"], regular),
+            "Not regular (n = 140)": _fmt(participants["gt_interpersonal_ca"], ~regular),
+            "Δ (reg − not)": f"{secondary['transit_ca']['interpersonal']['diff_regular_minus_not_regular']:.2f}",
+        },
+        {
+            "Measure": "Age",
+            "Regular (n = 101)": _fmt(participants["Age"], regular),
+            "Not regular (n = 140)": _fmt(participants["Age"], ~regular),
+            "Δ (reg − not)": "",
+        },
+        {
+            "Measure": "Q28 ride-share days (ordinal 0–4)",
+            "Regular (n = 101)": _fmt(_ord(participants["Q28"], q28ord), regular),
+            "Not regular (n = 140)": _fmt(_ord(participants["Q28"], q28ord), ~regular),
+            "Δ (reg − not)": "",
+        },
+    ]
+)
 ```
 
 ## Persona tiers
@@ -617,11 +732,11 @@ Disentangling MAE from discrimination: DeepSeek v2 is only ~1.1× worse than RF 
 
 RF's low-vs-high AUC climbs from ~0.49 (`demos`) to **0.72–0.74** (`transit`); DeepSeek v2 stays near chance (0.45–0.53) at every tier (@fig-band-discrimination-auc). The LLM's error is **band-insensitive**: its scores hug the cohort mean, so absolute error is bounded while rank recovery fails. **MAE alone therefore understates the LLM's failure to recover the trait distribution** — band F1, band distance, and low-vs-high AUC belong alongside MAE in digital-twin evaluation.
 
-### Feature attributions: TreeSHAP on true CA vs surrogate on LLM outputs
+### Feature attributions: TreeSHAP on true CA vs SHAP on live LLM outputs
 
-TreeSHAP mean \|SHAP| at the `transit` tier (predicting true Group CA) versus a surrogate RF fit to DeepSeek v2's own outputs (surrogate \\(R^2\\) = 0.74; tables: `shap_ml_group_raw.csv`, `shap_llm_surrogate_group_raw.csv`):
+TreeSHAP mean \|SHAP| at the `transit` tier (predicting true Group CA) versus SHAP on the live LLM's outputs — an RF fit to DeepSeek v2's real vLLM predictions (surrogate \\(R^2\\) = 0.74; tables: `shap_ml_group_raw.csv`, `shap_llm_surrogate_group_raw.csv`):
 
-| Rank | RF → true CA | mean \|SHAP| | DeepSeek v2 surrogate | mean \|SHAP| |
+| Rank | RF → true CA | mean \|SHAP| | DeepSeek v2 output | mean \|SHAP| |
 |---|---:|---:|---:|---:|
 | 1 | Q28 (ride-share days) | 1.93 | LocationLatitude | 0.27 |
 | 2 | Employment status | 0.83 | Age | 0.21 |
@@ -630,12 +745,12 @@ TreeSHAP mean \|SHAP| at the `transit` tier (predicting true Group CA) versus a 
 | 5 | LocationLongitude | 0.54 | Country of residence | 0.15 |
 | 6 | Age | 0.53 | Q26 | 0.15 |
 
-: Top-six TreeSHAP attributions for true Group CA versus surrogate-SHAP for DeepSeek v2. {#tbl-shap-top6}
+: Top-six TreeSHAP attributions for true Group CA versus SHAP on DeepSeek v2's live outputs. {#tbl-shap-top6}
 
 
-![ML TreeSHAP vs LLM-surrogate SHAP](memos/figures/fig_shap_ml_vs_llm_compare.png){#fig-shap-ml-vs-llm}
+![ML TreeSHAP vs DeepSeek v2 output SHAP](memos/figures/fig_shap_ml_vs_llm_compare.png){#fig-shap-ml-vs-llm}
 
-Ride-share days (Q28) and employment drive true-CA prediction, while the persona agent's outputs are dominated by **geolocation and age** — over-weighting place/demographic cues relative to the mobility/employment mix that predicts the actual PRCA scores (@fig-shap-ml-vs-llm). Mean |SHAP| magnitudes are also approximately 7× smaller for the surrogate, so no single profile feature dominates the agent's scores.
+Ride-share days (Q28) and employment drive true-CA prediction, while the persona agent's live outputs are dominated by **geolocation and age** — over-weighting place/demographic cues relative to the mobility/employment mix that predicts the actual PRCA scores (@fig-shap-ml-vs-llm). Mean |SHAP| magnitudes are also approximately 7× smaller for the LLM output attribution, so no single profile feature dominates the agent's scores.
 
 ### Error by demographic group (live DeepSeek v2)
 
@@ -939,6 +1054,28 @@ Three cross-cutting conclusions follow.
 3. **Tier effects are not additive gifts; they are model- and target-dependent.** Employment is a calibration split in the live model (Part-Time/Other under-predicted by 2.0–3.6 points), transit breaks Llama-3.1's interpersonal recovery but not DeepSeek's, and voice text helps Llama-3.1's group bands while hurting its IP error. Reporting a single pooled MAE per model therefore obscures the patterned failures that matter for digital-twin evaluation; band F1, band distance, low-vs-high AUC, and group-level error slices are the load-bearing metrics.
 
 # Discussion
+
+## Answers to the research questions
+
+**RQ1 — employment.** Adding employment status does **not** shrink overall prediction error relative to `demos` (v1 tier-level ΔMAE ≈ 0 across models), so we retain the null for the aggregate comparison. The alternative is nonetheless supported in a different form: live DeepSeek v2 shows a real **calibration split** — Full-Time respondents are under-approximated (MAE 4.35–4.63; signed error ≈ −0.01) while Part-Time/Other are systematically under-predicted (signed error −2.0 to −3.6) at every tier. Employment is therefore a *calibration split*, not an error shrinker.
+
+**RQ2 — transit.** We reject the null for the LLM family in a *model-dependent* direction: the mobility bundle slightly helps Llama-3.1's group bands but produces a **transit-triggered interpersonal collapse** (IP MAE 4.67 → 8.17; signed error flips −2.21 → +6.52), while DeepSeek's IP error stays flat. v3 greedy ablations isolate the trigger to the *bundled* mobility dump (bundled IP 7.77 vs single-cue 4.85–5.92). The classical RF baseline does improve monotonically with transit cues (MAE 5.47 → 4.48), so the null is rejected for the tabular family but the LLM uses mobility cues as stereotype proxies rather than psychologically sensible signal.
+
+**RQ3 — full voice.** We reject the null only for specific model–target pairs: DeepSeek's best `full` IP MAE (5.42), Llama-3.2's best `full` group MAE (5.29). For Llama-3.1, voice partially walks back the transit collapse (IP 8.17 → 6.92) but stays above demos. Open-text voice is **not uniformly helpful** — no consistent aggregate improvement.
+
+**S1 — transit ↔ CA.** We reject the null: regular riders report lower group (Δ = −2.72, *d* = −0.46, *p* < .001) and interpersonal (Δ = −1.73, *d* = −0.30, *p* = .020) CA.
+
+**S2 — geo → transit.** We retain the null: lat/long RF CV ROC-AUC = 0.551 (country 0.549), statistically ≈ chance.
+
+**S3 — CA → transit.** We retain the null in practical terms: CA RF ROC-AUC = 0.590, a weak reverse predictor well below conventional discriminability.
+
+**S4 — Q27/Q28 → transit.** We reject the null for ride-share: Q28 ROC-AUC = **0.762** (AP 0.689; F1 0.702). Q27 intensity alone is ≈ chance (0.589), and adding Q27 to Q28 adds nothing (0.761).
+
+**S5 — follow-ups.** We reject the null in a qualified form: wave-2 covariates add lift only when they extend the ride-share family (CA+Q28+car 0.736; kitchen sink 0.824), but no covariate displaces Q28's dominance.
+
+**TF1 — profile → transit.** We reject the null: demos+employment+geo reaches AUC **0.662** (0.672 with CA) — ridership is partly recoverable from non-mobility profiles.
+
+**TF2 — transit intensity.** We retain the null: fine-grained intensity is not recoverable (Q27 intensity AUC 0.549; Q26 ordinal MAE 1.22 vs majority 0.805). No answer is an answer here: transit frequency beyond weekly+ is effectively irreducible from the available covariates.
 
 ## Primary digital-twin findings
 

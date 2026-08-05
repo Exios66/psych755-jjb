@@ -649,8 +649,10 @@ def plot_ml_vs_llm_shap_compare(
     *,
     path: Path,
     top_n: int = 10,
+    llm_label: str = "LLM output (real vLLM)",
+    title: str | None = None,
 ) -> Path:
-    """Side-by-side mean |SHAP| for ML target model vs LLM surrogate."""
+    """Side-by-side mean |SHAP| for ML target model vs LLM output attribution."""
     ml = ml_raw.set_index("raw_feature")["mean_abs_shap"]
     ll = llm_raw.set_index("raw_feature")["mean_abs_shap"]
     features = list(
@@ -668,7 +670,7 @@ def plot_ml_vs_llm_shap_compare(
         y + 0.18,
         [ll.get(f, 0.0) for f in features],
         0.35,
-        label="Surrogate of LLM output",
+        label=llm_label,
         color=PALETTE["llm"],
     )
     ax.set_yticks(y)
@@ -676,7 +678,7 @@ def plot_ml_vs_llm_shap_compare(
     ax.legend(frameon=False)
     _style_axes(
         ax,
-        "Feature importance: ML (true CA) vs LLM-surrogate SHAP",
+        title or "Feature importance: ML (true CA) vs LLM output attribution",
         xlabel="Mean |SHAP|",
     )
     fig.tight_layout()

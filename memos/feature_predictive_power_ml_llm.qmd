@@ -95,7 +95,7 @@ Surrogate SHAP (RF predicting live LLM Group CA from tabular features; \(R^2 = 0
 : Rank / DeepSeek v2 surrogate mean \ / SHAP\. {#tbl-fp-4}
 
 
-![ML SHAP vs LLM-surrogate SHAP](figures/fig_shap_ml_vs_llm_compare.png){#fig-fp-fig-shap-ml-vs-llm-compare}
+![ML TreeSHAP vs DeepSeek v2 output SHAP](figures/fig_shap_ml_vs_llm_compare.png){#fig-fp-fig-shap-ml-vs-llm-compare}
 
 ![Band macro-F1 by tier — RF vs DeepSeek v2](figures/fig_f1_ml_vs_llm.png){#fig-fp-fig-f1-ml-vs-llm}
 

@@ -526,7 +526,7 @@ def main() -> None:
     )
     figure_paths["shap_bar_llm_group"] = plot_shap_bar(
         llm_shap_group["raw_importance"],
-        title=f"Surrogate SHAP — features tracking {PRIMARY_LLM} Group CA ({args.tier})",
+        title=f"SHAP on {PRIMARY_LLM} output — features tracking Group CA ({args.tier})",
         path=fig_dir / "fig_shap_bar_llm_surrogate_group.png",
         color=PALETTE["llm"],
     )
@@ -534,6 +534,11 @@ def main() -> None:
         ml_shap["gt_group_ca"]["raw_importance"],
         llm_shap_group["raw_importance"],
         path=fig_dir / "fig_shap_ml_vs_llm_compare.png",
+        llm_label=f"{PRIMARY_LLM} output (real vLLM)",
+        title=(
+            f"Feature importance: ML (true CA) vs {PRIMARY_LLM} output "
+            f"attribution ({args.tier} tier)"
+        ),
     )
     figure_paths["f1_heatmap"] = plot_f1_heatmap(
         all_metrics,
