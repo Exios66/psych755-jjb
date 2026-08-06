@@ -1651,6 +1651,7 @@ def plot_experiment_memo_figure(
                 ns=plot_df["n"].tolist() if "n" in plot_df else None,
                 benchmarks=("chance", "geo", "ca"),
                 xlim=(0.45, 0.88),
+                legend_loc="below",
             )
             axes[0].set_title("Nested predictive models", loc="left", fontsize=11, pad=8)
         strata = analysis.get("strata")
@@ -1698,6 +1699,7 @@ def plot_experiment_memo_figure(
                 xlabel="CV ROC-AUC for high intensity",
                 benchmarks=("chance",),
                 xlim=(0.40, 0.70),
+                legend_loc="below",
             )
             axes[1].set_title("Predictors of high intensity (≥3–4 rides)", loc="left", fontsize=11, pad=8)
         summary = analysis.get("sample_summary") or {}
@@ -1741,6 +1743,7 @@ def plot_experiment_memo_figure(
                 ns=ns,
                 benchmarks=("chance", "geo", "ca", "q28"),
                 xlim=(0.45, min(0.92, float(np.nanmax(aucs)) + 0.08)),
+                legend_loc="below",
             )
             add_title_block(
                 fig2,
@@ -1772,6 +1775,7 @@ def plot_experiment_memo_figure(
                 ns=frame["n"].tolist() if "n" in frame.columns else None,
                 benchmarks=("chance", "geo", "ca"),
                 xlim=(0.45, min(0.90, float(frame["roc_auc"].max()) + 0.10)),
+                legend_loc="below",
             )
             subtitle_bits = [f"n={n}", f"primary AUC={auc:.3f}"]
             if analysis.get("summary_delta"):
@@ -1820,20 +1824,35 @@ def plot_overview_figure(overview: pd.DataFrame, *, output_path: str | Path) -> 
         add_title_block,
         apply_memo_style,
         color_by_auc,
-        family_color,
         plot_auc_bars,
         save_figure,
     )
 
+    def wrap_label(text: str, *, width: int = 26) -> str:
+        """Wrap a label at spaces so long names never spill or clip."""
+        words = str(text).split()
+        lines: list[str] = []
+        cur = ""
+        for w in words:
+            if len(cur) + len(w) + 1 <= width:
+                cur = (cur + " " + w).strip()
+            else:
+                if cur:
+                    lines.append(cur)
+                cur = w
+        if cur:
+            lines.append(cur)
+        return "\n".join(lines)
+
     apply_memo_style()
     out = Path(output_path)
     frame = overview.dropna(subset=["roc_auc"]).copy()
-    fig, ax = plt.subplots(figsize=(10.8, 6.2))
+    fig, ax = plt.subplots(figsize=(11.2, 6.6))
     # Recolor by strength for overview readability
     colors = [color_by_auc(a) for a in frame["roc_auc"]]
-    plot_auc_bars(
+    bench_handles = plot_auc_bars(
         ax,
-        frame["label"].tolist(),
+        [wrap_label(lbl) for lbl in frame["label"].tolist()],
         frame["roc_auc"].tolist(),
         colors=colors,
         ns=frame["n"].tolist() if "n" in frame.columns else None,
@@ -1841,6 +1860,7 @@ def plot_overview_figure(overview: pd.DataFrame, *, output_path: str | Path) -> 
         benchmarks=("chance", "geo", "ca", "q28"),
         xlim=(0.48, 0.86),
         highlight_best=True,
+        legend_loc=None,  # single figure-level legend below the axes
     )
     best = frame.sort_values("roc_auc", ascending=False).iloc[0]
     add_title_block(
@@ -1852,7 +1872,7 @@ def plot_overview_figure(overview: pd.DataFrame, *, output_path: str | Path) -> 
             "Reference lines: chance / geo / CA / full-cohort Q28"
         ),
     )
-    # Dual legends: benchmarks stay on-axes; AUC bands sit below the figure
+    # Single legend under the axes: benchmarks + AUC bands (never covers bars).
     from matplotlib.patches import Patch
 
     band_handles = [
@@ -1862,17 +1882,18 @@ def plot_overview_figure(overview: pd.DataFrame, *, output_path: str | Path) -> 
         Patch(facecolor=WARN, edgecolor="none", label="Weak (<0.55)"),
     ]
     fig.legend(
-        handles=band_handles,
-        loc="lower center",
+        handles=[*(bench_handles or []), *band_handles],
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.04),
         ncol=4,
         fontsize=8,
         frameon=False,
-        bbox_to_anchor=(0.63, 0.01),
-        title="AUC band",
-        title_fontsize=8.5,
+        handlelength=1.8,
+        columnspacing=1.1,
     )
-    fig.subplots_adjust(top=0.82, left=0.30, right=0.96, bottom=0.16)
-    return save_figure(fig, out)
+    # Reserve top space for the title block instead of relying on a
+    # subplots_adjust that save_figure's tight_layout would discard.
+    return save_figure(fig, out, tight_rect=(0, 0, 1, 0.87))
 
 
 def run_followup_experiments_pipeline(

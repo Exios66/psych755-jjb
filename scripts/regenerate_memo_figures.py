@@ -310,6 +310,7 @@ def main() -> None:
         benchmarks=("chance",),
         xlim=(0.45, 0.70),
         highlight_best=False,
+        legend_loc="below",
     )
     add_title_block(fig, "Geography → regular transit", "Lat/long vs country-only vs chance")
     fig.subplots_adjust(top=0.82, left=0.28, right=0.96, bottom=0.14)
@@ -336,6 +337,7 @@ def main() -> None:
             colors=[PRIMARY if "ca" in str(m) or "group" in str(m) or "interpersonal" in str(m) else WARN for m in mt["model"]],
             benchmarks=("chance", "geo"),
             xlim=(0.45, 0.75),
+            legend_loc="below",
         )
     add_title_block(fig, "CA scores → regular transit", "Nested RF ablations and null baselines")
     fig.subplots_adjust(top=0.82, left=0.34, right=0.96, bottom=0.14)

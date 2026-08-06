@@ -244,6 +244,7 @@ def fig_geo() -> None:
         highlight_index=0,
         vlines={"Chance = .500": 0.5},
         xlim=(0.46, 0.62),
+        legend_loc="below",
     )
     _save(fig, DOCS_FIG / "geo_rf_auc_vs_baselines.png")
 
@@ -294,6 +295,7 @@ def fig_ca_rf() -> None:
         highlight_index=0,
         vlines={"Chance = .500": 0.5},
         xlim=(0.45, 0.65),
+        legend_loc="below",
     )
     _save(fig, DOCS_FIG / "ca_rf_auc_comparison.png")
 
@@ -335,6 +337,7 @@ def fig_covariate_followups() -> None:
         highlight_index=0,
         vlines={"Chance=.500": 0.5, "Geo=.551": 0.551, "CA=.590": 0.590},
         xlim=(0.45, 0.88),
+        legend_loc="below",
     )
     _save(fig, MEMOS_FIG / "transit_covariate_followups_memo.png")
 
@@ -356,6 +359,7 @@ def fig_covariate_followups() -> None:
         highlight_index=0,
         vlines={"Chance = .500": 0.5, "Geo = .551": 0.551, "CA = .590": 0.590},
         xlim=(0.45, 0.84),
+        legend_loc="below",
     )
     _save(fig, MEMOS_FIG / "q27_q28_predicts_transit_comparison.png")
 

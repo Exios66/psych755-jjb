@@ -652,6 +652,7 @@ def plot_comparison_memo_figure(
         ns=frame["n"].tolist() if "n" in frame.columns else None,
         benchmarks=("chance", "geo", "ca"),
         xlim=(0.45, min(0.88, float(frame["roc_auc"].max()) + 0.08)),
+        legend_loc="below",
     )
     best = frame.sort_values("roc_auc", ascending=False).iloc[0]
     add_title_block(

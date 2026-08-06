@@ -126,8 +126,13 @@ def horizontal_bars(
     highlight_index: int | None = None,
     vlines: dict[str, float] | None = None,
     xlim: tuple[float, float] | None = None,
+    legend_loc: str | None = "lower right",
 ) -> plt.Axes:
-    """Horizontal bar chart with value labels (APA-friendly grayscale)."""
+    """Horizontal bar chart with value labels (APA-friendly grayscale).
+
+    ``legend_loc="below"`` places the vline legend under the axes (reserved by
+    tight_layout) so no legend box covers bars or value labels.
+    """
     apply_apa_style()
     y = np.arange(len(labels))
     vals = np.asarray(values, dtype=float)
@@ -157,7 +162,17 @@ def horizontal_bars(
         styles = ["--", ":", "-."]
         for j, (name, xval) in enumerate(vlines.items()):
             ax.axvline(xval, color="#333333", ls=styles[j % len(styles)], lw=1.0, label=name)
-        ax.legend(frameon=False, loc="lower right", fontsize=8)
+        if legend_loc:
+            if legend_loc == "below":
+                ax.legend(
+                    frameon=False,
+                    loc="upper center",
+                    bbox_to_anchor=(0.5, -0.09),
+                    ncol=len(vlines),
+                    fontsize=8,
+                )
+            else:
+                ax.legend(frameon=False, loc=legend_loc, fontsize=8)
     ax.invert_yaxis()
     return apa_axes(ax)
 

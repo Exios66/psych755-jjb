@@ -891,6 +891,7 @@ horizontal_bars(
     highlight_index=0,
     vlines={"Chance = 0.500": 0.5},
     xlim=(0.45, 0.68),
+    legend_loc="below",
 )
 fig.tight_layout()
 plt.show()
@@ -907,6 +908,7 @@ plt.show()
 #| fig-cap: "Proportion of Regular Transit Riders by Q27 Intensity and Q28 Ride-Share Days"
 #| fig-alt: "Two-panel grayscale horizontal bar charts of regular-transit prevalence by Q27 and Q28 response levels."
 #| out-width: "100%"
+#| fig-dpi: 220
 
 order27 = [
     "1-2 rides in a typical day",
@@ -921,6 +923,18 @@ order28 = [
     "4-8 days a month",
     "8 or more days a month",
 ]
+short27 = {
+    "1-2 rides in a typical day": "1–2 rides/day",
+    "3-4 rides in a typical day": "3–4 rides/day",
+    "5-6 rides in a typical day": "5–6 rides/day",
+}
+short28 = {
+    "Never": "Never",
+    "0-1 days a month": "0–1 days/mo",
+    "2-4 days a month": "2–4 days/mo",
+    "4-8 days a month": "4–8 days/mo",
+    "8 or more days a month": "8+ days/mo",
+}
 q27 = pd.DataFrame(secondary["q27_prevalence"])
 q27["level"] = pd.Categorical(q27["level"], categories=order27, ordered=True)
 q27 = q27.sort_values("level")
@@ -928,33 +942,35 @@ q28 = pd.DataFrame(secondary["q28_prevalence"])
 q28["level"] = pd.Categorical(q28["level"], categories=order28, ordered=True)
 q28 = q28.sort_values("level")
 
-fig, axes = plt.subplots(1, 2, figsize=(9.6, 4.0))
-for ax, frame, title in [
-    (axes[0], q27, "Q27 (n = 239)"),
-    (axes[1], q28, "Q28 (n = 241)"),
+fig, axes = plt.subplots(1, 2, figsize=(10.6, 4.8))
+for ax, frame, title, short_map in [
+    (axes[0], q27, "Q27 (n = 239)", short27),
+    (axes[1], q28, "Q28 (n = 241)", short28),
 ]:
     y = np.arange(len(frame))
-    ax.barh(y, frame["prevalence"], color="#444444", edgecolor="black", height=0.7)
+    ax.barh(y, frame["prevalence"], color="#444444", edgecolor="black", height=0.68)
     ax.axvline(
         secondary["prevalence"],
         color="black",
         ls="--",
-        lw=1.0,
+        lw=1.1,
         label=f"Sample prevalence = {secondary['prevalence']:.3f}",
     )
     ax.set_yticks(y)
     ax.set_yticklabels(
-        [f"{lv} (n={int(n)})" for lv, n in zip(frame["level"], frame["n"])],
-        fontsize=8,
+        [f"{short_map.get(lv, lv)} (n={int(n)})" for lv, n in zip(frame["level"], frame["n"])],
+        fontsize=10,
     )
-    ax.set_xlabel("Proportion regular transit (weekly+)")
-    ax.set_xlim(0, 1.05)
+    ax.set_xlabel("Proportion regular transit (weekly+)", fontsize=10)
+    ax.set_xlim(0, 1.14)
     for yi, v in zip(y, frame["prevalence"]):
-        ax.text(min(float(v) + 0.02, 0.90), yi, f"{v:.1%}", va="center", fontsize=8)
+        # Value labels always sit OUTSIDE the bar so they stay legible.
+        ax.text(v + 0.012, yi, f"{v:.1%}", va="center", ha="left", fontsize=9.5)
     ax.invert_yaxis()
     apa_axes(ax)
-    ax.text(0.98, 0.98, title, transform=ax.transAxes, ha="right", va="top", fontsize=9)
-    ax.legend(frameon=False, fontsize=7, loc="lower right")
+    ax.tick_params(axis="x", labelsize=9)
+    ax.text(0.985, 0.98, title, transform=ax.transAxes, ha="right", va="top", fontsize=10)
+    ax.legend(frameon=False, fontsize=8, loc="upper right")
 fig.tight_layout()
 plt.show()
 ```
@@ -1024,6 +1040,7 @@ horizontal_bars(
     highlight_index=0,
     vlines={"Chance = 0.500": 0.5, "Geo = 0.551": 0.551, "CA = 0.590": 0.590},
     xlim=(0.45, 0.84),
+    legend_loc="below",
 )
 fig.tight_layout()
 plt.show()

@@ -136,6 +136,26 @@ main p:has(+ .quarto-figure) {
   line-height: 1.55;
 }
 
+/* Sidebar: pinned below the fixed navbar at all times while scrolling.
+   The sidebar scrolls internally (own scrollbar) and never overlaps the
+   content column, since the grid already reserves its width. */
+@media (min-width: 992px) {
+  body.nav-sidebar.floating #quarto-sidebar {
+    position: sticky;
+    top: 64px;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    align-self: start;
+    overscroll-behavior: contain;
+  }
+
+  /* When the headroom navbar is hidden (scroll down), reclaim full height. */
+  body.nav-sidebar.floating:not(.nav-fixed) #quarto-sidebar {
+    top: 0;
+    max-height: 100vh;
+  }
+}
+
 /* PR progress graph page — immersive layout hooks */
 body.pr-graph-page #quarto-sidebar,
 html.pr-graph-page #quarto-sidebar,

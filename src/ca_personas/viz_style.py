@@ -93,10 +93,16 @@ def apply_memo_style() -> None:
     )
 
 
-def save_figure(fig: Figure, path: str | Path, *, dpi: int = 220) -> Path:
+def save_figure(fig: Figure, path: str | Path, *, dpi: int = 220, tight_rect: tuple[float, float, float, float] | None = None) -> Path:
     out = Path(path)
     out.parent.mkdir(parents=True, exist_ok=True)
-    fig.tight_layout()
+    if tight_rect is None:
+        # Reserve headroom for suptitle title blocks; otherwise tight_layout()
+        # clobbers manual figure margins and the title/subtitle collide with axes.
+        rect = (0, 0, 1, 0.88) if fig._suptitle is not None else None
+    else:
+        rect = tight_rect
+    fig.tight_layout(rect=rect)
     fig.savefig(out, dpi=dpi, bbox_inches="tight", facecolor=PAPER, edgecolor="none")
     plt.close(fig)
     return out
@@ -208,7 +214,16 @@ def plot_auc_bars(
     xlim: tuple[float, float] | None = None,
     highlight_best: bool = True,
     benchmarks: Sequence[str] = ("chance", "geo", "ca"),
-) -> None:
+    legend_loc: str | None = "lower right",
+) -> list:
+    """Horizontal AUC bar chart; returns benchmark legend handles.
+
+    ``legend_loc=None`` skips the in-axes legend so callers can place a
+    figure-level legend (e.g. below the axes) without covering bars.
+    ``legend_loc="below"`` draws the legend under the axes (tight_layout
+    reserves the space), so the longest (bottom) bar and its value label
+    stay unobstructed.
+    """
     labels = list(labels)
     aucs_arr = np.asarray(list(aucs), dtype=float)
     order = np.argsort(aucs_arr)
@@ -244,14 +259,16 @@ def plot_auc_bars(
     bench_handles = add_benchmark_vlines(
         ax, which=benchmarks, annotate=False, ymax=len(labels) - 0.35
     )
-    if bench_handles:
+    if bench_handles and legend_loc:
         ax.legend(
             handles=bench_handles,
-            loc="lower right",
+            loc="upper center" if legend_loc == "below" else legend_loc,
+            bbox_to_anchor=(0.5, -0.07) if legend_loc == "below" else None,
+            ncol=len(bench_handles) if legend_loc == "below" else 1,
             fontsize=7.5,
-            title="Benchmarks",
+            title="Benchmarks" if legend_loc != "below" else None,
             title_fontsize=8,
-            frameon=True,
+            frameon=legend_loc != "below",
             fancybox=False,
             edgecolor=GRID,
             facecolor=PAPER,
@@ -278,6 +295,7 @@ def plot_auc_bars(
             fontweight="bold",
             zorder=4,
         )
+    return bench_handles
 
 
 def plot_prevalence_bars(
@@ -327,15 +345,14 @@ def plot_prevalence_bars(
     ax.set_xlabel(xlabel)
     if title:
         ax.set_title(title, loc="left", fontsize=11, pad=8)
-    xmax = max(0.70, float(np.nanmax(pcts_arr)) + 0.15)
+    xmax = max(0.72, float(np.nanmax(pcts_arr)) + 0.16)
     ax.set_xlim(0, xmax)
     style_axes(ax, grid="x")
     for i, pct in enumerate(pcts_arr):
         txt = f"{pct:.0%}"
         if ns_arr is not None:
             txt = f"{pct:.0%}  (n={ns_arr[i]})"
-        xpos = min(pct + 0.015, xmax - 0.05)
-        ax.text(xpos, i, txt, va="center", ha="left", fontsize=8.5, color=INK)
+        ax.text(pct + 0.015, i, txt, va="center", ha="left", fontsize=8.5, color=INK)
 
 
 def plot_roc_curve(
