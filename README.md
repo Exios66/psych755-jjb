@@ -278,13 +278,13 @@ python scripts/publish_posit_jackjburleson.py
 
 Agent runbook: [`.cursor/skills/posit-connect-publish/SKILL.md`](.cursor/skills/posit-connect-publish/SKILL.md).
 
-### GitHub Pages mirror (permanent portfolio URL)
+Publish from the project root with the wrapper (sources `.env`, delegates to the helper, passes flags through):
 
-Posit Connect content IDs can change; a Quarto → GitHub Pages workflow publishes a stable mirror from `main`:
-
-**URL:** [https://exios66.github.io/psych755-jjb/](https://exios66.github.io/psych755-jjb/)
-
-Workflow: [`.github/workflows/publish-gh-pages.yml`](.github/workflows/publish-gh-pages.yml) (mock LLM + `artifacts/posit_full_cohort/` — same keyless path as local `quarto render`). One-time setup: repo **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+```bash
+./publish.sh                         # full-cohort analyses + render + publish
+./publish.sh --skip-analysis         # skip full-cohort CLI re-runs
+./publish.sh --skip-analysis --skip-render   # re-push the current _site/
+```
 
 ## Notes
 

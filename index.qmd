@@ -1188,9 +1188,7 @@ python scripts/regenerate_ml_vs_llm_shap.py   # rebuild ML-vs-LLM tables/figures
 quarto render
 ```
 
-For **Posit Connect Cloud** [@quarto; @positconnect]: publish this repository [@psych755repo] with `_quarto.yml` as the primary file and `requirements.txt` present so Python dependencies install at build time. When private exports are absent, the manuscript loads committed full-cohort artifacts — participants, seeded secondary metrics, ML-vs-LLM metric tables (`artifacts/posit_full_cohort/ml_vs_llm/`), and the vLLM export tables including real stereotyping slices.
-
-A **GitHub Pages** mirror (permanent portfolio URL) is built by [`.github/workflows/publish-gh-pages.yml`](.github/workflows/publish-gh-pages.yml) on pushes to `main` using the same committed-artifact path: [https://exios66.github.io/psych755-jjb/](https://exios66.github.io/psych755-jjb/). Enable **Settings → Pages → Source: GitHub Actions** once after merge. Posit Connect remains the interactive full-cohort deployment when File A/B/C and credentials are available.
+For **Posit Connect Cloud** [@quarto; @positconnect]: publish this repository [@psych755repo] with `_quarto.yml` as the primary file and `requirements.txt` present so Python dependencies install at build time. When private exports are absent, the manuscript loads committed full-cohort artifacts — participants, seeded secondary metrics, ML-vs-LLM metric tables (`artifacts/posit_full_cohort/ml_vs_llm/`), and the vLLM export tables including real stereotyping slices. From the project root, run [`./publish.sh`](publish.sh) (full analyses → render → Posit Connect publish) or `./publish.sh --skip-analysis --skip-render` to re-push the current `_site/`.
 
 Source and author profile: [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb) · [github.com/Exios66](https://github.com/Exios66) [@github].
 
