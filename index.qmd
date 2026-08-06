@@ -19,10 +19,10 @@ abstract: |
   transportation), and score LLM predictions against ground-truth PRCA alongside a
   cross-validated tabular suite (Ridge, Elastic Net, k-NN, Random Forest [RF],
   XGBoost, MLP).
-  Three primary research questions (RQ1–RQ3) examine whether employment status,
-  transportation-use cues, and joint geo/employment/transit context improve absolute
-  CA prediction error — under either family — and how prediction error distributes across
-  demographic and contextual groups. Five secondary research questions (S1–S5) reverse the
+  Three primary research questions (RQ1–RQ3) examine whether employment status (RQ1),
+  transportation-use cues (RQ2), and full cumulative context including free-response
+  voice (RQ3) improve absolute CA prediction error — under either family — and how
+  prediction error distributes across demographic and contextual groups. Five secondary research questions (S1–S5) reverse the
   predictive direction on the same matched sample, asking how CA, place, and mobility
   self-reports relate to regular public-transit use (survey item Q26, weekly-or-more)
   under classical
@@ -215,19 +215,19 @@ Methodologically, this manuscript sits between two traditions. The *data-modelin
 
 ## Research Questions
 
-The primary design compares **information tiers** rather than a single prompt: each participant is personified five ways (`demos` → `employment` → `geo` → `transit` → `full`) while ground-truth PRCA stays fixed, directly testing the "beyond demographics" result that accumulating non-demographic context—beliefs, circumstances, and behavior—improves persona fidelity [@chuang2024belief; @kaiser2025]. The present study addressed three primary research questions concerning whether accumulated persona context shrinks prediction error relative to classical ML and whether residual error still clusters by group membership; five secondary research questions concerning classical predictors of regular public-transit use; and a secondary *focus* pair that holds transit self-reports out of the persona/profile and asks models to estimate ridership instead [@cheng2023; @santurkar2023]. Because persona prompting is known to be packaging-sensitive [@hu2024; @argyle2023; @sclar2024], the project also evaluates signal-first redesigns (`v2`/`v3`) against the published v1 baselines.
+The primary design compares **information tiers** rather than a single prompt: each participant is personified five ways (`demos` → `employment` → `geo` → `transit` → `full`) while ground-truth PRCA stays fixed, directly testing the "beyond demographics" result that accumulating non-demographic context—beliefs, circumstances, and behavior—improves persona fidelity [@chuang2024belief; @kaiser2025]. The present study addressed three primary research questions — whether adding employment status (RQ1), transportation-use cues (RQ2), or full cumulative context including free-response voice (RQ3) shrinks prediction error relative to classical ML, and whether residual error still clusters by group membership; five secondary research questions concerning classical predictors of regular public-transit use; and a secondary *focus* pair that holds transit self-reports out of the persona/profile and asks models to estimate ridership instead [@cheng2023; @santurkar2023]. Because persona prompting is known to be packaging-sensitive [@hu2024; @argyle2023; @sclar2024], the project also evaluates signal-first redesigns (`v2`/`v3`) against the published v1 baselines.
 
 ::: {.research-focus-block}
 ### Primary Research Questions
 
 *Outcome.* Continuous PRCA-24 group and interpersonal communication apprehension scores (range 6–30).  
-*Design.* Cumulative persona prompts evaluated with mean absolute error (MAE), signed error, and band accuracy against Qualtrics ground truth.
+*Design.* Cumulative persona prompts (`demos` → `employment` → `geo` → `transit` → `full`) evaluated with mean absolute error (MAE), signed error, and band accuracy against Qualtrics ground truth; each tier after `demos` maps to a primary RQ (RQ1 = `employment`, RQ2 = `transit`, RQ3 = `full`).
 
-**Research Question 1 (RQ1):** Does providing progressively richer contextual information about the respondent beyond basic demographics improve an LLM's predictive accuracy for self-reported communication apprehension scores, and does residual prediction error still cluster systematically by demographic or contextual group membership?
+**Research Question 1 (RQ1):** Does adding employment status to a basic-demographics persona improve an LLM's predictive accuracy for self-reported communication apprehension scores, and does residual prediction error cluster systematically by employment group membership?
 
-**Research Question 2 (RQ2):** Does transportation-use information improve prediction of communication apprehension relative to earlier persona tiers, and does the model use mobility cues in a psychologically sensible way rather than as stereotype proxies?
+**Research Question 2 (RQ2):** Does adding transportation-use information to the geo-context persona improve prediction of communication apprehension relative to earlier tiers, and does the model use mobility cues in a psychologically sensible way rather than as stereotype proxies?
 
-**Research Question 3 (RQ3):** Does combining employment, geography, and transportation information improve prediction of communication apprehension beyond either addition alone, or are these cues redundant?
+**Research Question 3 (RQ3):** Does adding full cumulative context — including free-response attitudes (voice text) beyond the transit tier — improve prediction of communication apprehension, or are the combined cues redundant?
 :::
 
 ::: {.research-focus-block}
