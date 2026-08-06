@@ -1,6 +1,8 @@
 project:
   type: website
   output-dir: _site
+  pre-render:
+    - python scripts/pre_render_pr_graph.py
   render:
     - index.qmd
     - docs/framework.qmd

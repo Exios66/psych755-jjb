@@ -5,6 +5,7 @@ toc: false
 number-sections: false
 sidebar: false
 page-layout: full
+freeze: false
 format:
   html:
     toc: false

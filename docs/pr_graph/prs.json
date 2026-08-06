@@ -1,11 +1,11 @@
 {
   "meta": {
     "repo": "Exios66/psych755-jjb",
-    "generatedAt": "2026-08-06T05:02:22Z",
-    "nodeCount": 68,
+    "generatedAt": "2026-08-06T16:42:44Z",
+    "nodeCount": 69,
     "prCount": 57,
-    "issueCount": 11,
-    "edgeCount": 187,
+    "issueCount": 12,
+    "edgeCount": 191,
     "statusCounts": {
       "pr": {
         "merged": 51,
@@ -13,7 +13,7 @@
         "open": 2
       },
       "issue": {
-        "closed": 4,
+        "closed": 5,
         "open": 7
       }
     },
@@ -22,7 +22,7 @@
       "personas": 12,
       "site": 9,
       "ml": 9,
-      "data": 3,
+      "data": 4,
       "vllm": 4,
       "secondary-rq": 20,
       "infra": 5
@@ -1190,14 +1190,14 @@
       "number": 66,
       "kind": "issue",
       "title": "[Bug]: Stale ML Suite Viz",
-      "status": "open",
+      "status": "closed",
       "theme": "ml",
       "themeLabel": "ML baselines",
       "author": "Exios66",
       "url": "https://github.com/Exios66/psych755-jjb/issues/66",
       "createdAt": "2026-08-05T22:04:32Z",
       "mergedAt": null,
-      "closedAt": null,
+      "closedAt": "2026-08-06T12:40:35Z",
       "isDraft": false,
       "labels": [
         "bug"
@@ -1241,6 +1241,25 @@
         "bug"
       ],
       "excerpt": "### Summary Trashy Visualizations located \u25b6\ufe0f [MEMO LINK](https://019f9a10-ebb9-d1d5-839f-97e794bfd0ca.share.connect.posit.cloud/#q27-and-q28-as-traditional-ml-predictors-of-regular-transit) ### Steps to reproduce ```python order27 = [ \"1-2 rides in a typical day\", \"3-4 rides in\u2026"
+    },
+    {
+      "id": "I-70",
+      "number": 70,
+      "kind": "issue",
+      "title": "[Feature]: Test Suite on Render Capability",
+      "status": "open",
+      "theme": "data",
+      "themeLabel": "Data & pipeline",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/issues/70",
+      "createdAt": "2026-08-06T12:39:52Z",
+      "mergedAt": null,
+      "closedAt": null,
+      "isDraft": false,
+      "labels": [
+        "enhancement"
+      ],
+      "excerpt": "### Problem / motivation I need individual tests to evaluate & ensure that individual .qmd memo files can be rendered to html appropriately. ### Proposed solution Test suite. ### Area Tooling / DX ### Alternatives considered _No response_ ### Constraints - [x] Does not require c\u2026"
     }
   ],
   "edges": [
@@ -1605,14 +1624,8 @@
       "type": "timeline"
     },
     {
-      "id": "timeline-65-66",
+      "id": "timeline-65-58",
       "source": "I-65",
-      "target": "I-66",
-      "type": "timeline"
-    },
-    {
-      "id": "timeline-66-58",
-      "source": "I-66",
       "target": "I-58",
       "type": "timeline"
     },
@@ -1644,6 +1657,18 @@
       "id": "timeline-68-63",
       "source": "I-68",
       "target": "I-63",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-63-70",
+      "source": "I-63",
+      "target": "I-70",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-70-66",
+      "source": "I-70",
+      "target": "I-66",
       "type": "timeline"
     },
     {
@@ -2102,9 +2127,30 @@
       "theme": "data"
     },
     {
+      "id": "relates-19-70",
+      "source": "PR-19",
+      "target": "I-70",
+      "type": "relates",
+      "theme": "data"
+    },
+    {
       "id": "relates-8-19",
       "source": "PR-8",
       "target": "PR-19",
+      "type": "relates",
+      "theme": "data"
+    },
+    {
+      "id": "relates-8-70",
+      "source": "PR-8",
+      "target": "I-70",
+      "type": "relates",
+      "theme": "data"
+    },
+    {
+      "id": "relates-15-70",
+      "source": "PR-15",
+      "target": "I-70",
       "type": "relates",
       "theme": "data"
     },
