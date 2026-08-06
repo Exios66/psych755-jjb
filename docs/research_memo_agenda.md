@@ -61,7 +61,7 @@ Live GPU baselines are documented separately in [`docs/llm_vllm_memo_agenda.md`]
 
 ## Intentionally deferred (future work; need further live LLM or new data)
 
-- **v2 / v3 canonical refresh** — v2 is now GPU-evaluated on Llama-3.1-8B, Llama-3.2-3B-Instruct, and DeepSeek-R1-Distill-8B (v2_enhanced; `exports/v2/`), and v3 greedy 8-tier ablations on Llama-3.1, 3.2-3B-Instruct, and 3.3-70B (`exports/v3/`). Remaining: canonical `v3_enhanced` decode refresh, base-3B v2/v3, and 70B under `large_model` — see [`persona_prompt_versions.md`](persona_prompt_versions.md)
+- **v2 / v3 canonical refresh** — v2 is now GPU-evaluated on Llama-3.1-8B, Llama-3.2-3B-Instruct, and DeepSeek-R1-Distill-8B (v2_enhanced; `exports/v2/`), and v3 greedy 8-tier ablations on Llama-3.1, 3.2-3B-Instruct, and 3.3-70B (`exports/v3/`). Remaining: canonical `v3_enhanced` decode refresh, base-3B v2/v3, and 70B under `large_model` — see [`persona_prompt_versions.qmd`](persona_prompt_versions.qmd)
 - **Completed since wave 1:** live-export TreeSHAP / surrogate SHAP ([`memos/feature_predictive_power_ml_llm.qmd`](../memos/feature_predictive_power_ml_llm.qmd)) and real stereotyping slices ([`memos/live_llm_stereotyping_slices.qmd`](../memos/live_llm_stereotyping_slices.qmd))
 - Richer / MNAR-sensitive MI of car items (wave-2 MI head-to-head is implemented; see [`memos/mi_head_to_head.qmd`](../memos/mi_head_to_head.qmd))
 - City/density GIS layers beyond Qualtrics lat/long

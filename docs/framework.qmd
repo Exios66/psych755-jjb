@@ -133,7 +133,7 @@ structured questionnaire checklists:
 7. `v3_public_transit` — Q26 only (+ Q27 if used)
 8. `v3_voice` — Q18.1 / Q19 open-text only (no structured transit)
 
-Version map (v1 baseline → v2 packaging → v3 ablations): [`persona_prompt_versions.md`](persona_prompt_versions.md).  
+Version map (v1 baseline → v2 packaging → v3 ablations): [`persona_prompt_versions.qmd`](persona_prompt_versions.qmd).  
 Llama-3.1 full-cohort baseline (prompt v1): [`llm_baseline_llama31_v1.md`](llm_baseline_llama31_v1.md).  
 Packaging details: [`persona_prompt_efficiency.md`](persona_prompt_efficiency.md).  
 See [`prompts/system_prompt.md`](../prompts/system_prompt.md) and

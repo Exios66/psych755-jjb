@@ -30,7 +30,7 @@ Document the first wave of **live GPU vLLM** evaluations on the matched analytic
 | [`llm_baseline_llama31_v1.md`](llm_baseline_llama31_v1.md) | Full Llama-3.1 tables |
 | [`llm_baseline_llama32_instruct_v1.md`](llm_baseline_llama32_instruct_v1.md) | Full Llama-3.2 Instruct tables |
 | [`llm_baseline_deepseek_r1_distill_v1.md`](llm_baseline_deepseek_r1_distill_v1.md) | Full DeepSeek tables |
-| [`persona_prompt_versions.md`](persona_prompt_versions.md) | v1 → v2 → v3 map |
+| [`persona_prompt_versions.qmd`](persona_prompt_versions.qmd) | v1 → v2 → v3 map |
 
 ## Shared design
 
@@ -41,7 +41,7 @@ Document the first wave of **live GPU vLLM** evaluations on the matched analytic
 
 ## Intentionally deferred (future work)
 
-- **Canonical `v3_enhanced` refresh** — v2 is GPU-evaluated on Llama-3.1-8B, Llama-3.2-3B-Instruct, and DeepSeek-R1-Distill-8B (v2_enhanced; `exports/v2/`), and v3 greedy 8-tier ablations on Llama-3.1, 3.2-3B-Instruct, and 3.3-70B (`exports/v3/`); the committed v3 packages are greedy-decode (identical to `prior_v3_greedy`), so the `v3_enhanced` decode refresh remains — see [`persona_prompt_versions.md`](persona_prompt_versions.md).  
+- **Canonical `v3_enhanced` refresh** — v2 is GPU-evaluated on Llama-3.1-8B, Llama-3.2-3B-Instruct, and DeepSeek-R1-Distill-8B (v2_enhanced; `exports/v2/`), and v3 greedy 8-tier ablations on Llama-3.1, 3.2-3B-Instruct, and 3.3-70B (`exports/v3/`); the committed v3 packages are greedy-decode (identical to `prior_v3_greedy`), so the `v3_enhanced` decode refresh remains — see [`persona_prompt_versions.qmd`](persona_prompt_versions.qmd).  
 - **Completed since the v1 wave:** v2/v3 evaluation memo ([`memos/vllm_v2_v3_evaluation.qmd`](../memos/vllm_v2_v3_evaluation.qmd)) and real live-export stereotyping slices ([`memos/live_llm_stereotyping_slices.qmd`](../memos/live_llm_stereotyping_slices.qmd)).  
 - Temperature / constrained-decoding ablations (70B `large_model` preset)  
 

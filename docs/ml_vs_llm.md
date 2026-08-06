@@ -8,7 +8,7 @@ subtitle: "Head-to-head evaluation across persona information tiers"
 **CLI:** `ca-personas compare --provider mock|ollama|openrouter`  
 **Real-export harness:** [`scripts/regenerate_ml_vs_llm_shap.py`](../scripts/regenerate_ml_vs_llm_shap.py) (F1 / SHAP / band discrimination from committed `exports/`)  
 **ML reference:** [`ml_baselines.md`](ml_baselines.md)  
-**Live LLM baselines:** [`persona_prompt_versions.md`](persona_prompt_versions.md), [`llm_v2_v3_enhanced_variants.md`](llm_v2_v3_enhanced_variants.md)  
+**Live LLM baselines:** [`persona_prompt_versions.qmd`](persona_prompt_versions.qmd), [`llm_v2_v3_enhanced_variants.md`](llm_v2_v3_enhanced_variants.md)  
 **Band / SHAP memo:** [`memos/feature_predictive_power_ml_llm.qmd`](../memos/feature_predictive_power_ml_llm.qmd)  
 **Manuscript:** [`index.qmd`](../index.qmd)
 

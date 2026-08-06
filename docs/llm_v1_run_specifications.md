@@ -3,7 +3,7 @@ title: "v1 vLLM run specifications"
 subtitle: "Models, context, prompts, sampling, and decode settings for prompt-v1 baselines"
 ---
 
-**Companion:** [`llm_v2_v3_enhanced_variants.md`](llm_v2_v3_enhanced_variants.md) · [`persona_prompt_versions.md`](persona_prompt_versions.md) · [`config/vllm_presets.yaml`](../config/vllm_presets.yaml)
+**Companion:** [`llm_v2_v3_enhanced_variants.md`](llm_v2_v3_enhanced_variants.md) · [`persona_prompt_versions.qmd`](persona_prompt_versions.qmd) · [`config/vllm_presets.yaml`](../config/vllm_presets.yaml)
 
 This page pins the **prompt-v1** digital-twin generation stack used for the four published full-cohort baselines (N = 241 × 5 = 1,205 prompts each). Primary manuscript claims remain on these runs.
 

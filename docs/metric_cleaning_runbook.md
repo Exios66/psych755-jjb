@@ -50,7 +50,7 @@ python -m inference.ingest_results \
 **Parse success is a reported quality gate.** The v1 Llama-3.2-3B-Instruct run
 reached 100 % parse; the Llama-3.2-3B **base** run produced malformed JSON and
 is excluded from all analyses (see
-[`docs/persona_prompt_versions.md`](persona_prompt_versions.md)).
+[`docs/persona_prompt_versions.qmd`](persona_prompt_versions.qmd)).
 
 ## Phase 2 — Merge with ground truth & validation
 

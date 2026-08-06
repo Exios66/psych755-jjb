@@ -6,7 +6,7 @@ subtitle: "Signal-first Terrarium narratives for RQ1–RQ3 predictive efficiency
 **Code:** [`src/ca_personas/personas.py`](../src/ca_personas/personas.py)  
 **System contract:** [`prompts/system_prompt.md`](../prompts/system_prompt.md)  
 **Examples:** [`prompts/examples/`](../prompts/examples/)  
-**Evidence:** [`llm_baseline_llama31_v1.md`](llm_baseline_llama31_v1.md) (prompt **v1** Llama-3.1) · [`persona_prompt_versions.md`](persona_prompt_versions.md) · [`factor_feature_importance.md`](factor_feature_importance.md)
+**Evidence:** [`llm_baseline_llama31_v1.md`](llm_baseline_llama31_v1.md) (prompt **v1** Llama-3.1) · [`persona_prompt_versions.qmd`](persona_prompt_versions.qmd) · [`factor_feature_importance.md`](factor_feature_importance.md)
 
 ---
 
@@ -65,7 +65,7 @@ Expected: **1,928** prompts (241 × 8). Artifacts (gitignored):
 
 ## 6. Status and how to read a future re-run
 
-**Status:** v3.1 packaging and the three v3 ablation tiers are **implemented in code** and covered by unit tests. Live GPU evaluation is committed for **v2** (signal-first packaging, `v2_enhanced` decode, on Llama-3.1-8B, Llama-3.2-3B-Instruct, and DeepSeek-R1-Distill-8B) and **v3** (greedy 8-tier ablations on Llama-3.1, Llama-3.2-3B-Instruct, and Llama-3.3-70B); the canonical `v3_enhanced` decode refresh remains pending. See [`persona_prompt_versions.md`](persona_prompt_versions.md) and the pooled results in [`memos/vllm_v2_v3_evaluation.qmd`](../memos/vllm_v2_v3_evaluation.qmd).
+**Status:** v3.1 packaging and the three v3 ablation tiers are **implemented in code** and covered by unit tests. Live GPU evaluation is committed for **v2** (signal-first packaging, `v2_enhanced` decode, on Llama-3.1-8B, Llama-3.2-3B-Instruct, and DeepSeek-R1-Distill-8B) and **v3** (greedy 8-tier ablations on Llama-3.1, Llama-3.2-3B-Instruct, and Llama-3.3-70B); the canonical `v3_enhanced` decode refresh remains pending. See [`persona_prompt_versions.qmd`](persona_prompt_versions.qmd) and the pooled results in [`memos/vllm_v2_v3_evaluation.qmd`](../memos/vllm_v2_v3_evaluation.qmd).
 
 Compare a new LLM/vLLM export against [`llm_baseline_llama31_v1.md`](llm_baseline_llama31_v1.md):
 

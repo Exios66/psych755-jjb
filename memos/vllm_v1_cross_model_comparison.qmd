@@ -8,7 +8,7 @@ bibliography: ../references.bib
 
 **Research question:** Across full-cohort vLLM runs on the **same prompt-v1** five-tier ladder (`demos` → `employment` → `geo` → `transit` → `full`), which open-weight instruct / distill models best recover ground-truth PRCA group and interpersonal scores — and do employment, transit, or cumulative context reduce absolute error (RQ1–RQ3)?
 
-**Formal method pages:** [`docs/llm_baseline_llama31_v1.md`](../docs/llm_baseline_llama31_v1.md) · [`docs/llm_baseline_llama32_instruct_v1.md`](../docs/llm_baseline_llama32_instruct_v1.md) · [`docs/llm_baseline_deepseek_r1_distill_v1.md`](../docs/llm_baseline_deepseek_r1_distill_v1.md) · [`docs/llm_baseline_llama33_70b_v1.md`](../docs/llm_baseline_llama33_70b_v1.md) · [`docs/persona_prompt_versions.md`](../docs/persona_prompt_versions.md)
+**Formal method pages:** [`docs/llm_baseline_llama31_v1.md`](../docs/llm_baseline_llama31_v1.md) · [`docs/llm_baseline_llama32_instruct_v1.md`](../docs/llm_baseline_llama32_instruct_v1.md) · [`docs/llm_baseline_deepseek_r1_distill_v1.md`](../docs/llm_baseline_deepseek_r1_distill_v1.md) · [`docs/llm_baseline_llama33_70b_v1.md`](../docs/llm_baseline_llama33_70b_v1.md) · [`docs/persona_prompt_versions.qmd`](../docs/persona_prompt_versions.qmd)
 
 **Sibling memos (per model):** [`vllm_v1_llama31_8b.qmd`](vllm_v1_llama31_8b.qmd) · [`vllm_v1_llama32_3b.qmd`](vllm_v1_llama32_3b.qmd) · [`vllm_v1_deepseek_r1_distill.qmd`](vllm_v1_deepseek_r1_distill.qmd) · [`vllm_v1_llama33_70b.qmd`](vllm_v1_llama33_70b.qmd)
 

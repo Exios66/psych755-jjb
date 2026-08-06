@@ -82,6 +82,6 @@ Does the canonical `v3_enhanced` decode refresh (`temp` 0.3, `seed` 42, `guided 
 - Live-model stereotyping slices on the v2 exports: [`live_llm_stereotyping_slices.qmd`](live_llm_stereotyping_slices.qmd)
 - Band discrimination and surrogate SHAP for the best live agent: [`feature_predictive_power_ml_llm.qmd`](feature_predictive_power_ml_llm.qmd)
 - Tabular `Q28`-dominance that motivates the `v3_rideshare` tip: [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd)
-- Prompt-version map and decode presets: `docs/persona_prompt_versions.md`, `docs/llm_v2_v3_enhanced_variants.md`
+- Prompt-version map and decode presets: `docs/persona_prompt_versions.qmd`, `docs/llm_v2_v3_enhanced_variants.md`
 
 *Sources:* `exports/v2/` (DeepSeek `…_20260730_2213`, Llama-3.1 `…_20260728_2214`, Llama-3.2-Instruct `…_20260728_2353`) · `exports/v3/` (`…_20260729_1039`) · `exports/prior_v3_greedy/` · `config/vllm_presets.yaml` · `scripts/package_vllm_export.py`
