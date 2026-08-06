@@ -1,12 +1,12 @@
 ---
-title: "Memo: Does Llama-3.2-3B-Instruct recover PRCA on prompt v1?"
+title: "Memo: Does Llama-3.2–3B-Instruct recover PRCA on prompt v1?"
 subtitle: "Research memorandum — full-cohort vLLM baseline (Terrarium 5-tier ladder)"
 author: Jack J. Burleson
-date: 2026-07-26
+date: 2026–07-26
 bibliography: ../references.bib
 ---
 
-**Research question:** Does the smaller `meta-llama/Llama-3.2-3B-Instruct` model recover PRCA group and interpersonal scores on the same prompt-v1 ladder as the 8B baseline — and does it avoid the transit-induced interpersonal failure seen in Llama-3.1?
+**Research question:** Does the smaller `meta-llama/Llama-3.2–3B-Instruct` model recover PRCA group and interpersonal scores on the same prompt-v1 ladder as the 8B baseline — and does it avoid the transit-induced interpersonal failure seen in Llama-3.1?
 
 **Formal write-up:** [`docs/llm_baseline_llama32_instruct_v1.md`](../docs/llm_baseline_llama32_instruct_v1.md)  
 **Cross-model memo:** [`vllm_v1_cross_model_comparison.qmd`](vllm_v1_cross_model_comparison.qmd)
@@ -15,11 +15,11 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Full-cohort vLLM run (**n = 241**; **1,205** prompts; parse **100%**; ~21.0 samples/s; export `psych755_vllm_llama32_3b_instruct_full_cohort_20260726_0252`). A parallel `Llama-3.2-3B` **base** (non-instruct) run only parsed ~7% of outputs and is excluded from inference claims.
+Full-cohort vLLM run (**n = 241**; **1,205** prompts; parse **100%**; ~21.0 samples/s; export `psych755_vllm_llama32_3b_instruct_full_cohort_20260726_0252`). A parallel `Llama-3.2–3B` **base** (non-instruct) run only parsed ~7% of outputs and is excluded from inference claims.
 
-**Short answer:** Still not a digital twin (exact match 9.1% / 7.7%), but **better overall MAE than Llama-3.1-8B** (group **5.51** vs 5.92; IP **5.35** vs 5.82) and **much stronger group band accuracy** (**52.7%** vs 28.8%). Transit still **hurts** interpersonal MAE (+0.58 vs demos) but far less than the 8B collapse (+3.51). IP band accuracy remains near chance (~30%). Best group MAE is at `full` (**5.29**), still above Ridge ML (~4.49).
+**Short answer:** Still not a digital twin (exact match **9.1%** / **7.7%**), but **better overall MAE than Llama-3.1–8B** (group **5.51** vs **5.92**; IP **5.35** vs 5.82) and **much stronger group band accuracy** (**52.7%** vs 28.8%). Transit still **hurts** interpersonal MAE (+0.58 vs demos) but far less than the 8B collapse (+3.51). IP band accuracy remains near chance (~30%). Best group MAE is at `full` (**5.29**), still above Ridge ML (~4.49).
 
-### Overall vs Llama-3.1-8B (same prompts)
+### Overall vs Llama-3.1–8B (same prompts)
 
 | Metric (all tiers) | 3B-Instruct | 8B-Instruct |
 |---|---:|---:|
@@ -29,7 +29,7 @@ Full-cohort vLLM run (**n = 241**; **1,205** prompts; parse **100%**; ~21.0 samp
 | Band acc interpersonal | 30.0% | **40.2%** |
 | Exact group / IP | 9.1% / 7.7% | 6.1% / 9.0% |
 
-: Llama-3.2-3B tier-level performance. {#tbl-v1l32-1}
+: Llama-3.2–3B tier-level performance. {#tbl-v1l32–1}
 
 
 ### Metrics by tier
@@ -42,7 +42,7 @@ Full-cohort vLLM run (**n = 241**; **1,205** prompts; parse **100%**; ~21.0 samp
 | transit | 5.47 | 5.65 | 52.7% | 29.5% | **−0.12** | +0.58 |
 | full | **5.29** | 5.53 | 50.6% | **31.5%** | **−0.29** | +0.46 |
 
-: Tier / MAE G / MAE IP. {#tbl-v1l32-2}
+: Tier / MAE G / MAE IP. {#tbl-v1l32–2}
 
 
 ### Band confusion (pooled) — key pattern

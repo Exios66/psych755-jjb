@@ -2,7 +2,7 @@
 title: "Memo: Does employment status predict regular transit?"
 subtitle: "Research memorandum — employment follow-up to the geography memo"
 author: Jack J. Burleson
-date: 2026-07-25
+date: 2026–07-25
 bibliography: ../references.bib
 ---
 
@@ -15,7 +15,7 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Using the full matched analytic cohort (**n = 241**; 101 regular / 140 not regular), we evaluated **Employment status** (Full-Time / Part-Time / Other) as a single-feature Random Forest predicting weekly+ public transit (`Q26` threshold as in the geo and CA memos). Stratified 5-fold CV, `random_state=42`.
+Using the full matched analytic cohort (**n = 241**; 101 regular / 140 not regular), we evaluated **Employment status** (Full-Time / Part-Time / Other) as a single-feature **Random Forest** predicting weekly+ public transit (`Q26` threshold as in the geo and CA memos). Stratified 5-fold CV, `random_state=42`.
 
 **Short answer:** Barely. Employment status yields CV ROC-AUC = **0.528** — only +0.028 above chance and **below** both the geo (**0.551**) and CA (**0.590**) benchmarks. It is not a competitive stand-alone predictor in this sample.
 
@@ -46,7 +46,7 @@ Part-time and full-time rates are close; the “Other” category is less often 
 : Model / n / ROC-AUC. {#tbl-et-2}
 
 
-Balanced accuracy = 0.560 and Brier = 0.247. Permutation importance mean AUC drop = 0.059.
+Balanced accuracy = 0.560 and Brier = 0.247. Permutation importance mean $\Delta$AUC = 0.059.
 
 **Conclusion.** Employment status, as coded in the Prolific export, recovers AUC = **0.528** for weekly+ transit. It remains useful as a control/covariate in multi-feature models, but it does not outperform geography (0.551) or CA (0.590) on its own.
 

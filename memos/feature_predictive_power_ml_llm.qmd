@@ -2,7 +2,7 @@
 title: "Memo: Feature predictive power for CA (SHAP / F1)"
 subtitle: "Research memorandum — ML vs LLM attributions across persona tiers"
 author: Jack J. Burleson
-date: 2026-07-30
+date: 2026–07-30
 bibliography: ../references.bib
 ---
 
@@ -16,7 +16,7 @@ Using the Prolific↔Qualtrics matched analytic cohort (File A + File B stacked 
 
 Full notebook: [`notebooks/feature_predictive_power_shap.ipynb`](../notebooks/feature_predictive_power_shap.ipynb) · module `ca_personas.shap_eval` · real-export harness `scripts/regenerate_ml_vs_llm_shap.py` (the CLI `ca-personas shap-eval --seed 42` keeps a deterministic mock for CI; this memo uses the committed vLLM exports).
 
-**Short answer:** Yes — structured covariates carry measurable predictive power for true CA under Random Forest, with **ride-share frequency (Q28)**, **employment status**, **public-transit frequency (Q26)**, and **survey geolocation** dominating TreeSHAP importance at the transit tier. Band **macro-F1 rises from ~0.31 (demos) to ~0.42 (transit)** for RF as information accumulates. The live LLM surrogate confirms the persona agent tracks profile features (surrogate $R^2 \approx 0.74$ for Group CA), but the attribution profile is **shifted**: DeepSeek v2 over-weights **geolocation and Age** relative to the Q28/employment mix that predicts true CA, its **low-vs-high band AUC is ≈ chance** (0.53 group / 0.49 interpersonal at transit vs RF 0.72 / 0.74), it **never emits the high-CA band** (≥20), and it stays above the RF MAE floor at every tier (transit mean MAE **5.03** vs **4.48**).
+**Short answer:** Yes — structured covariates carry measurable predictive power for true CA under Random Forest, with **ride-share frequency (`Q28`)**, **employment status**, **public-transit frequency (`Q26`)**, and **survey geolocation** dominating TreeSHAP importance at the transit tier. Band **macro-F1 rises from ~0.31 (demos) to ~0.42 (transit)** for RF as information accumulates. The live LLM surrogate confirms the persona agent tracks profile features (surrogate $R^2 \approx 0.74$ for Group CA), but the attribution profile is **shifted**: DeepSeek v2 over-weights **geolocation and Age** relative to the `Q28`/employment mix that predicts true CA, its **low-vs-high band AUC is ≈ chance** (0.53 group / 0.49 interpersonal at transit vs RF 0.72 / 0.74), it **never emits the high-CA band** (≥20), and it stays above the RF MAE floor at every tier (transit mean MAE **5.03** vs **4.48**).
 
 ![Composite: SHAP comparison, F1/MAE by tier, and tier ablation](figures/fig_memo_feature_power_composite.png){#fig-fp-fig-feature-power-composite}
 
@@ -50,9 +50,9 @@ This ranking (predicting **CA**) is not interchangeable with the permutation ran
 
 | Rank | Feature | Mean $\|SHAP\|$ |
 |---|---|---:|
-| 1 | Q28 (ride-share days) | 1.93 |
+| 1 | `Q28` (ride-share days) | 1.93 |
 | 2 | Employment status | 0.83 |
-| 3 | Q26 (public-transit days) | 0.58 |
+| 3 | `Q26` (public-transit days) | 0.58 |
 | 4 | LocationLatitude | 0.57 |
 | 5 | LocationLongitude | 0.54 |
 | 6 | Age | 0.53 |
@@ -80,17 +80,17 @@ All LLM figures below use the **committed vLLM exports** (full cohort, N = 241 p
 
 Mean of group + interpersonal targets. DeepSeek v2 trails RF on **every** tier and metric. Its tier profile is also flatter — employment and transit add nothing (and slightly worsen) LLM error, whereas RF improves monotonically with information.
 
-Surrogate SHAP (RF predicting live LLM Group CA from tabular features; $R^2 = 0.74$) ranked **lat/long, Age, Q28, country, Q26, employment** highest — i.e., the persona agent’s outputs track place and age more than the Q28/employment mix that predicts true CA. Magnitudes are also compressed (0.13–0.27 vs ML’s 0.53–1.93), so no single profile feature dominates the agent’s scores:
+Surrogate SHAP (RF predicting live LLM Group CA from tabular features; $R^2 = 0.74$) ranked **lat/long, Age, `Q28`, country, `Q26`, employment** highest — i.e., the persona agent’s outputs track place and age more than the `Q28`/employment mix that predicts true CA. Magnitudes are also compressed (0.13–0.27 vs ML’s 0.53–1.93), so no single profile feature dominates the agent’s scores:
 
 | Rank | DeepSeek v2 surrogate $\|SHAP\|$ | RF $\|SHAP\|$ (true CA) |
 |---|---:|---:|
-| 1 | LocationLatitude 0.27 | Q28 1.93 |
+| 1 | LocationLatitude 0.27 | `Q28` 1.93 |
 | 2 | Age 0.21 | Employment status 0.83 |
-| 3 | LocationLongitude 0.21 | Q26 0.58 |
-| 4 | Q28 0.19 | LocationLatitude 0.57 |
+| 3 | LocationLongitude 0.21 | `Q26` 0.58 |
+| 4 | `Q28` 0.19 | LocationLatitude 0.57 |
 | 5 | Country of residence 0.15 | LocationLongitude 0.54 |
-| 6 | Q26 0.15 | Age 0.53 |
-| 7 | Employment status 0.13 | Q21 0.38 |
+| 6 | `Q26` 0.15 | Age 0.53 |
+| 7 | Employment status 0.13 | `Q21` 0.38 |
 
 : Rank / DeepSeek v2 surrogate $\|SHAP\|$ vs RF $\|SHAP\|$ (true Group CA) at the transit tier. {#tbl-fp-4}
 
@@ -117,7 +117,11 @@ When a model says “**low**”, “**moderate**”, or “**high**”, which nu
 
 ![Predicted scores inside each estimated band — RF vs DeepSeek v2](figures/fig_band_score_profiles.png){#fig-fp-fig-band-score-profiles}
 
+:::{.callout-important}
+
 Two quantification findings stand out. **First, the LLM never emits the high band for Group CA at `transit`** (0 of 240 predictions ≥ 20; n = 3 at `geo`, all exactly 20.0) — its “moderate” label covers the full 14–18 span and absorbs every high-apprehension respondent. **Second, RF’s rare high-band predictions (n = 12) are badly calibrated**: they land on respondents whose true mean is 16.17 (moderate), so RF precision on high is only 0.25. Both families are strong only on the low band; band precision collapses to 0.26–0.31 on moderate/high.
+
+:::
 
 ### Band discrimination (accuracy, distance, low-vs-high AUC)
 
@@ -153,7 +157,7 @@ The discrimination gap widens as tiers accumulate: RF's low-vs-high AUC climbs f
 
 ## What questions or uncertainties remain?
 
-Does the canonical `v3_enhanced` decode (temp 0.3, guided JSON) change DeepSeek's near-chance band discrimination, or is high-band avoidance intrinsic to the reasoning-distilled family? Would interaction SHAP (employment × transit) explain the residual over-weighting of place/age? Are band rankings stable under alternate cutoffs (e.g., ≤12 / ≥21)? Do the smaller Llama-3.2-3B and collapsed Llama-3.1/3.3-70B exports show the same discrimination floor or worse?
+Does the canonical `v3_enhanced` decode (temp 0.3, guided JSON) change DeepSeek's near-chance band discrimination, or is high-band avoidance intrinsic to the reasoning-distilled family? Would interaction SHAP (employment × transit) explain the residual over-weighting of place/age? Are band rankings stable under alternate cutoffs (e.g., ≤12 / ≥21)? Do the smaller Llama-3.2–3B and collapsed Llama-3.1/3.3–70B exports show the same discrimination floor or worse?
 
 ## What other analyses pair with this memo?
 

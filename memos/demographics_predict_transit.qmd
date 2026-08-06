@@ -2,7 +2,7 @@
 title: "Memo: Do Age, Sex, and Student status predict regular transit?"
 subtitle: "Research memorandum — Prolific demographics as reverse predictors"
 author: Jack J. Burleson
-date: 2026-07-25
+date: 2026–07-25
 bibliography: ../references.bib
 ---
 
@@ -14,7 +14,7 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Using the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26`; n = **224** with complete Age/Sex/Student after cleaning `DATA_EXPIRED` student values), we fit a mixed balanced Random Forest (Age numeric; Sex & Student one-hot) with stratified 5-fold CV (`seed=42`).
+Using the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26`; n = **224** with complete Age/Sex/Student after cleaning `DATA_EXPIRED` student values), we fit a mixed balanced **Random Forest** (Age numeric; Sex & Student one-hot) with stratified 5-fold CV (`seed=42`).
 
 **Short answer:** Demographics are a **modest but real** predictor (CV ROC-AUC ≈ **0.618**)—above chance (0.50), geo (≈0.55), and the CA benchmark (≈0.59). **Age dominates**; Sex and Student status contribute less.
 
@@ -61,4 +61,4 @@ Permutation importance (AUC drop): Age ≈ 0.33 · Sex ≈ 0.13 · Student ≈ 0
 
 ## What questions or uncertainties remain?
 
-Does age remain predictive after conditioning on Q28 and car access on a common-*N* frame? (Partially answered in [`common_n_head_to_head.qmd`](common_n_head_to_head.qmd)—demographics fall near chance when mobility items are forced into the overlap.)
+Does age remain predictive after conditioning on `Q28` and car access on a common-*N* frame? (Partially answered in [`common_n_head_to_head.qmd`](common_n_head_to_head.qmd)—demographics fall near chance when mobility items are forced into the overlap.)

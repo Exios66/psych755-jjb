@@ -2,51 +2,51 @@
 title: "Memo: v2/v3 vLLM evaluation (signal-first packaging and 8-tier ablations)"
 subtitle: "Research memorandum — GPU-evaluated prompt-v2 and prompt-v3 results from the archived exports"
 author: Jack J. Burleson
-date: 2026-07-31
+date: 2026–07-31
 bibliography: ../references.bib
 ---
 
-**Research question:** Does signal-first prompt packaging (v2) and single-cue ablation prompting (v3) move the live full-cohort vLLM baselines closer to the classical ML floor — and does either redesign fix Llama-3.1-8B-Instruct's interpersonal collapse at the `transit` tier?
+**Research question:** Does signal-first prompt packaging (v2) and single-cue ablation prompting (v3) move the live full-cohort vLLM baselines closer to the classical ML floor — and does either redesign fix Llama-3.1–8B-Instruct's interpersonal collapse at the `transit` tier?
 
 ---
 
 ## Answer, Response, + Summary of Results
 
-Using the committed GPU export packages (`exports/v2/`, `exports/v3/`; full matched cohort, *N* = 241 per tier), we evaluated three models under prompt-v2 signal-first packaging with `v2_enhanced` decoding (temp 0.3, seed 42, guided JSON) and three models under the prompt-v3 eight-tier greedy ablation ladder. Results are judged against the prompt-v1 baselines and the tabular suite floor (best transit group MAE = 4.49 Ridge).
+Using the committed GPU export packages (`exports/v2/`, `exports/v3/`; full matched cohort, *N* = 241 per tier), we evaluated three models under prompt-v2 signal-first packaging with `v2_enhanced` decoding (`temp` 0.3, `seed` 42, `guided JSON`) and three models under the prompt-v3 eight-tier greedy ablation ladder. Results are judged against the prompt-v1 baselines and the tabular suite floor (best transit group MAE = **4.49** Ridge).
 
-**Short answer:** DeepSeek-R1-Distill-Llama-8B improves under v2 (pooled group MAE **5.02**, IP **5.26**, transit IP **5.09**; the best live result in the project), whereas v2 does **not** fix — and at the base tier worsens — Llama-3.1-8B's interpersonal error (demos IP 4.67 → **8.45**; transit 8.17 → 8.23). Greedy v3 ablations show the Llama-3.1 collapse is **combination-specific**: isolating ride-share (Q28), transit use (Q26), or open-text voice leaves IP MAE at 4.85–5.92, while the bundled mobility dump still collapses it (7.77). Llama-3.3-70B's constant-prior mode collapse persists under v3; the Llama-3.2-3B base model remains a 0% JSON parse (7.1% in v1) and is excluded. No redesign closes the gap to the classical floor.
+**Short answer:** DeepSeek-R1-Distill-Llama-8B improves under v2 (pooled group MAE **5.02**, IP **5.26**, transit IP **5.09**; the best live result in the project), whereas v2 does **not** fix — and at the base tier worsens — Llama-3.1–8B's interpersonal error (demos IP 4.67 → **8.45**; transit 8.17 → 8.23). Greedy v3 ablations show the Llama-3.1 collapse is **combination-specific**: isolating ride-share (`Q28`), transit use (`Q26`), or open-text voice leaves IP MAE at 4.85–5.92, while the bundled mobility dump still collapses it (7.77). Llama-3.3–70B's constant-prior mode collapse persists under v3; the Llama-3.2–3B base model remains a 0% JSON parse (7.1% in v1) and is excluded. No redesign closes the gap to the classical floor.
 
 ---
 
 ## v2 results (signal-first packaging, `v2_enhanced` decode)
 
-Same five-tier topology as v1 (`demos` → `employment` → `geo` → `transit` → `full`), with signal-first packaging: 1-decimal geo, Q27/Q29 skipped when Never, Q26 → Q28 ordering, independent group/IP subscale ask, and a mobility anti-bleed system clause. Decoding: temp 0.3, top_p 0.95, rep 1.05, seed 42, guided JSON. 1,205 prompts per model.
+Same five-tier topology as v1 (`demos` → `employment` → `geo` → `transit` → `full`), with signal-first packaging: 1-decimal geo, `Q27`/`Q29` skipped when Never, `Q26` → `Q28` ordering, independent group/IP subscale ask, and a mobility anti-bleed system clause. Decoding: `temp` 0.3, `top_p` 0.95, `rep` 1.05, `seed` 42, `guided JSON`. 1,205 prompts per model.
 
 | Model | MAE group ↓ | MAE IP ↓ | Band G | Band IP | Transit IP | Verdict vs v1 |
 |---|---:|---:|---:|---:|---:|---|
 | DeepSeek-R1-Distill-Llama-8B | **5.02** | **5.26** | 35.7% | 34.2% | **5.09** | **Improved both subscales; no IP collapse** |
-| Llama-3.2-3B-Instruct | 5.73 | 6.07 | 32.2% | 42.3% | 5.77 | IP worse than v1 (5.35); no collapse |
-| Llama-3.1-8B-Instruct | 5.99 | 7.63 | 29.9% | 25.7% | 8.23 | **IP collapse persists; base IP worse (demos 4.67 → 8.45)** |
+| Llama-3.2–3B-Instruct | 5.73 | 6.07 | 32.2% | 42.3% | 5.77 | IP worse than v1 (5.35); no collapse |
+| Llama-3.1–8B-Instruct | 5.99 | 7.63 | 29.9% | 25.7% | 8.23 | **IP collapse persists; base IP worse (demos 4.67 → 8.45)** |
 
-: v2/v3 prompt version performance comparison. {#tbl-v23-1}
+: v2/v3 prompt version performance comparison. {#tbl-v23–1}
 
 
-DeepSeek v2 is the best live result in the project (pooled group MAE 5.02, below its v1 5.22) and stays flat at transit (IP 5.09, signed error near zero). Llama-3.2-3B's v1 interpersonal win does not replicate under v2 packaging/decode (pooled IP 5.35 → 6.07). For Llama-3.1, signal-first packaging and the mobility anti-bleed clause do not stop the transit collapse (transit IP 8.23 ≈ v1 8.17), and the independent-subscale ask shifts its *base* interpersonal calibration (demos IP 4.67 → **8.45**). Packaging therefore changes error patterns in **model-specific** directions.
+DeepSeek v2 is the best live result in the project (pooled group MAE 5.02, below its v1 5.22) and stays flat at transit (IP 5.09, signed error near zero). Llama-3.2–3B's v1 interpersonal win does not replicate under v2 packaging/decode (pooled IP 5.35 → 6.07). For Llama-3.1, signal-first packaging and the mobility anti-bleed clause do not stop the transit collapse (transit IP 8.23 ≈ v1 8.17), and the independent-subscale ask shifts its *base* interpersonal calibration (demos IP 4.67 → **8.45**). Packaging therefore changes error patterns in **model-specific** directions.
 
 ## v3 results (8-tier greedy ablation)
 
-Adds three parallel single-cue tiers on the demos→employment→geo base — `v3_rideshare` (Q28 only), `v3_public_transit` (Q26 only), `v3_voice` (Q18.1/Q19 only) — for eight tiers per model (1,928 prompts). Greedy decode; the committed `v3/` packages are byte-identical to the archived `prior_v3_greedy/` runs.
+Adds three parallel single-cue tiers on the demos→employment→geo base — `v3_rideshare` (`Q28` only), `v3_public_transit` (`Q26` only), `v3_voice` (Q18.1/`Q19` only) — for eight tiers per model (1,928 prompts). Greedy decode; the committed `v3/` packages are byte-identical to the archived `prior_v3_greedy/` runs.
 
 | Model | MAE group ↓ | MAE IP ↓ | Band G | Band IP | Parse | Notes |
 |---|---:|---:|---:|---:|---:|---|
-| Llama-3.1-8B-Instruct | 5.99 | 5.76 | 25.5% | 42.9% | 100% | **Transit tier still collapses (IP 7.77); ablations stable** |
-| Llama-3.2-3B-Instruct | 5.72 | 6.81 | 41.8% | 40.6% | 100% | IP worse than v1 (5.35) under v3 packaging |
-| Llama-3.3-70B-Instruct-AWQ | 6.01 | 4.61† | 26.5% | 52.6%† | 100% | †Constant prior `(18, 12)` persists — not person-tracking |
+| Llama-3.1–8B-Instruct | 5.99 | 5.76 | 25.5% | 42.9% | 100% | **Transit tier still collapses (IP 7.77); ablations stable** |
+| Llama-3.2–3B-Instruct | 5.72 | 6.81 | 41.8% | 40.6% | 100% | IP worse than v1 (5.35) under v3 packaging |
+| Llama-3.3–70B-Instruct-AWQ | 6.01 | 4.61† | 26.5% | 52.6%† | 100% | †Constant prior `(18, 12)` persists — not person-tracking |
 
-: Model / MAE group ↓ / MAE IP ↓. {#tbl-v23-2}
+: Model / MAE group ↓ / MAE IP ↓. {#tbl-v23–2}
 
 
-The 8-tier pooling mixes the collapsed `transit`/`full` tiers with stable ablations, so pooled IP is pulled back toward v1 (5.76). Llama-3.2-3B base remained a 0% JSON parse (as in v1) and is excluded.
+The 8-tier pooling mixes the collapsed `transit`/`full` tiers with stable ablations, so pooled IP is pulled back toward v1 (5.76). Llama-3.2–3B base remained a 0% JSON parse (as in v1) and is excluded.
 
 ### Llama-3.1 per-tier ablation (IP MAE)
 
@@ -54,34 +54,34 @@ The 8-tier pooling mixes the collapsed `transit`/`full` tiers with stable ablati
 |---|---|---|---:|---:|
 | `demos` | Base demographics | 6.66 | 5.22 | 46.9% |
 | `geo` | + survey lat/long | 6.02 | **4.63** | 53.1% |
-| `v3_public_transit` | geo + Q26 only | 6.04 | **4.85** | 51.9% |
-| `v3_voice` | geo + Q18.1/Q19 only | **5.64** | 5.82 | 44.0% |
-| `v3_rideshare` | geo + Q28 only | 5.86 | 5.92 | 41.5% |
+| `v3_public_transit` | geo + `Q26` only | 6.04 | **4.85** | 51.9% |
+| `v3_voice` | geo + Q18.1/`Q19` only | **5.64** | 5.82 | 44.0% |
+| `v3_rideshare` | geo + `Q28` only | 5.86 | 5.92 | 41.5% |
 | `transit` | geo + full mobility bundle | 6.07 | **7.77** | 23.7% |
 | `full` | transit + free-response voice | 5.63 | 7.22 | 29.9% |
 
-: Tier / Content / MAE group ↓. {#tbl-v23-3}
+: Tier / Content / MAE group ↓. {#tbl-v23–3}
 
 
-**No single cue collapses Llama-3.1's interpersonal recovery — only the bundled mobility dump does.** On group MAE, `v3_rideshare` (5.86) beats the kitchen-sink `transit` tier (6.07), aligning with the tabular Q28-dominance result (Q28 reverse-prediction AUC 0.762; see [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd)). `v3_public_transit` (6.04) and `v3_voice` (5.64) group MAE stay near the geo base (6.02).
+**No single cue collapses Llama-3.1's interpersonal recovery — only the bundled mobility dump does.** On group MAE, `v3_rideshare` (5.86) beats the kitchen-sink `transit` tier (6.07), aligning with the tabular `Q28`-dominance result (`Q28` reverse-prediction AUC 0.762; see [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd)). `v3_public_transit` (6.04) and `v3_voice` (5.64) group MAE stay near the geo base (6.02).
 
 ## Interpretation
 
 1. **Packaging is not a universal cure.** v2 changed error patterns in model-specific directions: DeepSeek improved both subscales and stayed tier-stable; Llama-3.1's transit collapse persisted and its base-tier IP calibration worsened.
 2. **The collapse trigger is the combination, not any single cue.** Single-cue ablations leave Llama-3.1 IP MAE at 4.85–5.92 (vs. geo base 4.63); the bundled mobility dump still collapses it to 7.77. Open-text voice (`v3_voice`) is not the driver.
 3. **The reasoning-distilled family stays flat.** DeepSeek v2 has transit IP 5.09 and near-zero signed error — the mobility bundle is not inherently hazardous across architectures.
-4. **Mode collapse is architecture-scale-invariant.** Llama-3.3-70B still emits a ≈constant `(18, 12)` prior under greedy v3 (≈52% interpersonal "bands" are an artifact).
-5. **The base 3B remains unusable for structured psychometrics.** Llama-3.2-3B parses 0% of v3 outputs (7.1% in v1) and is excluded from reported metrics.
+4. **Mode collapse is architecture-scale-invariant.** Llama-3.3–70B still emits a ≈constant `(18, 12)` prior under greedy v3 (≈52% interpersonal "bands" are an artifact).
+5. **The base 3B remains unusable for structured psychometrics.** Llama-3.2–3B parses 0% of v3 outputs (7.1% in v1) and is excluded from reported metrics.
 
 ## What questions or uncertainties remain?
 
-Does the canonical `v3_enhanced` decode refresh (temp 0.3, seed 42, guided JSON, max tokens 512) preserve or change the Llama-3.1 ablation pattern? Would a 70B run under the `large_model` preset (temp 0.5, rep 1.1) break the constant-prior collapse? And does the DeepSeek family's flat tier profile reflect genuinely stable calibration or the same mean-hugging the surrogate-SHAP analysis identifies ([`feature_predictive_power_ml_llm.qmd`](feature_predictive_power_ml_llm.qmd))?
+Does the canonical `v3_enhanced` decode refresh (`temp` 0.3, `seed` 42, `guided JSON`, max tokens 512) preserve or change the Llama-3.1 ablation pattern? Would a 70B run under the `large_model` preset (temp 0.5, rep 1.1) break the constant-prior collapse? And does the DeepSeek family's flat tier profile reflect genuinely stable calibration or the same mean-hugging the surrogate-SHAP analysis identifies ([`feature_predictive_power_ml_llm.qmd`](feature_predictive_power_ml_llm.qmd))?
 
 ## What other analyses pair with this memo?
 
 - Live-model stereotyping slices on the v2 exports: [`live_llm_stereotyping_slices.qmd`](live_llm_stereotyping_slices.qmd)
 - Band discrimination and surrogate SHAP for the best live agent: [`feature_predictive_power_ml_llm.qmd`](feature_predictive_power_ml_llm.qmd)
-- Tabular Q28-dominance that motivates the `v3_rideshare` tip: [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd)
+- Tabular `Q28`-dominance that motivates the `v3_rideshare` tip: [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd)
 - Prompt-version map and decode presets: `docs/persona_prompt_versions.md`, `docs/llm_v2_v3_enhanced_variants.md`
 
 *Sources:* `exports/v2/` (DeepSeek `…_20260730_2213`, Llama-3.1 `…_20260728_2214`, Llama-3.2-Instruct `…_20260728_2353`) · `exports/v3/` (`…_20260729_1039`) · `exports/prior_v3_greedy/` · `config/vllm_presets.yaml` · `scripts/package_vllm_export.py`

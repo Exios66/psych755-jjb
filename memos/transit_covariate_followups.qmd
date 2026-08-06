@@ -2,22 +2,22 @@
 title: "Memo: Geo-memo follow-ups — which covariates predict regular transit?"
 subtitle: "Research memorandum — car access, employment, ride-share head-to-head"
 author: Jack J. Burleson
-date: 2026-07-25
+date: 2026–07-25
 bibliography: ../references.bib
 ---
 
 **Research question:** Among the candidates listed in the geography → transit memo—car license/access (`Q20`/`Q21`), employment status, and ride-share frequency (`Q28`/`Q29`)—which features best predict regular public-transit use?
 
 **Parent memo:** [`geo_predicts_transit.qmd`](geo_predicts_transit.qmd)  
-**Family memos:** [`car_access_predicts_transit.qmd`](car_access_predicts_transit.qmd) · [`employment_predicts_transit.qmd`](employment_predicts_transit.qmd) · [`rideshare_predicts_transit.qmd`](rideshare_predicts_transit.qmd) · [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd) (Q27 vs Q28 traditional ML)
+**Family memos:** [`car_access_predicts_transit.qmd`](car_access_predicts_transit.qmd) · [`employment_predicts_transit.qmd`](employment_predicts_transit.qmd) · [`rideshare_predicts_transit.qmd`](rideshare_predicts_transit.qmd) · [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd) (`Q27` vs `Q28` traditional ML)
 
 ---
 
 ## Answer, Response, + Summary of Results
 
-We re-used the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26` outcome; companion geo AUC = **0.551**, CA AUC = **0.590**, chance = **0.500**) and ran balanced Random Forests with stratified 5-fold CV (`seed=42`) for each feature family, plus a joint **mobility bundle**. Complete-case *N* differs by family because `Q20`/`Q21` (and some `Q29`) are missing more often than employment or `Q28`.
+We re-used the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26` outcome; companion geo AUC = **0.551**, CA AUC = **0.590**, chance = **0.500**) and ran balanced **Random Forest**s with stratified 5-fold CV (`seed=42`) for each feature family, plus a joint **mobility bundle**. Complete-case *N* differs by family because `Q20`/`Q21` (and some `Q29`) are missing more often than employment or `Q28`.
 
-**Short answer:** **Q28 alone** recovers the highest AUC in the suite (**0.762**; [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd)). The Q28/Q29 rideshare family reaches **0.745**; car access **0.607**; employment **0.528**. Bundling car+employment+ride-share (**0.746** on n = 143) does not meaningfully beat ride-share alone once *N* shrinks to respondents with complete car items.
+**Short answer:** **`Q28` alone** recovers the highest AUC in the suite (**0.762**; [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd)). The `Q28`/`Q29` rideshare family reaches **0.745**; car access **0.607**; employment **0.528**. Bundling car+employment+ride-share (**0.746** on n = 143) does not meaningfully beat ride-share alone once *N* shrinks to respondents with complete car items.
 
 ![Head-to-head CV ROC-AUC for follow-up families vs benchmarks](figures/transit_covariate_followups_memo.png){#fig-cf-transit-covariate-followups}
 
@@ -25,12 +25,12 @@ We re-used the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26` o
 
 | Feature family | Analytic n | Regular | ROC-AUC | vs geo | vs CA |
 |---|---:|---:|---:|:---:|:---:|
-| **Q28 only** | 241 | 101 | **0.762** | ✓ | ✓ |
-| Mobility bundle (Q20/Q21 + Q28/Q29 + employment) | 143 | 56 | **0.746** | ✓ | ✓ |
-| Ride-share (Q28/Q29) | 233 | 99 | **0.745** | ✓ | ✓ |
-| Car license & access (Q20/Q21) | 149 | 58 | **0.607** | ✓ | ✓ |
+| **`Q28` only** | 241 | 101 | **0.762** | ✓ | ✓ |
+| Mobility bundle (`Q20`/`Q21` + `Q28`/`Q29` + employment) | 143 | 56 | **0.746** | ✓ | ✓ |
+| Ride-share (`Q28`/`Q29`) | 233 | 99 | **0.745** | ✓ | ✓ |
+| Car license & access (`Q20`/`Q21`) | 149 | 58 | **0.607** | ✓ | ✓ |
 | Group + interpersonal CA *(benchmark)* | 241 | 101 | 0.590 | ✓ | — |
-| Q27 only | 239 | 101 | **0.589** | ✓ | ≈ |
+| `Q27` only | 239 | 101 | **0.589** | ✓ | ≈ |
 | Lat/long *(benchmark)* | 241 | 101 | 0.551 | — | — |
 | Employment status | 241 | 101 | **0.528** | ✗ | ✗ |
 | Chance / prevalence | — | — | 0.500 | — | — |
@@ -43,9 +43,9 @@ We re-used the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26` o
 1. **`Q28` ride-share days** shows a steep prevalence gradient (Never = 15.7% regular → 8+ days/month = 94.1% regular) and dominates permutation importance in both the rideshare-only and bundle models.
 2. **`Q21` car access** separates groups sharply among complete cases (No access = 76.0% regular vs Yes = 30.9%), lifting car-only AUC to **0.607** above CA/geo despite smaller *N*.
 3. **Employment** (Full-Time / Part-Time / Other) recovers AUC = **0.528**; treat it as a control, not a primary classifier.
-4. The **bundle** (AUC = 0.746) is only +0.002 above ride-share alone (0.745) on the overlapping complete-case subset, indicating limited incremental value from car/employment once ride-share is in the model.
+4. The **bundle** (AUC = **0.746**) is only +0.002 above ride-share alone (0.745) on the overlapping complete-case subset, indicating limited incremental value from car/employment once ride-share is in the model.
 
-**Conclusion.** For predicting weekly+ public transit in this cohort, ride-share items (Q28 AUC = 0.762; Q28/Q29 AUC = 0.745) exceed survey geolocation (0.551) and CA scores (0.590); car access (0.607) is a secondary mobility cue; employment (0.528) is not competitive. Same-wave self-reports still preclude causal claims, and AUCs should not be compared naively across unequal complete-case samples without that caveat.
+**Conclusion.** For predicting weekly+ public transit in this cohort, ride-share items (`Q28` AUC = **0.762**; `Q28`/`Q29` AUC = **0.745**) exceed survey geolocation (0.551) and CA scores (0.590); car access (0.607) is a secondary mobility cue; employment (0.528) is not competitive. Same-wave self-reports still preclude causal claims, and AUCs should not be compared naively across unequal complete-case samples without that caveat.
 
 *Sources:* `notebooks/secondary_rq_transit_covariate_followups.ipynb` · `src/ca_personas/transit_covariate_rf.py` · `ca-personas covariate-transit-rf` · artifacts `outputs/transit_covariate_rf/` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
 
@@ -55,7 +55,7 @@ We re-used the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26` o
 
 Would a model that includes CA + ride-share + car access on a multiply-imputed frame change the relative importance of psychological vs mobility predictors? How much of the `Q28`–`Q26` association is multimodality versus shared urban lifestyle confounds?
 
-**Answered in follow-ups:** the multiply-imputed head-to-head is [`mi_head_to_head.qmd`](mi_head_to_head.qmd) (Q28's lead preserved); CA + Q28 + car on a complete-case frame is [`ca_mobility_joint_predicts_transit.qmd`](ca_mobility_joint_predicts_transit.qmd) (joint AUC 0.736); Q28 conditional on car is [`q28_conditioned_on_car.qmd`](q28_conditioned_on_car.qmd); country × car is [`country_car_predicts_transit.qmd`](country_car_predicts_transit.qmd); equal-*N* ranking is [`common_n_head_to_head.qmd`](common_n_head_to_head.qmd).
+**Answered in follow-ups:** the multiply-imputed head-to-head is [`mi_head_to_head.qmd`](mi_head_to_head.qmd) (`Q28`'s lead preserved); CA + `Q28` + car on a complete-case frame is [`ca_mobility_joint_predicts_transit.qmd`](ca_mobility_joint_predicts_transit.qmd) (joint AUC 0.736); `Q28` conditional on car is [`q28_conditioned_on_car.qmd`](q28_conditioned_on_car.qmd); country × car is [`country_car_predicts_transit.qmd`](country_car_predicts_transit.qmd); equal-*N* ranking is [`common_n_head_to_head.qmd`](common_n_head_to_head.qmd).
 
 ## What other features may also well-predict regular public transit use?
 

@@ -2,7 +2,7 @@
 title: "Memo: Does geography predict regular transit?"
 subtitle: "Research memorandum — survey latitude & longitude"
 author: Jack J. Burleson
-date: 2026-07-25
+date: 2026–07-25
 bibliography: ../references.bib
 ---
 
@@ -15,9 +15,9 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to File C on Prolific ID / `Q0`; **252** matched rows; analytic **n = 241** with complete PRCA items and non-missing Qualtrics `LocationLatitude` / `LocationLongitude`), we asked whether approximate survey **geolocation** predicts **regular** public-transit use. Regular transit is defined as `Q26` ∈ {`4-8 days a month`, `8 or more days a month`} (weekly-or-more). A balanced **Random Forest** (stratified 5-fold CV, `random_state=42`) used latitude and longitude as the sole features, compared against chance (ROC-AUC = 0.50) and a country-of-residence-only Random Forest baseline. Re-run with `ca-personas geo-transit-rf --join inner --seed 42` and cite `outputs/geo_transit_rf/` for exact N.
+Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to File C on Prolific ID / `Q0`; **252** matched rows; analytic **n = 241** with complete PRCA items and non-missing Qualtrics `LocationLatitude` / `LocationLongitude`), we asked whether approximate survey **geolocation** predicts **regular** public-transit use. Regular transit is defined as `Q26` ∈ {`4–8 days a month`, `8 or more days a month`} (weekly-or-more). A balanced **Random Forest** (stratified 5-fold CV, `random_state=42`) used latitude and longitude as the sole features, compared against chance (ROC-AUC = **0.50**) and a country-of-residence-only Random Forest baseline. Re-run with ``ca-personas geo-transit-rf` --join inner --seed 42` and cite `outputs/geo_transit_rf/` for exact N.
 
-**Short answer:** Lat/long recover above-chance discrimination (CV ROC-AUC = **0.551**), essentially matching a country-only model (AUC = **0.549**). Geography alone is not a competitive predictor of regular transit relative to Q28 (AUC = 0.762). The companion CA→transit RF yields AUC = **0.590** (see [`memos/ca_scores_predict_transit.md`](ca_scores_predict_transit.qmd)).
+**Short answer:** Lat/long recover above-chance discrimination (CV ROC-AUC = **0.551**), essentially matching a country-only model (AUC = **0.549**). Geography alone is not a competitive predictor of regular transit relative to `Q28` (AUC = **0.762**). The companion CA→transit RF yields AUC = **0.590** (see [`memos/ca_scores_predict_transit.md`](ca_scores_predict_transit.qmd)).
 
 ![Survey geolocation by transit use and ROC curve for the lat/lon Random Forest](figures/geo_predicts_transit_memo.png){#fig-gt-geo-predicts-transit}
 
@@ -34,11 +34,11 @@ Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to
 : Random Forest ROC-AUC for geography predicting regular transit. {#tbl-gt-1}
 
 
-Permutation importance ranks **longitude** (mean AUC drop = 0.335) above **latitude** (0.260). Continuous coordinates lift AUC by only **+0.002** over the country-only forest (0.551 − 0.549).
+Permutation importance ranks **longitude** (mean $\Delta$AUC = 0.335) above **latitude** (0.260). Continuous coordinates lift AUC by only ****+0.002**** over the country-only forest (0.551 − 0.549).
 
-**Conclusion.** Qualtrics survey latitude and longitude recover CV ROC-AUC = **0.551** — above chance (0.500) but essentially equal to country-only (0.549) and below CA (0.590) and Q28 (0.762). These coordinates reflect approximate IP/browser geolocation rather than verified home addresses, so they should be interpreted as a coarse place cue, not a precise measure of transit accessibility.
+**Conclusion.** Qualtrics survey latitude and longitude recover CV ROC-AUC = **0.551** — above chance (0.500) but essentially equal to country-only (0.549) and below CA (0.590) and `Q28` (0.762). These coordinates reflect approximate IP/browser geolocation rather than verified home addresses, so they should be interpreted as a coarse place cue, not a precise measure of transit accessibility.
 
-*Sources:* `notebooks/secondary_rq_geo_transit_rf.ipynb` · `src/ca_personas/geo_transit_rf.py` · `ca-personas geo-transit-rf` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
+*Sources:* `notebooks/secondary_rq_geo_transit_rf.ipynb` · `src/ca_personas/geo_transit_rf.py` · ``ca-personas geo-transit-rf`` · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
 
 ---
 

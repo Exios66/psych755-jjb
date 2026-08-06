@@ -5,7 +5,7 @@ bibliography: ../references.bib
 ---
 
 **Researcher:** Jack J. Burleson  
-**Date:** 2026-07-28  
+**Date:** 2026–07-28  
 
 ---
 
@@ -15,14 +15,14 @@ Given only a user’s **demographics, employment, and geography** (and, in a sec
 
 ## Why this focus
 
-Primary persona work asks whether *transit cues help predict CA*. Here the twin asks whether *non-transit context predicts transit*. That is the natural LLM task if a digital twin must guess ridership without seeing Q26–Q29.
+Primary persona work asks whether *transit cues help predict CA*. Here the twin asks whether *non-transit context predicts transit*. That is the natural LLM task if a digital twin must guess ridership without seeing `Q26`–`Q29`.
 
 ## Design (seed = 42)
 
-- **Hold-out:** Q26, Q27, Q28, Q29, Q20, Q21, Q19  
+- **Hold-out:** `Q26`, `Q27`, `Q28`, `Q29`, `Q20`, `Q21`, `Q19`  
 - **TF1 features:** Age, Sex, Country, Student, Employment, lat/long (± group & interpersonal CA)  
-- **TF2 features:** same profile + CA → Q26 ordinal; Q27 among reporters  
-- **Model:** balanced Random Forest, stratified 5-fold CV  
+- **TF2 features:** same profile + CA → `Q26` ordinal; `Q27` among reporters  
+- **Model:** balanced **Random Forest**, stratified 5-fold CV  
 - **Sample:** complete-case n = **224** (of 241 analytic) for profile specs  
 
 CLI: `ca-personas transit-focus` · artifacts `outputs/transit_focus/` · LLM prompts under `persona_prompts/`.
@@ -33,15 +33,15 @@ CLI: `ca-personas transit-focus` · artifacts `outputs/transit_focus/` · LLM pr
 |---|---:|---|---:|
 | Profile → regular transit | 224 | ROC-AUC | **0.662** |
 | Profile + CA → regular transit | 224 | ROC-AUC | **0.672** |
-| Profile + CA → Q26 days | 224 | Balanced accuracy / ordinal MAE | **0.283** / **1.22** |
-| Profile + CA → Q27 rides | 222 | Balanced accuracy / ordinal MAE | **0.371** / **0.38** |
+| Profile + CA → `Q26` days | 224 | Balanced accuracy / ordinal MAE | **0.283** / **1.22** |
+| Profile + CA → `Q27` rides | 222 | Balanced accuracy / ordinal MAE | **0.371** / **0.38** |
 
 : Transit focus regular and intensity results. {#tbl-tf-1}
 
 
 **TF1.** Non-mobility profile alone recovers regular ridership well above chance (0.662). Adding CA scores helps only modestly (+0.010). Permutation importance is led by **Age**, then **longitude**, latitude, employment — consistent with the Wave-2 demographics memo ([`demographics_predict_transit.qmd`](demographics_predict_transit.qmd); Age+Sex+Student AUC 0.618) but stronger once place and work are included. The profile-only result also parallels the CA → transit memo ([`ca_scores_predict_transit.qmd`](ca_scores_predict_transit.qmd)) and geography memo ([`geo_predicts_transit.qmd`](geo_predicts_transit.qmd)) in that non-mobility context alone is a weak-to-moderate ridership signal.
 
-**TF2.** Fine-grained Q26 recovery is weak in absolute terms (balanced accuracy 0.28) though it beats a majority classifier. Q27 is heavily imbalanced (most respondents report 1–2 rides/day); the forest does not beat majority accuracy.
+**TF2.** Fine-grained `Q26` recovery is weak in absolute terms (balanced accuracy 0.28) though it beats a majority classifier. `Q27` is heavily imbalanced (most respondents report 1–2 rides/day); the forest does not beat majority accuracy.
 
 ## LLM twin path
 
@@ -50,8 +50,8 @@ Transit-focus persona tiers (`tf_demos` → `tf_employment` → `tf_geo` → `tf
 ## Remaining uncertainties
 
 1. Will live LLMs match or underperform the 0.66–0.67 AUC tabular floor when transit is held out?  
-2. Should car access (Q20/Q21) ever be allowed as “context” rather than held out? Current design treats it as mobility and excludes it.  
-3. Ordinal models (ordered logit / ordinal RF) may improve Q26 MAE relative to flat multiclass RF.
+2. Should car access (`Q20`/`Q21`) ever be allowed as “context” rather than held out? Current design treats it as mobility and excludes it.  
+3. Ordinal models (ordered logit / ordinal RF) may improve `Q26` MAE relative to flat multiclass RF.
 
 *Sources:* `src/ca_personas/transit_focus.py` · `ca-personas transit-focus` · [write-up](../docs/secondary_rq_transit_focus.md) · [github.com/Exios66/psych755-jjb](https://github.com/Exios66/psych755-jjb)
 
