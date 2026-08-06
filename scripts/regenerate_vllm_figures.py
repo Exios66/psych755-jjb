@@ -110,14 +110,14 @@ def plot_cross_model(df: pd.DataFrame, out: Path) -> None:
         ax.set_title("Cross-model pooled " + ("MAE by prompt version" if metric == "mae" else "band accuracy by prompt version"))
         ax.legend(fontsize=8, ncol=3, loc="upper left" if metric == "mae" else "upper right")
 
-    fig.suptitle("Full-cohort vLLM digital-twin evaluation: prompt-v1 (v1) vs signal-first v2 vs 8-tier v3 (greedy)", fontsize=11, y=1.0)
-    fig.tight_layout()
+    fig.suptitle("Full-cohort vLLM digital-twin evaluation: prompt-v1 (v1) vs signal-first v2 vs 8-tier v3 (greedy)", fontsize=11, y=0.99)
+    fig.tight_layout(rect=(0, 0, 1, 0.93))
     fig.savefig(out, dpi=170)
     plt.close(fig)
 
 
 def plot_llama31_collapse(df: pd.DataFrame, out: Path) -> None:
-    fig, axes = plt.subplots(1, 2, figsize=(13, 5.2))
+    fig, axes = plt.subplots(1, 2, figsize=(14.5, 5.6), gridspec_kw={"wspace": 0.35})
 
     llama31 = df[df["model"] == "meta-llama/Llama-3.1-8B-Instruct"]
     deepseek = df[df["model"] == "deepseek-ai/DeepSeek-R1-Distill-Llama-8B"]
@@ -146,15 +146,15 @@ def plot_llama31_collapse(df: pd.DataFrame, out: Path) -> None:
                 ys = [v * 100 for v in ys]
             ax.plot(range(len(tiers)), ys, marker="s", ms=4, lw=1.8, ls="--", label=f"DeepSeek {version}")
         ax.set_xticks(range(len(v3_tiers)))
-        ax.set_xticklabels(v3_tiers, rotation=20, ha="right", fontsize=8)
+        ax.set_xticklabels(v3_tiers, rotation=45, ha="right", fontsize=6.8)
         ax.set_ylabel(ylabel)
         ax.set_xlabel("Tier")
         ax.axvline(3.5, color="grey", ls=":", lw=1)
         ax.legend(fontsize=8)
         ax.set_title("Llama-3.1 IP " + ("MAE by tier" if metric == "mae_interpersonal" else "band accuracy by tier"))
 
-    fig.suptitle("Llama-3.1 interpersonal collapse persists under v2 packaging; v3 ablations isolate the trigger (greedy decode)", fontsize=11, y=1.0)
-    fig.tight_layout()
+    fig.suptitle("Llama-3.1 interpersonal collapse persists under v2 packaging; v3 ablations isolate the trigger (greedy decode)", fontsize=11, y=0.99)
+    fig.tight_layout(rect=(0, 0, 1, 0.93))
     fig.savefig(out, dpi=170)
     plt.close(fig)
 

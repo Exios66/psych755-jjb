@@ -16,6 +16,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 
+from ca_personas.viz_style import fit_text_within_axes
+
 
 # Print-safe grayscale fills (dark → light). Distinguishable when photocopied.
 APA_FILLS = ["#111111", "#666666", "#999999", "#CCCCCC", "#EEEEEE"]
@@ -167,7 +169,7 @@ def horizontal_bars(
                 ax.legend(
                     frameon=False,
                     loc="upper center",
-                    bbox_to_anchor=(0.5, -0.09),
+                    bbox_to_anchor=(0.5, -0.15),
                     ncol=len(vlines),
                     fontsize=8,
                 )
@@ -268,12 +270,12 @@ def roc_curve_apa(
     ax.set_aspect("equal", adjustable="box")
     if annotate:
         ax.text(
-            0.98,
-            0.02,
+            0.03,
+            0.97,
             annotate,
             transform=ax.transAxes,
-            ha="right",
-            va="bottom",
+            ha="left",
+            va="top",
             fontsize=8,
         )
     ax.legend(frameon=False, loc="lower right", fontsize=8)
@@ -301,11 +303,22 @@ def prevalence_bars(
     )
     ax.set_xlabel(xlabel)
     ax.set_xlim(0, 1.10)
+    ax.set_xticks([0.0, 0.25, 0.5, 0.75, 1.0])
+    value_texts = []
     for yi, v in zip(y, vals):
         label = f"{v:.1%}"
         if ns is not None:
             label = f"{v:.1%}  (n={ns[yi]})"
-        ax.text(min(float(v) + 0.02, 0.92), yi, label, va="center", fontsize=8)
+        value_texts.append(
+            ax.text(
+                min(float(v) + 0.02, 0.92),
+                yi,
+                label,
+                va="center",
+                fontsize=8,
+                clip_on=True,
+            )
+        )
     if sample_prevalence is not None:
         ax.axvline(
             sample_prevalence,
@@ -314,6 +327,12 @@ def prevalence_bars(
             lw=1.0,
             label=f"Sample prevalence = {sample_prevalence:.3f}",
         )
-        ax.legend(frameon=False, fontsize=7, loc="lower right")
+        ax.legend(
+            frameon=False,
+            fontsize=7,
+            loc="upper center",
+            bbox_to_anchor=(0.5, -0.15),
+        )
     ax.invert_yaxis()
+    fit_text_within_axes(ax, value_texts)
     return apa_axes(ax)

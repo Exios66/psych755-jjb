@@ -151,8 +151,8 @@ def fit_text_within_axes(ax: Axes, texts: Sequence[Any], *, pad_frac: float = 0.
             hi = max(hi, inv.transform((ext.x1, 0))[0])
     span = hi - lo
     pad = pad_frac * span
-    new_x0 = x0 - pad if lo < x0 else x0
-    new_x1 = x1 + pad if hi > x1 else x1
+    new_x0 = min(x0, lo - pad) if lo < x0 else x0
+    new_x1 = max(x1, hi + pad) if hi > x1 else x1
     if new_x0 != x0 or new_x1 != x1:
         ax.set_xlim(new_x0, new_x1)
 
