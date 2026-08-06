@@ -35,6 +35,17 @@
   const PR_STATUSES = ["merged", "open", "draft", "closed"];
   const ISSUE_STATUSES = ["open", "closed"];
 
+  // Resolve a CSS custom property at draw time so the canvas follows the
+  // active site scheme (light / dark / osaka-jade / synthwave84).
+  function cssVar(name, fallback) {
+    try {
+      const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
   const THEME_PALETTE = [
     "#c5050c",
     "#0f7b8c",
@@ -706,7 +717,7 @@
           r: r,
           cx: 0,
           cy: 0,
-          fill: n.status === "draft" ? "#ffffff" : grad,
+          fill: n.status === "draft" ? cssVar("--prg-surface", "#ffffff") : grad,
           stroke: n.status === "draft" ? STATUS_META.draft.color : "none",
           "stroke-width": n.status === "draft" ? 2 : 0,
           "stroke-dasharray": n.status === "draft" ? "2 2" : "",
@@ -756,7 +767,7 @@
         cx: 0,
         cy: 0,
         fill: "none",
-        stroke: themeColors[n.theme] || "#94a3b8",
+        stroke: themeColors[n.theme] || cssVar("--prg-muted", "#94a3b8"),
         "stroke-width": 2.5,
       });
 
@@ -1019,7 +1030,7 @@
         STATUS_META[n.status].label +
         "</span>" +
         '<span class="prg-tag prg-tag-theme" style="--prg-tag-color:' +
-        (themeColors[n.theme] || "#94a3b8") +
+        (themeColors[n.theme] || cssVar("--prg-muted", "#94a3b8")) +
         '">' +
         esc(n.themeLabel || n.theme) +
         "</span>" +

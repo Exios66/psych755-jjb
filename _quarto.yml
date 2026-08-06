@@ -65,8 +65,9 @@ website:
   description: "PSYCH 755 manuscript — tiered persona prompts, PRCA ground truth, and LLM prediction error"
   site-url: https://connect.posit.cloud/jackjburleson/content/019f9a10-ebb9-d1d5-839f-97e794bfd0ca
   repo-url: https://github.com/Exios66/psych755-jjb
-  repo-actions: [source, issue]
+  repo-actions: [source, edit, issue]
   page-navigation: true
+  bread-crumbs: true
   navbar:
     background: "#C5050C"
     foreground: white
@@ -93,24 +94,12 @@ website:
             text: Prompt versions (v1–v3)
           - href: docs/persona_prompt_efficiency.md
             text: Persona prompt packaging (v2/v3)
-          - href: docs/llm_v1_run_specifications.md
-            text: v1 run specifications
           - href: docs/llm_v2_v3_enhanced_variants.md
             text: v2/v3 enhanced variants
           - href: docs/stereotyping_evaluation.md
             text: Stereotyping evaluation
           - href: docs/metric_cleaning_runbook.md
             text: Metric cleaning runbook
-          - href: docs/llm_baseline_llama31_v1.md
-            text: Llama-3.1 baseline (prompt v1)
-          - href: docs/llm_baseline_llama32_instruct_v1.md
-            text: Llama-3.2-3B Instruct (prompt v1)
-          - href: docs/llm_baseline_deepseek_r1_distill_v1.md
-            text: DeepSeek-R1-Distill (prompt v1)
-          - href: docs/llm_baseline_llama33_70b_v1.md
-            text: Llama-3.3-70B (prompt v1)
-          - href: docs/llm_vllm_memo_agenda.md
-            text: vLLM memo agenda (v1)
       - text: Secondary RQs
         menu:
           - href: docs/research_memo_agenda.md
@@ -141,46 +130,14 @@ website:
             text: "S4 · Q27/Q28 → transit"
           - href: memos/transit_covariate_followups.qmd
             text: "S5 · Mobility follow-ups"
-          - href: memos/rideshare_predicts_transit.qmd
-            text: Ride-share → transit
-          - href: memos/car_access_predicts_transit.qmd
-            text: Car access → transit
-          - href: memos/employment_predicts_transit.qmd
-            text: Employment → transit
-          - href: memos/demographics_predict_transit.qmd
-            text: Demographics → transit
-          - href: memos/country_predicts_transit.qmd
-            text: Country → transit
-          - href: memos/q28_conditioned_on_car.qmd
-            text: Q28 | car (nested)
-          - href: memos/ca_mobility_joint_predicts_transit.qmd
-            text: CA + mobility joint
-          - href: memos/country_car_predicts_transit.qmd
-            text: Country × car
-          - href: memos/q27_intensity_among_riders.qmd
-            text: Q27 among riders
-          - href: memos/common_n_head_to_head.qmd
-            text: Common-N ranking
-          - href: memos/residual_ca_after_rideshare.qmd
-            text: Residual CA after Q28
-          - href: memos/mi_head_to_head.qmd
-            text: MI vs complete-case
-          - href: memos/comprehensive_predictors_transit.qmd
-            text: Comprehensive predictors
           - href: memos/transit_focus_regular_and_intensity.qmd
             text: "TF1/TF2 · Transit focus (held-out)"
+          - href: memos/comprehensive_predictors_transit.qmd
+            text: Comprehensive predictors
           - href: memos/feature_predictive_power_ml_llm.qmd
             text: Feature power (SHAP / F1)
           - href: memos/vllm_v1_cross_model_comparison.qmd
             text: "vLLM · Cross-model (v1)"
-          - href: memos/vllm_v1_llama31_8b.qmd
-            text: "vLLM · Llama-3.1-8B"
-          - href: memos/vllm_v1_llama32_3b.qmd
-            text: "vLLM · Llama-3.2-3B"
-          - href: memos/vllm_v1_deepseek_r1_distill.qmd
-            text: "vLLM · DeepSeek-R1-Distill"
-          - href: memos/vllm_v1_llama33_70b.qmd
-            text: "vLLM · Llama-3.3-70B"
           - href: memos/vllm_v2_v3_evaluation.qmd
             text: "vLLM · v2/v3 evaluation"
           - href: memos/live_llm_stereotyping_slices.qmd
@@ -295,6 +252,7 @@ format:
     toc: true
     toc-depth: 3
     toc-location: right
+    toc-title: "On this page"
     number-sections: true
     code-fold: true
     code-tools: true
@@ -308,6 +266,10 @@ format:
     tbl-cap-location: top
     code-block-border-left: true
     link-external-icon: true
+    include-in-header:
+      - site/theme-init.html
+    include-after-body:
+      - site/ux.html
 
 execute:
   echo: true
