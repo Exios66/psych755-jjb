@@ -85,7 +85,10 @@ keywords:
   - Qualtrics
   - PSYCH 755
 nocite: |
-  @breiman2001, @pedregosa2011, @prolific, @qualtrics, @positconnect, @github, @psych755repo
+  @*
+toc: true
+toc-depth: 3
+bibliography: references.bib
 ---
 
 ```{python}

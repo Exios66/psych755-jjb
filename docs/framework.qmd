@@ -1,5 +1,6 @@
 ---
 title: "CA persona prediction framework"
+bibliography: ../references.bib
 ---
 
 ## Goal

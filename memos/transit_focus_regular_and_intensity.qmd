@@ -1,6 +1,7 @@
 ---
 title: "Memo: Transit focus — regular use & intensity with mobility held out"
 subtitle: "Research memorandum — TF1 / TF2 secondary focus"
+author: Jack J. Burleson
 bibliography: ../references.bib
 ---
 

@@ -6,6 +6,7 @@ number-sections: false
 sidebar: false
 page-layout: full
 freeze: false
+bibliography: ../references.bib
 format:
   html:
     toc: false

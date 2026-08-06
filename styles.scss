@@ -725,6 +725,19 @@ div.sourceCode pre {
   padding: 0.75rem 1rem;
   overflow-x: auto;
   max-width: 100%;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Ensure code lines wrap instead of clipping off screen / off the page.
+   Without this, long source lines force horizontal scrolling past the
+   viewer's viewport (and bleed past the printed page edge). */
+div.sourceCode > pre > code,
+div.sourceCode pre code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* Code-fold / code-tools chrome */

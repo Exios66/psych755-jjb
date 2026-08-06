@@ -256,7 +256,7 @@ format:
     toc-location: right
     toc-title: "On this page"
     number-sections: true
-    code-fold: true
+    code-fold: false
     code-tools: true
     code-link: true
     df-print: paged

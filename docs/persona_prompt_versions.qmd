@@ -1,6 +1,7 @@
 ---
 title: "Persona prompt versions (v1 → v2 → v3)"
 subtitle: "How the Terrarium tier stack evolved for RQ efficiency and predictive power"
+bibliography: ../references.bib
 ---
 
 **Code:** [`src/ca_personas/personas.py`](../src/ca_personas/personas.py)  
