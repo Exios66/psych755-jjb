@@ -12,11 +12,11 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Using the Prolific↔Qualtrics matched analytic cohort (File A + File B stacked joined to File C; **252** matched; analytic **n = 241** with complete scorable PRCA items), we evaluated feature predictive power across the project’s cumulative information tiers (`demos` → `employment` → `geo` → `transit`). Traditional ML used cross-validated **Random Forest** and **KNN** regressors targeting ground-truth Group and Interpersonal CA (6–30). LLM persona agents were evaluated on the **same tiers and metrics using the live vLLM exports** — the best non-collapsed model, **DeepSeek-R1-Distill-Llama-8B under prompt-v2 packaging** (`exports/v2/`), replaces the earlier deterministic-mock stand-in. Attribution used **TreeSHAP** on RF models predicting true CA, plus **surrogate SHAP** on an RF fit to live LLM numeric outputs. Classification quality used **macro / weighted / per-band F1**, **band accuracy**, **mean band distance**, and **low-vs-high ROC-AUC** after mapping scores to classroom bands (low ≤13, moderate 14–19, high ≥20).
+Using the Prolific↔Qualtrics matched analytic cohort (File A + File B stacked joined to File C; **252** matched; analytic **n = 241** with complete scorable PRCA items), we evaluated feature predictive power across the project’s cumulative information tiers (`demos` → `employment` → `geo` → `transit`). Traditional ML used cross-validated **Random Forest** and **KNN** regressors targeting ground-truth Group and Interpersonal CA (6–30). LLM persona agents were evaluated on the **same tiers and metrics using the live vLLM exports** — the best non-collapsed model, **DeepSeek-R1-Distill-Llama-8B under prompt-v2 packaging** (`exports/v2/`), replaces the earlier deterministic-mock stand-in. Attribution used **TreeSHAP** on RF models predicting true CA, plus **surrogate SHAP** on an RF fit to live LLM numeric outputs. Classification quality used **macro / weighted / per-band F1**, **band accuracy**, **mean band distance**, and **low-vs-high ROC-AUC** after mapping scores to classroom bands (**low** ≤13, **moderate** 14–19, **high** ≥20).
 
 Full notebook: [`notebooks/feature_predictive_power_shap.ipynb`](../notebooks/feature_predictive_power_shap.ipynb) · module `ca_personas.shap_eval` · real-export harness `scripts/regenerate_ml_vs_llm_shap.py` (the CLI `ca-personas shap-eval --seed 42` keeps a deterministic mock for CI; this memo uses the committed vLLM exports).
 
-**Short answer:** Yes — structured covariates carry measurable predictive power for true CA under Random Forest, with **ride-share frequency (Q28)**, **employment status**, **public-transit frequency (Q26)**, and **survey geolocation** dominating TreeSHAP importance at the transit tier. Band **macro-F1 rises from ~0.31 (demos) to ~0.42 (transit)** for RF as information accumulates. The live LLM surrogate confirms the persona agent tracks profile features (surrogate \(R^2 \approx 0.74\) for Group CA), but the attribution profile is **shifted**: DeepSeek v2 over-weights **geolocation and Age** relative to the Q28/employment mix that predicts true CA, its **low-vs-high band AUC is ≈ chance** (0.53 group / 0.49 interpersonal at transit vs RF 0.72 / 0.74), it **never emits the high-CA band** (≥20), and it stays above the RF MAE floor at every tier (transit mean MAE **5.03** vs **4.48**).
+**Short answer:** Yes — structured covariates carry measurable predictive power for true CA under Random Forest, with **ride-share frequency (Q28)**, **employment status**, **public-transit frequency (Q26)**, and **survey geolocation** dominating TreeSHAP importance at the transit tier. Band **macro-F1 rises from ~0.31 (demos) to ~0.42 (transit)** for RF as information accumulates. The live LLM surrogate confirms the persona agent tracks profile features (surrogate $R^2 \approx 0.74$ for Group CA), but the attribution profile is **shifted**: DeepSeek v2 over-weights **geolocation and Age** relative to the Q28/employment mix that predicts true CA, its **low-vs-high band AUC is ≈ chance** (0.53 group / 0.49 interpersonal at transit vs RF 0.72 / 0.74), it **never emits the high-CA band** (≥20), and it stays above the RF MAE floor at every tier (transit mean MAE **5.03** vs **4.48**).
 
 ![Composite: SHAP comparison, F1/MAE by tier, and tier ablation](figures/fig_memo_feature_power_composite.png){#fig-fp-fig-feature-power-composite}
 
@@ -43,12 +43,12 @@ At the transit tier, Group CA RF band F1 components were low=0.64 · moderate=0.
 
 ### SHAP — features driving ML predictions of true CA
 
-TreeSHAP mean |SHAP| (aggregated to raw fields) for RF → true **Group CA** at the transit tier.
+TreeSHAP mean $\|SHAP\|$ (aggregated to raw fields) for RF → true **Group CA** at the transit tier.
 This ranking (predicting **CA**) is not interchangeable with the permutation ranking in
 [`docs/factor_feature_importance.md`](../docs/factor_feature_importance.md) (predicting
 **regular transit**), where Age outranks employment.
 
-| Rank | Feature | Mean \|SHAP\| |
+| Rank | Feature | Mean $\|SHAP\|$ |
 |---|---|---:|
 | 1 | Q28 (ride-share days) | 1.93 |
 | 2 | Employment status | 0.83 |
@@ -57,7 +57,7 @@ This ranking (predicting **CA**) is not interchangeable with the permutation ran
 | 5 | LocationLongitude | 0.54 |
 | 6 | Age | 0.53 |
 
-: Rank / Feature / Mean \. {#tbl-fp-2}
+: Rank / Feature / Mean $\|SHAP\|$ for RF → true Group CA at the transit tier. {#tbl-fp-2}
 
 
 ![ML TreeSHAP bar chart for Group CA](figures/fig_shap_bar_ml_group.png){#fig-fp-fig-shap-bar-ml-group}
@@ -80,9 +80,9 @@ All LLM figures below use the **committed vLLM exports** (full cohort, N = 241 p
 
 Mean of group + interpersonal targets. DeepSeek v2 trails RF on **every** tier and metric. Its tier profile is also flatter — employment and transit add nothing (and slightly worsen) LLM error, whereas RF improves monotonically with information.
 
-Surrogate SHAP (RF predicting live LLM Group CA from tabular features; \(R^2 = 0.74\)) ranked **lat/long, Age, Q28, country, Q26, employment** highest — i.e., the persona agent’s outputs track place and age more than the Q28/employment mix that predicts true CA. Magnitudes are also compressed (0.13–0.27 vs ML’s 0.53–1.93), so no single profile feature dominates the agent’s scores:
+Surrogate SHAP (RF predicting live LLM Group CA from tabular features; $R^2 = 0.74$) ranked **lat/long, Age, Q28, country, Q26, employment** highest — i.e., the persona agent’s outputs track place and age more than the Q28/employment mix that predicts true CA. Magnitudes are also compressed (0.13–0.27 vs ML’s 0.53–1.93), so no single profile feature dominates the agent’s scores:
 
-| Rank | DeepSeek v2 surrogate mean \|SHAP\| | RF mean \|SHAP\| (true CA) |
+| Rank | DeepSeek v2 surrogate $\|SHAP\|$ | RF $\|SHAP\|$ (true CA) |
 |---|---:|---:|
 | 1 | LocationLatitude 0.27 | Q28 1.93 |
 | 2 | Age 0.21 | Employment status 0.83 |
@@ -92,7 +92,7 @@ Surrogate SHAP (RF predicting live LLM Group CA from tabular features; \(R^2 = 0
 | 6 | Q26 0.15 | Age 0.53 |
 | 7 | Employment status 0.13 | Q21 0.38 |
 
-: Rank / DeepSeek v2 surrogate mean \ / SHAP\. {#tbl-fp-4}
+: Rank / DeepSeek v2 surrogate $\|SHAP\|$ vs RF $\|SHAP\|$ (true Group CA) at the transit tier. {#tbl-fp-4}
 
 
 ![ML TreeSHAP vs DeepSeek v2 output SHAP](figures/fig_shap_ml_vs_llm_compare.png){#fig-fp-fig-shap-ml-vs-llm-compare}
@@ -101,7 +101,7 @@ Surrogate SHAP (RF predicting live LLM Group CA from tabular features; \(R^2 = 0
 
 ### What the estimated bands actually contain
 
-When a model says “low”, “moderate”, or “high”, which numeric scores did it output, and how do they relate to ground truth? Group CA, transit tier:
+When a model says “**low**”, “**moderate**”, or “**high**”, which numeric scores did it output, and how do they relate to ground truth? Group CA, `transit` tier:
 
 | Agent | Predicted band | n | Pred score M (range) | GT score M | MAE | Band precision |
 |---|---:|---:|---:|---:|---:|---:|

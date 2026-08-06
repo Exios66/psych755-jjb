@@ -306,6 +306,8 @@ format:
     footnotes-hover: true
     fig-cap-location: bottom
     tbl-cap-location: top
+    code-block-border-left: true
+    link-external-icon: true
 
 execute:
   echo: true

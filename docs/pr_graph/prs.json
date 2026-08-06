@@ -1,23 +1,23 @@
 {
   "meta": {
     "repo": "Exios66/psych755-jjb",
-    "generatedAt": "2026-07-27T03:43:17Z",
-    "nodeCount": 49,
-    "edgeCount": 127,
+    "generatedAt": "2026-08-06T02:12:55Z",
+    "nodeCount": 57,
+    "edgeCount": 151,
     "statusCounts": {
-      "merged": 42,
+      "merged": 51,
       "closed": 4,
-      "draft": 3
+      "open": 2
     },
     "themeCounts": {
       "docs": 4,
-      "personas": 9,
-      "site": 6,
+      "personas": 10,
+      "site": 9,
       "ml": 7,
       "data": 3,
-      "vllm": 1,
-      "secondary-rq": 16,
-      "infra": 3
+      "vllm": 2,
+      "secondary-rq": 18,
+      "infra": 4
     },
     "themes": [
       {
@@ -770,7 +770,7 @@
       "id": "PR-45",
       "number": 45,
       "title": "docs: changelog for v0.2.0 (2026-07-26)",
-      "status": "draft",
+      "status": "open",
       "theme": "infra",
       "themeLabel": "Infra & tooling",
       "author": "app/cursor",
@@ -778,7 +778,7 @@
       "createdAt": "2026-07-26T06:07:02Z",
       "mergedAt": null,
       "closedAt": null,
-      "isDraft": true,
+      "isDraft": false,
       "labels": [],
       "excerpt": "## Summary Initial `CHANGELOG.md` for the first weekly maintainer run. Covers all merged work on `main` from **2026-07-19 \u2192 2026-07-26**. ## Type - [x] Docs only ## Version bump - **Previous:** none (no prior changelog; package at `0.1.0` in `pyproject.toml`) - **New:** `0.2.0`\u2026"
     },
@@ -818,7 +818,7 @@
       "id": "PR-48",
       "number": 48,
       "title": "Fix duplicate tool.pyright block blocking pytest",
-      "status": "draft",
+      "status": "open",
       "theme": "site",
       "themeLabel": "Quarto / Posit site",
       "author": "Exios66",
@@ -826,7 +826,7 @@
       "createdAt": "2026-07-27T03:17:45Z",
       "mergedAt": null,
       "closedAt": null,
-      "isDraft": true,
+      "isDraft": false,
       "labels": [],
       "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Removes a duplicate identical `[tool.pyright]` section in `pyproject.toml` that caused `tomllib` / `pytest` to fail with `Cannot declare ('tool', 'pyright') twice`. ## Type - [ ] Code / CLI / package - [ ] Analysis / notebook / arti\u2026"
     },
@@ -834,17 +834,145 @@
       "id": "PR-49",
       "number": 49,
       "title": "Format research questions in APA numbered primary/secondary groups",
-      "status": "draft",
+      "status": "merged",
       "theme": "secondary-rq",
       "themeLabel": "Secondary RQs",
       "author": "Exios66",
       "url": "https://github.com/Exios66/psych755-jjb/pull/49",
       "createdAt": "2026-07-27T04:02:24Z",
-      "mergedAt": null,
-      "closedAt": null,
-      "isDraft": true,
+      "mergedAt": "2026-07-28T23:52:01Z",
+      "closedAt": "2026-07-28T23:52:01Z",
+      "isDraft": false,
       "labels": [],
       "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Reformats the manuscript research questions into clean APA-style numbered statements, grouped as Primary Research Questions (RQ1\u2013RQ3) and Secondary Research Questions (S1\u2013S5), and aligns the abstract with that structure. Removes inf\u2026"
+    },
+    {
+      "id": "PR-50",
+      "number": 50,
+      "title": "Fix Quarto render list truncated by PR graph resources",
+      "status": "merged",
+      "theme": "site",
+      "themeLabel": "Quarto / Posit site",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/50",
+      "createdAt": "2026-07-27T04:06:59Z",
+      "mergedAt": "2026-07-27T15:14:28Z",
+      "closedAt": "2026-07-27T15:14:28Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Restores the full Quarto `project.render` list that was accidentally truncated into `resources` when the PR Progress Graph page was added (merged in #47). Also refreshes the baked PR graph JSON to the current 49-node bake already li\u2026"
+    },
+    {
+      "id": "PR-51",
+      "number": 51,
+      "title": "docs: changelog for v0.3.0 (2026-07-27)",
+      "status": "merged",
+      "theme": "infra",
+      "themeLabel": "Infra & tooling",
+      "author": "app/cursor",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/51",
+      "createdAt": "2026-07-27T06:01:57Z",
+      "mergedAt": "2026-07-29T15:22:21Z",
+      "closedAt": "2026-07-29T15:22:21Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "## Summary Adds `CHANGELOG.md` with the v0.2.0 backlog (previously drafted in open PR #45 but never merged) and a new **v0.3.0** section covering merged work on `main` from **2026-07-26 \u2192 2026-07-27**. ## Type - [x] Docs only ## Date range analyzed **2026-07-26 \u2192 2026-07-27** (c\u2026"
+    },
+    {
+      "id": "PR-52",
+      "number": 52,
+      "title": "Document Posit Connect Cloud env vars in .env.example",
+      "status": "merged",
+      "theme": "site",
+      "themeLabel": "Quarto / Posit site",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/52",
+      "createdAt": "2026-07-27T20:43:25Z",
+      "mergedAt": "2026-07-28T02:45:27Z",
+      "closedAt": "2026-07-28T02:45:27Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Documents empty `POSIT_CONNECT_CLOUD_ACCESS_TOKEN`, `POSIT_CONNECT_CLOUD_REFRESH_TOKEN`, and `POSIT_CONNECT_CLOUD_ACCOUNT_ID` placeholders in `.env.example` for the JackJBurleson Posit publish helper. Real credentials remain in giti\u2026"
+    },
+    {
+      "id": "PR-53",
+      "number": 53,
+      "title": "Manuscript submission polish: live figures, Discussion, v2/v3 future work, GH Pages",
+      "status": "merged",
+      "theme": "site",
+      "themeLabel": "Quarto / Posit site",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/53",
+      "createdAt": "2026-07-27T21:41:37Z",
+      "mergedAt": "2026-07-27T22:04:08Z",
+      "closedAt": "2026-07-27T22:04:08Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Closes the awkward v2/v3 middle ground and polishes the manuscript for term-project submission: primary claims stay on prompt-v1; live cross-model findings are figure-first on the main page; Discussion/literature/`full`-tier/IP-coll\u2026"
+    },
+    {
+      "id": "PR-54",
+      "number": 54,
+      "title": "v1 run specs, v2/v3 enhanced presets, and stereotyping evaluation",
+      "status": "merged",
+      "theme": "personas",
+      "themeLabel": "Personas & prompts",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/54",
+      "createdAt": "2026-07-27T22:52:28Z",
+      "mergedAt": "2026-07-28T02:35:09Z",
+      "closedAt": "2026-07-28T02:35:09Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Pins prompt-v1 model/runtime specifications, implements literature- and data-backed v2/v3 enhanced generation presets (prompt + decode), and adds a full stereotyping / discriminatory-error evaluation path for the primary RQs. ### v1\u2026"
+    },
+    {
+      "id": "PR-55",
+      "number": 55,
+      "title": "Multiply-imputed head-to-head: Q28 lead vs demos/CA restoration",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/55",
+      "createdAt": "2026-07-28T02:59:26Z",
+      "mergedAt": "2026-07-28T03:08:45Z",
+      "closedAt": "2026-07-28T03:08:45Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds a wave-2 experiment and research memo answering the open question from the common-*N* memo: whether multiple imputation of car/student items would restore demographics/CA while preserving Q28\u2019s lead, or attenuate rideshare\u2019s ad\u2026"
+    },
+    {
+      "id": "PR-56",
+      "number": 56,
+      "title": "Add Braintrust integration for vLLM digital-twin runs",
+      "status": "merged",
+      "theme": "vllm",
+      "themeLabel": "vLLM / models",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/56",
+      "createdAt": "2026-07-28T23:58:14Z",
+      "mergedAt": "2026-07-29T00:04:09Z",
+      "closedAt": "2026-07-29T00:04:09Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Wires optional Braintrust experiment logging and prompt-registry loading into every vLLM path (`predict_vllm`, `run_vllm.sh`, ingest / post-hoc CLI) so GPU runs can track parse / exact / band / inverse-MAE metrics and iterate the CA\u2026"
+    },
+    {
+      "id": "PR-57",
+      "number": 57,
+      "title": "Add secondary focus TF1/TF2: transit prediction with mobility held out",
+      "status": "merged",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/pull/57",
+      "createdAt": "2026-07-29T00:00:07Z",
+      "mergedAt": "2026-07-29T15:21:57Z",
+      "closedAt": "2026-07-29T15:21:57Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds a secondary **research focus** (TF1 / TF2) for the twin prediction task: estimate regular public-transit use and intensity from profile/context (+ CA) while **holding transit / ride-share / car answers out** of features and per\u2026"
     }
   ],
   "edges": [
@@ -1131,9 +1259,57 @@
       "type": "timeline"
     },
     {
-      "id": "timeline-47-49",
+      "id": "timeline-47-50",
       "source": "PR-47",
+      "target": "PR-50",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-50-53",
+      "source": "PR-50",
+      "target": "PR-53",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-53-54",
+      "source": "PR-53",
+      "target": "PR-54",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-54-52",
+      "source": "PR-54",
+      "target": "PR-52",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-52-55",
+      "source": "PR-52",
+      "target": "PR-55",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-55-49",
+      "source": "PR-55",
       "target": "PR-49",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-49-56",
+      "source": "PR-49",
+      "target": "PR-56",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-56-57",
+      "source": "PR-56",
+      "target": "PR-57",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-57-51",
+      "source": "PR-57",
+      "target": "PR-51",
       "type": "timeline"
     },
     {
@@ -1235,6 +1411,13 @@
       "theme": "personas"
     },
     {
+      "id": "relates-46-54",
+      "source": "PR-46",
+      "target": "PR-54",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
       "id": "relates-2-10",
       "source": "PR-2",
       "target": "PR-10",
@@ -1291,6 +1474,20 @@
       "theme": "personas"
     },
     {
+      "id": "relates-35-54",
+      "source": "PR-35",
+      "target": "PR-54",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-38-54",
+      "source": "PR-38",
+      "target": "PR-54",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
       "id": "relates-6-9",
       "source": "PR-6",
       "target": "PR-9",
@@ -1326,6 +1523,27 @@
       "theme": "site"
     },
     {
+      "id": "relates-48-50",
+      "source": "PR-48",
+      "target": "PR-50",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
+      "id": "relates-50-52",
+      "source": "PR-50",
+      "target": "PR-52",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
+      "id": "relates-52-53",
+      "source": "PR-52",
+      "target": "PR-53",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
       "id": "relates-6-29",
       "source": "PR-6",
       "target": "PR-29",
@@ -1357,6 +1575,27 @@
       "id": "relates-29-47",
       "source": "PR-29",
       "target": "PR-47",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
+      "id": "relates-48-52",
+      "source": "PR-48",
+      "target": "PR-52",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
+      "id": "relates-48-53",
+      "source": "PR-48",
+      "target": "PR-53",
+      "type": "relates",
+      "theme": "site"
+    },
+    {
+      "id": "relates-50-53",
+      "source": "PR-50",
+      "target": "PR-53",
       "type": "relates",
       "theme": "site"
     },
@@ -1457,6 +1696,13 @@
       "target": "PR-19",
       "type": "relates",
       "theme": "data"
+    },
+    {
+      "id": "relates-14-56",
+      "source": "PR-14",
+      "target": "PR-56",
+      "type": "relates",
+      "theme": "vllm"
     },
     {
       "id": "relates-16-17",
@@ -1560,6 +1806,20 @@
       "id": "relates-44-49",
       "source": "PR-44",
       "target": "PR-49",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-49-55",
+      "source": "PR-49",
+      "target": "PR-55",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-55-57",
+      "source": "PR-55",
+      "target": "PR-57",
       "type": "relates",
       "theme": "secondary-rq"
     },
@@ -1669,6 +1929,13 @@
       "theme": "secondary-rq"
     },
     {
+      "id": "relates-49-57",
+      "source": "PR-49",
+      "target": "PR-57",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
       "id": "relates-42-43",
       "source": "PR-42",
       "target": "PR-43",
@@ -1683,9 +1950,30 @@
       "theme": "infra"
     },
     {
+      "id": "relates-45-51",
+      "source": "PR-45",
+      "target": "PR-51",
+      "type": "relates",
+      "theme": "infra"
+    },
+    {
       "id": "relates-42-45",
       "source": "PR-42",
       "target": "PR-45",
+      "type": "relates",
+      "theme": "infra"
+    },
+    {
+      "id": "relates-42-51",
+      "source": "PR-42",
+      "target": "PR-51",
+      "type": "relates",
+      "theme": "infra"
+    },
+    {
+      "id": "relates-43-51",
+      "source": "PR-43",
+      "target": "PR-51",
       "type": "relates",
       "theme": "infra"
     }

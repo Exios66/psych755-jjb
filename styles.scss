@@ -170,3 +170,103 @@ body.pr-graph-page main {
 .prg-help strong {
   color: #1a1d23;
 }
+
+/* Typography: tier name badges (demos, employment, geo, transit, full, v3_*) */
+code:not(pre code) {
+  background: rgba(197, 5, 12, 0.06);
+  border: 1px solid rgba(197, 5, 12, 0.12);
+  border-radius: 3px;
+  padding: 0.05em 0.35em;
+  font-size: 0.88em;
+  color: #8B1A1A;
+  font-weight: 500;
+}
+
+/* Callout: important (red accent for critical findings) */
+div.callout-important {
+  border-left-color: #C5050C;
+  background: rgba(197, 5, 12, 0.04);
+}
+
+div.callout-important .callout-icon::before {
+  color: #C5050C;
+}
+
+/* Table stripes and hover for paged data tables */
+table.quarto-float-tbl tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.018);
+}
+
+table.quarto-float-tbl tbody tr:hover {
+  background: rgba(197, 5, 12, 0.04);
+  transition: background 0.15s ease;
+}
+
+/* Table header emphasis */
+.quarto-float-tbl thead th {
+  font-weight: 600;
+  border-bottom: 2px solid #333;
+  background: #F8F8F8;
+}
+
+/* Code blocks with subtle border */
+div.sourceCode {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  background: #FAFAFA;
+}
+
+div.sourceCode pre {
+  background: #FAFAFA;
+  padding: 0.75rem 1rem;
+}
+
+/* Figure note refinement */
+.figure-note {
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: 0.25rem;
+}
+
+/* Conclusion block (for cross-cutting findings) */
+.conclusion-block {
+  margin: 1rem 0 1.5rem 0;
+  padding: 0.85rem 1rem 0.85rem 1.15rem;
+  border-left: 4px solid #2F6B4F;
+  background: linear-gradient(180deg, rgba(47, 107, 79, 0.04), rgba(0, 0, 0, 0.015));
+  border-radius: 0 4px 4px 0;
+}
+
+.conclusion-block > p {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.conclusion-block ol,
+.conclusion-block ul {
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+}
+
+.conclusion-block li {
+  margin-bottom: 0.4rem;
+  line-height: 1.55;
+}
+
+/* Key result value emphasis */
+.key-result {
+  font-weight: 700;
+  color: #C5050C;
+}
+
+/* Paged data table header */
+div.datatables table.dataTable thead th {
+  border-bottom: 2px solid #C5050C;
+  font-weight: 600;
+  background: #F5F5F5;
+}
+
+/* Code block border-left indicator */
+div.sourceCode {
+  border-left: 3px solid rgba(197, 5, 12, 0.25);
+}

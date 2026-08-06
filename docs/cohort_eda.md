@@ -27,7 +27,7 @@ Every persona tier, ML baseline, and secondary RQ rests on the same cleaned anal
 | Dropped incomplete PRCA items | 11 |
 | **Analytic sample (complete group + interpersonal GT)** | **241** |
 
-Waves: File A = 99, File B = 153 (of the matched/analytic pipeline). Full Prolific waves omit Ethnicity / Nationality / Language; the `demos` tier therefore uses Age, Sex, Country of residence, and Student status.
+Waves (matched respondents): File A = 99, File B = 153 of the 252 Prolific∩Qualtrics matches. Full Prolific waves omit Ethnicity / Nationality / Language; the `demos` tier therefore uses Age, Sex, Country of residence, and Student status.
 
 **Covariate coverage in the analytic sample:** employment 100%, transit (`Q26–Q29`) 100%, Student status 93.0% non-missing (17/241 `DATA_EXPIRED` → missing).
 

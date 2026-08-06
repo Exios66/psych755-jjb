@@ -205,7 +205,7 @@ N = int(len(participants))
 
 # Introduction
 
-Communication apprehension (CA) is a well-studied individual difference describing fear or anxiety associated with real or anticipated communication [@mccroskey1970; @mccroskey1984]. McCroskey first introduced the Personal Report of Communication Apprehension (PRCA-24) in the fourth edition of *An Introduction to Rhetorical Communication* [@mccroskey1982], and the measure remains the standard self-report tool for the construct, with the current scoring guide maintained by the author [@mccroskeyprca24]. Early self-report batteries for social-communicative anxiety were compared and validated in the late 1970s [@daly1978], and the PRCA-24's content validity across communication contexts was subsequently established [@mccroskey1984]. The PRCA-24 yields context-specific subscale scores—including **group discussion** and **interpersonal** conversation—each ranging from 6 (very low apprehension) to 30 (very high) [@mccroskey1982; @beatty1988].
+Communication apprehension (CA) is a well-studied individual difference describing fear or anxiety associated with real or anticipated communication [@mccroskey1970; @mccroskey1984]. McCroskey first introduced the Personal Report of Communication Apprehension (PRCA-24) in the fourth edition of *An Introduction to Rhetorical Communication* [@mccroskey1982], and the measure remains the standard self-report tool for the construct, with the current scoring guide maintained by the author [@mccroskeyprca24]. Early self-report batteries for social-communicative anxiety were compared and validated in the late 1970s [@daly1978], and the PRCA-24's content validity across communication contexts was subsequently established [@mccroskey1984]. The PRCA-24 yields context-specific subscale scores—including *group discussion* and *interpersonal* conversation—each ranging from 6 (very low apprehension) to 30 (very high) [@mccroskey1982; @beatty1988].
 
 Separately, large language models are increasingly used as **survey respondents** and **silicon samples**: prompts that condition on demographic or biographical attributes and emit attitude- or item-like answers [@argyle2023; @park2024]. Related work on generative agents and digital-twin simulation explores whether models can stand in for populations or individuals in social-science workflows [@park2023; @park2024; @binz2024], and computational social-science program statements identify LLM-driven simulation as a central methodological frontier [@grossmann2023]. Behavioral economists have pushed the same agenda in experimental economics, treating instruction-tuned models as implicit computational models of humans ("*homo silicus*") whose behavior can be probed in simulated scenarios [@horton2023]. Prior evaluations show that persona prompts can surface social stereotypes and opinion distributions that do not faithfully track the populations they purport to represent, and that outputs are sensitive to prompt packaging and position [@cheng2023; @santurkar2023; @hu2024; @salewski2023]. The same persona-impersonation mechanisms that recover human-like developmental or expertise effects can also reveal systematic group biases [@salewski2023], and formatting-level prompt variation alone shifts downstream answers in measurable ways [@sclar2024]. That raises a concrete measurement question for psychological research tooling:
 
@@ -548,7 +548,7 @@ Full-cohort **live** LLM baselines use GPU **vLLM** exports on the original prom
 
 Primary digital-twin claims come from full-cohort **vLLM** exports on identical prompt-**v1** Terrarium narratives (`demos` → `employment` → `geo` → `transit` → `full`). Each of four open-weight models received *N* = 241 × 5 = 1,205 prompts. JSON parse rates were 100% for the three Llama instruct models and **99.8%** (1,202/1,205) for DeepSeek-R1-Distill-Llama-8B (post-`</think>` ingest). Metrics follow `ca_personas.evaluate`: MAE, exact match, and band accuracy on group and interpersonal PRCA (bands low ≤13 / moderate 14–19 / high ≥20). Classical ML floor: best transit **group MAE ≈ 4.49** (Ridge; [`docs/ml_baselines.md`](docs/ml_baselines.md)). Prompt-v2 (`v2_enhanced` decode, 5 tiers) and v3 (greedy, 8 tiers) results from the archived `exports/` packages are reported below the v1 head-to-head.
 
-![Cross-model pooled MAE and band accuracy by prompt version — prompt-v1 (v1), signal-first v2, and 8-tier v3 (greedy) vLLM exports](memos/figures/vllm_v1_cross_model_memo.png){#fig-vllm-v1-cross}
+![Cross-model pooled MAE and band accuracy by prompt version — prompt-v1 (v1), signal-first v2, and 8-tier v3 (greedy) vLLM exports](memos/figures/vllm_v1_cross_model_memo.png){#fig-vllm-v1-cross fig-alt="Grouped grayscale bar charts comparing pooled mean absolute error and band accuracy across Llama-3.1-8B, Llama-3.2-3B, DeepSeek-R1-Distill-8B, and Llama-3.3-70B under prompt versions v1, v2, and v3."}
 
 @fig-vllm-v1-cross is the manuscript’s primary live-result figure: pooled MAE / band accuracy for Llama-3.1-8B, Llama-3.2-3B, DeepSeek-R1-Distill-8B, and Llama-3.3-70B under prompt-v1 and the GPU-evaluated v2/v3 packages. **None** is a high-fidelity twin (exact match single-digit). Among non-collapsed runs, **DeepSeek** wins pooled group MAE (**5.22**) and is the most tier-stable; **Llama-3.2-3B** wins interpersonal MAE (**5.35**) and group band accuracy (**52.7%**); **Llama-3.1-8B** recovers interpersonal bands early (~52% at demos/geo) then **collapses at transit** (IP MAE 4.67 → **8.17**); **Llama-3.3-70B** is a mode-collapse cautionary case (≈93% constant prior `(18, 12)`).
 
@@ -615,7 +615,7 @@ For Llama-3.1, the ablations isolate the trigger precisely (IP MAE): `transit` b
 
 The most dramatic live finding is Llama-3.1-8B-Instruct’s interpersonal trajectory: IP MAE moves from **4.67** at `demos` to **8.17** at `transit` (+3.51), while band accuracy falls **51.9% → 15.4%** (−36.5 percentage points). This is not symmetric noise. Signed mean error (predicted − ground truth) flips from **−2.21** (under-prediction at demos) to **+6.52** at transit — systematic **over-prediction toward high interpersonal CA** once mobility cues appear [@santurkar2023]. The `full` tier partially walks back the damage (IP MAE **6.92**; signed error **+2.52**) but remains worse than demos-only. Group MAE, by contrast, improves slightly at transit (6.05 → 5.68).
 
-![Llama-3.1 vs DeepSeek interpersonal MAE by tier across prompt-v1 (v1), v2, and v3 (greedy) exports](memos/figures/vllm_v1_llama31_ip_collapse.png){#fig-llama31-ip-collapse}
+![Llama-3.1 vs DeepSeek interpersonal MAE by tier across prompt-v1 (v1), v2, and v3 (greedy) exports](memos/figures/vllm_v1_llama31_ip_collapse.png){#fig-llama31-ip-collapse fig-alt="Line chart comparing interpersonal mean absolute error by persona tier for Llama-3.1-8B and DeepSeek-R1-Distill-8B across prompt versions v1, v2, and v3, showing Llama-3.1's collapse at the transit tier."}
 
 @fig-llama31-ip-collapse contrasts Llama-3.1 with DeepSeek-R1-Distill-Llama-8B on the published per-tier summaries across prompt versions. DeepSeek’s IP MAE stays flat in v1 and improves under v2 (transit IP 5.09, signed error near zero), so the collapse is **model-specific**, not an inevitable property of adding transit text. Participant-level prediction histograms would require the gitignored raw vLLM export (`data/vllm/`); this revision uses the published tier aggregates in [`docs/llm_baseline_llama31_v1.md`](docs/llm_baseline_llama31_v1.md).
 
@@ -675,7 +675,7 @@ Mean of group + interpersonal targets (*F*1 = macro-averaged harmonic mean of pr
 
 RF improves **monotonically** as tiers accumulate (MAE 5.47 → 4.48; macro-F1 0.31 → 0.42; band accuracy 0.37 → 0.51). DeepSeek v2 does not: `employment` is its *worst* tier (5.47), `transit` (5.03) barely beats `demos` (5.08), and its band metrics are flat at ~0.25–0.36 — below RF at every tier (@fig-f1-ml-vs-llm). In variance terms, the best tabular learner explains only a small share of true CA: RF $R^2$ rises from ≈ −0.37/−0.31 at `demos` (group / interpersonal) to **0.06–0.10** at `transit` (RMSE 5.82 / 5.51; table: `metrics_ml_llm.csv`). Even at its richest tier the classical suite leaves the large majority of individual CA variance unexplained, which contextualizes both the modest *d* = −0.46 transit-group CA contrast above and the single-digit exact-match ceiling of the persona agents.
 
-![Band macro-F1 by tier — RF vs DeepSeek v2](memos/figures/fig_f1_ml_vs_llm.png){#fig-f1-ml-vs-llm}
+![Band macro-F1 by tier — RF vs DeepSeek v2](memos/figures/fig_f1_ml_vs_llm.png){#fig-f1-ml-vs-llm fig-alt="Grouped grayscale bar chart comparing band macro-F1 by persona tier for Random Forest and DeepSeek v2 on group and interpersonal communication apprehension."}
 
 ### Who uses the information? Tier ablations
 
@@ -708,7 +708,7 @@ When a model says “low / moderate / high”, which numeric scores did it emit,
 : Predicted-score profiles inside each estimated band for Group CA at the transit tier. {#tbl-band-profiles}
 
 
-![Predicted scores inside each estimated band — RF vs DeepSeek v2](memos/figures/fig_band_score_profiles.png){#fig-band-score-profiles}
+![Predicted scores inside each estimated band — RF vs DeepSeek v2](memos/figures/fig_band_score_profiles.png){#fig-band-score-profiles fig-alt="Boxplots showing predicted score distributions within low, moderate, and high bands for Random Forest and DeepSeek v2 at the transit tier on group communication apprehension."}
 
 Two quantification findings. **First, DeepSeek v2 never emits the high band for Group CA at `transit`** (0 of 240 predictions ≥ 20) — its “moderate” label absorbs every high-apprehension respondent (@fig-band-score-profiles). **Second, RF's rare high-band predictions (*n* = 12) are badly calibrated**: they land on respondents whose true mean is 16.17 (moderate), so RF precision on high is only 0.25. Both families are strong only on the low band.
 
@@ -728,7 +728,7 @@ Disentangling MAE from discrimination: DeepSeek v2 is only ~1.1× worse than RF 
 
 *Notes.* AUC low-vs-high = predicted score separating ground-truth high (≥20) from low (≤13) respondents (moderates excluded); ordinal AUC = Hand–Till pairwise AUC over all three bands (0.5 = chance). Full per-tier/per-band table: `artifacts/posit_full_cohort/ml_vs_llm/band_discrimination_ml_llm.csv`.
 
-![Low-vs-high ROC-AUC by tier — RF vs DeepSeek v2](memos/figures/fig_band_discrimination_auc.png){#fig-band-discrimination-auc}
+![Low-vs-high ROC-AUC by tier — RF vs DeepSeek v2](memos/figures/fig_band_discrimination_auc.png){#fig-band-discrimination-auc fig-alt="Grouped grayscale bar chart comparing low-versus-high band ROC-AUC by persona tier for Random Forest and DeepSeek v2 on group and interpersonal communication apprehension, with a chance reference line at 0.50."}
 
 RF's low-vs-high AUC climbs from ~0.49 (`demos`) to **0.72–0.74** (`transit`); DeepSeek v2 stays near chance (0.45–0.53) at every tier (@fig-band-discrimination-auc). The LLM's error is **band-insensitive**: its scores hug the cohort mean, so absolute error is bounded while rank recovery fails. **MAE alone therefore understates the LLM's failure to recover the trait distribution** — band F1, band distance, and low-vs-high AUC belong alongside MAE in digital-twin evaluation.
 
@@ -748,7 +748,7 @@ TreeSHAP mean \|SHAP| at the `transit` tier (predicting true Group CA) versus SH
 : Top-six TreeSHAP attributions for true Group CA versus SHAP on DeepSeek v2's live outputs. {#tbl-shap-top6}
 
 
-![ML TreeSHAP vs DeepSeek v2 output SHAP](memos/figures/fig_shap_ml_vs_llm_compare.png){#fig-shap-ml-vs-llm}
+![ML TreeSHAP vs DeepSeek v2 output SHAP](memos/figures/fig_shap_ml_vs_llm_compare.png){#fig-shap-ml-vs-llm fig-alt="Side-by-side horizontal bar charts comparing top mean absolute SHAP values for Random Forest predicting true group CA and a surrogate Random Forest fit to DeepSeek v2 live outputs at the transit tier."}
 
 Ride-share days (Q28) and employment drive true-CA prediction, while the persona agent's live outputs are dominated by **geolocation and age** — over-weighting place/demographic cues relative to the mobility/employment mix that predicts the actual PRCA scores (@fig-shap-ml-vs-llm). Mean |SHAP| magnitudes are also approximately 7× smaller for the LLM output attribution, so no single profile feature dominates the agent's scores.
 
