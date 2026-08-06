@@ -927,6 +927,7 @@ short27 = {
     "1-2 rides in a typical day": "1–2 rides/day",
     "3-4 rides in a typical day": "3–4 rides/day",
     "5-6 rides in a typical day": "5–6 rides/day",
+    "7 or more rides in a typical day": "7+ rides/day",
 }
 short28 = {
     "Never": "Never",
