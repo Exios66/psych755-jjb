@@ -1,6 +1,6 @@
 ---
-title: "PR Progress Graph"
-subtitle: "Interactive map of pull requests that shaped this project over time"
+title: "PR & Issue Progress Graph"
+subtitle: "Interactive map of pull requests and issues that shaped this project over time"
 toc: false
 number-sections: false
 sidebar: false
@@ -33,16 +33,27 @@ for path in candidates:
         break
 
 if payload is None:
-    print("> **PR graph data missing.** Run `python scripts/sync_pr_graph_data.py` and re-render.")
+    print("> **Progress graph data missing.** Run `python scripts/sync_pr_graph_data.py` and re-render.")
 else:
     meta = payload.get("meta", {})
     n = meta.get("nodeCount", len(payload.get("nodes", [])))
+    prs = meta.get("prCount", 0)
+    issues = meta.get("issueCount", 0)
     e = meta.get("edgeCount", len(payload.get("edges", [])))
+    baked = meta.get("generatedAt", "")
+    from datetime import datetime
+    baked_display = ""
+    try:
+        dt = datetime.fromisoformat(baked.replace("Z", "+00:00"))
+        baked_display = f"{dt:%B} {dt.day}, {dt.year}"
+    except Exception:
+        baked_display = baked
     print(
-        f'<p class="prg-intro">Explore <strong>{n}</strong> pull requests and '
-        f'<strong>{e}</strong> links across themes (personas, secondary RQs, ML, site, data). '
-        f'Filter by edge type or status, scrub the time slider to watch progress unfold, '
-        f'and open any node on GitHub.</p>'
+        f'<p class="prg-intro">Explore <strong>{prs}</strong> pull requests and '
+        f'<strong>{issues}</strong> issues with <strong>{e}</strong> links across themes '
+        f'(personas, secondary RQs, ML, vLLM, site, data). '
+        f'Filter by kind, edge type, or status; scrub the time slider to watch progress unfold; '
+        f'and open any item on GitHub. Graph baked <strong>{baked_display}</strong>.</p>'
     )
     # Inline fallback so Posit Connect never depends on a separate fetch path.
     print('<script type="application/json" id="prg-data">')
@@ -54,7 +65,7 @@ else:
 :::
 
 ::: {.prg-help}
-**Controls.** Edge pills switch Timeline vs Relates-to links. Status chips toggle node visibility.
-**Group by theme** pulls same-theme PRs into clusters (Cluster pull slider). Time range reveals PRs chronologically.
-Click a node for details; double-click / double-tap opens the GitHub PR. Pinch or scroll to zoom; drag the canvas to pan.
+**Controls.** Kind pills switch pull requests vs issues; edge pills switch Timeline vs Relates-to links.
+Status chips toggle node visibility per kind. **Cluster by theme** pulls same-theme items into groups (Cluster pull slider).
+Time range reveals items chronologically. Click a node for details; double-click / double-tap opens it on GitHub. Pinch or scroll to zoom; drag the canvas to pan.
 :::

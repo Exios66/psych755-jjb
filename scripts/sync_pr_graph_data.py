@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Bake GitHub PR graph data for the Quarto Progress page.
+"""Bake GitHub PR + issue graph data for the Quarto Progress page.
 
-Fetches all pull requests for Exios66/psych755-jjb via ``gh``, classifies each
-into a theme group, emits timeline + relates-to edges, and writes offline JSON
-under ``artifacts/pr_graph/`` so Posit Connect renders without live GitHub auth.
+Fetches all pull requests and issues for Exios66/psych755-jjb via ``gh``,
+classifies each into a theme group, emits timeline + relates-to + resolves
+edges, and writes offline JSON under ``artifacts/pr_graph/`` so Posit Connect
+renders without live GitHub auth.
 
 Usage:
 
@@ -144,6 +145,52 @@ def fetch_prs(repo: str) -> list[dict[str, Any]]:
     return raw
 
 
+def fetch_issues(repo: str) -> list[dict[str, Any]]:
+    """Fetch all issues (open + closed) with fields needed for the graph."""
+    raw = _run_gh_json(
+        [
+            "issue",
+            "list",
+            "--repo",
+            repo,
+            "--state",
+            "all",
+            "--limit",
+            "200",
+            "--json",
+            "number,title,state,createdAt,closedAt,author,url,labels,body",
+        ]
+    )
+    if not isinstance(raw, list):
+        raise SystemExit(f"Unexpected gh issue list payload: {type(raw)}")
+    return raw
+
+
+def fetch_resolves_edges(repo: str, prs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Best-effort PR -> issue links via closingIssuesReferences on each PR."""
+    resolved: list[dict[str, Any]] = []
+    for pr in prs:
+        try:
+            refs = _run_gh_json(
+                ["pr", "view", str(pr["number"]), "--repo", repo, "--json", "closingIssuesReferences"]
+            )
+        except SystemExit:
+            continue
+        for ref in refs.get("closingIssuesReferences") or []:
+            num = ref.get("number")
+            if not num:
+                continue
+            resolved.append(
+                {
+                    "id": f"resolves-PR{pr['number']}-I{num}",
+                    "source": f"PR-{pr['number']}",
+                    "target": f"I-{num}",
+                    "type": "resolves",
+                }
+            )
+    return resolved
+
+
 def classify_theme(title: str, body: str | None = None) -> str:
     """Classify from title first; fall back to body only if title is uninformative."""
     for theme, pattern in THEME_RULES:
@@ -156,13 +203,16 @@ def classify_theme(title: str, body: str | None = None) -> str:
     return "docs"
 
 
-def normalize_status(pr: dict[str, Any]) -> str:
-    """Map GitHub PR fields onto graph legend statuses."""
-    if pr.get("mergedAt"):
+def normalize_status(item: dict[str, Any], kind: str) -> str:
+    """Map GitHub PR/issue fields onto graph legend statuses."""
+    if kind == "issue":
+        state = str(item.get("state") or "").upper()
+        return "open" if state == "OPEN" else "closed"
+    if item.get("mergedAt"):
         return "merged"
-    state = str(pr.get("state") or "").upper()
+    state = str(item.get("state") or "").upper()
     if state == "OPEN":
-        return "draft" if pr.get("isDraft") else "open"
+        return "draft" if item.get("isDraft") else "open"
     if state == "CLOSED":
         return "closed"
     # MERGED sometimes appears as state from gh
@@ -196,35 +246,42 @@ def sort_key_iso(pr_node: dict[str, Any]) -> str:
     )
 
 
-def build_nodes(raw_prs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def build_nodes(raw_items: list[dict[str, Any]], kind: str) -> list[dict[str, Any]]:
+    """Build graph nodes for PRs or issues with a common schema + `kind` field."""
+    prefix = "PR-" if kind == "pr" else "I-"
+    default_url = (
+        f"https://github.com/{DEFAULT_REPO}/pull/" if kind == "pr"
+        else f"https://github.com/{DEFAULT_REPO}/issues/"
+    )
     nodes: list[dict[str, Any]] = []
-    for pr in raw_prs:
-        title = str(pr.get("title") or "")
-        body = pr.get("body")
+    for item in raw_items:
+        title = str(item.get("title") or "")
+        body = item.get("body")
         theme = classify_theme(title, body if isinstance(body, str) else None)
         labels = []
-        for lab in pr.get("labels") or []:
+        for lab in item.get("labels") or []:
             if isinstance(lab, dict):
                 name = lab.get("name")
                 if name:
                     labels.append(str(name))
             else:
                 labels.append(str(lab))
-        number = int(pr["number"])
+        number = int(item["number"])
         nodes.append(
             {
-                "id": f"PR-{number}",
+                "id": f"{prefix}{number}",
                 "number": number,
+                "kind": kind,
                 "title": title,
-                "status": normalize_status(pr),
+                "status": normalize_status(item, kind),
                 "theme": theme,
                 "themeLabel": THEME_LABELS.get(theme, theme),
-                "author": author_login(pr),
-                "url": str(pr.get("url") or f"https://github.com/{DEFAULT_REPO}/pull/{number}"),
-                "createdAt": pr.get("createdAt"),
-                "mergedAt": pr.get("mergedAt"),
-                "closedAt": pr.get("closedAt"),
-                "isDraft": bool(pr.get("isDraft")),
+                "author": author_login(item),
+                "url": str(item.get("url") or f"{default_url}{number}"),
+                "createdAt": item.get("createdAt"),
+                "mergedAt": item.get("mergedAt"),
+                "closedAt": item.get("closedAt"),
+                "isDraft": bool(item.get("isDraft")),
                 "labels": labels,
                 "excerpt": body_excerpt(body if isinstance(body, str) else None),
             }
@@ -301,24 +358,37 @@ def build_relates_edges(nodes: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return edges
 
 
-def build_payload(repo: str, raw_prs: list[dict[str, Any]]) -> dict[str, Any]:
-    nodes = build_nodes(raw_prs)
+def build_payload(
+    repo: str,
+    raw_prs: list[dict[str, Any]],
+    raw_issues: list[dict[str, Any]],
+    resolves: list[dict[str, Any]],
+) -> dict[str, Any]:
+    pr_nodes = build_nodes(raw_prs, "pr")
+    issue_nodes = build_nodes(raw_issues, "issue")
+    nodes = pr_nodes + issue_nodes
     timeline = build_timeline_edges(nodes)
     relates = build_relates_edges(nodes)
-    status_counts: dict[str, int] = defaultdict(int)
+    status_counts: dict[str, dict[str, int]] = {"pr": defaultdict(int), "issue": defaultdict(int)}
     theme_counts: dict[str, int] = defaultdict(int)
     for n in nodes:
-        status_counts[n["status"]] += 1
+        status_counts[n["kind"]][n["status"]] += 1
         theme_counts[n["theme"]] += 1
 
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    edges = timeline + relates + resolves
     return {
         "meta": {
             "repo": repo,
             "generatedAt": now,
             "nodeCount": len(nodes),
-            "edgeCount": len(timeline) + len(relates),
-            "statusCounts": dict(status_counts),
+            "prCount": len(pr_nodes),
+            "issueCount": len(issue_nodes),
+            "edgeCount": len(edges),
+            "statusCounts": {
+                kind: dict(counts)
+                for kind, counts in status_counts.items()
+            },
             "themeCounts": dict(theme_counts),
             "themes": [
                 {"id": tid, "label": THEME_LABELS[tid]}
@@ -327,7 +397,7 @@ def build_payload(repo: str, raw_prs: list[dict[str, Any]]) -> dict[str, Any]:
             ],
         },
         "nodes": nodes,
-        "edges": timeline + relates,
+        "edges": edges,
     }
 
 
@@ -342,11 +412,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    raw = fetch_prs(args.repo)
-    if not raw:
+    raw_prs = fetch_prs(args.repo)
+    if not raw_prs:
         raise SystemExit("No pull requests returned from GitHub.")
+    raw_issues = fetch_issues(args.repo)
+    resolves = fetch_resolves_edges(args.repo, raw_prs)
 
-    payload = build_payload(args.repo, raw)
+    payload = build_payload(args.repo, raw_prs, raw_issues, resolves)
     out_dir: Path = args.out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -365,8 +437,8 @@ def main(argv: list[str] | None = None) -> int:
 
     print(
         f"Wrote {prs_path.relative_to(ROOT)} and {page_data.relative_to(ROOT)} "
-        f"({payload['meta']['nodeCount']} nodes, "
-        f"{payload['meta']['edgeCount']} edges)"
+        f"({payload['meta']['nodeCount']} nodes — {payload['meta']['prCount']} PRs + "
+        f"{payload['meta']['issueCount']} issues, {payload['meta']['edgeCount']} edges)"
     )
     return 0
 

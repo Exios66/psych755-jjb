@@ -1,22 +1,30 @@
 {
   "repo": "Exios66/psych755-jjb",
-  "generatedAt": "2026-08-06T02:12:55Z",
-  "nodeCount": 57,
-  "edgeCount": 151,
+  "generatedAt": "2026-08-06T05:02:22Z",
+  "nodeCount": 68,
+  "prCount": 57,
+  "issueCount": 11,
+  "edgeCount": 187,
   "statusCounts": {
-    "merged": 51,
-    "closed": 4,
-    "open": 2
+    "pr": {
+      "merged": 51,
+      "closed": 4,
+      "open": 2
+    },
+    "issue": {
+      "closed": 4,
+      "open": 7
+    }
   },
   "themeCounts": {
-    "docs": 4,
-    "personas": 10,
+    "docs": 6,
+    "personas": 12,
     "site": 9,
-    "ml": 7,
+    "ml": 9,
     "data": 3,
-    "vllm": 2,
-    "secondary-rq": 18,
-    "infra": 4
+    "vllm": 4,
+    "secondary-rq": 20,
+    "infra": 5
   },
   "themes": [
     {

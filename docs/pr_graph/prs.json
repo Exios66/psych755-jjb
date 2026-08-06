@@ -1,23 +1,31 @@
 {
   "meta": {
     "repo": "Exios66/psych755-jjb",
-    "generatedAt": "2026-08-06T02:12:55Z",
-    "nodeCount": 57,
-    "edgeCount": 151,
+    "generatedAt": "2026-08-06T05:02:22Z",
+    "nodeCount": 68,
+    "prCount": 57,
+    "issueCount": 11,
+    "edgeCount": 187,
     "statusCounts": {
-      "merged": 51,
-      "closed": 4,
-      "open": 2
+      "pr": {
+        "merged": 51,
+        "closed": 4,
+        "open": 2
+      },
+      "issue": {
+        "closed": 4,
+        "open": 7
+      }
     },
     "themeCounts": {
-      "docs": 4,
-      "personas": 10,
+      "docs": 6,
+      "personas": 12,
       "site": 9,
-      "ml": 7,
+      "ml": 9,
       "data": 3,
-      "vllm": 2,
-      "secondary-rq": 18,
-      "infra": 4
+      "vllm": 4,
+      "secondary-rq": 20,
+      "infra": 5
     },
     "themes": [
       {
@@ -58,6 +66,7 @@
     {
       "id": "PR-1",
       "number": 1,
+      "kind": "pr",
       "title": "Update README.md",
       "status": "merged",
       "theme": "docs",
@@ -74,6 +83,7 @@
     {
       "id": "PR-2",
       "number": 2,
+      "kind": "pr",
       "title": "Create system_prompt.md",
       "status": "merged",
       "theme": "personas",
@@ -90,6 +100,7 @@
     {
       "id": "PR-3",
       "number": 3,
+      "kind": "pr",
       "title": "Update README.md",
       "status": "merged",
       "theme": "docs",
@@ -106,6 +117,7 @@
     {
       "id": "PR-4",
       "number": 4,
+      "kind": "pr",
       "title": "Add tiered CA persona extraction and LLM prediction framework",
       "status": "merged",
       "theme": "personas",
@@ -122,6 +134,7 @@
     {
       "id": "PR-5",
       "number": 5,
+      "kind": "pr",
       "title": "Update Getstarted.md",
       "status": "closed",
       "theme": "docs",
@@ -138,6 +151,7 @@
     {
       "id": "PR-6",
       "number": 6,
+      "kind": "pr",
       "title": "Add Quarto manuscript website for Posit Connect Cloud",
       "status": "merged",
       "theme": "site",
@@ -154,6 +168,7 @@
     {
       "id": "PR-7",
       "number": 7,
+      "kind": "pr",
       "title": "Add stage-one Random Forest and KNN CA prediction baselines",
       "status": "merged",
       "theme": "ml",
@@ -170,6 +185,7 @@
     {
       "id": "PR-8",
       "number": 8,
+      "kind": "pr",
       "title": "Added Excerpts to Root",
       "status": "closed",
       "theme": "data",
@@ -186,6 +202,7 @@
     {
       "id": "PR-9",
       "number": 9,
+      "kind": "pr",
       "title": "Merge main into Quarto manuscript branch and resolve conflicts",
       "status": "merged",
       "theme": "site",
@@ -202,6 +219,7 @@
     {
       "id": "PR-10",
       "number": 10,
+      "kind": "pr",
       "title": "Add band accuracy metrics, GT scoring script, and full persona prompts",
       "status": "merged",
       "theme": "personas",
@@ -218,6 +236,7 @@
     {
       "id": "PR-11",
       "number": 11,
+      "kind": "pr",
       "title": "Add distance-from-correct metrics for CA evaluation",
       "status": "merged",
       "theme": "personas",
@@ -234,6 +253,7 @@
     {
       "id": "PR-12",
       "number": 12,
+      "kind": "pr",
       "title": "Add factor analysis and feature-importance notebook",
       "status": "merged",
       "theme": "ml",
@@ -250,6 +270,7 @@
     {
       "id": "PR-13",
       "number": 13,
+      "kind": "pr",
       "title": "Add ML vs LLM shared-metric comparison notebook",
       "status": "merged",
       "theme": "ml",
@@ -266,6 +287,7 @@
     {
       "id": "PR-14",
       "number": 14,
+      "kind": "pr",
       "title": "Add vLLM digital-twin inference launcher for CA persona prompts",
       "status": "merged",
       "theme": "vllm",
@@ -282,6 +304,7 @@
     {
       "id": "PR-15",
       "number": 15,
+      "kind": "pr",
       "title": "Align pipeline to File A/B/C sibling data, cleaning, and RQ-focused EDA",
       "status": "merged",
       "theme": "data",
@@ -298,6 +321,7 @@
     {
       "id": "PR-16",
       "number": 16,
+      "kind": "pr",
       "title": "Secondary RQ: regular public transit vs cohort CA scores",
       "status": "merged",
       "theme": "secondary-rq",
@@ -314,6 +338,7 @@
     {
       "id": "PR-17",
       "number": 17,
+      "kind": "pr",
       "title": "Secondary RQ: Random Forest of lat/long \u2192 regular public transit",
       "status": "merged",
       "theme": "secondary-rq",
@@ -330,6 +355,7 @@
     {
       "id": "PR-18",
       "number": 18,
+      "kind": "pr",
       "title": "Secondary RQ5: Random Forest of CA scores \u2192 regular public transit",
       "status": "merged",
       "theme": "secondary-rq",
@@ -346,6 +372,7 @@
     {
       "id": "PR-19",
       "number": 19,
+      "kind": "pr",
       "title": "Fix File C merge: restore 252/21/10 coverage audit",
       "status": "merged",
       "theme": "data",
@@ -362,6 +389,7 @@
     {
       "id": "PR-20",
       "number": 20,
+      "kind": "pr",
       "title": "Add research memo: CA scores predicting regular transit use",
       "status": "merged",
       "theme": "secondary-rq",
@@ -378,6 +406,7 @@
     {
       "id": "PR-21",
       "number": 21,
+      "kind": "pr",
       "title": "Add research memo: geolocation predicting regular transit",
       "status": "closed",
       "theme": "secondary-rq",
@@ -394,6 +423,7 @@
     {
       "id": "PR-22",
       "number": 22,
+      "kind": "pr",
       "title": "Resolve geo transit memo merge conflict with main",
       "status": "merged",
       "theme": "secondary-rq",
@@ -410,6 +440,7 @@
     {
       "id": "PR-23",
       "number": 23,
+      "kind": "pr",
       "title": "Add comprehensive feature-importance RF + research memo for regular transit",
       "status": "merged",
       "theme": "secondary-rq",
@@ -429,6 +460,7 @@
     {
       "id": "PR-24",
       "number": 24,
+      "kind": "pr",
       "title": "Fix silent failures, path fallbacks, placeholders, and doc/requirements drift",
       "status": "merged",
       "theme": "docs",
@@ -445,6 +477,7 @@
     {
       "id": "PR-25",
       "number": 25,
+      "kind": "pr",
       "title": "Sync secondary RQ docs to File A/B/C re-run (seed=42)",
       "status": "closed",
       "theme": "secondary-rq",
@@ -461,6 +494,7 @@
     {
       "id": "PR-26",
       "number": 26,
+      "kind": "pr",
       "title": "SHAP/F1 feature predictive-power suite for ML and LLM agents",
       "status": "merged",
       "theme": "ml",
@@ -477,6 +511,7 @@
     {
       "id": "PR-27",
       "number": 27,
+      "kind": "pr",
       "title": "Geo-memo follow-ups: car access, employment, and ride-share \u2192 regular transit",
       "status": "merged",
       "theme": "secondary-rq",
@@ -493,6 +528,7 @@
     {
       "id": "PR-28",
       "number": 28,
+      "kind": "pr",
       "title": "Manuscript: Q27/Q28 traditional ML predictors of regular transit",
       "status": "merged",
       "theme": "secondary-rq",
@@ -509,6 +545,7 @@
     {
       "id": "PR-29",
       "number": 29,
+      "kind": "pr",
       "title": "Rerun Posit stats on full cohort and ship APA site figures",
       "status": "merged",
       "theme": "site",
@@ -525,6 +562,7 @@
     {
       "id": "PR-30",
       "number": 30,
+      "kind": "pr",
       "title": "Add wave-2 follow-up experiments, research memos, and Quarto site pages",
       "status": "merged",
       "theme": "secondary-rq",
@@ -541,6 +579,7 @@
     {
       "id": "PR-31",
       "number": 31,
+      "kind": "pr",
       "title": "Incorporate student status into base demos persona tier",
       "status": "merged",
       "theme": "personas",
@@ -557,6 +596,7 @@
     {
       "id": "PR-32",
       "number": 32,
+      "kind": "pr",
       "title": "Add JackJBurleson Posit Connect publish skill (full-data gated)",
       "status": "merged",
       "theme": "site",
@@ -575,6 +615,7 @@
     {
       "id": "PR-33",
       "number": 33,
+      "kind": "pr",
       "title": "Add sample persona prompts for each cumulative context tier",
       "status": "merged",
       "theme": "personas",
@@ -591,6 +632,7 @@
     {
       "id": "PR-34",
       "number": 34,
+      "kind": "pr",
       "title": "Expand landing abstract, secondary RQ presentation, and GitHub access",
       "status": "merged",
       "theme": "secondary-rq",
@@ -607,6 +649,7 @@
     {
       "id": "PR-35",
       "number": 35,
+      "kind": "pr",
       "title": "Rework persona prompts to AI Terrarium natural-language digital twins",
       "status": "merged",
       "theme": "personas",
@@ -625,6 +668,7 @@
     {
       "id": "PR-36",
       "number": 36,
+      "kind": "pr",
       "title": "Expand CA ML baselines to Ridge, XGBoost, MLP, and full suite",
       "status": "merged",
       "theme": "ml",
@@ -641,6 +685,7 @@
     {
       "id": "PR-37",
       "number": 37,
+      "kind": "pr",
       "title": "Refresh ML suite baseline figures after full-cohort republish",
       "status": "merged",
       "theme": "ml",
@@ -657,6 +702,7 @@
     {
       "id": "PR-38",
       "number": 38,
+      "kind": "pr",
       "title": "Show AI Terrarium persona examples on the landing page",
       "status": "merged",
       "theme": "personas",
@@ -673,6 +719,7 @@
     {
       "id": "PR-39",
       "number": 39,
+      "kind": "pr",
       "title": "Clean site navigation: separate Memos from Secondary RQs",
       "status": "merged",
       "theme": "secondary-rq",
@@ -689,6 +736,7 @@
     {
       "id": "PR-40",
       "number": 40,
+      "kind": "pr",
       "title": "Fix comprehensive-transit-rf CLI and republish full cohort",
       "status": "merged",
       "theme": "secondary-rq",
@@ -705,6 +753,7 @@
     {
       "id": "PR-41",
       "number": 41,
+      "kind": "pr",
       "title": "Audit Posit site: fix stale ML claims, vague prose, and path bugs",
       "status": "merged",
       "theme": "ml",
@@ -721,6 +770,7 @@
     {
       "id": "PR-42",
       "number": 42,
+      "kind": "pr",
       "title": "Add AGENTS.md with Cursor Cloud dev environment setup notes",
       "status": "merged",
       "theme": "infra",
@@ -737,6 +787,7 @@
     {
       "id": "PR-43",
       "number": 43,
+      "kind": "pr",
       "title": "Add PR/issue templates and expand AGENTS.md",
       "status": "merged",
       "theme": "infra",
@@ -753,6 +804,7 @@
     {
       "id": "PR-44",
       "number": 44,
+      "kind": "pr",
       "title": "Harden cohort loading and sync secondary Posit artifacts",
       "status": "merged",
       "theme": "secondary-rq",
@@ -769,6 +821,7 @@
     {
       "id": "PR-45",
       "number": 45,
+      "kind": "pr",
       "title": "docs: changelog for v0.2.0 (2026-07-26)",
       "status": "open",
       "theme": "infra",
@@ -785,6 +838,7 @@
     {
       "id": "PR-46",
       "number": 46,
+      "kind": "pr",
       "title": "Promote prompt-v1 multi-model LLM findings in core manuscript",
       "status": "merged",
       "theme": "personas",
@@ -801,6 +855,7 @@
     {
       "id": "PR-47",
       "number": 47,
+      "kind": "pr",
       "title": "Add immersive PR progress node graph to Posit site",
       "status": "merged",
       "theme": "site",
@@ -817,6 +872,7 @@
     {
       "id": "PR-48",
       "number": 48,
+      "kind": "pr",
       "title": "Fix duplicate tool.pyright block blocking pytest",
       "status": "open",
       "theme": "site",
@@ -833,6 +889,7 @@
     {
       "id": "PR-49",
       "number": 49,
+      "kind": "pr",
       "title": "Format research questions in APA numbered primary/secondary groups",
       "status": "merged",
       "theme": "secondary-rq",
@@ -849,6 +906,7 @@
     {
       "id": "PR-50",
       "number": 50,
+      "kind": "pr",
       "title": "Fix Quarto render list truncated by PR graph resources",
       "status": "merged",
       "theme": "site",
@@ -865,6 +923,7 @@
     {
       "id": "PR-51",
       "number": 51,
+      "kind": "pr",
       "title": "docs: changelog for v0.3.0 (2026-07-27)",
       "status": "merged",
       "theme": "infra",
@@ -881,6 +940,7 @@
     {
       "id": "PR-52",
       "number": 52,
+      "kind": "pr",
       "title": "Document Posit Connect Cloud env vars in .env.example",
       "status": "merged",
       "theme": "site",
@@ -897,6 +957,7 @@
     {
       "id": "PR-53",
       "number": 53,
+      "kind": "pr",
       "title": "Manuscript submission polish: live figures, Discussion, v2/v3 future work, GH Pages",
       "status": "merged",
       "theme": "site",
@@ -913,6 +974,7 @@
     {
       "id": "PR-54",
       "number": 54,
+      "kind": "pr",
       "title": "v1 run specs, v2/v3 enhanced presets, and stereotyping evaluation",
       "status": "merged",
       "theme": "personas",
@@ -929,6 +991,7 @@
     {
       "id": "PR-55",
       "number": 55,
+      "kind": "pr",
       "title": "Multiply-imputed head-to-head: Q28 lead vs demos/CA restoration",
       "status": "merged",
       "theme": "secondary-rq",
@@ -945,6 +1008,7 @@
     {
       "id": "PR-56",
       "number": 56,
+      "kind": "pr",
       "title": "Add Braintrust integration for vLLM digital-twin runs",
       "status": "merged",
       "theme": "vllm",
@@ -961,6 +1025,7 @@
     {
       "id": "PR-57",
       "number": 57,
+      "kind": "pr",
       "title": "Add secondary focus TF1/TF2: transit prediction with mobility held out",
       "status": "merged",
       "theme": "secondary-rq",
@@ -973,6 +1038,209 @@
       "isDraft": false,
       "labels": [],
       "excerpt": "<!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary Adds a secondary **research focus** (TF1 / TF2) for the twin prediction task: estimate regular public-transit use and intensity from profile/context (+ CA) while **holding transit / ride-share / car answers out** of features and per\u2026"
+    },
+    {
+      "id": "I-58",
+      "number": 58,
+      "kind": "issue",
+      "title": "[Bug]: Replace Placeholder LLM Results in 'Memo: Feature predictive power for CA (SHAP / F1)'",
+      "status": "closed",
+      "theme": "ml",
+      "themeLabel": "ML baselines",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/issues/58",
+      "createdAt": "2026-07-30T20:05:07Z",
+      "mergedAt": null,
+      "closedAt": "2026-08-05T22:05:18Z",
+      "isDraft": false,
+      "labels": [
+        "bug"
+      ],
+      "excerpt": "### Summary Replace Placeholder LLM Results in 'Memo: Feature predictive power for CA (SHAP / F1)'. Viewable at Posit Site: [Linked Page in Question](https://019f9a10-ebb9-d1d5-839f-97e794bfd0ca.share.connect.posit.cloud/memos/feature_predictive_power_ml_llm.html) ### Steps to r\u2026"
+    },
+    {
+      "id": "I-59",
+      "number": 59,
+      "kind": "issue",
+      "title": "[Docs]: Add a New Research Memo Regarding Would multiple imputation of Q20/Q21 recover the full-cohort Q28 AUC while preserving the incremental car effect?",
+      "status": "closed",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/issues/59",
+      "createdAt": "2026-07-30T20:14:17Z",
+      "mergedAt": null,
+      "closedAt": "2026-08-05T22:05:18Z",
+      "isDraft": false,
+      "labels": [
+        "documentation"
+      ],
+      "excerpt": "### Which docs? Research memos (`memos/`) ### What's wrong or missing? ### NEW MEMO Question: _Would multiple imputation of Q20/Q21 recover the full-cohort Q28 AUC while preserving the incremental car effect?_ [URL WHERE MENTIONED](https://019f9a10-ebb9-d1d5-839f-97e794bfd0ca.sh\u2026"
+    },
+    {
+      "id": "I-60",
+      "number": 60,
+      "kind": "issue",
+      "title": "[Bug]: Flowchart Display on Persona Prompt Versions Memo",
+      "status": "open",
+      "theme": "personas",
+      "themeLabel": "Personas & prompts",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/issues/60",
+      "createdAt": "2026-07-30T20:19:52Z",
+      "mergedAt": null,
+      "closedAt": null,
+      "isDraft": false,
+      "labels": [
+        "bug"
+      ],
+      "excerpt": "### Summary Incorrect visualization or rendering of the flowchart on the Persona Prompt Versions v1 flowchart. ``` flowchart TB v1[v1_core_5] --> llama[Llama31_baseline] llama --> v2[v2_packaging_same_5] v2 --> v3[v3_plus_3_ablations] v3 --> export[1928_prompts_export] ``` [ACCE\u2026"
+    },
+    {
+      "id": "I-61",
+      "number": 61,
+      "kind": "issue",
+      "title": "[Feature]: Verify All Visualizations & Enhance Present Memo Formatting",
+      "status": "open",
+      "theme": "docs",
+      "themeLabel": "Docs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/issues/61",
+      "createdAt": "2026-07-30T21:22:38Z",
+      "mergedAt": null,
+      "closedAt": null,
+      "isDraft": false,
+      "labels": [
+        "enhancement"
+      ],
+      "excerpt": "### Problem / motivation ## PRIMARY ISSUE - Several inconsistent findings, results, improper visualizations, and formatting issues are identified in the presently published posit site. ### Proposed solution ## PROPOSED SOLUTION - PERFORM A FULL RERENDER OF ALL PAGES, PLEASE ENSU\u2026"
+    },
+    {
+      "id": "I-62",
+      "number": 62,
+      "kind": "issue",
+      "title": "UPDATE LLAMA 3.1_Instruct v3 Results",
+      "status": "closed",
+      "theme": "vllm",
+      "themeLabel": "vLLM / models",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/issues/62",
+      "createdAt": "2026-07-30T21:41:17Z",
+      "mergedAt": null,
+      "closedAt": "2026-08-05T22:05:19Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "Tier | Samples | Group MAE | Interpersonal MAE | Exact Acc (Group) | Exact Acc (IP) | Band Acc (Group) | Band Acc (IP) -- | -- | -- | -- | -- | -- | -- | -- demos | 241 | 6.66 | 5.22 | 4.98% | 10.79% | 22.82% | 46.89% employment | 241 | 6.05 | 4.67 | 5.81% | 12.86% | 25.31% | 52\u2026"
+    },
+    {
+      "id": "I-63",
+      "number": 63,
+      "kind": "issue",
+      "title": "UPDATE SCORING TO AGGREGATE SCORES OF EACH PERSONA TIER",
+      "status": "closed",
+      "theme": "personas",
+      "themeLabel": "Personas & prompts",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/issues/63",
+      "createdAt": "2026-07-30T21:47:23Z",
+      "mergedAt": null,
+      "closedAt": "2026-08-05T23:02:42Z",
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "TO ACHIEVE THESE EXACT RESULTS, you need to build a structured data pipeline that takes your raw LLM text outputs and transforms them into standard continuous and categorical metrics. Here is the exact set of cleaning and computing steps required to replicate this analysis: ###\u2026"
+    },
+    {
+      "id": "I-64",
+      "number": 64,
+      "kind": "issue",
+      "title": "SCORING STEPS",
+      "status": "open",
+      "theme": "vllm",
+      "themeLabel": "vLLM / models",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/issues/64",
+      "createdAt": "2026-07-30T21:50:00Z",
+      "mergedAt": null,
+      "closedAt": null,
+      "isDraft": false,
+      "labels": [],
+      "excerpt": "Here are the exact steps to clean the data and compute your final metrics based on this schema. ### **Phase 1: Parse the `prediction` Column** * **Load Data:** Read the CSV into a data frame (e.g., pandas). * **Extract JSON:** Iterate through the `prediction` column. Since Llama\u2026"
+    },
+    {
+      "id": "I-65",
+      "number": 65,
+      "kind": "issue",
+      "title": "## Update Changelog Writer",
+      "status": "open",
+      "theme": "infra",
+      "themeLabel": "Infra & tooling",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/issues/65",
+      "createdAt": "2026-08-05T21:45:25Z",
+      "mergedAt": null,
+      "closedAt": null,
+      "isDraft": false,
+      "labels": [
+        "documentation"
+      ],
+      "excerpt": "## Summary Initial `CHANGELOG.md` for the first weekly maintainer run. Covers all merged work on `main` from **2026-07-19 \u2192 2026-07-26**. ## Type - [x] Docs only ## Version bump - **Previous:** none (no prior changelog; package at `0.1.0` in `pyproject.toml`) - **New:** `0.2.0`\u2026"
+    },
+    {
+      "id": "I-66",
+      "number": 66,
+      "kind": "issue",
+      "title": "[Bug]: Stale ML Suite Viz",
+      "status": "open",
+      "theme": "ml",
+      "themeLabel": "ML baselines",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/issues/66",
+      "createdAt": "2026-08-05T22:04:32Z",
+      "mergedAt": null,
+      "closedAt": null,
+      "isDraft": false,
+      "labels": [
+        "bug"
+      ],
+      "excerpt": "### Summary Stale artifacts at [Link](https://019f9a10-ebb9-d1d5-839f-97e794bfd0ca.share.connect.posit.cloud/docs/ml_baselines.html) \u2b05\ufe0f ### Steps to reproduce N/A ### Expected vs actual Expected : Full ML Suite Enclusion Actual: 2 Models ### Area Quarto site / manuscript ### Env\u2026"
+    },
+    {
+      "id": "I-67",
+      "number": 67,
+      "kind": "issue",
+      "title": "Fix Sloppy Visualizations in Charts included in memos.",
+      "status": "open",
+      "theme": "docs",
+      "themeLabel": "Docs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/issues/67",
+      "createdAt": "2026-08-05T22:09:00Z",
+      "mergedAt": null,
+      "closedAt": null,
+      "isDraft": false,
+      "labels": [
+        "bug"
+      ],
+      "excerpt": "[LINK](https://019f9a10-ebb9-d1d5-839f-97e794bfd0ca.share.connect.posit.cloud/docs/secondary_rq_followup_experiments.html) \u2b05\ufe0f direct link to memo. Located under: `Extended follow-up experiments \u2014 demographics, nesting, and residual CA`"
+    },
+    {
+      "id": "I-68",
+      "number": 68,
+      "kind": "issue",
+      "title": "[Bug]: Poorly Formatted Visualizations",
+      "status": "open",
+      "theme": "secondary-rq",
+      "themeLabel": "Secondary RQs",
+      "author": "Exios66",
+      "url": "https://github.com/Exios66/psych755-jjb/issues/68",
+      "createdAt": "2026-08-05T22:23:52Z",
+      "mergedAt": null,
+      "closedAt": null,
+      "isDraft": false,
+      "labels": [
+        "bug"
+      ],
+      "excerpt": "### Summary Trashy Visualizations located \u25b6\ufe0f [MEMO LINK](https://019f9a10-ebb9-d1d5-839f-97e794bfd0ca.share.connect.posit.cloud/#q27-and-q28-as-traditional-ml-predictors-of-regular-transit) ### Steps to reproduce ```python order27 = [ \"1-2 rides in a typical day\", \"3-4 rides in\u2026"
     }
   ],
   "edges": [
@@ -1313,6 +1581,72 @@
       "type": "timeline"
     },
     {
+      "id": "timeline-51-60",
+      "source": "PR-51",
+      "target": "I-60",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-60-61",
+      "source": "I-60",
+      "target": "I-61",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-61-64",
+      "source": "I-61",
+      "target": "I-64",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-64-65",
+      "source": "I-64",
+      "target": "I-65",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-65-66",
+      "source": "I-65",
+      "target": "I-66",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-66-58",
+      "source": "I-66",
+      "target": "I-58",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-58-59",
+      "source": "I-58",
+      "target": "I-59",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-59-62",
+      "source": "I-59",
+      "target": "I-62",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-62-67",
+      "source": "I-62",
+      "target": "I-67",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-67-68",
+      "source": "I-67",
+      "target": "I-68",
+      "type": "timeline"
+    },
+    {
+      "id": "timeline-68-63",
+      "source": "I-68",
+      "target": "I-63",
+      "type": "timeline"
+    },
+    {
       "id": "relates-1-3",
       "source": "PR-1",
       "target": "PR-3",
@@ -1334,6 +1668,20 @@
       "theme": "docs"
     },
     {
+      "id": "relates-24-61",
+      "source": "PR-24",
+      "target": "I-61",
+      "type": "relates",
+      "theme": "docs"
+    },
+    {
+      "id": "relates-61-67",
+      "source": "I-61",
+      "target": "I-67",
+      "type": "relates",
+      "theme": "docs"
+    },
+    {
       "id": "relates-1-5",
       "source": "PR-1",
       "target": "PR-5",
@@ -1351,6 +1699,20 @@
       "id": "relates-3-24",
       "source": "PR-3",
       "target": "PR-24",
+      "type": "relates",
+      "theme": "docs"
+    },
+    {
+      "id": "relates-3-61",
+      "source": "PR-3",
+      "target": "I-61",
+      "type": "relates",
+      "theme": "docs"
+    },
+    {
+      "id": "relates-5-61",
+      "source": "PR-5",
+      "target": "I-61",
       "type": "relates",
       "theme": "docs"
     },
@@ -1414,6 +1776,20 @@
       "id": "relates-46-54",
       "source": "PR-46",
       "target": "PR-54",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-54-60",
+      "source": "PR-54",
+      "target": "I-60",
+      "type": "relates",
+      "theme": "personas"
+    },
+    {
+      "id": "relates-60-63",
+      "source": "I-60",
+      "target": "I-63",
       "type": "relates",
       "theme": "personas"
     },
@@ -1642,6 +2018,20 @@
       "theme": "ml"
     },
     {
+      "id": "relates-41-58",
+      "source": "PR-41",
+      "target": "I-58",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
+      "id": "relates-58-66",
+      "source": "I-58",
+      "target": "I-66",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
       "id": "relates-7-13",
       "source": "PR-7",
       "target": "PR-13",
@@ -1677,6 +2067,27 @@
       "theme": "ml"
     },
     {
+      "id": "relates-37-58",
+      "source": "PR-37",
+      "target": "I-58",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
+      "id": "relates-37-66",
+      "source": "PR-37",
+      "target": "I-66",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
+      "id": "relates-41-66",
+      "source": "PR-41",
+      "target": "I-66",
+      "type": "relates",
+      "theme": "ml"
+    },
+    {
       "id": "relates-8-15",
       "source": "PR-8",
       "target": "PR-15",
@@ -1701,6 +2112,41 @@
       "id": "relates-14-56",
       "source": "PR-14",
       "target": "PR-56",
+      "type": "relates",
+      "theme": "vllm"
+    },
+    {
+      "id": "relates-56-62",
+      "source": "PR-56",
+      "target": "I-62",
+      "type": "relates",
+      "theme": "vllm"
+    },
+    {
+      "id": "relates-62-64",
+      "source": "I-62",
+      "target": "I-64",
+      "type": "relates",
+      "theme": "vllm"
+    },
+    {
+      "id": "relates-14-62",
+      "source": "PR-14",
+      "target": "I-62",
+      "type": "relates",
+      "theme": "vllm"
+    },
+    {
+      "id": "relates-14-64",
+      "source": "PR-14",
+      "target": "I-64",
+      "type": "relates",
+      "theme": "vllm"
+    },
+    {
+      "id": "relates-56-64",
+      "source": "PR-56",
+      "target": "I-64",
       "type": "relates",
       "theme": "vllm"
     },
@@ -1824,6 +2270,20 @@
       "theme": "secondary-rq"
     },
     {
+      "id": "relates-57-59",
+      "source": "PR-57",
+      "target": "I-59",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-59-68",
+      "source": "I-59",
+      "target": "I-68",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
       "id": "relates-16-18",
       "source": "PR-16",
       "target": "PR-18",
@@ -1936,6 +2396,34 @@
       "theme": "secondary-rq"
     },
     {
+      "id": "relates-49-59",
+      "source": "PR-49",
+      "target": "I-59",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-55-59",
+      "source": "PR-55",
+      "target": "I-59",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-55-68",
+      "source": "PR-55",
+      "target": "I-68",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
+      "id": "relates-57-68",
+      "source": "PR-57",
+      "target": "I-68",
+      "type": "relates",
+      "theme": "secondary-rq"
+    },
+    {
       "id": "relates-42-43",
       "source": "PR-42",
       "target": "PR-43",
@@ -1957,6 +2445,13 @@
       "theme": "infra"
     },
     {
+      "id": "relates-51-65",
+      "source": "PR-51",
+      "target": "I-65",
+      "type": "relates",
+      "theme": "infra"
+    },
+    {
       "id": "relates-42-45",
       "source": "PR-42",
       "target": "PR-45",
@@ -1974,6 +2469,20 @@
       "id": "relates-43-51",
       "source": "PR-43",
       "target": "PR-51",
+      "type": "relates",
+      "theme": "infra"
+    },
+    {
+      "id": "relates-43-65",
+      "source": "PR-43",
+      "target": "I-65",
+      "type": "relates",
+      "theme": "infra"
+    },
+    {
+      "id": "relates-45-65",
+      "source": "PR-45",
+      "target": "I-65",
       "type": "relates",
       "theme": "infra"
     }
