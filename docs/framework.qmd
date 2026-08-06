@@ -12,7 +12,7 @@ Estimate whether LLM-predicted communication apprehension (CA) from demographic 
 
 Private full-cohort inputs live in `../sibling_data/` (File A + File B stacked Prolific waves; File C Qualtrics; merge on `Q0`). Path resolution also accepts staged cloud copies (`/tmp/sibling_data` or `CA_SIBLING_DATA`). Excerpt fixtures under `data/excerpts/` are for unit tests only — Posit Connect pages never display excerpt statistics (they use full-cohort runs or committed `artifacts/posit_full_cohort/`).
 
-:::.
+:::
 
 ```{mermaid}
 flowchart LR
@@ -116,7 +116,7 @@ Group items: `Q1–Q6`. Interpersonal items: `Q13–Q18`.
 ## Persona tiers
 
 Cumulative information revealed to the model as **natural-language, second-person
-digital-twin narratives** (AI Terrarium / ICA 2026 framing — “You are a …”), not
+digital-twin narratives** (AI Terrarium framing [@chuang2026aiterrarium] — “You are a …”), not
 structured questionnaire checklists:
 
 **Core ladder (RQ1–RQ3):**
