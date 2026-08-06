@@ -26,7 +26,7 @@ Open a file on GitHub → select lines → press **`y`** to pin the URL to a com
 - **The component I "owned" and that I summarize here is best described as** the
   end-to-end CA persona research framework: Prolific↔Qualtrics loading and
   cleaning, PRCA ground-truth scoring, tiered / full persona prompts, Ollama /
-  OpenRouter / mock LLM clients, evaluation (exact score, band, distance), ML
+  OpenRouter LLM clients, evaluation (exact score, band, distance), ML
   baselines, ML-vs-LLM comparison, vLLM digital-twin inference bridge, and the
   secondary observational RQs (transit↔CA, geo→transit RF, CA→transit RF), plus
   the Quarto manuscript site.
@@ -59,4 +59,5 @@ Open a file on GitHub → select lines → press **`y`** to pin the URL to a com
 By adding your name below, each member affirms that the account of their own
 contribution is accurate.
 
-- [x] Jack J. Burleson (`Exios66`) — 2026-07-25
+- [x] Jack J. Burleson (`Exios66`) — 2026-08-05
+- [x] Jack J. Burleson (`jjburleson`) — 2026-08-05
