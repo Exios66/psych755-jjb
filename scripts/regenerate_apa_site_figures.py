@@ -47,6 +47,12 @@ PREVALENCE = float(SECONDARY["prevalence"])
 def _save(fig: plt.Figure, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()
+    from ca_personas.viz_style import fit_text_within_axes
+
+    for ax in fig.axes:
+        texts = [t for t in ax.texts if t.get_text().strip()]
+        if texts:
+            fit_text_within_axes(ax, texts)
     fig.savefig(path, dpi=300, bbox_inches="tight", facecolor="white")
     plt.close(fig)
     print(f"wrote {path.relative_to(ROOT)}")
