@@ -34,7 +34,7 @@ Table @tbl-demographics_predict_transit-1 reports the prevalence gradients.
 | Student status | Yes | 34 | 50.0% |
 | Student status | No | 190 | 41.1% |
 
-: Feature / Level / n. {#tbl-demographics_predict_transit-1}
+: Feature / Level / sample size. {#tbl-demographics_predict_transit-1}
 
 
 ### Performance

@@ -22,7 +22,7 @@ We restrict to respondents with complete **`Q28` + `Q20` + `Q21`** (n = **149**;
 
 ### Nested CV performance (common n = 149)
 
-Table @tbl-q28–1 reports the nested CV performance on the common sample.
+Table @tbl-q28-1 reports the nested CV performance on the common sample.
 
 | Model | ROC-AUC | Avg. precision | Balanced acc. | F1 |
 |---|---:|---:|---:|---:|
@@ -32,7 +32,7 @@ Table @tbl-q28–1 reports the nested CV performance on the common sample.
 | `Q21` only | 0.631 | — | — | — |
 | Chance | 0.500 | — | 0.500 | — |
 
-: `Q28` conditioned on car access. {#tbl-q28–1}
+: `Q28` conditioned on car access. {#tbl-q28-1}
 
 
 Permutation importance in `Q28`+`Q21`: `Q28` mean $\Delta$AUC ≈ 0.15 · `Q21` ≈ 0.13.

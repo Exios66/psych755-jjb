@@ -20,7 +20,7 @@ Using the committed GPU export packages (`exports/v2/`, `exports/v3/`; full matc
 
 ## v2 results (signal-first packaging, `v2_enhanced` decode)
 
-Same five-tier topology as v1 (`demos` → `employment` → `geo` → `transit` → `full`), with signal-first packaging: 1-decimal geo, `Q27`/`Q29` skipped when Never, `Q26` → `Q28` ordering, independent group/IP subscale ask, and a mobility anti-bleed system clause. Decoding: `temp` 0.3, `top_p` 0.95, `rep` 1.05, `seed` 42, `guided JSON`. 1,205 prompts per model (Table @tbl-v23–1).
+Same five-tier topology as v1 (`demos` → `employment` → `geo` → `transit` → `full`), with signal-first packaging: 1-decimal geo, `Q27`/`Q29` skipped when Never, `Q26` → `Q28` ordering, independent group/IP subscale ask, and a mobility anti-bleed system clause. Decoding: `temp` 0.3, `top_p` 0.95, `rep` 1.05, `seed` 42, `guided JSON`. 1,205 prompts per model (Table @tbl-v23-1).
 
 | Model | MAE group ↓ | MAE IP ↓ | Band G | Band IP | Transit IP | Verdict vs v1 |
 |---|---:|---:|---:|---:|---:|---|
@@ -28,14 +28,14 @@ Same five-tier topology as v1 (`demos` → `employment` → `geo` → `transit` 
 | Llama-3.2–3B-Instruct | 5.73 | 6.07 | 32.2% | 42.3% | 5.77 | IP worse than v1 (5.35); no collapse |
 | Llama-3.1–8B-Instruct | 5.99 | 7.63 | 29.9% | 25.7% | 8.23 | **IP collapse persists; base IP worse (demos 4.67 → 8.45)** |
 
-: v2/v3 prompt version performance comparison. {#tbl-v23–1}
+: v2/v3 prompt version performance comparison. {#tbl-v23-1}
 
 
 DeepSeek v2 is the best live result in the project (pooled group MAE 5.02, below its v1 5.22) and stays flat at transit (IP 5.09, signed error near zero). Llama-3.2–3B's v1 interpersonal win does not replicate under v2 packaging/decode (pooled IP 5.35 → 6.07). For Llama-3.1, signal-first packaging and the mobility anti-bleed clause do not stop the transit collapse (transit IP 8.23 ≈ v1 8.17), and the independent-subscale ask shifts its *base* interpersonal calibration (demos IP 4.67 → **8.45**). Packaging therefore changes error patterns in **model-specific** directions.
 
 ## v3 results (8-tier greedy ablation)
 
-Adds three parallel single-cue tiers on the demos→employment→geo base — `v3_rideshare` (`Q28` only), `v3_public_transit` (`Q26` only), `v3_voice` (Q18.1/`Q19` only) — for eight tiers per model (1,928 prompts). Greedy decode; the committed `v3/` packages are byte-identical to the archived `prior_v3_greedy/` runs (Table @tbl-v23–2).
+Adds three parallel single-cue tiers on the demos→employment→geo base — `v3_rideshare` (`Q28` only), `v3_public_transit` (`Q26` only), `v3_voice` (Q18.1/`Q19` only) — for eight tiers per model (1,928 prompts). Greedy decode; the committed `v3/` packages are byte-identical to the archived `prior_v3_greedy/` runs (Table @tbl-v23-2).
 
 | Model | MAE group ↓ | MAE IP ↓ | Band G | Band IP | Parse | Notes |
 |---|---:|---:|---:|---:|---:|---|
@@ -43,14 +43,14 @@ Adds three parallel single-cue tiers on the demos→employment→geo base — `v
 | Llama-3.2–3B-Instruct | 5.72 | 6.81 | 41.8% | 40.6% | 100% | IP worse than v1 (5.35) under v3 packaging |
 | Llama-3.3–70B-Instruct-AWQ | 6.01 | 4.61† | 26.5% | 52.6%† | 100% | †Constant prior `(18, 12)` persists — not person-tracking |
 
-: Model / MAE group ↓ / MAE IP ↓. {#tbl-v23–2}
+: Model / MAE group ↓ / MAE IP ↓. {#tbl-v23-2}
 
 
 The 8-tier pooling mixes the collapsed `transit`/`full` tiers with stable ablations, so pooled IP is pulled back toward v1 (5.76). Llama-3.2–3B base remained a 0% JSON parse (as in v1) and is excluded.
 
 ### Llama-3.1 per-tier ablation (IP MAE)
 
-Table @tbl-v23–3 reports Llama-3.1's per-tier MAE and band metrics across the v3 ablation ladder.
+Table @tbl-v23-3 reports Llama-3.1's per-tier MAE and band metrics across the v3 ablation ladder.
 
 | Tier | Content | MAE group ↓ | MAE IP ↓ | Band IP |
 |---|---|---|---:|---:|
@@ -62,7 +62,7 @@ Table @tbl-v23–3 reports Llama-3.1's per-tier MAE and band metrics across the 
 | `transit` | geo + full mobility bundle | 6.07 | **7.77** | 23.7% |
 | `full` | transit + free-response voice | 5.63 | 7.22 | 29.9% |
 
-: Tier / Content / MAE group ↓. {#tbl-v23–3}
+: Tier / Content / MAE group ↓. {#tbl-v23-3}
 
 
 **No single cue collapses Llama-3.1's interpersonal recovery — only the bundled mobility dump does.** On group MAE, `v3_rideshare` (5.86) beats the kitchen-sink `transit` tier (6.07), aligning with the tabular `Q28`-dominance result (`Q28` reverse-prediction AUC 0.762; see [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd)). `v3_public_transit` (6.04) and `v3_voice` (5.64) group MAE stay near the geo base (6.02).

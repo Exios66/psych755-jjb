@@ -60,7 +60,7 @@ Table @tbl-rc-3 reports the within-`Q28`-stratum contrasts.
 | 4–8 days/month | −2.62 | .22 | Underpowered |
 | 8+ days/month | — | — | Nearly all regular |
 
-: `Q28` level / Group CA Δ (reg − not) / Welch *p. {#tbl-rc-3}
+: `Q28` level / Group CA Δ (reg − not) / Welch *p*. {#tbl-rc-3}
 
 
 ### Interpretation

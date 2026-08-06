@@ -21,7 +21,7 @@ Full-cohort vLLM run (**n = 241**; **1,205** prompts; parse **100%**; ~21.0 samp
 
 ### Overall vs Llama-3.1–8B (same prompts)
 
-Table @tbl-v1l32–1 compares 3B-Instruct against 8B-Instruct on the same prompts.
+Table @tbl-v1l32-1 compares 3B-Instruct against 8B-Instruct on the same prompts.
 
 | Metric (all tiers) | 3B-Instruct | 8B-Instruct |
 |---|---:|---:|
@@ -31,12 +31,12 @@ Table @tbl-v1l32–1 compares 3B-Instruct against 8B-Instruct on the same prompt
 | Band acc interpersonal | 30.0% | **40.2%** |
 | Exact group / IP | 9.1% / 7.7% | 6.1% / 9.0% |
 
-: Llama-3.2–3B tier-level performance. {#tbl-v1l32–1}
+: Llama-3.2–3B tier-level performance. {#tbl-v1l32-1}
 
 
 ### Metrics by tier
 
-Table @tbl-v1l32–2 reports MAE and band metrics by tier.
+Table @tbl-v1l32-2 reports MAE and band metrics by tier.
 
 | Tier | MAE G | MAE IP | Band G | Band IP | Δ MAE G vs demos | Δ MAE IP vs demos |
 |---|---:|---:|---:|---:|---:|---:|
@@ -46,7 +46,7 @@ Table @tbl-v1l32–2 reports MAE and band metrics by tier.
 | transit | 5.47 | 5.65 | 52.7% | 29.5% | **−0.12** | +0.58 |
 | full | **5.29** | 5.53 | 50.6% | **31.5%** | **−0.29** | +0.46 |
 
-: Tier / MAE G / MAE IP. {#tbl-v1l32–2}
+: Tier / MAE G / MAE IP. {#tbl-v1l32-2}
 
 
 ### Band confusion (pooled) — key pattern

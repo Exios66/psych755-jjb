@@ -15,14 +15,14 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Using the Prolific↔Qualtrics matched analytic cohort (File A + File B joined to File C; base **n = 241** with complete PRCA and usable `Q26`), we define **regular transit** as `Q26` ∈ {`4–8 days a month`, `8 or more days a month`} (weekly-or-more). We then fit balanced ****Random Forest**s** ([@breiman2001]) with stratified 5-fold CV (`random_state=42`) using categorical one-hot encodings of the survey items in Table @tbl-q27q28–1:
+Using the Prolific↔Qualtrics matched analytic cohort (File A + File B joined to File C; base **n = 241** with complete PRCA and usable `Q26`), we define **regular transit** as `Q26` ∈ {`4–8 days a month`, `8 or more days a month`} (weekly-or-more). We then fit balanced ****Random Forest**s** ([@breiman2001]) with stratified 5-fold CV (`random_state=42`) using categorical one-hot encodings of the survey items in Table @tbl-q27q28-1:
 
 | Item | Stem (abridged) | Role |
 |---|---|---|
 | **`Q27`** | On a typical day of public transportation use, how many rides do you take? | Within-mode **intensity** |
 | **`Q28`** | In the last three months on how many days did you use ride-share platforms? | Cross-mode **ride-share exposure** |
 
-: `Q27` and `Q28` survey items. {#tbl-q27q28–1}
+: `Q27` and `Q28` survey items. {#tbl-q27q28-1}
 
 
 **Short answer:** **`Q28`** recovers CV ROC-AUC = **0.762** (AP = **0.689**; balanced accuracy = **0.730**). **`Q27`** recovers AUC = **0.589**—matching the CA benchmark (0.590 [@mccroskey1970])—and the joint `Q27`+`Q28` forest reaches AUC = **0.761** (Δ = −0.001 vs `Q28` alone). Ride-share days, not transit-day intensity, carry the usable discrimination.
@@ -35,7 +35,7 @@ Figure @fig-q27q28-q27-q28-predicts-transit plots `Q27` and `Q28` prevalence and
 
 ### Descriptive gradients
 
-**`Q27` (n = 239).** Respondents reporting more rides on a typical transit day are more often weekly+ riders, but most of the sample sits in the lowest intensity bin (Table @tbl-q27q28–2):
+**`Q27` (n = 239).** Respondents reporting more rides on a typical transit day are more often weekly+ riders, but most of the sample sits in the lowest intensity bin (Table @tbl-q27q28-2):
 
 | `Q27` | n | % regular |
 |---|---:|---:|
@@ -44,10 +44,10 @@ Figure @fig-q27q28-q27-q28-predicts-transit plots `Q27` and `Q28` prevalence and
 | 5–6 rides / typical day | 3 | 100% |
 | 7+ rides / typical day | 1 | 100% |
 
-: `Q27` intensity distribution by regular transit status. {#tbl-q27q28–2}
+: `Q27` intensity distribution by regular transit status. {#tbl-q27q28-2}
 
 
-**`Q28` (n = 241).** Regular-transit prevalence rises steeply with ride-share days (Table @tbl-q27q28–3):
+**`Q28` (n = 241).** Regular-transit prevalence rises steeply with ride-share days (Table @tbl-q27q28-3):
 
 | `Q28` | n | % regular |
 |---|---:|---:|
@@ -57,12 +57,12 @@ Figure @fig-q27q28-q27-q28-predicts-transit plots `Q27` and `Q28` prevalence and
 | 4–8 days a month | 42 | 69.0% |
 | 8 or more days a month | 17 | **94.1%** |
 
-: `Q28` ride-share days by regular transit status. {#tbl-q27q28–3}
+: `Q28` ride-share days by regular transit status. {#tbl-q27q28-3}
 
 
 ### Random Forest performance (stratified CV)
 
-Table @tbl-q27q28–4 reports the stratified-CV performance for the `Q27`/`Q28` forests.
+Table @tbl-q27q28-4 reports the stratified-CV performance for the `Q27`/`Q28` forests.
 
 | Model | n | ROC-AUC | Avg. precision | Balanced acc. | F1 |
 |---|---:|---:|---:|---:|---:|
@@ -74,7 +74,7 @@ Table @tbl-q27q28–4 reports the stratified-CV performance for the `Q27`/`Q28` 
 | Geo RF benchmark | 241 | 0.551 | — | — | — |
 | Chance | — | 0.500 | — | 0.500 | — |
 
-: Random Forest performance for `Q27` and `Q28` predicting regular transit. {#tbl-q27q28–4}
+: Random Forest performance for `Q27` and `Q28` predicting regular transit. {#tbl-q27q28-4}
 
 
 Permutation importance in the joint **`Q27` + `Q28`** forest ranks **`Q28`** (mean $\Delta$AUC = 0.240) far above **`Q27`** (0.041). Adding `Q29` (rides on a typical ride-share day) to `Q28` does not improve AUC over `Q28` alone (rideshare family AUC = **0.745**).

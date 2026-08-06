@@ -122,7 +122,7 @@ When a model says “**low**”, “**moderate**”, or “**high**”, which nu
 | DeepSeek v2 | moderate (14–19) | 162 | 15.01 (14–18) | 15.06 | 4.73 | 0.26 |
 | DeepSeek v2 | high (20–30) | **0** | — | — | — | — |
 
-: Agent / Predicted band / n. {#tbl-fp-5}
+: Agent / Predicted band / sample-size. {#tbl-fp-5}
 
 
 Figure @fig-fp-fig-band-score-profiles shows the predicted-score profiles inside each estimated band.
@@ -157,7 +157,9 @@ Figure @fig-fp-fig-band-discrimination-auc plots the low-vs-high ROC-AUC across 
 
 Figures @fig-fp-fig-confusion-rf-group and @fig-fp-fig-confusion-llm-group show the RF and DeepSeek v2 band confusion matrices.
 
-![RF band confusion — Group CA (transit)](figures/fig_confusion_rf_group.png){#fig-fp-fig-confusion-rf-group} ![DeepSeek v2 band confusion — Group CA (transit)](figures/fig_confusion_llm_group.png){#fig-fp-fig-confusion-llm-group}
+![RF band confusion — Group CA (transit)](figures/fig_confusion_rf_group.png){#fig-fp-fig-confusion-rf-group}
+
+![DeepSeek v2 band confusion — Group CA (transit)](figures/fig_confusion_llm_group.png){#fig-fp-fig-confusion-llm-group}
 
 :::{.callout-important}
 

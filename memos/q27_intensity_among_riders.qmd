@@ -22,7 +22,7 @@ Among **101** regular riders, 35 (34.7%) report high intensity (3–4 / 5–6 / 
 
 ### `Q27` distribution among weekly+ riders
 
-Table @tbl-q27–1 shows the `Q27` distribution among weekly+ riders.
+Table @tbl-q27-1 shows the `Q27` distribution among weekly+ riders.
 
 | `Q27` | n |
 |---|---:|
@@ -31,12 +31,12 @@ Table @tbl-q27–1 shows the `Q27` distribution among weekly+ riders.
 | 5–6 rides in a typical day | 3 |
 | 7 or more rides in a typical day | 1 |
 
-: `Q27` intensity among regular riders. {#tbl-q27–1}
+: `Q27` intensity among regular riders. {#tbl-q27-1}
 
 
 ### Candidate predictors of high intensity
 
-Table @tbl-q27–2 reports the candidate models for high intensity.
+Table @tbl-q27-2 reports the candidate models for high intensity.
 
 | Model | n | ROC-AUC |
 |---|---:|---:|
@@ -47,7 +47,7 @@ Table @tbl-q27–2 reports the candidate models for high intensity.
 | Employment status | 101 | 0.447 |
 | Chance | — | 0.500 |
 
-: Model / n / ROC-AUC. {#tbl-q27–2}
+: Model / n / ROC-AUC. {#tbl-q27-2}
 
 
 ### Interpretation

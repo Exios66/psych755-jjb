@@ -21,7 +21,7 @@ Full-cohort vLLM run on the matched Prolific↔Qualtrics sample (**n = 241**; **
 
 ### Overall vs chance / ML floor
 
-Table @tbl-v1l31–1 situates observed metrics against exact/band chance and the ML floor.
+Table @tbl-v1l31-1 situates observed metrics against exact/band chance and the ML floor.
 
 | Metric | Observed | Reference |
 |---|---:|---|
@@ -29,12 +29,12 @@ Table @tbl-v1l31–1 situates observed metrics against exact/band chance and the
 | Band group / IP | 28.8% / **40.2%** | ~33% band chance |
 | MAE group / IP | 5.92 / 5.82 | ML floor group ≈ 4.49 |
 
-: Llama-3.1–8B tier-level performance. {#tbl-v1l31–1}
+: Llama-3.1–8B tier-level performance. {#tbl-v1l31-1}
 
 
 ### Metrics by tier
 
-Table @tbl-v1l31–2 reports MAE and band metrics by tier.
+Table @tbl-v1l31-2 reports MAE and band metrics by tier.
 
 | Tier | MAE G | MAE IP | Band G | Band IP | Mean err IP |
 |---|---:|---:|---:|---:|---:|
@@ -44,7 +44,7 @@ Table @tbl-v1l31–2 reports MAE and band metrics by tier.
 | transit | **5.68** | **8.17** | 29.9% | **15.4%** | **+6.52** |
 | full | 5.84 | 6.92 | **37.8%** | 29.0% | +2.52 |
 
-: Tier / MAE G / MAE IP. {#tbl-v1l31–2}
+: Tier / MAE G / MAE IP. {#tbl-v1l31-2}
 
 
 ### RQ verdicts

@@ -21,7 +21,7 @@ Full-cohort vLLM export on the matched Prolific↔Qualtrics sample (**n = 241**;
 
 ### Collapse diagnostics
 
-Table @tbl-v1l70–1 reports the mode-collapse diagnostics.
+Table @tbl-v1l70-1 reports the mode-collapse diagnostics.
 
 | Signal | Value |
 |---|---:|
@@ -30,12 +30,12 @@ Table @tbl-v1l70–1 reports the mode-collapse diagnostics.
 | Share pred_IP = 12 | **93.2%** |
 | Mean signed error (G / IP) | **+3.51** / **−2.10** |
 
-: Llama-3.3–70B tier-level performance. {#tbl-v1l70–1}
+: Llama-3.3–70B tier-level performance. {#tbl-v1l70-1}
 
 
 ### Metrics by tier
 
-Table @tbl-v1l70–2 reports MAE and band metrics by tier.
+Table @tbl-v1l70-2 reports MAE and band metrics by tier.
 
 | Tier | MAE G | MAE IP | Band G | Band IP | Mean err G | Mean err IP |
 |---|---:|---:|---:|---:|---:|---:|
@@ -45,7 +45,7 @@ Table @tbl-v1l70–2 reports MAE and band metrics by tier.
 | transit | 6.08 | 4.69 | 26.1% | 51.9% | +3.58 | −2.01 |
 | full | **5.83** | **4.51** | 27.0% | **53.5%** | +3.32 | −2.28 |
 
-: Tier / MAE G / MAE IP. {#tbl-v1l70–2}
+: Tier / MAE G / MAE IP. {#tbl-v1l70-2}
 
 
 ### RQ verdicts

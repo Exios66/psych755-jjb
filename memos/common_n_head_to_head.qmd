@@ -22,7 +22,7 @@ Requiring complete Age, Sex, Student status, Country, Employment, `Q20`/`Q21`, `
 
 ### Equal-*N* CV ranking (n = 139)
 
-Table @tbl-cn2–1 reports the equal-*N* CV ranking across feature families.
+Table @tbl-cn2-1 reports the equal-*N* CV ranking across feature families.
 
 | Feature family | ROC-AUC |
 |---|---:|
@@ -35,7 +35,7 @@ Table @tbl-cn2–1 reports the equal-*N* CV ranking across feature families.
 | Age + Sex + Student | 0.511 |
 | Chance / prevalence | 0.500 |
 
-: Common-N fair ranking comparison. {#tbl-cn2–1}
+: Common-N fair ranking comparison. {#tbl-cn2-1}
 
 
 ### Interpretation
