@@ -14,13 +14,15 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-We restrict to respondents with complete **`Q28` + `Q20` + `Q21`** (n = **149**; 58 regular) so nested models share one sample, then compare stratified CV Random Forests (`seed=42`).
+We restrict to respondents with complete **`Q28` + `Q20` + `Q21`** (n = **149**; 58 regular) so nested models share one sample, then compare stratified CV Random Forests ([@breiman2001]; `seed=42`).
 
-**Short answer:** **Yes—`Q28` retains lift**, and car access adds incremental discrimination. On the common frame, `Q28` alone AUC ≈ **0.665**; `Q28`+`Q21` rises to ≈ **0.730** (+0.066). `Q21` alone is ≈ 0.631.
+**Short answer:** **Yes—`Q28` retains lift**, and car access adds incremental discrimination. On the common frame, `Q28` alone AUC ≈ **0.665**; `Q28`+`Q21` rises to ≈ **0.730** (+0.066). `Q21` alone is ≈ 0.631 (Figure @fig-q28-nested-q28-car-followup).
 
 ![Nested `Q28`|car AUC comparison](figures/nested_q28_car_followup_memo.png){#fig-q28-nested-q28-car-followup}
 
 ### Nested CV performance (common n = 149)
+
+Table @tbl-q28–1 reports the nested CV performance on the common sample.
 
 | Model | ROC-AUC | Avg. precision | Balanced acc. | F1 |
 |---|---:|---:|---:|---:|

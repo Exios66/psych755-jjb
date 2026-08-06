@@ -11,7 +11,7 @@ bibliography: ../references.bib
 
 ## Question
 
-Given only a user’s **demographics, employment, and geography** (and, in a second arm, their **CA scores**), can models estimate (1) whether they are a **regular public-transit rider** and (2) **how much** public transit they use — when every transit / ride-share / car survey answer is **held out** of the features and persona prompt?
+Given only a user’s **demographics, employment, and geography** (and, in a second arm, their **CA scores** [@mccroskey1970]), can models estimate (1) whether they are a **regular public-transit rider** and (2) **how much** public transit they use — when every transit / ride-share / car survey answer is **held out** of the features and persona prompt?
 
 ## Why this focus
 
@@ -22,12 +22,14 @@ Primary persona work asks whether *transit cues help predict CA*. Here the twin 
 - **Hold-out:** `Q26`, `Q27`, `Q28`, `Q29`, `Q20`, `Q21`, `Q19`  
 - **TF1 features:** Age, Sex, Country, Student, Employment, lat/long (± group & interpersonal CA)  
 - **TF2 features:** same profile + CA → `Q26` ordinal; `Q27` among reporters  
-- **Model:** balanced **Random Forest**, stratified 5-fold CV  
+- **Model:** balanced **Random Forest** ([@breiman2001]), stratified 5-fold CV  
 - **Sample:** complete-case n = **224** (of 241 analytic) for profile specs  
 
 CLI: `ca-personas transit-focus` · artifacts `outputs/transit_focus/` · LLM prompts under `persona_prompts/`.
 
 ## Results summary
+
+Table @tbl-tf-1 reports the transit-focus regular-use and intensity results.
 
 | Spec | n | Metric | Value |
 |---|---:|---|---:|

@@ -14,13 +14,15 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Using the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26`; n = **224** with complete Age/Sex/Student after cleaning `DATA_EXPIRED` student values), we fit a mixed balanced **Random Forest** (Age numeric; Sex & Student one-hot) with stratified 5-fold CV (`seed=42`).
+Using the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26`; n = **224** with complete Age/Sex/Student after cleaning `DATA_EXPIRED` student values), we fit a mixed balanced **Random Forest** ([@breiman2001]; Age numeric; Sex & Student one-hot) with stratified 5-fold CV (`seed=42`).
 
-**Short answer:** Demographics are a **modest but real** predictor (CV ROC-AUC ≈ **0.618**)—above chance (0.50), geo (≈0.55), and the CA benchmark (≈0.59). **Age dominates**; Sex and Student status contribute less.
+**Short answer:** Demographics are a **modest but real** predictor (CV ROC-AUC ≈ **0.618**)—above chance (0.50), geo (≈0.55), and the CA benchmark (≈0.59). **Age dominates**; Sex and Student status contribute less. Figure @fig-demographics_predict_transit-demographics-followup shows the prevalence gradients and ROC curve.
 
 ![Demographics prevalence and ROC](figures/demographics_followup_memo.png){#fig-demographics_predict_transit-demographics-followup}
 
 ### Prevalence gradients
+
+Table @tbl-demographics_predict_transit-1 reports the prevalence gradients.
 
 | Feature | Level | n | % regular |
 |---|---|---:|---:|
@@ -36,6 +38,8 @@ Using the Prolific↔Qualtrics matched analytic definition (weekly+ `Q26`; n = *
 
 
 ### Performance
+
+Table @tbl-demographics_predict_transit-2 reports the CV performance.
 
 | Model | n | ROC-AUC | Avg. precision | Balanced acc. | F1 |
 |---|---:|---:|---:|---:|---:|

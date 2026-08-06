@@ -1,6 +1,9 @@
-"""APA-aligned matplotlib helpers for Quarto / Posit figures.
+"""APA-aligned figure helpers built on seaborn (matplotlib backend).
 
-Follows APA 7 figure conventions for student manuscripts:
+Figures are rendered with **seaborn** — which sits on matplotlib — and then
+styled through ``apply_apa_style()`` to align closely with APA 7 figure
+conventions for student manuscripts:
+
 - sans-serif labels (8–14 pt)
 - no chartjunk (no background grid, no in-figure title)
 - high-contrast grayscale / hatch patterns (print-safe)
@@ -15,6 +18,10 @@ from typing import Sequence
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import seaborn as sns
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
 
 from ca_personas.viz_style import fit_text_within_axes
 
@@ -25,7 +32,8 @@ APA_HATCHES = ["", "///", "\\\\\\", "xxx", "...", "---"]
 
 
 def apply_apa_style() -> None:
-    """Set global matplotlib rcParams for APA-like figures."""
+    """Set seaborn's white theme, then layer APA-compatible matplotlib rcParams."""
+    sns.set_theme(style="white")
     mpl.rcParams.update(
         {
             "font.family": "sans-serif",
@@ -71,39 +79,50 @@ def grouped_bars(
     annotate: bool = True,
     ylim: tuple[float, float] | None = None,
 ) -> plt.Axes:
-    """Grouped bar chart with grayscale fills + hatches (APA-friendly)."""
+    """Grouped bar chart (seaborn ``barplot``) with grayscale fills + hatches."""
     apply_apa_style()
     cats = list(categories)
     names = list(series.keys())
-    x = np.arange(len(cats), dtype=float)
     n = max(len(names), 1)
     width = min(0.8 / n, 0.35)
-    offsets = (np.arange(n) - (n - 1) / 2) * width
 
-    for i, name in enumerate(names):
-        vals = np.asarray(series[name], dtype=float)
-        bars = ax.bar(
-            x + offsets[i],
-            vals,
-            width=width * 0.95,
-            label=name,
-            color=APA_FILLS[i % len(APA_FILLS)],
-            edgecolor="black",
-            linewidth=0.8,
-            hatch=APA_HATCHES[i % len(APA_HATCHES)],
-        )
-        if annotate:
-            for rect, v in zip(bars, vals):
-                ax.text(
-                    rect.get_x() + rect.get_width() / 2,
-                    rect.get_height(),
-                    f"{v:.2f}",
-                    ha="center",
-                    va="bottom",
-                    fontsize=8,
-                )
+    rows = [
+        (cat, name, float(v))
+        for name in names
+        for cat, v in zip(cats, series[name])
+    ]
+    df = pd.DataFrame(rows, columns=["category", "series", "value"])
 
-    ax.set_xticks(x)
+    sns.barplot(
+        data=df,
+        x="category",
+        y="value",
+        hue="series",
+        hue_order=names,
+        order=cats,
+        ax=ax,
+        palette=APA_FILLS[: len(names)],
+        edgecolor="black",
+        linewidth=0.8,
+        width=width * n,
+        errorbar=None,
+        legend=False,
+    )
+    for i, bar in enumerate(ax.patches):
+        bar.set_hatch(APA_HATCHES[(i % n) % len(APA_HATCHES)])
+
+    if annotate:
+        for bar in ax.patches:
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height(),
+                f"{bar.get_height():.2f}",
+                ha="center",
+                va="bottom",
+                fontsize=8,
+            )
+
+    ax.set_xticks(np.arange(len(cats)))
     ax.set_xticklabels(cats)
     ax.set_ylabel(ylabel)
     if xlabel:
@@ -115,7 +134,17 @@ def grouped_bars(
         headroom = 1.25 if annotate else 1.18
         ax.set_ylim(0, ymax * headroom)
     if len(names) > 1:
-        ax.legend(frameon=False, loc="upper right")
+        handles = [
+            Patch(
+                facecolor=APA_FILLS[i % len(APA_FILLS)],
+                hatch=APA_HATCHES[i % len(APA_HATCHES)],
+                edgecolor="black",
+                linewidth=0.8,
+                label=name,
+            )
+            for i, name in enumerate(names)
+        ]
+        ax.legend(handles=handles, frameon=False, loc="upper right")
     return apa_axes(ax)
 
 
@@ -130,36 +159,53 @@ def horizontal_bars(
     xlim: tuple[float, float] | None = None,
     legend_loc: str | None = "lower right",
 ) -> plt.Axes:
-    """Horizontal bar chart with value labels (APA-friendly grayscale).
+    """Horizontal bar chart (seaborn ``barplot``) with value labels.
 
     ``legend_loc="below"`` places the vline legend under the axes (reserved by
     tight_layout) so no legend box covers bars or value labels.
     """
     apply_apa_style()
-    y = np.arange(len(labels))
+    labels_l = list(labels)
     vals = np.asarray(values, dtype=float)
-    colors = []
-    hatches = []
-    for i in range(len(labels)):
+    df = pd.DataFrame({"label": labels_l, "value": vals})
+
+    sns.barplot(
+        data=df,
+        x="value",
+        y="label",
+        order=labels_l,
+        ax=ax,
+        orient="h",
+        color="#777777",
+        edgecolor="black",
+        linewidth=0.8,
+        errorbar=None,
+        legend=False,
+    )
+    for i, bar in enumerate(ax.patches):
         if highlight_index is not None and i == highlight_index:
-            colors.append("#111111")
-            hatches.append("")
+            bar.set_facecolor("#111111")
+            bar.set_hatch("")
         else:
-            colors.append("#777777")
-            hatches.append("///")
-    bars = ax.barh(y, vals, color=colors, edgecolor="black", linewidth=0.8)
-    for bar, hatch in zip(bars, hatches):
-        bar.set_hatch(hatch)
-    ax.set_yticks(y)
-    ax.set_yticklabels(labels)
+            bar.set_facecolor("#777777")
+            bar.set_hatch("///")
+
+    ax.set_yticks(np.arange(len(labels_l)))
+    ax.set_yticklabels(labels_l)
     ax.set_xlabel(xlabel)
     if xlim is not None:
         ax.set_xlim(*xlim)
     else:
         xmax = max(vals) + max(0.15, max(vals) * 0.03)
         ax.set_xlim(0, xmax)
-    for yi, v in zip(y, vals):
-        ax.text(v + (0.008 if xlim is None else (xlim[1] - xlim[0]) * 0.01), yi, f"{v:.3f}", va="center", fontsize=8)
+    for bar, v in zip(ax.patches, vals):
+        ax.text(
+            bar.get_width() + (0.008 if xlim is None else (xlim[1] - xlim[0]) * 0.01),
+            bar.get_y() + bar.get_height() / 2,
+            f"{v:.3f}",
+            va="center",
+            fontsize=8,
+        )
     if vlines:
         styles = ["--", ":", "-."]
         for j, (name, xval) in enumerate(vlines.items()):
@@ -188,9 +234,21 @@ def scatter_identity(
     ylabel: str,
     lims: tuple[float, float] = (6, 30),
 ) -> plt.Axes:
-    """Scatter with identity line; grayscale markers."""
+    """Scatter with identity line (seaborn ``scatterplot``); grayscale markers."""
     apply_apa_style()
-    ax.scatter(x, y, s=28, c="#333333", edgecolors="black", linewidths=0.3, alpha=0.65)
+    df = pd.DataFrame({"x": np.asarray(x, dtype=float), "y": np.asarray(y, dtype=float)})
+    sns.scatterplot(
+        data=df,
+        x="x",
+        y="y",
+        ax=ax,
+        s=28,
+        color="#333333",
+        edgecolor="black",
+        linewidth=0.3,
+        alpha=0.65,
+        legend=False,
+    )
     ax.plot(lims, lims, ls="--", color="#666666", lw=1.0, label="Identity line")
     ax.set_xlim(lims)
     ax.set_ylim(lims)
@@ -212,36 +270,60 @@ def scatter_by_group(
     positive_label: str = "Regular",
     negative_label: str = "Not regular",
 ) -> plt.Axes:
-    """Two-group scatter with marker shape (APA grayscale, print-safe)."""
+    """Two-group scatter (seaborn) with marker shape (print-safe grayscale)."""
     apply_apa_style()
-    x_arr = np.asarray(x, dtype=float)
-    y_arr = np.asarray(y, dtype=float)
     g = np.asarray(group).astype(bool)
-    ax.scatter(
-        x_arr[~g],
-        y_arr[~g],
-        s=28,
-        c="#777777",
-        marker="o",
-        edgecolors="black",
-        linewidths=0.3,
-        alpha=0.7,
-        label=f"{negative_label} (n={int((~g).sum())})",
+    df = pd.DataFrame(
+        {
+            "x": np.asarray(x, dtype=float),
+            "y": np.asarray(y, dtype=float),
+            "group": np.where(g, positive_label, negative_label),
+        }
     )
-    ax.scatter(
-        x_arr[g],
-        y_arr[g],
-        s=36,
-        c="#111111",
-        marker="^",
-        edgecolors="black",
-        linewidths=0.3,
-        alpha=0.8,
-        label=f"{positive_label} (n={int(g.sum())})",
+    sns.scatterplot(
+        data=df,
+        x="x",
+        y="y",
+        hue="group",
+        hue_order=[negative_label, positive_label],
+        style="group",
+        markers={negative_label: "o", positive_label: "^"},
+        palette={negative_label: "#777777", positive_label: "#111111"},
+        s=30,
+        edgecolor="black",
+        linewidth=0.3,
+        alpha=0.75,
+        ax=ax,
+        legend=False,
     )
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
-    ax.legend(frameon=False, loc="best", fontsize=8)
+    counts = {positive_label: int(g.sum()), negative_label: int((~g).sum())}
+    handles = [
+        Line2D(
+            [0],
+            [0],
+            marker="o",
+            ls="",
+            color="#777777",
+            markerfacecolor="#777777",
+            markeredgecolor="black",
+            markersize=7,
+            label=f"{negative_label} (n={counts[negative_label]})",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="^",
+            ls="",
+            color="#111111",
+            markerfacecolor="#111111",
+            markeredgecolor="black",
+            markersize=8,
+            label=f"{positive_label} (n={counts[positive_label]})",
+        ),
+    ]
+    ax.legend(handles=handles, frameon=False, loc="best", fontsize=8)
     return apa_axes(ax)
 
 
@@ -255,12 +337,15 @@ def roc_curve_apa(
     chance: bool = True,
     annotate: str | None = None,
 ) -> plt.Axes:
-    """APA-friendly ROC curve (black solid + dashed chance diagonal)."""
+    """APA-friendly ROC curve (seaborn ``lineplot`` + chance diagonal)."""
     apply_apa_style()
     curve_label = label or f"Model (AUC = {auc:.3f})"
     if "AUC" not in curve_label:
         curve_label = f"{curve_label} (AUC = {auc:.3f})"
-    ax.plot(fpr, tpr, color="#111111", lw=1.6, label=curve_label)
+    df = pd.DataFrame(
+        {"fpr": np.asarray(fpr, dtype=float), "tpr": np.asarray(tpr, dtype=float)}
+    )
+    sns.lineplot(data=df, x="fpr", y="tpr", ax=ax, color="#111111", lw=1.6, legend=False)
     if chance:
         ax.plot([0, 1], [0, 1], color="#666666", ls="--", lw=1.0, label="Chance (AUC = .500)")
     ax.set_xlabel("False positive rate")
@@ -278,7 +363,7 @@ def roc_curve_apa(
             va="top",
             fontsize=8,
         )
-    ax.legend(frameon=False, loc="lower right", fontsize=8)
+    ax.legend([curve_label, "Chance (AUC = .500)"] if chance else [curve_label], loc="lower right", fontsize=8)
     return apa_axes(ax)
 
 
@@ -291,28 +376,40 @@ def prevalence_bars(
     sample_prevalence: float | None = None,
     xlabel: str = "Proportion regular transit (weekly+)",
 ) -> plt.Axes:
-    """Horizontal prevalence bars with n in tick labels."""
+    """Horizontal prevalence bars (seaborn) with n in tick labels."""
     apply_apa_style()
-    y = np.arange(len(labels))
+    labels_l = list(labels)
     vals = np.asarray(prevalences, dtype=float)
-    ax.barh(y, vals, color="#444444", edgecolor="black", height=0.7, linewidth=0.8)
-    ax.set_yticks(y)
+    df = pd.DataFrame({"label": labels_l, "value": vals})
+    sns.barplot(
+        data=df,
+        x="value",
+        y="label",
+        order=labels_l,
+        ax=ax,
+        orient="h",
+        color="#444444",
+        edgecolor="black",
+        linewidth=0.8,
+        errorbar=None,
+        legend=False,
+    )
+    ax.set_yticks(np.arange(len(labels_l)))
     ax.set_yticklabels(
-        [f"{lab} (n={int(n)})" for lab, n in zip(labels, ns)],
+        [f"{lab} (n={int(n)})" for lab, n in zip(labels_l, ns)],
         fontsize=8,
     )
     ax.set_xlabel(xlabel)
     ax.set_xlim(0, 1.10)
     ax.set_xticks([0.0, 0.25, 0.5, 0.75, 1.0])
     value_texts = []
-    for yi, v in zip(y, vals):
-        label = f"{v:.1%}"
-        if ns is not None:
-            label = f"{v:.1%}  (n={ns[yi]})"
+    for bar, n in zip(ax.patches, ns):
+        v = float(bar.get_width())
+        label = f"{v:.1%}  (n={n})"
         value_texts.append(
             ax.text(
-                min(float(v) + 0.02, 0.92),
-                yi,
+                min(v + 0.02, 0.92),
+                bar.get_y() + bar.get_height() / 2,
                 label,
                 va="center",
                 fontsize=8,

@@ -15,13 +15,13 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Using the full matched analytic cohort (**n = 241**; 101 regular / 140 not regular), we evaluated **Employment status** (Full-Time / Part-Time / Other) as a single-feature **Random Forest** predicting weekly+ public transit (`Q26` threshold as in the geo and CA memos). Stratified 5-fold CV, `random_state=42`.
+Using the full matched analytic cohort (**n = 241**; 101 regular / 140 not regular), we evaluated **Employment status** (Full-Time / Part-Time / Other) as a single-feature **Random Forest** ([@breiman2001]) predicting weekly+ public transit (`Q26` threshold as in the geo and CA memos). Stratified 5-fold CV, `random_state=42`.
 
-**Short answer:** Barely. Employment status yields CV ROC-AUC = **0.528** — only +0.028 above chance and **below** both the geo (**0.551**) and CA (**0.590**) benchmarks. It is not a competitive stand-alone predictor in this sample.
+**Short answer:** Barely. Employment status yields CV ROC-AUC = **0.528** — only +0.028 above chance and **below** both the geo (**0.551**) and CA (**0.590**) benchmarks. It is not a competitive stand-alone predictor in this sample. Figure @fig-et-employment-predicts-transit shows prevalence by level and the ROC curve.
 
 ![Employment prevalence by level and ROC curve](figures/employment_predicts_transit_memo.png){#fig-et-employment-predicts-transit}
 
-**Descriptive associations.**
+**Descriptive associations.** Table @tbl-et-1 reports employment prevalence.
 
 | Employment status | n | % regular |
 |---|---:|---:|
@@ -34,7 +34,7 @@ Using the full matched analytic cohort (**n = 241**; 101 regular / 140 not regul
 
 Part-time and full-time rates are close; the “Other” category is less often regular. With only three coarse levels, discrimination is inherently limited.
 
-**Random Forest (stratified CV).**
+**Random Forest (stratified CV).** Table @tbl-et-2 reports the CV ROC-AUCs.
 
 | Model | n | ROC-AUC |
 |---|---:|---:|

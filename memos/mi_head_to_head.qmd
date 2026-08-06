@@ -14,13 +14,15 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-We compare each predictor family under **listwise complete-case** versus **$M = 20$** multivariate imputations of the missing-prone items (**`Q20`**, **`Q21`**, **Student status**), using chained equations (``IterativeImputer``, ``sample_posterior=True``) with complete auxiliaries (Age, Sex, CA, `Q28`, employment, country, lat/long). Outcome-labeled base n = **241** (seed 42, stratified CV). `Q28` and CA are never imputed—they appear in both arms as observed.
+We compare each predictor family under **listwise complete-case** versus **$M = 20$** multivariate imputations of the missing-prone items (**`Q20`**, **`Q21`**, **Student status**), using chained equations (``IterativeImputer``, ``sample_posterior=True`` [@pedregosa2011]) with complete auxiliaries (Age, Sex, CA [@mccroskey1970], `Q28`, employment, country, lat/long). Outcome-labeled base n = **241** (seed 42, stratified CV). `Q28` and CA are never imputed—they appear in both arms as observed.
 
-**Short answer:** **`Q28`’s singleton lead is preserved** under MI (AUC ≈ **0.762**). Demographics and CA are **not restored** to competitive levels (≈ 0.617 and 0.590); imputation does **not** attenuate rideshare’s advantage among single-family models. Joint models that *include* `Q28` remain strongest (CA+`Q28`+car MI ≈ **0.808**).
+**Short answer:** **`Q28`’s singleton lead is preserved** under MI (AUC ≈ **0.762**). Demographics and CA are **not restored** to competitive levels (≈ 0.617 and 0.590); imputation does **not** attenuate rideshare’s advantage among single-family models. Joint models that *include* `Q28` remain strongest (CA+`Q28`+car MI ≈ **0.808**; Figure @fig-mi-mi-head-to-head-followup).
 
 ![Complete-case vs MI AUCs](figures/mi_head_to_head_followup_memo.png){#fig-mi-mi-head-to-head-followup}
 
 ### Complete-case vs multiply-imputed ranking (n_full = 241)
+
+Table @tbl-mi-1 reports complete-case and multiply-imputed AUCs for each feature family.
 
 | Feature family | CC *n* | CC AUC | MI *n* | MI AUC | Δ (MI − CC) |
 |---|---:|---:|---:|---:|---:|

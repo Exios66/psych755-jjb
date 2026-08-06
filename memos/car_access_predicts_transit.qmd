@@ -15,13 +15,13 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to File C; analytic PRCA sample **n = 241**), we tested the geo-memo follow-up candidate **car license / car access**. Regular transit is `Q26` ∈ {`4–8 days a month`, `8 or more days a month`}. Because `Q20`/`Q21` are missing for many respondents, the complete-case modeling frame is **n = 149** (58 regular / 91 not regular; prevalence = 38.9%). A balanced **Random Forest** with stratified 5-fold CV (`seed=42`) used `Q20` and `Q21` as one-hot features.
+Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to File C; analytic PRCA sample ([@mccroskey1970]; **n = 241**), we tested the geo-memo follow-up candidate **car license / car access**. Regular transit is `Q26` ∈ {`4–8 days a month`, `8 or more days a month`}. Because `Q20`/`Q21` are missing for many respondents, the complete-case modeling frame is **n = 149** (58 regular / 91 not regular; prevalence = 38.9%). A balanced **Random Forest** ([@breiman2001]) with stratified 5-fold CV (`seed=42`) used `Q20` and `Q21` as one-hot features.
 
-**Short answer:** Yes — car license/access exceeds geography and CA on CV ROC-AUC. Car license/access recovers CV ROC-AUC = **0.607**, above chance (0.500), the geo RF benchmark (**0.551**), and the CA RF benchmark (**0.590**). Access (`Q21`) dominates license (`Q20`).
+**Short answer:** Yes — car license/access exceeds geography and CA on CV ROC-AUC. Car license/access recovers CV ROC-AUC = **0.607**, above chance (0.500), the geo RF benchmark (**0.551**), and the CA RF benchmark (**0.590**). Access (`Q21`) dominates license (`Q20`). Figure @fig-ca-car-access-predicts-transit shows prevalence by level and the ROC curve.
 
 ![Car access prevalence by level and ROC curve](figures/car_access_predicts_transit_memo.png){#fig-ca-car-access-predicts-transit}
 
-**Descriptive associations (complete cases).** Respondents without car access ride regularly far more often than those with access:
+**Descriptive associations (complete cases).** Respondents without car access ride regularly far more often than those with access (Table @tbl-ca-1):
 
 | Item | Level | n | % regular |
 |---|---|---:|---:|
@@ -33,7 +33,7 @@ Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to
 : Random Forest performance for car access predicting regular transit. {#tbl-ca-1}
 
 
-**Random Forest (stratified CV).**
+**Random Forest (stratified CV).** Table @tbl-ca-2 reports the CV ROC-AUCs.
 
 | Model | n | ROC-AUC |
 |---|---:|---:|

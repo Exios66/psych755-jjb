@@ -16,7 +16,7 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Using the Prolific↔Qualtrics matched analytic cohort (**n = 241**; inner join; complete scorable PRCA), we evaluated four GPU vLLM exports on **identical prompt-v1** Terrarium narratives (241 × 5 tiers = **1,205** prompts each):
+Using the Prolific↔Qualtrics matched analytic cohort (**n = 241**; inner join; complete scorable PRCA), we evaluated four GPU vLLM exports on **identical prompt-v1** Terrarium narratives (241 × 5 tiers = **1,205** prompts each; Table @tbl-v1x-1):
 
 | Model | Tag / export | Parse | Hardware / notes |
 |---|---|---:|---|
@@ -30,11 +30,15 @@ Using the Prolific↔Qualtrics matched analytic cohort (**n = 241**; inner join;
 
 Metrics follow the project evaluator (`ca_personas.evaluate`): **MAE** / **exact match** / **band accuracy** on group & interpersonal PRCA (6–30; bands low≤13 / moderate 14–19 / high≥20). Classical ML floor for comparison: best transit **group MAE ≈ 4.49** (Ridge; [`docs/ml_baselines.md`](../docs/ml_baselines.md)).
 
-**Short answer:** None of the models is a high-fidelity digital twin (exact match single-digit). Among **non-collapsed** runs, **DeepSeek-R1-Distill-Llama-8B** wins group CA (**5.22**), **Llama-3.2–3B-Instruct** wins interpersonal MAE (**5.35**) and group band accuracy (**52.7%**), and **Llama-3.1–8B-Instruct** uniquely recovers interpersonal bands above chance at demos/geo (~52%) but **collapses when transit is added** (IP MAE 4.67 → **8.17**). **Llama-3.3–70B** is a separate failure mode: ≈93% constant prior `(18, 12)` — do not rank it as a competitive twin despite a low IP MAE (**4.65**) that is an artifact of that prior. Employment (RQ1) is negligible for all; transit/full (RQ2–RQ3) help or hurt depending on model × subscale.
+**Short answer:** None of the models is a high-fidelity digital twin ([@argyle2023; @grossmann2023]) (exact match single-digit). Among **non-collapsed** runs, **DeepSeek-R1-Distill-Llama-8B** wins group CA (**5.22**), **Llama-3.2–3B-Instruct** wins interpersonal MAE (**5.35**) and group band accuracy (**52.7%**), and **Llama-3.1–8B-Instruct** uniquely recovers interpersonal bands above chance at demos/geo (~52%) but **collapses when transit is added** (IP MAE 4.67 → **8.17**). **Llama-3.3–70B** is a separate failure mode: ≈93% constant prior `(18, 12)` — do not rank it as a competitive twin despite a low IP MAE (**4.65**) that is an artifact of that prior. Employment (RQ1) is negligible for all; transit/full (RQ2–RQ3) help or hurt depending on model × subscale.
+
+Figure @fig-v1x-vllm-v1-cross-model summarizes cross-model MAE, band accuracy, and tier trajectories.
 
 ![Cross-model MAE, band accuracy, and tier trajectories](figures/vllm_v1_cross_model_memo.png){#fig-v1x-vllm-v1-cross-model}
 
 ### Head-to-head (all tiers pooled)
+
+Table @tbl-v1x-2 pools all tiers for the head-to-head model comparison.
 
 | Model | MAE group ↓ | MAE IP ↓ | Exact G | Exact IP | Band G | Band IP | Notes |
 |---|---:|---:|---:|---:|---:|---:|---|
@@ -49,6 +53,8 @@ Metrics follow the project evaluator (`ca_personas.evaluate`): **MAE** / **exact
 Non-collapsed models remain **above** the tabular Ridge floor (group MAE 4.49). Band accuracy vs ~33% chance: Llama-3.2 dominates **group** bands; Llama-3.1 leads **interpersonal** bands among models that still vary outputs (driven by demos/employment/geo, not transit).
 
 ### RQ1–RQ3 pattern by model
+
+Table @tbl-v1x-3 maps RQ1–RQ3 verdicts by model.
 
 | RQ | Llama-3.1–8B | Llama-3.2–3B | DeepSeek-R1-Distill-8B | Llama-3.3–70B |
 |---|---|---|---|---|
@@ -67,7 +73,7 @@ Non-collapsed models remain **above** the tabular Ridge floor (group MAE 4.49). 
 
 ## v2 / v3 follow-up (evaluated)
 
-The archived v2/v3 exports (`exports/v2/`, `exports/v3/`) answer the questions left open above. Pooled metrics:
+The archived v2/v3 exports (`exports/v2/`, `exports/v3/`) answer the questions left open above. Pooled metrics (Table @tbl-v1x-4):
 
 | Prompt version | Model | MAE group | MAE IP | Transit IP | Notes |
 |---|---|---:|---:|---:|---|

@@ -14,13 +14,15 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-On `Q28`-complete rows (n = **241**), we (i) replicate the overall transit→CA Welch contrast, (ii) compare nested RFs (CA only / `Q28` only / CA+`Q28`), and (iii) run within-`Q28`-stratum Welch tests.
+On `Q28`-complete rows (n = **241**), we (i) replicate the overall transit→CA [@mccroskey1970] Welch contrast, (ii) compare nested RFs ([@breiman2001]; CA only / `Q28` only / CA+`Q28`), and (iii) run within-`Q28`-stratum Welch tests.
 
-**Short answer:** The **mean CA gap among regular riders remains real overall**, but for *prediction* CA adds almost nothing once `Q28` is present (**+0.021** AUC). Within `Q28` strata, CA differences are **heterogeneous**—sometimes reversed.
+**Short answer:** The **mean CA gap among regular riders remains real overall**, but for *prediction* CA adds almost nothing once `Q28` is present (**+0.021** AUC). Within `Q28` strata, CA differences are **heterogeneous**—sometimes reversed (Figure @fig-rc-residual-ca-q28-followup).
 
 ![Residual CA nested AUCs](figures/residual_ca_q28_followup_memo.png){#fig-rc-residual-ca-q28-followup}
 
 ### Overall transit → CA (replication)
+
+Table @tbl-rc-1 reports the overall transit → CA Welch contrasts.
 
 | Score | Mean regular | Mean not | Δ | Cohen’s *d* | Welch *p* |
 |---|---:|---:|---:|---:|---:|
@@ -31,6 +33,8 @@ On `Q28`-complete rows (n = **241**), we (i) replicate the overall transit→CA 
 
 
 ### Nested predictive models
+
+Table @tbl-rc-2 reports the nested predictive models.
 
 | Model | ROC-AUC |
 |---|---:|
@@ -45,6 +49,8 @@ On `Q28`-complete rows (n = **241**), we (i) replicate the overall transit→CA 
 CA incremental over `Q28` ≈ **+0.021**.
 
 ### Within-`Q28` strata (exploratory)
+
+Table @tbl-rc-3 reports the within-`Q28`-stratum contrasts.
 
 | `Q28` level | Group CA Δ (reg − not) | Welch *p* | Note |
 |---|---:|---:|---|

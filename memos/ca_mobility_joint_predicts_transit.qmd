@@ -6,7 +6,7 @@ date: 2026–07-25
 bibliography: ../references.bib
 ---
 
-**Research question:** On a complete-case frame, how do group/interpersonal **CA**, ride-share days (**`Q28`**), and car access (**`Q21`**) jointly and separately predict regular transit?
+**Research question:** On a complete-case frame, how do group/interpersonal **CA** ([@mccroskey1970]), ride-share days (**`Q28`**), and car access (**`Q21`**) jointly and separately predict regular transit?
 
 **Companions:** [`ca_scores_predict_transit.qmd`](ca_scores_predict_transit.qmd) · [`q28_conditioned_on_car.qmd`](q28_conditioned_on_car.qmd) · [`residual_ca_after_rideshare.qmd`](residual_ca_after_rideshare.qmd)
 
@@ -14,13 +14,15 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Complete cases for CA + `Q28` + `Q21` yield n = **149**. Nested mixed Random Forests on this shared frame (`seed=42`):
+Complete cases for CA + `Q28` + `Q21` yield n = **149**. Nested mixed Random Forests ([@breiman2001]) on this shared frame (`seed=42`):
 
-**Short answer:** The **joint model is strong** (AUC ≈ **0.736**), but it is a **mobility model**—`Q28` and `Q21` dominate. CA alone on this subset is **below chance** (≈ **0.471**), showing how sample restriction and mobility overlap can erase the modest full-cohort CA signal (≈0.590 on n=241).
+**Short answer:** The **joint model is strong** (AUC ≈ **0.736**), but it is a **mobility model**—`Q28` and `Q21` dominate. CA alone on this subset is **below chance** (≈ **0.471**), showing how sample restriction and mobility overlap can erase the modest full-cohort CA signal (≈0.590 on n=241). Figure @fig-cm-ca-q28-car-followup shows the nested AUC comparison.
 
 ![CA + `Q28` + car nested AUCs](figures/ca_q28_car_followup_memo.png){#fig-cm-ca-q28-car-followup}
 
 ### Nested CV performance (common n = 149)
+
+Table @tbl-cm-1 reports the nested CV ROC-AUCs.
 
 | Model | ROC-AUC |
 |---|---:|

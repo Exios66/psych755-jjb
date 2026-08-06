@@ -6,7 +6,7 @@ date: 2026–07-26
 bibliography: ../references.bib
 ---
 
-**Research question:** Does `meta-llama/Llama-3.3–70B-Instruct`, when personified via prompt-v1 cumulative Terrarium narratives, recover participants’ group and interpersonal PRCA scores — and do employment (RQ1), transit (RQ2), or full cumulative context (RQ3) reduce absolute error?
+**Research question:** Does `meta-llama/Llama-3.3–70B-Instruct`, when personified via prompt-v1 cumulative Terrarium narratives ([@grossmann2023]), recover participants’ group and interpersonal PRCA scores — and do employment (RQ1), transit (RQ2), or full cumulative context (RQ3) reduce absolute error?
 
 **Formal write-up:** [`docs/llm_baseline_llama33_70b_v1.md`](../docs/llm_baseline_llama33_70b_v1.md)  
 **Cross-model memo:** [`vllm_v1_cross_model_comparison.qmd`](vllm_v1_cross_model_comparison.qmd)
@@ -21,6 +21,8 @@ Full-cohort vLLM export on the matched Prolific↔Qualtrics sample (**n = 241**;
 
 ### Collapse diagnostics
 
+Table @tbl-v1l70–1 reports the mode-collapse diagnostics.
+
 | Signal | Value |
 |---|---:|
 | Unique generated texts | **8** |
@@ -32,6 +34,8 @@ Full-cohort vLLM export on the matched Prolific↔Qualtrics sample (**n = 241**;
 
 
 ### Metrics by tier
+
+Table @tbl-v1l70–2 reports MAE and band metrics by tier.
 
 | Tier | MAE G | MAE IP | Band G | Band IP | Mean err G | Mean err IP |
 |---|---:|---:|---:|---:|---:|---:|

@@ -16,13 +16,13 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Using the matched analytic cohort with complete `Q28`/`Q29` (**n = 233**; 99 regular / 134 not regular; prevalence = 42.5%), we fit a balanced **Random Forest** (stratified 5-fold CV, `seed=42`) predicting weekly+ transit from ride-share **days in the last three months** (`Q28`) and **rides on a typical ride-share day** (`Q29`).
+Using the matched analytic cohort with complete `Q28`/`Q29` (**n = 233**; 99 regular / 134 not regular; prevalence = 42.5%), we fit a balanced **Random Forest** ([@breiman2001]; stratified 5-fold CV, `seed=42`) predicting weekly+ transit from ride-share **days in the last three months** (`Q28`) and **rides on a typical ride-share day** (`Q29`).
 
-**Short answer:** Yes — ride-share frequency exceeds geography and CA on CV ROC-AUC. Ride-share frequency recovers CV ROC-AUC = **0.745**, well above chance (0.500), geo (**0.551**), and CA (**0.590**). Signal is driven almost entirely by `Q28`.
+**Short answer:** Yes — ride-share frequency exceeds geography and CA on CV ROC-AUC. Ride-share frequency recovers CV ROC-AUC = **0.745**, well above chance (0.500), geo (**0.551**), and CA (**0.590**). Signal is driven almost entirely by `Q28`. Figure @fig-rt-rideshare-predicts-transit shows prevalence by level and the ROC curve.
 
 ![Ride-share prevalence by level and ROC curve](figures/rideshare_predicts_transit_memo.png){#fig-rt-rideshare-predicts-transit}
 
-**Descriptive associations (`Q28`).** Regular transit rises monotonically with ride-share days:
+**Descriptive associations (`Q28`).** Regular transit rises monotonically with ride-share days (Table @tbl-rt-1):
 
 | `Q28` (ride-share days) | n | % regular |
 |---|---:|---:|
@@ -37,7 +37,7 @@ Using the matched analytic cohort with complete `Q28`/`Q29` (**n = 233**; 99 reg
 
 `Q29` (rides per typical day) shows a milder gradient and is sparsely populated above 1–2 rides.
 
-**Random Forest (stratified CV).**
+**Random Forest (stratified CV).** Table @tbl-rt-2 reports the CV results.
 
 | Model | n | ROC-AUC | Balanced acc. | F1 |
 |---|---:|---:|---:|---:|

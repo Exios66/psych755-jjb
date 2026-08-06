@@ -15,7 +15,7 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Using the Prolific↔Qualtrics matched analytic cohort (File A + File B joined to File C; base **n = 241** with complete PRCA and usable `Q26`), we define **regular transit** as `Q26` ∈ {`4–8 days a month`, `8 or more days a month`} (weekly-or-more). We then fit balanced ****Random Forest**s** with stratified 5-fold CV (`random_state=42`) using categorical one-hot encodings of:
+Using the Prolific↔Qualtrics matched analytic cohort (File A + File B joined to File C; base **n = 241** with complete PRCA and usable `Q26`), we define **regular transit** as `Q26` ∈ {`4–8 days a month`, `8 or more days a month`} (weekly-or-more). We then fit balanced ****Random Forest**s** ([@breiman2001]) with stratified 5-fold CV (`random_state=42`) using categorical one-hot encodings of the survey items in Table @tbl-q27q28–1:
 
 | Item | Stem (abridged) | Role |
 |---|---|---|
@@ -25,7 +25,9 @@ Using the Prolific↔Qualtrics matched analytic cohort (File A + File B joined t
 : `Q27` and `Q28` survey items. {#tbl-q27q28–1}
 
 
-**Short answer:** **`Q28`** recovers CV ROC-AUC = **0.762** (AP = **0.689**; balanced accuracy = **0.730**). **`Q27`** recovers AUC = **0.589**—matching the CA benchmark (0.590)—and the joint `Q27`+`Q28` forest reaches AUC = **0.761** (Δ = −0.001 vs `Q28` alone). Ride-share days, not transit-day intensity, carry the usable discrimination.
+**Short answer:** **`Q28`** recovers CV ROC-AUC = **0.762** (AP = **0.689**; balanced accuracy = **0.730**). **`Q27`** recovers AUC = **0.589**—matching the CA benchmark (0.590 [@mccroskey1970])—and the joint `Q27`+`Q28` forest reaches AUC = **0.761** (Δ = −0.001 vs `Q28` alone). Ride-share days, not transit-day intensity, carry the usable discrimination.
+
+Figure @fig-q27q28-q27-q28-predicts-transit plots `Q27` and `Q28` prevalence and ROC curves, and Figure @fig-q27q28-q27-q28-predicts-transit-comparison contrasts their head-to-head AUCs against the geo/CA benchmarks.
 
 ![`Q27` prevalence / ROC and `Q28` prevalence / ROC](figures/q27_q28_predicts_transit_memo.png){#fig-q27q28-q27-q28-predicts-transit}
 
@@ -33,7 +35,7 @@ Using the Prolific↔Qualtrics matched analytic cohort (File A + File B joined t
 
 ### Descriptive gradients
 
-**`Q27` (n = 239).** Respondents reporting more rides on a typical transit day are more often weekly+ riders, but most of the sample sits in the lowest intensity bin:
+**`Q27` (n = 239).** Respondents reporting more rides on a typical transit day are more often weekly+ riders, but most of the sample sits in the lowest intensity bin (Table @tbl-q27q28–2):
 
 | `Q27` | n | % regular |
 |---|---:|---:|
@@ -45,7 +47,7 @@ Using the Prolific↔Qualtrics matched analytic cohort (File A + File B joined t
 : `Q27` intensity distribution by regular transit status. {#tbl-q27q28–2}
 
 
-**`Q28` (n = 241).** Regular-transit prevalence rises steeply with ride-share days:
+**`Q28` (n = 241).** Regular-transit prevalence rises steeply with ride-share days (Table @tbl-q27q28–3):
 
 | `Q28` | n | % regular |
 |---|---:|---:|
@@ -59,6 +61,8 @@ Using the Prolific↔Qualtrics matched analytic cohort (File A + File B joined t
 
 
 ### Random Forest performance (stratified CV)
+
+Table @tbl-q27q28–4 reports the stratified-CV performance for the `Q27`/`Q28` forests.
 
 | Model | n | ROC-AUC | Avg. precision | Balanced acc. | F1 |
 |---|---:|---:|---:|---:|---:|

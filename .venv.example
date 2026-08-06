@@ -1,0 +1,28 @@
+# Virtual-environment template for PSYCH 755 (reproducible setup)
+# =============================================================================
+# This file documents how to recreate the development virtual environment that
+# accompanies requirements.txt. The real environment lives at .venv/ (which is
+# gitignored); copy the commands below, do not commit the directory.
+#
+# Requires Python >= 3.11 (see pyproject.toml `requires-python`).
+# =============================================================================
+
+# 1. Create the environment
+python3.11 -m venv .venv
+
+# 2. Activate it
+source .venv/bin/activate        # macOS / Linux
+# .venv\Scripts\activate         # Windows (PowerShell)
+
+# 3. Upgrade pip and install the declared dependencies
+pip install -U pip
+pip install -r requirements.txt
+
+# 4. Install the local `ca-personas` package (registers the CLI; adds pytest)
+pip install -e ".[dev]"
+
+# 5. Optional: local configuration template
+cp .env.example .env   # set CA_LLM_PROVIDER=mock for offline dry runs
+
+# 6. Optional: GPU-only digital-twin inference stack (heavy CUDA)
+# pip install -e ".[vllm]"

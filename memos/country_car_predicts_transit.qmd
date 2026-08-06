@@ -14,13 +14,15 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-On respondents with complete country + `Q21` (n = **149**), nested categorical **Random Forest**s (`seed=42`) show clear synergy.
+On respondents with complete country + `Q21` (n = **149**), nested categorical **Random Forest**s ([@breiman2001]) (`seed=42`) show clear synergy.
 
-**Short answer:** **Yes.** Country + car AUC ≈ **0.699**, beating car alone (0.631) and country alone (0.608). An explicit `country × car` interaction feature is similar but slightly weaker (0.683).
+**Short answer:** **Yes.** Country + car AUC ≈ **0.699**, beating car alone (0.631) and country alone (0.608). An explicit `country × car` interaction feature is similar but slightly weaker (0.683). Figure @fig-cc-country-car-followup shows the AUC comparison.
 
 ![Country × car AUC comparison](figures/country_car_followup_memo.png){#fig-cc-country-car-followup}
 
 ### Nested CV performance (common n = 149)
+
+Table @tbl-cc-1 reports the nested CV ROC-AUCs.
 
 | Model | ROC-AUC |
 |---|---:|

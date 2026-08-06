@@ -1,3 +1,4 @@
+from ca_personas import apa_plotting
 from ca_personas.apa_plotting import (
     apply_apa_style,
     grouped_bars,
@@ -9,11 +10,21 @@ from ca_personas.apa_plotting import (
 import matplotlib.pyplot as plt
 
 
+def test_apply_apa_style_uses_seaborn_theme(monkeypatch):
+    calls = []
+    monkeypatch.setattr(apa_plotting.sns, "set_theme", lambda **kw: calls.append(kw))
+    apply_apa_style()
+    assert calls and calls[-1].get("style") == "white"
+
+
 def test_grouped_bars_smoke():
     apply_apa_style()
     fig, ax = plt.subplots()
     grouped_bars(ax, ["a", "b"], {"x": [1.0, 2.0], "y": [1.5, 2.5]}, ylabel="y")
     assert ax.get_ylabel() == "y"
+    assert len(ax.patches) == 4
+    assert ax.patches[0].get_hatch() == ""
+    assert ax.patches[1].get_hatch() == "///"
     plt.close(fig)
 
 
@@ -37,4 +48,5 @@ def test_scatter_by_group():
     fig, ax = plt.subplots()
     scatter_by_group(ax, [1, 2, 3, 4], [1, 2, 3, 4], [0, 0, 1, 1], xlabel="x", ylabel="y")
     assert ax.get_xlabel() == "x"
+    assert len(ax.get_legend().get_texts()) == 2
     plt.close(fig)

@@ -14,13 +14,13 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to File C; **252** matched rows; analytic **n = 241** with complete PRCA items), we compared ground-truth **group** and **interpersonal** CA (range 6–30) for **regular** public-transit riders vs everyone else. Regular transit = `Q26` ∈ {`4–8 days a month`, `8 or more days a month`} (weekly-or-more). Primary test: Welch *t*; effect sizes Cohen's *d* / Hedges' *g*; ****bootstrap 95% CIs**** (`ca-personas transit-ca --join inner --seed 42`).
+Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to File C; **252** matched rows; analytic **n = 241** with complete PRCA items), we compared ground-truth **group** and **interpersonal** communication apprehension (CA; range 6–30; [@mccroskey1970]) for **regular** public-transit riders vs everyone else. Regular transit = `Q26` ∈ {`4–8 days a month`, `8 or more days a month`} (weekly-or-more). Primary test: Welch *t*; effect sizes Cohen's *d* / Hedges' *g*; ****bootstrap 95% CIs**** (`ca-personas transit-ca --join inner --seed 42`).
 
-**Short answer:** Yes. Regular riders report **lower** CA on both subscales. Group CA shows the clearer gap (Δ = **−2.72**, *d* = −0.46, *p* = .0003); interpersonal CA is smaller but still significant (Δ = **−1.73**, *d* = −0.30, *p* = .020).
+**Short answer:** Yes. Regular riders report **lower** CA on both subscales (see @fig-tc-transit-riders-ca). Group CA shows the clearer gap (Δ = **−2.72**, *d* = −0.46, *p* = .0003); interpersonal CA is smaller but still significant (Δ = **−1.73**, *d* = −0.30, *p* = .020).
 
 ![Mean CA by `Q26` ridership and regular vs not-regular](figures/transit_riders_ca_memo.png){#fig-tc-transit-riders-ca}
 
-**Key numbers (regular n = 101 vs not-regular n = 140):**
+**Key numbers (regular n = 101 vs not-regular n = 140; Table @tbl-tc-1):**
 
 | Subscale | Regular M | Not-regular M | Δ | Welch *p* | Cohen's *d* |
 |---|---:|---:|---:|---:|---:|

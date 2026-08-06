@@ -12,15 +12,17 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to File C on Prolific ID / `Q0`; **252** matched rows; analytic **n = 241** with complete PRCA items and non-missing Qualtrics geolocation), we screened demographics, employment, survey latitude/longitude, car access (`Q20`/`Q21`), ride-share behavior (`Q28`/`Q29`), and ground-truth PRCA scores as predictors of **regular** public-transit use. Regular transit is defined as `Q26` ∈ {`4–8 days a month`, `8 or more days a month`} (weekly-or-more). `Q26` was never used as a predictor. A mixed-type **Random Forest** (median/most-frequent imputation, one-hot encoding, stratified 5-fold CV) was tuned with `RandomizedSearchCV` to maximize ROC-AUC. Feature importance was assessed via univariate AUC, feature-group ablations, and original-column permutation importance.
+Using the Prolific↔Qualtrics matched cohort (File A + File B stacked joined to File C on Prolific ID / `Q0`; **252** matched rows; analytic **n = 241** with complete PRCA items and non-missing Qualtrics geolocation), we screened demographics, employment, survey latitude/longitude, car access (`Q20`/`Q21`), ride-share behavior (`Q28`/`Q29`), and ground-truth PRCA scores ([@mccroskey1970]) as predictors of **regular** public-transit use. Regular transit is defined as `Q26` ∈ {`4–8 days a month`, `8 or more days a month`} (weekly-or-more). `Q26` was never used as a predictor. A mixed-type **Random Forest** ([@breiman2001]; implemented via scikit-learn [@pedregosa2011]) (median/most-frequent imputation, one-hot encoding, stratified 5-fold CV) was tuned with `RandomizedSearchCV` to maximize ROC-AUC. Feature importance was assessed via univariate AUC, feature-group ablations, and original-column permutation importance.
 
 **Short answer:** Yes—combining mobility-adjacent and demographic fields yields **strong** discrimination. The tuned kitchen-sink forest reaches CV ROC-AUC = **0.824** (default RF = 0.808; chance = 0.500). **Ride-share frequency (`Q28`) is by far the dominant predictor**, followed by car access (`Q21`) and age.
+
+Figure @fig-cp-comprehensive-predictors-transit shows permutation importance and the ROC curve for the tuned forest.
 
 ![Permutation importance and ROC curve for the tuned kitchen-sink Random Forest](figures/comprehensive_predictors_transit_memo.png){#fig-cp-comprehensive-predictors-transit}
 
 **Univariate screen.** Fit alone, `Q28` already achieves AUC ≈ **0.762**. No other primary feature exceeds 0.58 alone (`Age` ≈ 0.580; `gt_group_ca` ≈ 0.555; lat/lon and country ≈ 0.55). Proximal `Q27` (rides on a typical public-transit day)—reserved for an upper-bound model—scores ≈ 0.594 univariate on the imputed n = 241 screen frame (cf. the seeded `Q27`-only model, AUC **0.589** on n = 239 in [`q27_q28_predict_transit.qmd`](q27_q28_predict_transit.qmd)).
 
-**Feature-group ablations.**
+**Feature-group ablations.** Table @tbl-cp-1 reports the ablation comparisons.
 
 | Model / comparison | ROC-AUC |
 |---|---:|

@@ -14,13 +14,15 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Among **101** regular riders, 35 (34.7%) report high intensity (3–4 / 5–6 / 7+ rides); 66 report the modal 1–2 rides. We treat high intensity as the binary target and evaluate candidate **Random Forest**s (`seed=42`).
+Among **101** regular riders, 35 (34.7%) report high intensity (3–4 / 5–6 / 7+ rides); 66 report the modal 1–2 rides. We treat high intensity as the binary target and evaluate candidate **Random Forest**s ([@breiman2001]; `seed=42`).
 
-**Short answer:** **Nothing predicts intensity well.** The best family (Age+Sex+Student, n=95) reaches only AUC ≈ **0.549**—near chance. CA, `Q28`, car access, and employment all fail as within-rider intensity classifiers.
+**Short answer:** **Nothing predicts intensity well.** The best family (Age+Sex+Student, n=95) reaches only AUC ≈ **0.549**—near chance. CA [@mccroskey1970], `Q28`, car access, and employment all fail as within-rider intensity classifiers (Figure @fig-q27-q27-among-regular-followup).
 
 ![`Q27`-among-riders comparison](figures/q27_among_regular_followup_memo.png){#fig-q27-q27-among-regular-followup}
 
 ### `Q27` distribution among weekly+ riders
+
+Table @tbl-q27–1 shows the `Q27` distribution among weekly+ riders.
 
 | `Q27` | n |
 |---|---:|
@@ -33,6 +35,8 @@ Among **101** regular riders, 35 (34.7%) report high intensity (3–4 / 5–6 / 
 
 
 ### Candidate predictors of high intensity
+
+Table @tbl-q27–2 reports the candidate models for high intensity.
 
 | Model | n | ROC-AUC |
 |---|---:|---:|

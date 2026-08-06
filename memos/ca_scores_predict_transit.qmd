@@ -14,11 +14,11 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Using the Prolific↔Qualtrics matched cohort for this project (File A + File B stacked joined to File C on Prolific ID / `Q0`; **252** matched rows; analytic **n = 241** with complete scorable PRCA items and usable `Q26`), we asked whether ground-truth **group** and **interpersonal** CA scores (range 6–30) predict **regular** public-transit use, defined as `Q26` ∈ {`4–8 days a month`, `8 or more days a month`} (weekly-or-more). A balanced **Random Forest** (stratified 5-fold CV, `random_state=42`) was trained on the two CA subscales, with group-only and interpersonal-only ablations and a chance baseline (ROC-AUC = **0.50**).
+Using the Prolific↔Qualtrics matched cohort for this project (File A + File B stacked joined to File C on Prolific ID / `Q0`; **252** matched rows; analytic **n = 241** with complete scorable PRCA items and usable `Q26`), we asked whether ground-truth **group** and **interpersonal** CA scores (range 6–30) predict **regular** public-transit use, defined as `Q26` ∈ {`4–8 days a month`, `8 or more days a month`} (weekly-or-more). A balanced **Random Forest** ([@breiman2001]; implemented via scikit-learn [@pedregosa2011]) (stratified 5-fold CV, `random_state=42`) was trained on the two CA subscales, with group-only and interpersonal-only ablations and a chance baseline (ROC-AUC = **0.50**).
 
 Figures below match the formal write-up [`docs/secondary_rq_ca_predicts_transit.md`](../docs/secondary_rq_ca_predicts_transit.md) and the seeded CLI artifacts under `outputs/ca_transit_rf/` (`ca-personas ca-transit-rf --join inner --seed 42`).
 
-**Short answer:** Yes. Higher CA is associated with *lower* odds of regular transit, and a CA-only Random Forest recovers above-chance discrimination (CV ROC-AUC = **0.590**; group-only = **0.555**; interpersonal-only = **0.506**). Group CA is the larger contributor (permutation mean $\Delta$AUC = 0.309 vs 0.223).
+**Short answer:** Yes. Higher CA is associated with *lower* odds of regular transit, and a CA-only Random Forest recovers above-chance discrimination (CV ROC-AUC = **0.590**; group-only = **0.555**; interpersonal-only = **0.506**). Group CA is the larger contributor (permutation mean $\Delta$AUC = 0.309 vs 0.223). Figure @fig-ct-ca-predicts-transit shows the mean-CA gap alongside the Random Forest ROC curve.
 
 ![Mean CA by transit group and ROC curve for the CA Random Forest](figures/ca_predicts_transit_memo.png){#fig-ct-ca-predicts-transit}
 
@@ -27,7 +27,7 @@ Figures below match the formal write-up [`docs/secondary_rq_ca_predicts_transit.
 - **Group CA:** *M* = **13.04** vs 15.76 (Δ = **−2.72**); point-biserial *r* = −0.223, *p* = 0.0005  
 - **Interpersonal CA:** M = 13.31 vs 15.04 (Δ = **−1.73**); point-biserial *r* = −0.147, *p* = 0.023  
 
-**Random Forest (stratified CV).** Predicting regular transit from CA scores:
+**Random Forest (stratified CV).** Predicting regular transit from CA scores (see Table @tbl-ct-1):
 
 | Model | ROC-AUC |
 |---|---:|

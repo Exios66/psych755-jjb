@@ -6,7 +6,7 @@ date: 2026–07-31
 bibliography: ../references.bib
 ---
 
-**Research question:** Does signal-first prompt packaging (v2) and single-cue ablation prompting (v3) move the live full-cohort vLLM baselines closer to the classical ML floor — and does either redesign fix Llama-3.1–8B-Instruct's interpersonal collapse at the `transit` tier?
+**Research question:** Does signal-first prompt packaging (v2) and single-cue ablation prompting (v3) move the live full-cohort vLLM baselines closer to the classical ML floor ([@bisbee2024]) — and does either redesign fix Llama-3.1–8B-Instruct's interpersonal collapse at the `transit` tier?
 
 ---
 
@@ -20,7 +20,7 @@ Using the committed GPU export packages (`exports/v2/`, `exports/v3/`; full matc
 
 ## v2 results (signal-first packaging, `v2_enhanced` decode)
 
-Same five-tier topology as v1 (`demos` → `employment` → `geo` → `transit` → `full`), with signal-first packaging: 1-decimal geo, `Q27`/`Q29` skipped when Never, `Q26` → `Q28` ordering, independent group/IP subscale ask, and a mobility anti-bleed system clause. Decoding: `temp` 0.3, `top_p` 0.95, `rep` 1.05, `seed` 42, `guided JSON`. 1,205 prompts per model.
+Same five-tier topology as v1 (`demos` → `employment` → `geo` → `transit` → `full`), with signal-first packaging: 1-decimal geo, `Q27`/`Q29` skipped when Never, `Q26` → `Q28` ordering, independent group/IP subscale ask, and a mobility anti-bleed system clause. Decoding: `temp` 0.3, `top_p` 0.95, `rep` 1.05, `seed` 42, `guided JSON`. 1,205 prompts per model (Table @tbl-v23–1).
 
 | Model | MAE group ↓ | MAE IP ↓ | Band G | Band IP | Transit IP | Verdict vs v1 |
 |---|---:|---:|---:|---:|---:|---|
@@ -35,7 +35,7 @@ DeepSeek v2 is the best live result in the project (pooled group MAE 5.02, below
 
 ## v3 results (8-tier greedy ablation)
 
-Adds three parallel single-cue tiers on the demos→employment→geo base — `v3_rideshare` (`Q28` only), `v3_public_transit` (`Q26` only), `v3_voice` (Q18.1/`Q19` only) — for eight tiers per model (1,928 prompts). Greedy decode; the committed `v3/` packages are byte-identical to the archived `prior_v3_greedy/` runs.
+Adds three parallel single-cue tiers on the demos→employment→geo base — `v3_rideshare` (`Q28` only), `v3_public_transit` (`Q26` only), `v3_voice` (Q18.1/`Q19` only) — for eight tiers per model (1,928 prompts). Greedy decode; the committed `v3/` packages are byte-identical to the archived `prior_v3_greedy/` runs (Table @tbl-v23–2).
 
 | Model | MAE group ↓ | MAE IP ↓ | Band G | Band IP | Parse | Notes |
 |---|---:|---:|---:|---:|---:|---|
@@ -49,6 +49,8 @@ Adds three parallel single-cue tiers on the demos→employment→geo base — `v
 The 8-tier pooling mixes the collapsed `transit`/`full` tiers with stable ablations, so pooled IP is pulled back toward v1 (5.76). Llama-3.2–3B base remained a 0% JSON parse (as in v1) and is excluded.
 
 ### Llama-3.1 per-tier ablation (IP MAE)
+
+Table @tbl-v23–3 reports Llama-3.1's per-tier MAE and band metrics across the v3 ablation ladder.
 
 | Tier | Content | MAE group ↓ | MAE IP ↓ | Band IP |
 |---|---|---|---:|---:|

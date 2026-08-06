@@ -14,13 +14,15 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-On the full matched analytic cohort (n = **241**), a categorical **Random Forest** on `Country of residence` yields CV ROC-AUC ≈ **0.552**—essentially identical to the lat/long geo memo (≈ **0.551**) and the geo module’s country-only baseline (≈ 0.549).
+On the full matched analytic cohort (n = **241**), a categorical **Random Forest** ([@breiman2001]) on `Country of residence` yields CV ROC-AUC ≈ **0.552**—essentially identical to the lat/long geo memo (≈ **0.551**) and the geo module’s country-only baseline (≈ 0.549).
 
-**Short answer:** Country is a **weak place cue**, interchangeable with survey coordinates for this outcome. It does **not** unlock the discrimination that mobility items (especially `Q28`) provide.
+**Short answer:** Country is a **weak place cue**, interchangeable with survey coordinates for this outcome. It does **not** unlock the discrimination that mobility items (especially `Q28`) provide. Figure @fig-cn-country-followup shows country prevalence and the ROC curve.
 
 ![Country prevalence and ROC](figures/country_followup_memo.png){#fig-cn-country-followup}
 
 ### Prevalence by country (n ≥ 20)
+
+Table @tbl-cn-1 reports prevalence by country.
 
 | Country | n | % regular |
 |---|---:|---:|
@@ -34,6 +36,8 @@ On the full matched analytic cohort (n = **241**), a categorical **Random Forest
 Remaining countries are singleton / tiny cells and should not be over-interpreted.
 
 ### Performance
+
+Table @tbl-cn-2 reports the CV performance.
 
 | Model | n | ROC-AUC |
 |---|---:|---:|

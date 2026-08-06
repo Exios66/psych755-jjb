@@ -12,13 +12,15 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Group-CA MAE and signed error (predicted − ground truth) were sliced by Sex, Student status, and Employment status from the committed DeepSeek-R1-Distill-Llama-8B v2 export (`exports/v2/psych755_vllm_deepseek_r1_distill_llama8b_v2_full_cohort_20260730_2213/tables/stereotyping_by_*.csv`). Slices cover all five v2 tiers (`demos` → `full`).
+Group-CA MAE and signed error (predicted − ground truth) were sliced by Sex, Student status, and Employment status ([@cheng2023; @salewski2023]) from the committed DeepSeek-R1-Distill-Llama-8B v2 export (`exports/v2/psych755_vllm_deepseek_r1_distill_llama8b_v2_full_cohort_20260730_2213/tables/stereotyping_by_*.csv`). Slices cover all five v2 tiers (`demos` → `full`).
 
 **Short answer:** Sex and student-status MAE gaps are small (≤ ≈0.5 points). **Employment is the striking slice**: Full-Time error sits at 4.35–4.63 in every tier, while Part-Time and Other hover at 5.5–6.2. Signed error is near zero for Full-Time (−0.01) but **−2.0 to −3.6 for Part-Time / Other** at every tier — the live agent systematically **under-predicts CA for non-full-time respondents**. This sharpens the RQ1 story: employment does not *shrink* overall MAE, but it is a real ****calibration split**** in the live model.
 
 ---
 
 ## Employment status (group-CA MAE by tier)
+
+Table @tbl-ls-1 reports group-CA MAE by employment group across tiers.
 
 | Group | demos | employment | geo | transit | full | n (transit) |
 |---|---:|---:|---:|---:|---:|---:|
@@ -33,6 +35,8 @@ Signed error (predicted − true) at `demos` / `transit`: Full-Time **−0.01** 
 
 ## Sex (group-CA MAE by tier)
 
+Table @tbl-ls-2 reports the Sex slice.
+
 | Group | demos | employment | geo | transit | full | n (transit) |
 |---|---:|---:|---:|---:|---:|---:|
 | Female | 4.93 | 5.09 | 4.73 | 4.73 | 5.02 | 120 |
@@ -44,6 +48,8 @@ Signed error (predicted − true) at `demos` / `transit`: Full-Time **−0.01** 
 Sex gaps are small (≤ ≈0.5 points) at every tier. Both groups are under-predicted on average at `demos` (Female −1.47; Male −0.90), converging toward zero by `transit` (−0.97 / −0.77).
 
 ## Student status (group-CA MAE by tier)
+
+Table @tbl-ls-3 reports the Student-status slice.
 
 | Group | demos | employment | geo | transit | full | n (transit) |
 |---|---:|---:|---:|---:|---:|---:|

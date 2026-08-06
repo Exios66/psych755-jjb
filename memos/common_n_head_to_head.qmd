@@ -14,13 +14,15 @@ bibliography: ../references.bib
 
 ## Answer, Response, + Summary of Results
 
-Requiring complete Age, Sex, Student status, Country, Employment, `Q20`/`Q21`, `Q28`, CA scores, and lat/long yields n = **139** (56 regular; prevalence 40.3%). Each family is re-fit with stratified CV (`seed=42`) on this shared frame.
+Requiring complete Age, Sex, Student status, Country, Employment, `Q20`/`Q21`, `Q28`, CA scores [@mccroskey1970], and lat/long yields n = **139** (56 regular; prevalence 40.3%). Each family is re-fit as a balanced **Random Forest** with stratified CV ([@breiman2001]; `seed=42`) on this shared frame.
 
-**Short answer:** **`Q28` still wins** (AUC ≈ **0.659**). Country and car remain mid-tier. Geo is weak-modest. Employment, CA, and demographics fall near chance on this restricted overlap.
+**Short answer:** **`Q28` still wins** (AUC ≈ **0.659**). Country and car remain mid-tier. Geo is weak-modest. Employment, CA, and demographics fall near chance on this restricted overlap (Figure @fig-cn2-common-n-followup).
 
 ![Common-N head-to-head AUCs](figures/common_n_followup_memo.png){#fig-cn2-common-n-followup}
 
 ### Equal-*N* CV ranking (n = 139)
+
+Table @tbl-cn2–1 reports the equal-*N* CV ranking across feature families.
 
 | Feature family | ROC-AUC |
 |---|---:|
