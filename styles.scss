@@ -136,9 +136,19 @@ main p:has(+ .quarto-figure) {
   line-height: 1.55;
 }
 
-/* Sidebar: pinned below the fixed navbar at all times while scrolling.
-   The sidebar scrolls internally (own scrollbar) and never overlaps the
-   content column, since the grid already reserves its width. */
+/* =====================================================================
+   Pinned page chrome — declarative sticky rules for every critical
+   element. All chrome stays in place while scrolling, self-scrolls when
+   needed, and never overlaps content (grid columns reserve their width).
+   ===================================================================== */
+
+/* Top navbar — always in place. Headroom's slide-away is overridden so
+   the chrome never disappears mid-scroll (body padding stays 64px). */
+#quarto-header.headroom--unpinned {
+  transform: translateY(0) !important;
+}
+
+/* Left navigation sidebar — pinned below the navbar, self-scrolls. */
 @media (min-width: 992px) {
   body.nav-sidebar.floating #quarto-sidebar {
     position: sticky;
@@ -147,13 +157,45 @@ main p:has(+ .quarto-figure) {
     overflow-y: auto;
     align-self: start;
     overscroll-behavior: contain;
+    background-color: #fff;
+  }
+}
+
+/* Right-hand table of contents — pinned below the navbar, self-scrolls,
+   with the active section highlighted in the site accent color. */
+@media (min-width: 992px) {
+  body.nav-sidebar #quarto-margin-sidebar {
+    position: sticky;
+    top: 64px;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    align-self: start;
+    overscroll-behavior: contain;
   }
 
-  /* When the headroom navbar is hidden (scroll down), reclaim full height. */
-  body.nav-sidebar.floating:not(.nav-fixed) #quarto-sidebar {
-    top: 0;
-    max-height: 100vh;
+  #TOC.toc-active .nav-link {
+    border-left: 2px solid transparent;
+    padding-left: 0.5rem;
   }
+
+  #TOC.toc-active .nav-link.active {
+    color: #C5050C;
+    border-left-color: #C5050C;
+  }
+}
+
+/* Document toolbar (source-code / code-fold controls) — pinned too. */
+#quarto-document-toolbar {
+  position: sticky;
+  top: 64px;
+  z-index: 900;
+}
+
+/* Slim scrollbars on pinned columns keep the chrome visually quiet. */
+#quarto-sidebar,
+#quarto-margin-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: #c5ccd4 transparent;
 }
 
 /* PR progress graph page — immersive layout hooks */
