@@ -1578,9 +1578,15 @@ def plot_experiment_memo_figure(
 
     # ---- Specialized layouts -------------------------------------------------
     if key == "demographics":
-        fig = plt.figure(figsize=(12.2, 5.6))
-        gs = fig.add_gridspec(1, 3, width_ratios=[1.15, 1.0, 1.05], wspace=0.32)
-        ax0, ax1, ax2 = fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[0, 1]), fig.add_subplot(gs[0, 2])
+        # Plain subplots (not add_gridspec): figures built with add_gridspec
+        # are incompatible with save_figure's tight_layout pass.
+        fig, axes = plt.subplots(
+            1,
+            3,
+            figsize=(12.2, 5.6),
+            gridspec_kw={"width_ratios": [1.15, 1.0, 1.05], "wspace": 0.32},
+        )
+        ax0, ax1, ax2 = axes[0], axes[1], axes[2]
         age = _assoc_for_feature(assoc, "Age (tertile)") if isinstance(assoc, pd.DataFrame) else pd.DataFrame()
         if not age.empty:
             plot_prevalence_bars(
@@ -1668,8 +1674,10 @@ def plot_experiment_memo_figure(
                 f"CA incremental ≈ {delta.get('ca_incremental_over_q28', float('nan')):+.3f}"
             ),
         )
-        fig.subplots_adjust(top=0.80, left=0.10, right=0.98, bottom=0.12, wspace=0.30)
-        return save_figure(fig, out)
+        # Reserve a bottom band so the below-axes benchmark legend clears the
+        # xlabels; tight_layout runs inside this same box and cannot clobber it.
+        fig.subplots_adjust(top=0.84, left=0.10, right=0.97, bottom=0.16, wspace=0.35)
+        return save_figure(fig, out, tight_rect=(0.08, 0.16, 0.98, 0.84))
 
     if key == "q27_among_regular":
         fig, axes = plt.subplots(1, 2, figsize=(11.8, 5.3), gridspec_kw={"width_ratios": [1.0, 1.15]})

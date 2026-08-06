@@ -123,6 +123,40 @@ def style_axes(ax: Axes, *, grid: str = "x") -> None:
     ax.tick_params(length=0)
 
 
+def fit_text_within_axes(ax: Axes, texts: Sequence[Any], *, pad_frac: float = 0.015) -> None:
+    """Grow the x-limits so every ``text`` stays inside the axes box.
+
+    Value labels are drawn to the right of bars; long labels (e.g. AUC + n)
+    would otherwise spill past the axes edge into a neighboring panel or the
+    figure margin. We measure the live text extents and expand the x-limits
+    with a small proportional pad — applied only on the side(s) that actually
+    overflowed, so lower bounds like ``0`` (prevalence) are never pushed
+    negative.
+    """
+    texts = [t for t in texts if t.get_text().strip()]
+    if not texts:
+        return
+    fig = ax.figure
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    inv = ax.transData.inverted()
+    axbox = ax.get_window_extent(renderer)
+    x0, x1 = ax.get_xlim()
+    lo, hi = x0, x1
+    for t in texts:
+        ext = t.get_window_extent(renderer)
+        if ext.x0 < axbox.x0:
+            lo = min(lo, inv.transform((ext.x0, 0))[0])
+        if ext.x1 > axbox.x1:
+            hi = max(hi, inv.transform((ext.x1, 0))[0])
+    span = hi - lo
+    pad = pad_frac * span
+    new_x0 = x0 - pad if lo < x0 else x0
+    new_x1 = x1 + pad if hi > x1 else x1
+    if new_x0 != x0 or new_x1 != x1:
+        ax.set_xlim(new_x0, new_x1)
+
+
 def add_title_block(
     fig: Figure,
     title: str,
@@ -263,7 +297,7 @@ def plot_auc_bars(
         ax.legend(
             handles=bench_handles,
             loc="upper center" if legend_loc == "below" else legend_loc,
-            bbox_to_anchor=(0.5, -0.07) if legend_loc == "below" else None,
+            bbox_to_anchor=(0.5, -0.16) if legend_loc == "below" else None,
             ncol=len(bench_handles) if legend_loc == "below" else 1,
             fontsize=7.5,
             title="Benchmarks" if legend_loc != "below" else None,
@@ -275,26 +309,39 @@ def plot_auc_bars(
             framealpha=0.95,
         )
 
+    # Omit the repeated "· n=…" suffix when every bar shares the same n —
+    # it is redundant noise (n is already in the title block).
+    show_n = ns is not None
+    if show_n:
+        n_vals = [v for v in ns if v is not None]
+        if n_vals and all(v == n_vals[0] for v in n_vals):
+            show_n = False
+
+    value_texts = []
     for i, (bar, auc) in enumerate(zip(bars, aucs_arr)):
         label = f"{auc:.3f}"
-        if ns is not None:
+        if show_n:
             n_val = ns[order[i]]
             if n_val is not None and not (isinstance(n_val, float) and np.isnan(n_val)):
                 label = f"{auc:.3f}  ·  n={int(n_val)}"
         # Ensure text stays within xlim by dynamically offsetting
         xlim_actual = ax.get_xlim()
         xpos = min(auc + 0.012, xlim_actual[1] - 0.03)
-        ax.text(
-            xpos,
-            bar.get_y() + bar.get_height() / 2,
-            label,
-            va="center",
-            ha="left",
-            fontsize=8.5,
-            color=INK,
-            fontweight="bold",
-            zorder=4,
+        value_texts.append(
+            ax.text(
+                xpos,
+                bar.get_y() + bar.get_height() / 2,
+                label,
+                va="center",
+                ha="left",
+                fontsize=8.5,
+                color=INK,
+                fontweight="bold",
+                zorder=4,
+                clip_on=True,
+            )
         )
+    fit_text_within_axes(ax, value_texts)
     return bench_handles
 
 
@@ -348,11 +395,28 @@ def plot_prevalence_bars(
     xmax = max(0.72, float(np.nanmax(pcts_arr)) + 0.16)
     ax.set_xlim(0, xmax)
     style_axes(ax, grid="x")
+    value_texts = []
     for i, pct in enumerate(pcts_arr):
         txt = f"{pct:.0%}"
         if ns_arr is not None:
             txt = f"{pct:.0%}  (n={ns_arr[i]})"
-        ax.text(pct + 0.015, i, txt, va="center", ha="left", fontsize=8.5, color=INK)
+        value_texts.append(
+            ax.text(
+                pct + 0.015,
+                i,
+                txt,
+                va="center",
+                ha="left",
+                fontsize=8.5,
+                color=INK,
+                clip_on=True,
+            )
+        )
+    fit_text_within_axes(ax, value_texts)
+    # Prevalence can never be negative: never let label-fitting push the
+    # lower x-limit below 0 (that would draw an out-of-range "-0.2" tick).
+    lo, hi = ax.get_xlim()
+    ax.set_xlim(max(0.0, lo), hi)
 
 
 def plot_roc_curve(
@@ -377,6 +441,8 @@ def plot_roc_curve(
     ax.set_ylabel("True positive rate")
     ax.set_title(title, loc="left", fontsize=11, pad=8)
     style_axes(ax, grid="both")
+    # Extra tick pad so the corner "0.0" x-tick clears the "0.0" y-tick label.
+    ax.tick_params(axis="x", pad=8)
     ax.legend(loc="lower right", fontsize=8.5)
 
 
@@ -431,17 +497,24 @@ def plot_forest_diffs(
     xlim_curr = ax.get_xlim()
     xlim_new = (min(xlim_curr[0], min(diffs) - xpad), max(xlim_curr[1], max(diffs) + xpad))
     ax.set_xlim(*xlim_new)
-    for i, (d, p) in enumerate(zip(diffs, work.get("welch_p", [np.nan] * len(work)))):
-        txt = f"{d:+.1f}" + (f"  p={p:.3f}" if pd.notna(p) else "")
-        ax.text(
-            d + (0.15 if d >= 0 else -0.15),
-            i,
-            txt,
-            va="center",
-            ha="left" if d >= 0 else "right",
-            fontsize=8,
-            color=INK,
+    # Compact data labels: the p-values / significance stars already live in
+    # the accompanying memo tables and on the y-tick labels, so long
+    # "−4.8  p=0.006" strings only crowd the panel.
+    value_texts = []
+    for i, d in enumerate(diffs):
+        value_texts.append(
+            ax.text(
+                d + (0.15 if d >= 0 else -0.15),
+                i,
+                f"{d:+.1f}",
+                va="center",
+                ha="left" if d >= 0 else "right",
+                fontsize=8,
+                color=INK,
+                clip_on=True,
+            )
         )
+    fit_text_within_axes(ax, value_texts, pad_frac=0.02)
 
 
 def short_level(text: Any, *, max_len: int = 28) -> str:
