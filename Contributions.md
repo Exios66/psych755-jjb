@@ -7,20 +7,6 @@
 
 ---
 
-## How to use this file
-
-Each member completes one section below. Claims must be checkable via file paths
-and permanent GitHub links (permalinks pinned to a commit SHA).
-
-> **Markdown links.** Write `[link text](https://example.com)` with no space
-> between the brackets and parentheses.
-
-### Permalinks
-
-Open a file on GitHub → select lines → press **`y`** to pin the URL to a commit.
-
----
-
 ## Student 1: Jack J. Burleson (`Exios66`)
 
 - **The component I "owned" and that I summarize here is best described as** the
