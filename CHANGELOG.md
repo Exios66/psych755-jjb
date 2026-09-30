@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Covers development on `main` since `0.3.0` (2026-07-27).
+## [0.4.0] - 2026-08-24
+
+Covers development on `main` from 2026-07-27 through 2026-08-24 (since `6495cbb` / `0.3.0`).
 
 ### Added
 
@@ -16,7 +18,17 @@ Covers development on `main` since `0.3.0` (2026-07-27).
 - Live-export TreeSHAP / surrogate-SHAP feature-power memo (`memos/feature_predictive_power_ml_llm.qmd`)
 - Ground-truth group-CA descriptive table by demographic slice in the manuscript stereotyping section
 - Cross-memo scaffolding links: README index now covers all 27 memos, orphan memos link siblings, wave-1 parents link forward to wave-2 follow-ups, `.md`/`.qmd` link mismatches fixed
-- LLM metric-cleaning runbook (`docs/metric_cleaning_runbook.md`) documenting the exact parse → validate → score → band → metric → aggregate pipeline (#63, #64)
+- LLM metric-cleaning runbook (`docs/metric_cleaning_runbook.md`) documenting the parse → validate → score → band → metric → aggregate pipeline (`d4e866a`)
+- v1 run specifications and v2/v3 enhanced generation presets in `config/vllm_presets.yaml`, wired via `--preset` / `VLLM_PRESET` (#54)
+- Stereotyping / discriminatory-error evaluation: `ca-personas stereotype-eval` plus `docs/stereotyping_evaluation.md` (#54)
+- Braintrust tracing and prompt-registry hooks for vLLM runs (opt-in via `BRAINTRUST_API_KEY`) (#56)
+- Weights & Biases integration for vLLM batch scoring and run logging (opt-in via `WANDB_API_KEY`; `2af6de1`)
+- Multiply-imputed Q28 head-to-head experiment and research memo (`mi_head_to_head`; #55)
+- Secondary transit-focus TF1/TF2 suite: RF baselines and transit-focus LLM prompts with mobility answers held out (#57)
+- PR progress graph: GitHub Issues overlay, multi-theme styling, and auto-sync on every `quarto render` (`ffa760f`, `f9af8eb`, `31c115d`)
+- Manuscript PDF export with running footer, linked TOC, visible code cells, and committed `index.pdf` (`61bb7dd`, `18348d3`)
+- Root `publish.sh` wrapper for Posit Connect deploy (`db25cff`)
+- Posit Connect Cloud env vars documented in `.env.example` (#52)
 
 ### Changed
 
@@ -24,23 +36,29 @@ Covers development on `main` since `0.3.0` (2026-07-27).
 - Replace mock-LLM diagnostics in the manuscript with real ML-vs-vLLM results and committed vLLM export tables
 - Discussion section: link every RQ/S/TF answer to its memo scaffold and add a Conclusion
 - Bibliography: add verified references (Daly 1978; Binz & Schulz 2024; Grossmann et al. 2023; Horton et al. 2023; Salewski et al. 2023; Sclar et al. 2024), fix park2024 title/authors, polish DOI/URL fields
-- Sync `pyproject.toml` package version to the changelog's current release (`0.3.0`) so the two stop disagreeing (#65)
+- Sync `pyproject.toml` package version to the changelog's current release (`0.3.0`) so the two stop disagreeing (`d4e866a`)
+- Format research questions as APA numbered primary (RQ1–RQ3) and secondary (S1–S5) groups (#49)
+- Manuscript submission polish: live v1 figures, expanded Discussion, and v2/v3 future-work framing (#53)
+- Align primary RQs in the manuscript with the synthesized tier mapping (`e7963d2`)
+- APA figure styling and layout refinements across site pages and memos (`a91221e`, `b6ba560`, `e426b1e`)
+- Add figure alt text across site pages and refresh memo figure assets (`37ce617`, `7cf0a4d`)
+- Standardize docs formatting and clarify memo navigation (`3c6b426`)
+- Pin page chrome and style active TOC links site-wide (`7009dda`)
 
 ### Fixed
 
-- Broken `memos/README.md` links (`.md` → `.qmd`) and README.md memo-link targets
-- Relative `exports/…` links in `docs/persona_prompt_versions.md` (missing `../`)
+- Restore full Quarto `project.render` list after PR graph resources accidentally truncated it (#50)
+- Broken `memos/README.md` links (`.md` → `.qmd`), README memo-link targets, and `docs/persona_prompt_versions.md` export paths (`0e19856`)
 - Stale "mock at render" and "GPU deferred" claims across README, AGENTS.md, docs, and memos
-- Remove committed Quarto-render library dir `memos/live_llm_stereotyping_slices_files/` from git and ignore `memos/*_files/`
-- Rerun the seeded full-cohort ML baseline so `docs/figures/ml_baseline_*` show the full seven-model suite instead of the stale two-model artifacts (#66)
-- Render the mermaid diagram in `docs/persona_prompt_versions.md` (plain fences emit no mermaid JS in `.md` pages; the page now loads the mermaid library and wraps the diagram in a `.mermaid` div) (#60)
-- Regenerate follow-up experiment figures from fresh `outputs/followup_experiments/` so the memo charts are no longer stale (#67)
-- Regenerate the Q27/Q28 prevalence chart with the corrected level ordering so bars display low→high (#68)
+- Regenerate stale committed figures and Posit artifact visuals after full-cohort audit (`7f07414`, `aea279d`, `7cf0a4d`)
+- Render the mermaid diagram in `docs/persona_prompt_versions.md` (load mermaid JS and wrap the diagram in a `.mermaid` div; `8d940e6`)
+- Remove committed Quarto-render library dirs from git and ignore `memos/*_files/` plus `_site/site_libs/` (`2cec78b`)
 
 ### Removed
 
 - Redundant CLI-wrapper scripts (`scripts/run_pipeline.py`, `prepare_full_cohort.py`, `score_ground_truth.py`, `build_personas.py`, `run_ca_transit_rf.py`, `run_geo_transit_rf.py`, `run_transit_ca.py`, `posit_publish.py`); `_publish.yml` now points to `publish_posit_jackjburleson.py`
 - Dead `cleaning.join_how` key from `config/default.yaml`
+- GitHub Pages workflow (Posit Connect remains the canonical publish target; `db25cff`)
 
 ## [0.3.0] - 2026-07-27
 
